@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #9195A3;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  max-width: 400px; /* Cap at 400px on laptops */
+  min-height: 100vh;
+  margin: 0 auto;
+  position: relative; /* Make this a positioning context */
+}
+
+/* Make sure the header spans full width on mobile */
+@media (max-width: 480px) {
+  #root {
+    max-width: 100%; /* Full viewport width on phones */
+    margin: 0; /* Remove any centering margins */
+  }
+  
+  /* This will ensure header takes full width */
+  header {
+    max-width: 100% !important;
+  }
+}
+
+/* Optional .frame styles if used elsewhere */
+.frame {
+  width: 90%;
+  max-width: 700px;
+  height: 600px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .frame {
+    width: 70%;
+  }
+}
+
+@media (max-width: 768px) {
+  .frame {
+    width: 80%;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .frame {
+    width: 85%;
+    padding: 10px;
+  }
+}
