@@ -136,7 +136,7 @@ function App() {
                                     <Route path="/bdgwin" element={<BDGWin />} />
 
                                     {/* Protected Routes */}
-                                    <Route>
+                                    <ProtectedRoute>
                                         <Route path="/" element={<Home />} />
                                         <Route path="/profilepage" element={<ProfilePage />} />
                                         <Route path="/wallet" element={<Wallet />} />
@@ -207,7 +207,7 @@ function App() {
                                         <Route path="/SportsGame" element={<SportsGame />} />
                                         <Route path="/casino-games" element={<CasinoGames />} />
                                         <Route path="/collect-reward" element={<CollectReward />} />
-                                    </Route>
+                                    </ProtectedRoute>
 
                                     {/* Default Redirect */}
                                     <Route path="*" element={<Navigate to="/login" replace />} />
