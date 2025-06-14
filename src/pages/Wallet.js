@@ -285,70 +285,71 @@ function Wallet() {
 
       <div className="bg-[#242424] p-4 shadow-md w-full max-w-md mt-3">
         <div className="bg-[#333332] p-2 rounded-lg shadow-md">
-       <div className="flex justify-center px-4 sm:px-8 md:px-12 lg:px-16 py-4 space-x-10">
-  {/* Main Wallet */}
-  <div className="text-center">
-    <div className="relative w-28 h-28">
-      <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
-        <path
-          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-          fill="none"
-          stroke={!isThirdPartyActive ? "#c4933f" : "#666462"}
-          strokeWidth="3"
-          strokeDasharray="100, 100"
-          className="transition-all duration-300"
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
-        {!isThirdPartyActive ? "100%" : "0%"}
-      </div>
-    </div>
-    {loading ? (
-      <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
-    ) : (
-      <p className="mt-2 font-semibold text-[#f5f3f0]">
-        {getCurrencySymbol(currency)}{mainWalletBalance !== null ? mainWalletBalance.toFixed(2) : "0.00"}
-      </p>
-    )}
-    <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">Main wallet</p>
-  </div>
+          <div className="flex justify-center px-4 sm:px-8 md:px-12 lg:px-16 py-4 space-x-10  gap-[20px]">
+            {/* Main Wallet */}
+            <div className="text-center">
+              <div className="relative w-24 h-24">
+                <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke={!isThirdPartyActive ? "#c4933f" : "#666462"}
+                    strokeWidth="3"
+                    strokeDasharray="100, 100"
+                    className="transition-all duration-300"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-[#f5f3f0]">
 
-  {/* 3rd Party Wallet */}
-  <div className="text-center">
-    <div className="relative w-28 h-28">
-      <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
-        <path
-          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-          fill="none"
-          stroke={isThirdPartyActive ? "#c4933f" : "#666462"}
-          strokeWidth="3"
-          strokeDasharray="100, 100"
-          className="transition-all duration-300"
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
-        {isThirdPartyActive ? "100%" : "0%"}
-      </div>
-    </div>
-    {loading ? (
-      <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
-    ) : (
-      <p className="mt-2 font-semibold text-[#f5f3f0]">
-        {getCurrencySymbol(currency)}{thirdPartyWalletBalance !== null ? thirdPartyWalletBalance.toFixed(2) : "0.00"}
-      </p>
-    )}
-    <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">3rd party wallet</p>
-  </div>
-</div>
+                  {!isThirdPartyActive ? "100%" : "0%"}
+                </div>
+              </div>
+              {loading ? (
+                <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
+              ) : (
+                <p className="mt-2 font-semibold text-[#f5f3f0]  font-sans">
+                  {getCurrencySymbol(currency)}{mainWalletBalance !== null ? mainWalletBalance.toFixed(2) : "0.00"}
+                </p>
+              )}
+              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">Main wallet</p>
+            </div>
 
+            {/* 3rd Party Wallet */}
+            <div className="text-center">
+              <div className="relative w-24 h-24">
+                <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke={isThirdPartyActive ? "#c4933f" : "#666462"}
+                    strokeWidth="3"
+                    strokeDasharray="100, 100"
+                    className="transition-all duration-300"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
+                  {isThirdPartyActive ? "100%" : "0%"}
+                </div>
+              </div>
+              {loading ? (
+                <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
+              ) : (
+                <p className="mt-2 font-semibold text-[#f5f3f0]  font-sans">
+                  {getCurrencySymbol(currency)}{thirdPartyWalletBalance !== null ? thirdPartyWalletBalance.toFixed(2) : "0.00"}
+                </p>
+              )}
+              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">3rd party wallet</p>
+            </div>
+
+          </div>
 
           {/* Transfer Button */}
           <button
             onClick={handleTransferClick}
             disabled={countdown !== null || transferLoading || (thirdPartyWalletBalance <= 0)}
-            className={`w-full py-2 font-sm font-semibold p-4 rounded-full text-white transition-all duration-300 
-              ${isGreyedOut ? "bg-[#6f7381]" : "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"} 
-              ${(countdown !== null || transferLoading || (thirdPartyWalletBalance <= 0)) ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full py-1.5 px-3 text-sm font-semibold rounded-full text-white transition-all duration-300 
+    ${isGreyedOut ? "bg-[#6f7381]" : "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"} 
+    ${(countdown !== null || transferLoading || (thirdPartyWalletBalance <= 0)) ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {transferLoading ? (
               <span>Processing Transfer...</span>
@@ -361,6 +362,7 @@ function Wallet() {
             )}
           </button>
 
+
           {/* Error Message Display */}
           {error && (mainWalletBalance !== null || thirdPartyWalletBalance !== null) && (
             <div className="mt-2 p-2 bg-red-900/20 border border-red-500/30 rounded">
@@ -368,55 +370,41 @@ function Wallet() {
             </div>
           )}
 
-          {/* Reduced gap - changed from mt-4 to mt-2 */}
-          <div className="grid grid-cols-4 gap-4 mt-2 text-center">
-            <Link to="/deposit" className="flex flex-col items-center">
-              <div>
-                <img
-                  src={DepositIcon}
-                  alt="File Icon"
-                  className="w-[70px] h-[70px]"
-                />
-              </div>
-              <span className="text-[#a8a5a1] text-sm mt-0">Deposit</span>
-            </Link>
+          {/* Icon Grid */}
+    {/* Icon Grid */}
+<div className="grid grid-cols-4 gap-4 mt-2 text-center">
+  <Link to="/deposit" className="flex flex-col items-center">
+    <div>
+      <img src={DepositIcon} alt="File Icon" className="w-[50px] h-[50px]" />
+    </div>
+    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Deposit</span>
+  </Link>
 
-            <Link to="/withdraw" className="flex flex-col items-center">
-              <div>
-                <img
-                  src={Withdraw}
-                  alt="File Icon"
-                  className="w-[70px] h-[70px]"
-                />
-              </div>
-              <span className="text-[#a8a5a1] text-sm mt-0">Withdraw</span>
-            </Link>
+  <Link to="/withdraw" className="flex flex-col items-center">
+    <div>
+      <img src={Withdraw} alt="File Icon" className="w-[50px] h-[50px]" />
+    </div>
+    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Withdraw</span>
+  </Link>
 
-            <Link to="/deposit-history" className="flex flex-col items-center">
-              <div>
-                <img
-                  src={DepositHistory}
-                  alt="File Icon"
-                  className="w-[70px] h-[70px]"
-                />
-              </div>
-              <span className="text-[#a8a5a1] text-sm mt-0">Deposit history</span>
-            </Link>
+  <Link to="/deposit-history" className="flex flex-col items-center">
+    <div>
+      <img src={DepositHistory} alt="File Icon" className="w-[50px] h-[50px]" />
+    </div>
+    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Deposit history</span>
+  </Link>
 
-            <Link to="/withdraw-history" className="flex flex-col items-center">
-              <div>
-                <img
-                  src={WithdrawHistory}
-                  alt="File Icon"
-                  className="w-[70px] h-[70px]"
-                />
-              </div>
-              <span className="text-[#a8a5a1] text-sm mt-0">Withdrawal history</span>
-            </Link>
-          </div>
+  <Link to="/withdraw-history" className="flex flex-col items-center">
+    <div>
+      <img src={WithdrawHistory} alt="File Icon" className="w-[50px] h-[50px]" />
+    </div>
+    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Withdrawal history</span>
+  </Link>
+</div>
+
         </div>
-
       </div>
+
       <Footer />
     </div>
   );

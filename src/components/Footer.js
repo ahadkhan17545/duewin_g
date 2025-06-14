@@ -97,7 +97,7 @@ function Footer() {
                     width: "100px",       // Reduced size
                     height: "80px",      // Reduced size
                     position: "relative",
-                    top: "-1px",        // Adjusted for better alignment
+                           // Adjusted for better alignment
                     borderRadius: "50%",
                     zIndex: 20,
                   }}
@@ -108,7 +108,7 @@ function Footer() {
                 <img
                   src={activeTab === tab.id ? tab.activeIcon : tab.icon}
                   alt={tab.label}
-                  className={`mb-1 ${tab.id === "wallet" || tab.id === "account" ? "w-8 h-8" : "w-10 h-10"}`} // Smaller size for wallet and account
+                  className={` ${tab.id === "wallet" || tab.id === "account" ? "w-8 h-8" : "w-10 h-10"}`} // Smaller size for wallet and account
                 />
               )}
 
@@ -120,6 +120,9 @@ function Footer() {
                     fontFamily: "Arial, sans-serif",
                     fontSize: "12px",
                     fontWeight: "500",
+                   
+                    
+                    
                   }}
                 >
                   {tab.label}

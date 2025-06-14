@@ -59,25 +59,26 @@ function ActivityPage() {
   };
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full flex flex-col items-center justify-center">
+    <div className="bg-[rgb(36,36,36)] min-h-screen w-full flex flex-col items-center justify-center">
       <ActivityHeader />
-      <div className="text-left mb-0 w-full max-w-md px-4 mt-14 p-4 bg-[#333332] font-roboto leading-tight text-sm">
-  <h1 className="text-xl text-white mb-2 font-normal">Activity</h1>
-  <p className="text-white text-sm">
-    Please remember to follow the event page
-    <br />
-    We will launch user feedback activities from time to time
-  </p>
-</div>
+      <div className="text-left mb-0 w-full max-w-md px-4 mt-10 p-3 bg-[#333332] font-roboto leading-tight text-sm">
+        <h1 className="text-lg text-white mb-2 font-sans">Activity</h1>
+        <p className="text-white text-xs font-sans">
+          Please remember to follow the event page
+          <br />
+          We will launch user feedback activities from time to time
+        </p>
+      </div>
+      
 
-      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full mt-2 flex flex-col justify-between">
+      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between">
         <div className="grid grid-cols-3 text-[#a8a5a1] items-center mb-2">
           <div className="text-center">
             <Link to="/invitebonus">
               <img
                 src={invitationBonus}
                 alt="Target"
-                className="w-12 h-12 mx-auto"
+                className="w-9 h-9 mx-auto"
               />
               <div className="text-xs mt-2">
                 Invitation <br /> bonus
@@ -89,7 +90,7 @@ function ActivityPage() {
               <img
                 src={superJackpot}
                 alt="Idea"
-                className="w-12 h-12 mx-auto"
+                className="w-9 h-9 mx-auto"
               />
               <div className="text-xs mt-2">
                 Activity
@@ -103,7 +104,7 @@ function ActivityPage() {
               <img
                 src={BettingRebate}
                 alt="Idea"
-                className="w-12 h-12 mx-auto"
+                className="w-9 h-9 mx-auto"
               />
               <div className="text-xs mt-2">
                 Betting
@@ -114,128 +115,131 @@ function ActivityPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 w-full">
-  {/* Gift Box */}
-  <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden">
-    <Link to="/Gift">
-      <div className="w-full aspect-[4/3]">
-        <img
-          src={signInBanner}
-          alt="description"
-          className="w-full h-full object-cover rounded-t-lg"
-        />
-      </div>
-      <div className="flex flex-col items-start justify-center p-3">
-        <h2 className="text-lg text-[#f5f3f0] font-semibold mb-1">Gifts</h2>
-        <p className="text-[#a8a5a1] text-sm tracking-tight leading-snug">
-          Enter the redemption code to receive gift rewards
-        </p>
-      </div>
-    </Link>
-  </div>
+<div className="w-full ">
+  <div className="grid grid-cols-2 gap-1 w-full">
+    {/* Gift Box */}
+    <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
+      <Link to="/Gift">
+        <div className="w-full aspect-[5/3]"> {/* Height thoda kam */}
+          <img
+            src={signInBanner}
+            alt="description"
+            className="w-full h-full object-cover rounded-t-lg"
+          />
+        </div>
+        <div className="flex flex-col items-start justify-center p-2"> {/* tighter padding */}
+          <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">Gifts</h2>
+          <p className="text-[#a8a5a1] text-xs tracking-tight leading-snug font-sans">
+            Enter the redemption code to receive gift rewards
+          </p>
+        </div>
+      </Link>
+    </div>
 
-  {/* Attendance Bonus Box */}
-  <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden">
-    <Link to="/AttendanceBonus">
-      <div className="w-full aspect-[4/3]">
-        <img
-          src={giftRedeem}
-          alt="description"
-          className="w-full h-full object-cover rounded-t-lg"
-        />
-      </div>
-      <div className="flex flex-col items-start justify-center p-3">
-        <h2 className="text-lg text-[#f5f3f0] font-semibold mb-1">
-          Attendance Bonus
-        </h2>
-        <p className="text-[#a8a5a1] text-sm tracking-tight leading-snug">
-          The more consecutive days you sign in, the higher the reward will be.
-        </p>
-      </div>
-    </Link>
-  </div>
-</div>
-
-
-
-
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4 mt-6">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827180534ickk.png"
-      alt="First Deposit Bonus"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">First Deposit Bonus</h2>
+    {/* Attendance Bonus Box */}
+    <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
+      <Link to="/AttendanceBonus">
+        <div className="w-full aspect-[5/3]">
+          <img
+            src={giftRedeem}
+            alt="description"
+            className="w-full h-full object-cover rounded-t-lg"
+          />
+        </div>
+        <div className="flex flex-col items-start justify-center p-2">
+          <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">
+            Attendance Bonus
+          </h2>
+          <p className="text-[#a8a5a1] text-xs tracking-tight leading-tight font-sans">
+           The more consecutive days you sign in, the higher the reward will be.
+          </p>
+        </div>
+      </Link>
+    </div>
   </div>
 </div>
 
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827175709gnr5.png"
-      alt="Daily Bonus"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">Daily Bonus</h2>
-  </div>
-</div>
 
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828174930butj.png"
-      alt="Aviator Challenger"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">Aviator Challenger</h2>
-  </div>
-</div>
 
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175051yb1x.png"
-      alt="Lucky 10 Days"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">Lucky 10 Days</h2>
-  </div>
-</div>
 
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175144x8p1.png"
-      alt="Wingo Win Streak Bonus"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">Wingo Win Streak Bonus</h2>
-  </div>
-</div>
 
-<div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
-  <Link to="/activitygamesrules">
-    <img
-      src="https://ossimg.diuacting.com/DiuWin/banner/Banner_202408291537368dtv.png"
-      alt="Diuwin Content Creators"
-      className="w-full h-auto rounded-lg"
-    />
-  </Link>
-  <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-    <h2 className="text-lg text-[#f5f3f0] font-semibold">Diuwin Content Creators</h2>
-  </div>
-</div>
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4 mt-6">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827180534ickk.png"
+              alt="First Deposit Bonus"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">First Deposit Bonus</h2>
+          </div>
+        </div>
+
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827175709gnr5.png"
+              alt="Daily Bonus"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">Daily Bonus</h2>
+          </div>
+        </div>
+
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828174930butj.png"
+              alt="Aviator Challenger"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">Aviator Challenger</h2>
+          </div>
+        </div>
+
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175051yb1x.png"
+              alt="Lucky 10 Days"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">Lucky 10 Days</h2>
+          </div>
+        </div>
+
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175144x8p1.png"
+              alt="Wingo Win Streak Bonus"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">Wingo Win Streak Bonus</h2>
+          </div>
+        </div>
+
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
+          <Link to="/activitygamesrules">
+            <img
+              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_202408291537368dtv.png"
+              alt="Diuwin Content Creators"
+              className="w-full h-auto rounded-lg"
+            />
+          </Link>
+          <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">Diuwin Content Creators</h2>
+          </div>
+        </div>
 
         <div className=" bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
           <div>
