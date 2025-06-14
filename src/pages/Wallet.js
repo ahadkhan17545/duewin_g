@@ -59,7 +59,7 @@ function Wallet() {
       }
 
       console.log('Making transfer request with token:', token.substring(0, 20) + '...');
-      
+
       const response = await fetch('https://strike.atsproduct.in/api/wallet/transfer-from-third-party', {
         method: 'POST',
         headers: {
@@ -111,19 +111,19 @@ function Wallet() {
     try {
       // Call the transfer API
       const transferResult = await transferFromThirdParty();
-      
+
       if (transferResult.success || transferResult.status === 'success') {
         console.log('Transfer successful:', transferResult);
-        
+
         // Mark transfer as successful but don't update UI yet
         setTransferSuccess(true);
-        
+
       } else {
         throw new Error(transferResult.message || 'Transfer failed');
       }
     } catch (err) {
       console.error('Transfer error:', err);
-      
+
       // Provide more specific error messages
       let errorMessage = 'Transfer failed. Please try again.';
       if (err.message.includes('401')) {
@@ -135,9 +135,9 @@ function Wallet() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       setError(errorMessage);
-      
+
       // Reset UI state on error
       setCountdown(null);
       setIsGreyedOut(false);
@@ -157,7 +157,7 @@ function Wallet() {
     } else if (countdown === 0) {
       setCountdown(null);
       setIsGreyedOut(false);
-      
+
       // If transfer was successful, now update the UI
       if (transferSuccess) {
         const transferAmount = thirdPartyWalletBalance;
@@ -165,7 +165,7 @@ function Wallet() {
         setThirdPartyWalletBalance(0);
         setIsThirdPartyActive(false);
         setTransferSuccess(false); // Reset the flag
-        
+
         // Refresh wallet balance from server to get accurate data
         setTimeout(() => {
           fetchBalance();
@@ -178,23 +178,23 @@ function Wallet() {
   const fetchBalance = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const data = await getWalletBalance();
-      
+
       if (data.success) {
         // Set main wallet balance
         setMainWalletBalance(data.mainWallet?.balance || 0);
-        
+
         // Set third party wallet balance
         setThirdPartyWalletBalance(data.thirdPartyWallet?.balance || 0);
-        
+
         // Set currency
         setCurrency(data.mainWallet?.currency || "EUR");
-        
+
         // Determine if third party wallet is active based on balance
         setIsThirdPartyActive((data.thirdPartyWallet?.balance || 0) > 0);
-        
+
         console.log("Wallet balance fetched successfully:", data);
       } else {
         throw new Error(data.message || "Failed to fetch wallet balance");
@@ -253,9 +253,10 @@ function Wallet() {
       style={timesNewRomanStyle}
     >
       <WalletHeader />
-      <div className="text-center mb-6 w-full max-w-md px-8 flex flex-col items-center">
-        <h1 className="text-xl font-bold mb-14"></h1>
-        <img src={IconWallet} alt="File Icon" className="w-12 h-12" />
+      <div className="text-center  w-full max-w-xs px-2 flex flex-col items-center">
+
+        <h1 className="text-xl font-bold mt-1"></h1>
+        <img src={IconWallet} alt="File Icon" className="w-9 h-9" />
 
         {/* Total Balance Display */}
         {loading ? (
@@ -263,7 +264,7 @@ function Wallet() {
         ) : error && !mainWalletBalance && !thirdPartyWalletBalance ? (
           <div className="text-center">
             <p className="text-red-500 text-sm">{error}</p>
-            <button 
+            <button
               onClick={fetchBalance}
               className="text-blue-400 text-xs mt-1 underline"
             >
@@ -272,81 +273,74 @@ function Wallet() {
           </div>
         ) : (
           <>
-            <h1 className="text-2xl font-normal text-white font-[Inter]">
+            <h1 className="text-xl font-normal text-white font-[Inter]">
               {getCurrencySymbol(currency)}{totalBalance.toFixed(2)}
             </h1>
-            <p className="text-white text-xs mt-1 font-serif tracking-wider">
-              Total Balance
+            <p className="text-white text-xs font-[Inter] tracking-wider">
+              Total balance
             </p>
           </>
         )}
       </div>
 
-      <div className="bg-[#242424] p-4 shadow-md w-full max-w-md mt-6">
+      <div className="bg-[#242424] p-4 shadow-md w-full max-w-md mt-3">
         <div className="bg-[#333332] p-2 rounded-lg shadow-md">
-          <div className="flex justify-center space-x-20 p-4">
-            {/* Main Wallet - Yellow when active */}
-            <div className="text-center">
-              <div className="relative w-28 h-28">
-                <svg
-                  className="w-full h-full absolute inset-0"
-                  viewBox="0 0 36 36"
-                >
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke={!isThirdPartyActive ? "#c4933f" : "#666462"}
-                    strokeWidth="3"
-                    strokeDasharray="100, 100"
-                    className="transition-all duration-300"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
-                  {!isThirdPartyActive ? "100%" : "0%"}
-                </div>
-              </div>
-              {loading ? (
-                <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
-              ) : (
-                <p className="mt-2 font-semibold text-[#f5f3f0]">
-                  {getCurrencySymbol(currency)}{mainWalletBalance !== null ? mainWalletBalance.toFixed(2) : "0.00"}
-                </p>
-              )}
-              <p className="text-sm text-[#f5f3f0] tracking-wider">Main wallet</p>
-            </div>
+       <div className="flex justify-center px-4 sm:px-8 md:px-12 lg:px-16 py-4 space-x-10">
+  {/* Main Wallet */}
+  <div className="text-center">
+    <div className="relative w-28 h-28">
+      <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+        <path
+          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+          fill="none"
+          stroke={!isThirdPartyActive ? "#c4933f" : "#666462"}
+          strokeWidth="3"
+          strokeDasharray="100, 100"
+          className="transition-all duration-300"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
+        {!isThirdPartyActive ? "100%" : "0%"}
+      </div>
+    </div>
+    {loading ? (
+      <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
+    ) : (
+      <p className="mt-2 font-semibold text-[#f5f3f0]">
+        {getCurrencySymbol(currency)}{mainWalletBalance !== null ? mainWalletBalance.toFixed(2) : "0.00"}
+      </p>
+    )}
+    <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">Main wallet</p>
+  </div>
 
-            {/* 3rd Party Wallet - Changes from Gray to Yellow */}
-            <div className="text-center">
-              <div className="relative w-28 h-28">
-                <svg
-                  className="w-full h-full absolute inset-0"
-                  viewBox="0 0 36 36"
-                >
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke={isThirdPartyActive ? "#c4933f" : "#666462"}
-                    strokeWidth="3"
-                    strokeDasharray="100, 100"
-                    className="transition-all duration-300"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
-                  {isThirdPartyActive ? "100%" : "0%"}
-                </div>
-              </div>
-              {loading ? (
-                <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
-              ) : (
-                <p className="mt-2 font-semibold text-[#f5f3f0]">
-                  {getCurrencySymbol(currency)}{thirdPartyWalletBalance !== null ? thirdPartyWalletBalance.toFixed(2) : "0.00"}
-                </p>
-              )}
-              <p className="text-sm text-[#f5f3f0] tracking-wider">
-                3rd party wallet
-              </p>
-            </div>
-          </div>
+  {/* 3rd Party Wallet */}
+  <div className="text-center">
+    <div className="relative w-28 h-28">
+      <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+        <path
+          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+          fill="none"
+          stroke={isThirdPartyActive ? "#c4933f" : "#666462"}
+          strokeWidth="3"
+          strokeDasharray="100, 100"
+          className="transition-all duration-300"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#f5f3f0]">
+        {isThirdPartyActive ? "100%" : "0%"}
+      </div>
+    </div>
+    {loading ? (
+      <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
+    ) : (
+      <p className="mt-2 font-semibold text-[#f5f3f0]">
+        {getCurrencySymbol(currency)}{thirdPartyWalletBalance !== null ? thirdPartyWalletBalance.toFixed(2) : "0.00"}
+      </p>
+    )}
+    <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">3rd party wallet</p>
+  </div>
+</div>
+
 
           {/* Transfer Button */}
           <button
@@ -421,7 +415,7 @@ function Wallet() {
             </Link>
           </div>
         </div>
-        
+
       </div>
       <Footer />
     </div>

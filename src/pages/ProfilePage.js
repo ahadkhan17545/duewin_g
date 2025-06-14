@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/Slice/loginSlice"; // Import logout action
@@ -31,7 +31,7 @@ import vip from "../Assets/vip/vip1.png"
 function ProfilePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Add state for controlling the logout modal
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -45,19 +45,19 @@ function ProfilePage() {
   // Handle confirm logout
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);
-    
+
     try {
       // Dispatch logout action to clear Redux state and localStorage
       dispatch(logout());
-      
+
       // Close the modal
       setShowLogoutModal(false);
-      
+
       console.log("User logged out successfully");
-      
+
       // Navigate to login page
       navigate("/login", { replace: true });
-      
+
     } catch (error) {
       console.error("Error during logout:", error);
       // Even if there's an error, we should still logout the user
@@ -68,8 +68,8 @@ function ProfilePage() {
     }
   };
   useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
+    window.scrollTo(0, 0);
+  }, []);
 
   // Handle cancel logout
   const handleCancelLogout = () => {
@@ -81,7 +81,7 @@ function ProfilePage() {
       {/* Main content wrapper with max-width matching Wallet page */}
       <div className="w-full max-w-md mx-auto">
         {/* Golden background header */}
-        <div 
+        <div
           className="w-full relative"
           style={{
             background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
@@ -90,85 +90,89 @@ function ProfilePage() {
             paddingBottom: "100px"
           }}
         >
-          <div className="px-6 py-8">
-            {/* Profile section with larger circular image */}
-            <div className="flex items-center mb-4">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white">
+          <div className="px-4 py-4">
+            <div className="flex items-center">
+              {/* Profile Image */}
+              <div className="w-16 h-16 rounded-full overflow-hidden border mt-1">
                 <img
                   src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fd2qp0siotla746.cloudfront.net%2Fimg%2Fuse-cases%2Fprofile-picture%2Ftemplate_3.jpg&f=1&nofb=1"
                   alt="User Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="ml-4 max-w-[calc(100%-7rem)]">
-                <div className="flex items-center">
-                  <h2 className="text-xl font-normal text-white truncate">MEMBERNGHEGGCK</h2>
-                  <img 
-                    src={vip} 
-                    alt="VIP Badge" 
-                    className="h-8 ml-2 flex-shrink-0"
-                  />
+
+              {/* Profile Details */}
+              <div className="ml-2 mt-1">
+                {/* Name + VIP */}
+                <div className="flex items-center mt-1">
+                  <h2 className="text-base font-semibold text-white uppercase">MEMBERNNGHEGCK</h2>
+                  <img src={vip} alt="VIP Badge" className="h-5 ml-2 mt-1" />
                 </div>
-                <div className="flex items-center bg-[#dd9138] rounded-full text-white mt-2 px-1 text-sm w-fit">
-                  <span>UID</span>
-                  <span className="mx-2">|</span>
-                  <span>1952877</span>
-                  <button className="ml-2">
-                    <FaCopy className="text-white" />
+
+                {/* UID section */}
+                <div className="flex items-center bg-[#dd9138] rounded-full text-white mt-1 px-3 py-[2px] text-xs w-fit space-x-1.5">
+                  <span className="font-medium">UID</span>
+                  <span className="opacity-70">|</span>
+                  <span className="font-medium">1952877</span>
+                  <button className="pl-1">
+                    <FaCopy className="text-white text-[11px]" />
                   </button>
                 </div>
 
-                <p className="text-white mt-1 text-sm">Last login: 2025-03-08 10:01:26</p>
+
+                {/* Login Time */}
+                <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p>
               </div>
             </div>
           </div>
+
+
 
           {/* Balance card - positioned to overlap the golden background */}
           <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16 w-[90%] max-w-full">
-            <div className="bg-[#4d4d4c] rounded-lg shadow-lg p-4">
-              <div className="text-gray-400 text-lg font-normal">Total balance</div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2"> 
-                  <div className="text-white text-xl font-bold">₹292672346792.32</div>
-                  <button className="text-white">
-                    <img src={refreshicon} alt="refresh" className="w-5 h-5" />
-                  </button>
-                </div>
+            <div className="bg-[#4d4d4c] rounded-lg shadow-lg px-4 py-3">
+              {/* Total balance */}
+              <div className="text-gray-400 text-xs font-normal">Total balance</div>
+              <div className="flex items-center gap-4 mt-1">
+                <div className="text-white text-base font-semibold">₹9.43</div>
+                <button className="text-white">
+                  <img src={refreshicon} alt="refresh" className="w-5 h-5" />
+                </button>
               </div>
 
-              
               {/* Quick action buttons */}
-              <div className="grid grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-4 gap-2 mt-4">
                 <Link to="/wallet" className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={wallet} alt="AR Wallet" className="w-8 h-8" />
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img src={wallet} alt="AR Wallet" className="w-6 h-6" />
                   </div>
-                  <p className="text-white text-lg ">Wallet</p>
+                  <p className="text-white text-sm font-medium mt-1">ARWallet</p>
                 </Link>
-                
+
                 <Link to="/deposit" className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={rechargeIcon} alt="Deposit" className="w-8 h-8" />
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img src={rechargeIcon} alt="Deposit" className="w-6 h-6" />
                   </div>
-                  <p className="text-white text-lg ">Deposit</p>
+                  <p className="text-white text-sm font-medium mt-1">Deposit</p>
                 </Link>
-                
+
                 <Link to="/withdraw" className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={widthdraw} alt="Withdraw" className="w-8 h-8" />
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img src={widthdraw} alt="Withdraw" className="w-6 h-6" />
                   </div>
-                  <p className="text-white text-lg ">Withdraw</p>
+                  <p className="text-white text-sm font-medium mt-1">Withdraw</p>
                 </Link>
-                
+
                 <Link to="/vipprofile" className="flex flex-col items-center">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img src={vipiconup} alt="VIP" className="w-8 h-8" />
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img src={vipiconup} alt="VIP" className="w-6 h-6" />
                   </div>
-                  <p className="text-white text-lg ">VIP</p>
+                  <p className="text-white text-sm font-medium mt-1">VIP</p>
                 </Link>
               </div>
             </div>
           </div>
+
         </div>
 
         {/* Content section with padding to account for the overlapping balance card */}
@@ -177,228 +181,227 @@ function ProfilePage() {
             <Link to="/safe" className="block">
               <div className="bg-[#333332] p-1 rounded-lg shadow-md  cursor-pointer">
                 <div className="flex justify-between items-center mb-2">
-                  <div className="flex">
-                    <img
-                      src={safe}
-                      alt="Safe Icon"
-                      className="w-14 h-12 mt-3 ml-4 flex-shrink-0"
-                    />
-                    <div className="text-[#a8a5a1] ml-4">
-                      Vault
-                      <br />
-                      <span className="text-xs leading-tight ">
-                        the daily interest rate is 0.1%, and the income is
-                        <br /> calculated once every 1 minutes.
-                      </span>
-                    </div>
-                  </div>
+                 <div className="flex">
+  <img
+    src={safe}
+    alt="Safe Icon"
+    className="w-14 h-12 mt-3 ml-4 flex-shrink-0"
+  />
+  <div className="text-[#a8a5a1] ml-4 leading-tight">
+    <div className="text-base">Vault</div>
+    <div className="text-xs leading-snug">
+      the daily interest rate is 0.1%, and the income is<br />
+      calculated once every 1 minute.
+    </div>
+  </div>
+</div>
+
                 </div>
               </div>
             </Link>
-          
-                    
-            {/* 2x2 grid layout */}
-            <div className="grid grid-cols-2 gap-2 mt-4">
+
+
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              {/* Game History */}
               <Link
                 to="/gamehistoryProfile"
-                className="bg-[#333332] p-1.5  rounded-lg shadow-md flex items-center cursor-pointer hover:bg-[#3c3c3b] transition-colors"
+                className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={bet} alt="Game History Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
-                <div className="flex flex-col leading-none">
-                  <p className="text-[#f5f3f0] text-lg">Game History</p>
-                  <p className="text-[#a8a5a1] text-sm font-semibold">My game history</p>
+                <img src={bet} alt="Game History Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
+                    Game History
+                  </p>
+                  <p className="text-[#a8a5a1] text-[10px] sm:text-xs font-medium truncate">
+                    My game history
+                  </p>
                 </div>
               </Link>
 
+              {/* Transaction */}
               <Link
                 to="/transactionProfile"
-                className="bg-[#333332] p-1.5 rounded-lg shadow-md flex items-center cursor-pointer hover:bg-[#3c3c3b] transition-colors"
+                className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={transaction} alt="Transaction Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
-                <div className="flex flex-col leading-none">
-                  <p className="text-[#f5f3f0] text-lg">Transaction</p>
-                  <p className="text-[#a8a5a1] text-sm font-semibold">My transaction history</p>
+                <img src={transaction} alt="Transaction Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
+                    Transaction
+                  </p>
+                  <p className="text-[#a8a5a1] text-[10px] sm:text-xs font-medium leading-tight">
+                    My transaction history
+                  </p>
+
                 </div>
               </Link>
 
+              {/* Deposit */}
               <Link
                 to="/deposit-history"
-                className="bg-[#333332] p-1.5 rounded-lg shadow-md flex items-center cursor-pointer hover:bg-[#3c3c3b] transition-colors"
+                className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={DepositHistory} alt="Deposit Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
-                <div className="flex flex-col leading-none">
-                  <p className="text-[#f5f3f0] text-lg">Deposit</p>
-                  <p className="text-[#a8a5a1] text-sm font-semibold">My deposit history</p>
+                <img src={DepositHistory} alt="Deposit Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
+                    Deposit
+                  </p>
+                  <p className="text-[#a8a5a1] text-[10px] sm:text-xs font-medium truncate">
+                    My deposit history
+                  </p>
                 </div>
               </Link>
 
+              {/* Withdraw */}
               <Link
                 to="/withdraw-history"
-                className="bg-[#333332] p-1.5  rounded-lg shadow-md flex items-center cursor-pointer hover:bg-[#3c3c3b] transition-colors"
+                className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={withdrawHistory} alt="Withdraw Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
-                <div className="flex flex-col leading-none">
-                  <p className="text-[#f5f3f0] text-lg">Withdraw</p>
-                  <p className="text-[#a8a5a1] text-sm font-semibold">My withdraw history</p>
+                <img src={withdrawHistory} alt="Withdraw Icon" className="w-7 h-7 mr-3 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
+                    Withdraw
+                  </p>
+                  <p className="text-[#a8a5a1] text-[10px] sm:text-xs font-medium leading-tight">
+                    My withdraw history
+                  </p>
                 </div>
               </Link>
             </div>
 
 
-                
-            <div className="bg-[#333332] p-4 rounded-lg shadow-md mt-4">
-              <div className="space-y-6">
-                {/* Notification Button */}
-                <div>
-                  <Link
-                    to="/notificationProfile"
-                    className="w-full text-base font-normal text-white flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={NotifyIcon}
-                        alt="Notification Icon"
-                        className="w-8 h-8 flex-shrink-0"
-                      />
-                      Notification
-                    </div>
-                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-                  </Link>
-                  <hr className="my-4 border-[#525167]" />
-                </div>
 
-                {/* Gifts Button */}
-                <div>
-                  <Link
-                    to="/Gift"
-                    className="w-full text-base font-normal text-white flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img src={gift} alt="Gift Icon" className="w-8 h-8 flex-shrink-0" />
-                      Gifts
-                    </div>
-                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-                  </Link>
-                  <hr className="my-4 border-[#525167]" />
-                </div>
 
-                {/* Game Statistics Button */}
-                <div>
-                  <Link
-                    to="/gamestatistics"
-                    className="w-full text-base font-normal text-white flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={gameStatistics}
-                        alt="Game Statistics Icon"
-                        className="w-8 h-8 flex-shrink-0"
-                      />
-                      Game Statistics
-                    </div>
-                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-                  </Link>
-                  <hr className="my-4 border-[#525167]" />
-                </div>
 
-                {/* Language Button */}
-                <div>
-                  <Link
-                    to="/language"
-                    className="w-full text-base font-normal text-white flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={languageIcon}
-                        alt="Language Icon"
-                        className="w-8 h-8 flex-shrink-0"
-                      />
-                      Language
-                    </div>
-                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
 
-                  </Link>
-                </div>
-              </div>
-            </div>
-                
+           <div className="bg-[#333332] p-4 rounded-lg shadow-md mt-4">
+  <div className="space-y-6">
+    {/* Notification */}
+    <div>
+      <Link
+        to="/notificationProfile"
+        className="w-full text-base font-normal text-white flex items-center justify-between"
+      >
+        <div className="flex items-center gap-2">
+          <img
+            src={NotifyIcon}
+            alt="Notification Icon"
+            className="w-6 h-6 flex-shrink-0"
+          />
+          Notification
+        </div>
+        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+      </Link>
+      <hr className="my-4 border-[#525167]" />
+    </div>
+
+    {/* Gifts */}
+    <div>
+      <Link
+        to="/Gift"
+        className="w-full text-base font-normal text-white flex items-center justify-between"
+      >
+        <div className="flex items-center gap-2">
+          <img src={gift} alt="Gift Icon" className="w-6 h-6 flex-shrink-0" />
+          Gifts
+        </div>
+        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+      </Link>
+      <hr className="my-4 border-[#525167]" />
+    </div>
+
+    {/* Game Statistics */}
+    <div>
+      <Link
+        to="/gamestatistics"
+        className="w-full text-base font-normal text-white flex items-center justify-between"
+      >
+        <div className="flex items-center gap-2">
+          <img
+            src={gameStatistics}
+            alt="Game Statistics Icon"
+            className="w-6 h-6 flex-shrink-0"
+          />
+          Game Statistics
+        </div>
+        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+      </Link>
+      <hr className="my-4 border-[#525167]" />
+    </div>
+
+    {/* Language */}
+    <div>
+      <Link
+        to="/language"
+        className="w-full text-base font-normal text-white flex items-center justify-between"
+      >
+        <div className="flex items-center gap-2">
+          <img
+            src={languageIcon}
+            alt="Language Icon"
+            className="w-6 h-6 flex-shrink-0"
+          />
+          <span>Language</span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="text-sm text-[#a8a5a1]">English</span>
+          <AiOutlineRight className="text-[#666666] text-base" />
+        </div>
+      </Link>
+      <hr className="my-4 border-[#525167]" />
+    </div>
+  </div>
+</div>
+
+
             <div className="bg-[#333332] text-[#a8a5a1] p-4 rounded-lg shadow-md mt-4">
               {/* Title aligned to the left */}
-              <p className="text-lg font-normal mb-8 text-white text-left">
-                Service Center
+              <p className="text-base font-medium mb-3 text-white text-left">
+                Service center
               </p>
 
               {/* Grid layout */}
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-y-4 gap-x-2 mt-2">
                 {/* Settings */}
-                <Link
-                  to="/settingsprofile"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img src={SettingCenter} alt="Settings" className="w-8 h-8" />
-                  <p className=" text-sm">Settings</p>
+                <Link to="/settingsprofile" className="flex flex-col items-center">
+                  <img src={SettingCenter} alt="Settings" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">Settings</p>
                 </Link>
 
                 {/* Feedback */}
-                <Link
-                  to="/feedbackProfile"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img src={service_feedback} alt="Feedback" className="w-8 h-8" />
-                  <p className=" text-sm">Feedback</p>
+                <Link to="/feedbackProfile" className="flex flex-col items-center">
+                  <img src={service_feedback} alt="Feedback" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">Feedback</p>
                 </Link>
 
-                {/* Notification */}
-                <Link
-                  to="/notificationsService"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img
-                    src={service_notification}
-                    alt="Notification"
-                    className="w-8 h-8"
-                  />
-                  <p className=" text-sm">Notification</p>
+                {/* Announcement */}
+                <Link to="/notificationsService" className="flex flex-col items-center">
+                  <img src={service_notification} alt="Announcement" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">Announcement</p>
                 </Link>
 
                 {/* Customer Service */}
-                <Link
-                  to="/agentcustomer"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img
-                    src={CustomerService}
-                    alt="Customer Service"
-                    className="w-8 h-8"
-                  />
-                  <p className=" text-sm text-center">Customer Service</p>
+                <Link to="/agentcustomer" className="flex flex-col items-center">
+                  <img src={CustomerService} alt="Customer Service" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">Customer Service</p>
                 </Link>
 
                 {/* Beginner's Guide */}
-                <Link
-                  to="/beginnerguide"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img
-                    src={service_guide}
-                    alt="Beginner's Guide"
-                    className="w-8 h-8"
-                  />
-                  <p className=" text-sm text-center">Beginner's Guide</p>
+                <Link to="/beginnerguide" className="flex flex-col items-center">
+                  <img src={service_guide} alt="Beginner's Guide" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">Beginner's Guide</p>
                 </Link>
 
                 {/* About Us */}
-                <Link
-                  to="/aboutusprofile"
-                  className="symbol flex flex-col items-center cursor-pointer"
-                >
-                  <img src={about} alt="About Us" className="w-8 h-8" />
-                  <p className=" text-sm">About us</p>
+                <Link to="/aboutusprofile" className="flex flex-col items-center">
+                  <img src={about} alt="About Us" className="w-6 h-6 mb-1" />
+                  <p className="text-xs text-center leading-none">About us</p>
                 </Link>
               </div>
             </div>
-                
-            <form className="space-y-4 md:space-y-6 mt-12 mb-14">
+
+
+            <form className="space-y-4 md:space-y-6 mt-12 mb-2">
               <button
                 type="button"
                 onClick={handleLogoutClick}
@@ -424,12 +427,12 @@ function ProfilePage() {
                 <span className="text-white text-6xl font-bold">!</span>
               </div>
             </div>
-            
+
             {/* Modal Text */}
             <div className="text-center text-white text-2xl font-medium py-4">
               Do you want to log out?
             </div>
-            
+
             {/* Modal Buttons */}
             <div className="px-10 pb-6 pt-2 mt-4">
               <button
