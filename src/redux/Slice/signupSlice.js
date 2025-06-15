@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "https://strike.atsproduct.in";
+const BASE_URL = "https://api.strikecolor1.com";
 
 export const signupUser = createAsyncThunk(
   "signup/signupUser",

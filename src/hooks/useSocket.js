@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'https://strike.atsproduct.in';
+const SOCKET_URL = 'https://api.strikecolor1.com';
 
 const useSocket = (gameType = 'wingo', duration = 60) => {
   const socketRef = useRef(null);

@@ -49,18 +49,19 @@ const FreezePopup = ({ children, timeRemaining }) => {
       {children}
       
       {/* Freeze popup only when last 5 seconds - using your preferred design */}
-      {showFreezePopup && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg z-10">
-          <div className="flex gap-4">
-            <div className="w-[140px] h-[200px] bg-[#4d4d4c] text-[#d9ac4f] text-[160px] font-bold flex items-center justify-center rounded-lg">
-              {firstDigit}
-            </div>
-            <div className="w-[140px] h-[200px] bg-[#4d4d4c] text-[#d9ac4f] text-[160px] font-bold flex items-center justify-center rounded-lg">
-              {secondDigit}
-            </div>
-          </div>
-        </div>
-      )}
+ {showFreezePopup && (
+  <div className="absolute top-[130%] left-0 right-0 flex items-center justify-center rounded-lg z-10">
+    <div className="flex gap-4">
+      <div className="w-[140px] h-[200px] bg-[#4d4d4c] text-[#d9ac4f] text-[160px] font-bold flex items-center justify-center rounded-lg">
+        {firstDigit}
+      </div>
+      <div className="w-[140px] h-[200px] bg-[#4d4d4c] text-[#d9ac4f] text-[160px] font-bold flex items-center justify-center rounded-lg">
+        {secondDigit}
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

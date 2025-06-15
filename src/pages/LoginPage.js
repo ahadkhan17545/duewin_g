@@ -154,7 +154,7 @@ function LoginPage() {
   // API connectivity test
   const testApiConnectivity = async () => {
     try {
-      const response = await fetch("https://strike.atsproduct.in/api/health", {
+      const response = await fetch("https://api.strikecolor1.com/api/health", {
         method: "GET",
         timeout: 5000,
       });

@@ -3,7 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Use CORS proxy for development, direct URL for production
-const BASE_URL = "https://strike.atsproduct.in";
+const BASE_URL = "https://api.strikecolor1.com";
 
 // Helper function to store token
 const storeToken = (token) => {

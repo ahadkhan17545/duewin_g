@@ -1,4 +1,4 @@
-const BASE_URL = "https://strike.atsproduct.in/api";
+const BASE_URL = "https://api.strikecolor1.com/api";
 
 // Helper function to get the auth token
 const getAuthToken = () => {
@@ -23,7 +23,7 @@ const getAuthToken = () => {
 export const transferFromThirdParty = async () => {
   try {
     const token = localStorage.getItem('authToken'); // Adjust based on your auth implementation
-    const response = await fetch('https://strike.atsproduct.in/api/wallet/transfer-from-third-party', {
+    const response = await fetch('https://api.strikecolor1.com/api/wallet/transfer-from-third-party', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -84,7 +84,7 @@ const Homeheader = () => {
           return;
         }
 
-        const response = await fetch("https://strike.atsproduct.in/api/users/balance", {
+        const response = await fetch("https://api.strikecolor1.com/api/users/balance", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

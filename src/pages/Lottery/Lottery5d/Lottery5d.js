@@ -60,7 +60,7 @@ function Lottery5d() {
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
   const [checked, setChecked] = useState(false);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
-  const API_BASE_URL = "https://strike.atsproduct.in";
+  const API_BASE_URL = "https://api.strikecolor1.com";
 
   // WebSocket hook
   const {
@@ -300,7 +300,7 @@ function Lottery5d() {
   }
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full max-w-full md:max-w-[400px] mx-auto flex flex-col items-center justify-center overflow-x-hidden pt-4 pb-24">
+    <div className="bg-[#242424] min-h-screen w-full max-w-full md:max-w-[400px] mx-auto flex flex-col items-center justify-center overflow-x-hidden pb-24">
       <LotteryWingoheader />
 
       <div className="text-center w-full px-2 mt-16">

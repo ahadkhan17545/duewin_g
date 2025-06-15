@@ -60,7 +60,7 @@ function Wallet() {
 
       console.log('Making transfer request with token:', token.substring(0, 20) + '...');
 
-      const response = await fetch('https://strike.atsproduct.in/api/wallet/transfer-from-third-party', {
+      const response = await fetch('https://api.strikecolor1.com/api/wallet/transfer-from-third-party', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

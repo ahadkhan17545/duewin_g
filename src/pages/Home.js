@@ -202,7 +202,7 @@ function Home() {
 
       if (category === "Hot Games") {
         const response = await fetch(
-          "https://strike.atsproduct.in/api/seamless-wallet/games?category=popular&limit=20",
+          "https://api.strikecolor1.com/api/seamless-wallet/games?category=popular&limit=20",
           {
             method: "GET",
             headers: {
@@ -252,7 +252,7 @@ function Home() {
         }
       } else if (category === "Original") {
         const response = await fetch(
-          "https://strike.atsproduct.in/api/spribe/games",
+          "https://api.strikecolor1.com/api/spribe/games",
           {
             method: "GET",
             headers: {
@@ -363,7 +363,7 @@ function Home() {
       if (game.provider.includes("spribe")) {
         const token = getAuthToken();
         const response = await fetch(
-          `https://strike.atsproduct.in/api/spribe/launch/${game.id}`,
+          `https://api.strikecolor1.com/api/spribe/launch/${game.id}`,
           {
             method: "GET",
             headers: {

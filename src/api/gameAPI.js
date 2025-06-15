@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { redirectToLogin, validateToken } from './auth';
 
-const API_BASE_URL = 'https://strike.atsproduct.in';
+const API_BASE_URL = 'https://api.strikecolor1.com';
 const CACHE_DURATION = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 // In-memory cache object

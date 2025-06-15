@@ -159,7 +159,7 @@ function LotteryWingo() {
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
 
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
-  const API_BASE_URL = "https://strike.atsproduct.in";
+  const API_BASE_URL = "https://api.strikecolor1.com";
 
   const fetchUserBets = useCallback(
     async (page = 1, limit = 10) => {
@@ -300,7 +300,7 @@ function LotteryWingo() {
     [activeButton, gameType]
   );
 
- useEffect(() => {
+  useEffect(() => {
     const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds;
 
     console.log("⏰ Time remaining:", {
@@ -445,41 +445,41 @@ function LotteryWingo() {
 
   // Update state more efficiently
   useEffect(() => {
-  if (isConnected) {
-    const updates = {};
-    let hasUpdates = false;
+    if (isConnected) {
+      const updates = {};
+      let hasUpdates = false;
 
-    if (socketPeriod && socketPeriod.periodId !== currentPeriod.periodId) {
-      // Only update if we have a valid period ID (not loading)
-      if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
-        updates.period = socketPeriod;
+      if (socketPeriod && socketPeriod.periodId !== currentPeriod.periodId) {
+        // Only update if we have a valid period ID (not loading)
+        if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
+          updates.period = socketPeriod;
+          hasUpdates = true;
+        }
+      }
+
+      if (
+        socketTime &&
+        (socketTime.minutes !== timeRemaining.minutes ||
+          socketTime.seconds !== timeRemaining.seconds)
+      ) {
+        updates.time = socketTime;
         hasUpdates = true;
       }
-    }
 
-    if (
-      socketTime &&
-      (socketTime.minutes !== timeRemaining.minutes ||
-        socketTime.seconds !== timeRemaining.seconds)
-    ) {
-      updates.time = socketTime;
-      hasUpdates = true;
+      if (hasUpdates) {
+        // Update period immediately without transitioning state
+        if (updates.period) setCurrentPeriod(updates.period);
+        if (updates.time) setTimeRemaining(updates.time);
+      }
     }
-
-    if (hasUpdates) {
-      // Update period immediately without transitioning state
-      if (updates.period) setCurrentPeriod(updates.period);
-      if (updates.time) setTimeRemaining(updates.time);
-    }
-  }
-}, [
-  isConnected,
-  socketPeriod,
-  socketTime,
-  currentPeriod.periodId,
-  timeRemaining.minutes,
-  timeRemaining.seconds,
-]);
+  }, [
+    isConnected,
+    socketPeriod,
+    socketTime,
+    currentPeriod.periodId,
+    timeRemaining.minutes,
+    timeRemaining.seconds,
+  ]);
 
   // Auto-close success popup after 3 seconds
   useEffect(() => {
@@ -769,9 +769,9 @@ function LotteryWingo() {
   };
 
   const getDisplayPeriodId = () => {
-  // Always return the current period ID, never show loading
-  return currentPeriod.periodId || currentPeriod.periodId;
-};
+    // Always return the current period ID, never show loading
+    return currentPeriod.periodId || currentPeriod.periodId;
+  };
 
   // Game History Table Component
   const GameHistoryTable = () => {
@@ -801,18 +801,23 @@ function LotteryWingo() {
     return (
       <div className="overflow-x-auto">
         <table className="table-auto rounded-lg w-full text-sm text-center bg-[#333332] text-[#f5f3f0]">
-          <thead>
-            <tr className="bg-[#3a3947] p-4">
-              <th className="px-2 py-4 text-white rounded-tl-lg text-sm">
-                Period
-              </th>
-              <th className="px-2 py-4 text-white text-sm">Number</th>
-              <th className="px-2 py-4 text-sm text-white">Big/Small</th>
-              <th className="px-2 py-4 text-white rounded-tr-lg text-sm">
-                Color
-              </th>
-            </tr>
-          </thead>
+<thead>
+  <tr className="bg-[#3a3947] p-4">
+    <th className="px-2 py-4 text-white rounded-tl-lg text-xs font-normal">
+      Period
+    </th>
+    <th className="px-2 py-4 text-white text-xs font-normal">
+      Number
+    </th>
+    <th className="px-2 py-4 text-xs text-white font-normal">
+      Big/Small
+    </th>
+    <th className="px-2 py-4 text-white rounded-tr-lg text-xs font-normal">
+      Color
+    </th>
+  </tr>
+</thead>
+
           <tbody>
             {gameHistoryData.map((row, index) => {
               const colorKey = iconColorMap[row.number] || "Green";
@@ -840,15 +845,14 @@ function LotteryWingo() {
                     {row.number === 0 || row.number === 5 ? (
                       <div className="relative inline-block min-w-[1.5rem] h-10">
                         <span
-                          className={`absolute top-0 left-0 w-full h-full text-4xl font-bold ${
-                            row.number === 0 ? "text-red-500" : "text-green-500"
-                          }`}
+                          className={`absolute top-0 left-0 w-full h-full text-4xl  ${row.number === 0 ? "text-red-500" : "text-green-500"
+                            }`}
                           style={{ clipPath: "inset(0 50% 0 0)" }}
                         >
                           {row.number}
                         </span>
                         <span
-                          className="absolute top-0 left-0 w-full h-full text-4xl font-bold text-violet-500"
+                          className="absolute top-0 left-0 w-full h-full text-4xl  text-violet-500"
                           style={{ clipPath: "inset(0 0 0 50%)" }}
                         >
                           {row.number}
@@ -888,7 +892,7 @@ function LotteryWingo() {
   };
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full mx-auto flex flex-col items-center justify-center overflow-x-hidden pt-24 pb-20">
+    <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center  pr-2 pl-2   pt-20 pb-24">
       <style>
         {`
           @keyframes squeeze {
@@ -903,8 +907,8 @@ function LotteryWingo() {
       </style>
       <LotteryWingoheader />
 
-      <div className="bg-[#242424] text-center w-full px-2">
-        <div className="rounded-3xl shadow-2xl p-3 relative overflow-hidden min-h-[110px]">
+      <div className="bg-[#242424] text-center w-full ">
+        <div className="rounded-3xl shadow-2xl p-2 relative overflow-hidden min-h-[120px]">
           <div className="absolute inset-0 z-0">
             <img
               src={walletbggame}
@@ -914,18 +918,15 @@ function LotteryWingo() {
           </div>
           <div className="absolute inset-0 bg-[#4d4d4c] opacity-70 z-10"></div>
           <div className="relative z-20">
-            <div className="relative flex items-center justify-center mb-2">
-              <div className="text-2xl font-bold text-white">
+            <div className="relative flex items-center justify-center">
+              <div className="text-base font-bold text-white">
                 ₹{walletBalance.toFixed(2)}
               </div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-6 h-6 absolute right-16 cursor-pointer transition-transform duration-200 ${
-                  isRefreshingBalance
-                    ? "animate-spin opacity-50"
-                    : "hover:scale-110"
-                }`}
+                className={`w-4 h-4 absolute right-16 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? "animate-spin opacity-50" : "hover:scale-110"
+                  }`}
                 onClick={handleRefreshBalance}
                 style={{
                   pointerEvents: isRefreshingBalance ? "none" : "auto",
@@ -933,20 +934,18 @@ function LotteryWingo() {
                 }}
               />
             </div>
-            <div className="flex items-center justify-center text-center mb-6">
-              <img src={wallet} alt="Wallet" className="w-6 h-6 ml-2" />
-              <span className="text-[#f5f3f0] text-base font-medium ml-1">
-                Wallet Balance
-              </span>
+            <div className="flex items-center justify-center text-center ">
+              <img src={wallet} alt="Wallet" className="w-5 h-5 ml-1" />
+              <span className="text-[#f5f3f0] text-xs ml-1">Wallet Balance</span>
             </div>
-            <div className="flex mt-4 justify-between space-x-2 px-2">
-              <Link to="/withdraw" className="flex-1">
-                <button className="bg-[#d23838] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-red-600">
+            <div className="flex justify-center gap-10 mb-2 mt-5">
+              <Link to="/withdraw">
+                <button className="bg-[#d23838] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-red-600 transition-all">
                   Withdraw
                 </button>
               </Link>
-              <Link to="/deposit" className="flex-1">
-                <button className="bg-[#17b15e] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-green-600">
+              <Link to="/deposit">
+                <button className="bg-[#17b15e] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-green-600 transition-all">
                   Deposit
                 </button>
               </Link>
@@ -955,16 +954,17 @@ function LotteryWingo() {
         </div>
       </div>
 
-      <div className="bg-[#242424] px-2 p-2 shadow-md w-full h-full flex flex-col justify-center">
-        <div className="p-2 rounded-full bg-[#333332] shadow-md mt-0">
+
+      <div className="bg-[#242424]  w-full h-full mt-2 flex flex-col justify-center">
+        <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1">
-              Thanks to all our members — past and present — for being part of
-              our journey.
+            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
+              Thanks to all our members — past and present — for being part of our journey.
             </p>
+
             <button
-              className="text-[#333] text-sm px-5 py-1 rounded-lg flex items-center justify-center gap-0"
+              className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
               style={{
                 backgroundImage: `url(${invitation})`,
                 backgroundSize: "cover",
@@ -972,103 +972,109 @@ function LotteryWingo() {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <img src={fire} alt="icon" className="w-4 h-4" /> Detail
+              <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
+
+
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-2 shadow-md">
-          <div className="button-container flex justify-between space-x-1">
+        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md pr-3">
+          <div className="button-container justify-between flex">
             {buttonData.map((button) => (
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center  px-2 py-1 rounded-lg w-full mx-0.5 transition-all duration-300 ${
-                  activeButton === button.id
-                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#4d4d4c] text-[#a8a5a1]"
-                }`}
+                className={`flex flex-col items-center px-1 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${activeButton === button.id
+                  ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#4d4d4c] text-[#a8a5a1]"
+                  }`}
+                style={{
+                  textAlign: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
                 <div
                   className="icon"
-                  style={{ fontSize: "20px", marginBottom: "4px" }}
+                  style={{ fontSize: "14px", marginBottom: "2px" }}
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-base leading-tight">{button.title}</span>
+                <span className="text-xs leading-none whitespace-nowrap">{button.title}</span>
               </button>
             ))}
           </div>
         </div>
 
         <div
-  className="rounded-lg mt-2 bg-cover mb-4 p-4"
-  style={{
-    backgroundImage: `url(${back})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
-  <div className="flex justify-between items-center flex-wrap">
-    <div className="min-w-0">
-      <button
-        onClick={() => setShowHowToPlay(true)}
-        className="border border-[#8f5206] rounded-full px-10 py-1 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0"
-      >
-        <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
-        <p className="text-[#8f5206] text-xs font-medium">
-          How to Play
-        </p>
-      </button>
-      <p className="text-[#8f5206] mb-2 mt-2 text-sm font-semibold truncate whitespace-nowrap max-w-full">
-        {selectedTitle}
-      </p>
+          className="rounded-lg mt-2 bg-cover mb-2 p-2"
+          style={{
+            backgroundImage: `url(${back})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="flex justify-between items-center flex-wrap">
+            <div className="-mt-2">
+              <button
+                onClick={() => setShowHowToPlay(true)}
+                className="border border-black rounded-full px-9 py-1 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0"
+              >
+                <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
+                <p className="text-[#8f5206] text-xs ">
+                  How to Play
+                </p>
+              </button>
+              <p className="text-[#8f5206] mb-2 mt-2 text-xs truncate whitespace-nowrap max-w-full">
+                {selectedTitle}
+              </p>
 
-      <div className="flex space-x-1">
-        {gameHistoryData.slice(0, 5).map((item, idx) => (
-          <span
-            key={idx}
-            className="w-7 h-7 rounded-full flex items-center justify-center"
-          >
-            <img
-              src={imageMap[item.number] || imageMap.default}
-              alt={`History Ball ${item.number}`}
-              className="w-full h-full object-cover rounded-full"
-            />
-          </span>
-        ))}
-      </div>
-    </div>
-    <div className="text-center min-w-0 mt-2 sm:mt-0">
-      <p className="text-[#8f5206] text-sm -mr-6 font-bold">
-        Time Remaining
-      </p>
-      <div className="flex space-x-0.5 text-[#8f5206] justify-end items-center mt-1">
-        <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
-          {formatTime(timeRemaining.minutes)[0]}
-        </span>
-        <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
-          {formatTime(timeRemaining.minutes)[1]}
-        </span>
-        <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">
-          :
-        </span>
-        <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
-          {formatTime(timeRemaining.seconds)[0]}
-        </span>
-        <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
-          {formatTime(timeRemaining.seconds)[1]}
-        </span>
-      </div>
-      {/* Fixed height container to prevent position shifts */}
-      <div className="mt-1 h-5 flex items-center justify-center">
-        <p className="text-sm font-bold text-[#8f5206] min-w-[120px] text-center">
-          {getDisplayPeriodId()}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="flex space-x-1">
+                {gameHistoryData.slice(0, 5).map((item, idx) => (
+                  <span
+                    key={idx}
+                    className="w-7 h-7 rounded-full flex items-center justify-center"
+                  >
+                    <img
+                      src={imageMap[item.number] || imageMap.default}
+                      alt={`History Ball ${item.number}`}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="text-center min-w-0 mt-2 sm:mt-0">
+              <p className="text-[#8f5206] text-xs -mr-6 font-bold">
+                Time Remaining
+              </p>
+              <div className="flex space-x-0.5 text-[#8f5206] justify-end items-center mt-1">
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  {formatTime(timeRemaining.minutes)[0]}
+                </span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  {formatTime(timeRemaining.minutes)[1]}
+                </span>
+                <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">
+                  :
+                </span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  {formatTime(timeRemaining.seconds)[0]}
+                </span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  {formatTime(timeRemaining.seconds)[1]}
+                </span>
+              </div>
+              {/* Fixed height container to prevent position shifts */}
+              <div className="mt-1 h-5 flex items-center justify-center">
+                <p className="text-xs font-bold text-[#8f5206] min-w-[120px] text-center">
+                  {getDisplayPeriodId()}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {showHowToPlay && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50]">
@@ -1234,11 +1240,11 @@ function LotteryWingo() {
         )}
 
         <FreezePopup timeRemaining={timeRemaining}>
-          <div className="bg-[#333332] rounded-lg shadow-md mb-2 p-3 space-y-2">
+          <div className="bg-[#333332] rounded-lg shadow-md  p-2 pt-1 space-y-2">
             {isLoading && (
               <div className="text-center text-gray-500">Loading...</div>
             )}
-            <div className="flex justify-between mb-4 space-x-4">
+            <div className="flex justify-between mb-2 space-x-4">
               {["Green", "Violet", "Red"].map((color) => (
                 <button
                   key={color}
@@ -1254,9 +1260,8 @@ function LotteryWingo() {
                 {["0", "1", "2", "3", "4"].map((num) => (
                   <span
                     key={num}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${
-                      isRandomAnimating ? "squeeze-animate" : ""
-                    }`}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${isRandomAnimating ? "squeeze-animate" : ""
+                      }`}
                     onClick={() => handleNumberClick(num)}
                   >
                     <img
@@ -1271,9 +1276,8 @@ function LotteryWingo() {
                 {["5", "6", "7", "8", "9"].map((num) => (
                   <span
                     key={num}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${
-                      isRandomAnimating ? "squeeze-animate" : ""
-                    }`}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${isRandomAnimating ? "squeeze-animate" : ""
+                      }`}
                     onClick={() => handleNumberClick(num)}
                   >
                     <img
@@ -1310,11 +1314,10 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${
-                            betAmount === parseInt(label)
-                              ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
-                              : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
+                            ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                            }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1351,11 +1354,10 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${
-                          popupMultiplier === label
-                            ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                        }`}
+                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
+                          ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
+                          : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1425,11 +1427,10 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${
-                            betAmount === parseInt(label)
-                              ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
-                              : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
+                            ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                            }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1466,11 +1467,10 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${
-                          popupMultiplier === label
-                            ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                        }`}
+                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
+                          ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
+                          : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1517,11 +1517,10 @@ function LotteryWingo() {
             <div className="flex justify-center items-center space-x-1">
               <button
                 onClick={handleRandomClick}
-                className={`text-sm px-2 py-2 rounded-lg flex-1 transition-all duration-300 ${
-                  isRandomAnimating
-                    ? "bg-gray-500 text-white"
-                    : "bg-[#242424] text-[#a8a5a1] border border-red-700"
-                }`}
+                className={`text-sm px-3 py-2 rounded-lg flex-1 transition-all duration-300 ${isRandomAnimating
+                  ? "bg-gray-500 text-red-600"
+                  : "bg-[#242424] text-red-600 border border-red-700"
+                  }`}
                 disabled={isRandomAnimating}
               >
                 Random
@@ -1529,11 +1528,10 @@ function LotteryWingo() {
               {multiplierOptions.map((value) => (
                 <button
                   key={value}
-                  className={`text-sm px-2 py-2 rounded-lg flex-1 transition-all duration-200 ${
-                    externalMultiplier === value
-                      ? "bg-green-500 text-white transform -translate-y-0.5"
-                      : "bg-[#242424] text-[#a8a5a1]"
-                  }`}
+                  className={`text-xs px-2 py-2 rounded-lg flex-1 transition-all duration-200 ${externalMultiplier === value
+                    ? "bg-green-500 text-white transform -translate-y-0.5"
+                    : "bg-[#242424] text-[#a8a5a1]"
+                    }`}
                   onClick={() => handleExternalMultiplierClick(value)}
                   disabled={isRandomAnimating}
                 >
@@ -1587,11 +1585,10 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${
-                            betAmount === parseInt(label)
-                              ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
-                              : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
+                            ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                            }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1628,11 +1625,10 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${
-                          popupMultiplier === label
-                            ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                        }`}
+                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
+                          ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
+                          : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1729,33 +1725,30 @@ function LotteryWingo() {
           </div>
         )}
 
-        <div className="flex justify-between space-x-1 mb-6 mt-2">
+        <div className="flex justify-between space-x-1 mb-3 mt-1">
           <button
-            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${
-              activeTab === "gameHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full px-1 py-2 text-xs rounded-lg shadow text-center ${activeTab === "gameHistory"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] "
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("gameHistory")}
           >
             Game history
           </button>
           <button
-            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${
-              activeTab === "chart"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${activeTab === "chart"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("chart")}
           >
             Chart
           </button>
           <button
-            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${
-              activeTab === "myHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${activeTab === "myHistory"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("myHistory")}
           >
             My History
@@ -1763,346 +1756,341 @@ function LotteryWingo() {
         </div>
 
         <div className="mb-2 rounded-lg shadow">
-  {activeTab === "gameHistory" && (
-    <>
-      <GameHistoryTable />
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-4 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-          >
-            Previous
-          </button>
+          {activeTab === "gameHistory" && (
+            <>
+              <GameHistoryTable />
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Previous
+                  </button>
 
-          <div className="flex items-center space-x-1">
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-              if (pageNum > totalPages) return null;
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      if (pageNum > totalPages) return null;
 
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                    currentPage === pageNum
-                      ? "bg-[#d9ac4f] text-black font-medium"
-                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-          >
-            Next
-          </button>
-        </div>
-      )}
-      <div className="text-center mt-3 text-xs text-gray-500">
-        Page {currentPage} of {totalPages} • {gameHistoryData.length} records shown
-      </div>
-    </>
-  )}
-  {activeTab === "chart" && (
-    <>
-      <div className="p-2 rounded-t-lg">
-        <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
-          <thead>
-            <tr className="bg-gray-700 rounded-t-lg">
-              <th className="px-2 w-2/5 py-2 text-center text-white text-sm border-b rounded-tl-xl border-[#3a3947]">
-                Period
-              </th>
-              <th className="px-2 w-3/5 py-2 text-center text-white text-sm border-b rounded-tr-xl border-[#3a3947]">
-                Number
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {chartData.length > 0 ? (
-              chartData.map((row, index) => (
-                <tr key={index} className="border-b border-gray-700">
-                  <td className="px-2 py-2 text-gray-200 text-sm text-center">
-                    {row.periodId}
-                  </td>
-                  <td className="px-2 py-2 text-center">
-                    <span
-                      className={`inline-flex items-center justify-center text-sm w-8 h-8 rounded-full text-white ${
-                        row.number === 0 || row.number === 5
-                          ? row.number === 0
-                            ? "bg-gradient-to-r from-red-500 to-violet-500"
-                            : "bg-gradient-to-r from-green-500 to-violet-500"
-                          : row.number % 2 === 0
-                            ? "bg-red-500"
-                            : "bg-green-500"
-                      }`}
-                    >
-                      {row.number}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="px-2 py-4 text-center text-gray-200">
-                  No data available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-4 space-x-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-          >
-            Previous
-          </button>
-
-          <div className="flex items-center space-x-1">
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-              if (pageNum > totalPages) return null;
-
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                    currentPage === pageNum
-                      ? "bg-[#d9ac4f] text-black font-medium"
-                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-          >
-            Next
-          </button>
-        </div>
-      )}
-      <div className="text-center mt-3 text-xs text-gray-500">
-        Page {currentPage} of {totalPages} • {chartData.length} records shown
-      </div>
-    </>
-  )}
-  {activeTab === "myHistory" && (
-    <div className="bg-[#333332] ">
-      {isLoading ? (
-        <div className="text-center py-8 text-gray-400">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d9ac4f] mx-auto mb-2"></div>
-          <p>Loading your betting history...</p>
-        </div>
-      ) : error ? (
-        <div className="text-center py-8 text-red-400">
-          <p>{error}</p>
-          <button
-            onClick={() => fetchUserBets(currentPage)}
-            className="mt-2 px-4 py-2 bg-[#d9ac4f] text-black rounded hover:bg-[#c49b45]"
-          >
-            Retry
-          </button>
-        </div>
-      ) : userBets.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
-          <p>No betting history found</p>
-          <p className="text-sm mt-1">
-            Your bets will appear here once you start playing
-          </p>
-        </div>
-      ) : (
-        <>
-          {userBets.map((bet, index) => {
-            // Function to determine the color based on bet selection
-            const getColorClass = (selection) => {
-              if (!selection) return 'bg-gray-500';
-              
-              const sel = selection.toString().toLowerCase();
-              if (sel.includes('green') || sel === 'g' || sel === '1' || sel === '3' || sel === '7' || sel === '9') {
-                return 'bg-green-500';
-              } else if (sel.includes('red') || sel === 'r' || sel === '2' || sel === '4' || sel === '6' || sel === '8') {
-                return 'bg-red-500';
-              } else if (sel.includes('violet') || sel === 'v' || sel === '0' || sel === '5') {
-                return 'bg-purple-500';
-              } else if (sel.includes('big') || sel === 'big') {
-                return 'bg-blue-500';
-              } else if (sel.includes('small') || sel === 'small') {
-                return 'bg-yellow-500';
-              }
-              return 'bg-gray-500';
-            };
-
-            return (
-              <div
-                key={bet.betId || index}
-                className=" rounded-md cursor-pointer bg-[#2a2a29] "
-                onClick={() =>
-                  setIsDetailsOpen(isDetailsOpen === index ? null : index)
-                }
-              >
-                <div className="flex justify-between items-center p-3">
-                  <div className="flex items-center space-x-3">
-                    {/* Color Square Box */}
-                    <div className={`w-8 h-8 rounded ${getColorClass(bet.select)}`}></div>
-                    <div className="text-left">
-                      <p className="text-gray-200 text-sm font-medium">{bet.period}</p>
-                      <p className="text-gray-500 text-xs">{bet.orderTime}</p>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-gray-400 text-xs">{bet.result || "Pending"}</p>
-                  </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    <div
-                      className={`border text-xs rounded-md px-2 py-1 ${
-                        bet.status === "Won"
-                          ? "border-green-500 text-green-500"
-                          : bet.status === "Lost"
-                            ? "border-red-500 text-red-500"
-                            : "border-red-500 text-red-500"
-                      }`}
-                    >
-                      {bet.status === "Won" ? "Success" : "Failed"}
-                    </div>
-                    <p
-                      className={`font-medium text-sm ${
-                        bet.winLose?.startsWith("+")
-                          ? "text-green-500"
-                          : bet.winLose?.startsWith("-")
-                            ? "text-red-500"
-                            : "text-gray-400"
-                      }`}
-                    >
-                      {bet.winLose}
-                    </p>
-                  </div>
-                </div>
-
-                {isDetailsOpen === index && (
-                  <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg">
-                    <div className="mb-4">
-                      <h3 className="text-white text-lg font-medium mb-1">Details</h3>
-                    </div>
-                    <div className="space-y-3 text-sm">
-                      {[
-                        { label: "Order number", value: bet.orderNumber },
-                        { label: "Period", value: bet.period },
-                        { label: "Purchase amount", value: bet.amount },
-                        { label: "Quantity", value: bet.quantity },
-                        {
-                          label: "Amount after tax",
-                          value: bet.afterTax,
-                          valueClass: "text-[#ff5555]",
-                        },
-                        {
-                          label: "Tax",
-                          value: bet.tax,
-                          valueClass: "text-[#ff5555]",
-                        },
-                        {
-                          label: "Result",
-                          value: bet.result || "Pending",
-                          valueClass: "text-green-400",
-                        },
-                        { label: "Select", value: bet.select, valueClass: "text-[#ff5555]" },
-                        {
-                          label: "Status",
-                          value: bet.status === "Won" ? "Success" : "Failed",
-                          valueClass: bet.status === "Won" ? "text-green-400" : "text-[#ff5555]f",
-                        },
-                        {
-                          label: "Win/lose",
-                          value: bet.winLose,
-                          valueClass: bet.winLose?.startsWith("+")
-                            ? "text-green-400"
-                            : bet.winLose?.startsWith("-")
-                              ? "text-[#ff5555]"
-                              : "text-[#ff5555]",
-                        },
-                        { label: "Order time", value: bet.orderTime },
-                      ].map(({ label, value, valueClass = "text-gray-400" }) => (
-                        <div
-                          key={label}
-                          className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
+                            ? "bg-[#d9ac4f] text-black font-medium"
+                            : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                            }`}
                         >
-                          <span className="text-gray-300 text-sm">{label}</span>
-                          <span className={`${valueClass} text-sm font-normal`}>
-                            {value || "N/A"}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                          {pageNum}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+              <div className="text-center mt-3 text-xs text-gray-500">
+                Page {currentPage} of {totalPages} • {gameHistoryData.length} records shown
               </div>
-            );
-          })}
+            </>
+          )}
+          {activeTab === "chart" && (
+            <>
+              <div className="p-2 rounded-t-lg">
+                <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
+                  <thead>
+                    <tr className="bg-gray-700 rounded-t-lg">
+                      <th className="px-2 w-2/5 py-2 text-center text-white text-xs font-normal border-b rounded-tl-xl border-[#3a3947]">
+                        Period
+                      </th>
+                      <th className="px-2 w-3/5 py-2 text-center text-white text-xs font-normal border-b rounded-tr-xl border-[#3a3947]">
+                        Number
+                      </th>
+                    </tr>
 
-          {/* Pagination for My History */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center mt-4 space-x-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-              >
-                Previous
-              </button>
-
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                  if (pageNum > totalPages) return null;
-
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`px-3 py-1 rounded text-sm transition-colors ${
-                        currentPage === pageNum
-                          ? "bg-[#d9ac4f] text-black font-medium"
-                          : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                  </thead>
+                  <tbody>
+                    {chartData.length > 0 ? (
+                      chartData.map((row, index) => (
+                        <tr key={index} className="border-b border-gray-700">
+                          <td className="px-2 py-2 text-gray-200 text-xs text-center">
+                            {row.periodId}
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            <span
+                              className={`inline-flex items-center justify-center text-sm w-8 h-8 rounded-full text-white ${row.number === 0 || row.number === 5
+                                ? row.number === 0
+                                  ? "bg-gradient-to-r from-red-500 to-violet-500"
+                                  : "bg-gradient-to-r from-green-500 to-violet-500"
+                                : row.number % 2 === 0
+                                  ? "bg-red-500"
+                                  : "bg-green-500"
+                                }`}
+                            >
+                              {row.number}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2" className="px-2 py-4 text-center text-gray-200">
+                          No data available
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Previous
+                  </button>
 
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-              >
-                Next
-              </button>
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      if (pageNum > totalPages) return null;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
+                            ? "bg-[#d9ac4f] text-black font-medium"
+                            : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                            }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+              <div className="text-center mt-3 text-xs text-gray-500">
+                Page {currentPage} of {totalPages} • {chartData.length} records shown
+              </div>
+            </>
+          )}
+          {activeTab === "myHistory" && (
+            <div className="bg-[#333332] ">
+              {isLoading ? (
+                <div className="text-center py-8 text-gray-400">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d9ac4f] mx-auto mb-2"></div>
+                  <p>Loading your betting history...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-red-400">
+                  <p>{error}</p>
+                  <button
+                    onClick={() => fetchUserBets(currentPage)}
+                    className="mt-2 px-4 py-2 bg-[#d9ac4f] text-black rounded hover:bg-[#c49b45]"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : userBets.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <p>No betting history found</p>
+                  <p className="text-sm mt-1">
+                    Your bets will appear here once you start playing
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {userBets.map((bet, index) => {
+                    // Function to determine the color based on bet selection
+                    const getColorClass = (selection) => {
+                      if (!selection) return 'bg-gray-500';
+
+                      const sel = selection.toString().toLowerCase();
+                      if (sel.includes('green') || sel === 'g' || sel === '1' || sel === '3' || sel === '7' || sel === '9') {
+                        return 'bg-green-500';
+                      } else if (sel.includes('red') || sel === 'r' || sel === '2' || sel === '4' || sel === '6' || sel === '8') {
+                        return 'bg-red-500';
+                      } else if (sel.includes('violet') || sel === 'v' || sel === '0' || sel === '5') {
+                        return 'bg-purple-500';
+                      } else if (sel.includes('big') || sel === 'big') {
+                        return 'bg-blue-500';
+                      } else if (sel.includes('small') || sel === 'small') {
+                        return 'bg-yellow-500';
+                      }
+                      return 'bg-gray-500';
+                    };
+
+                    return (
+                      <div
+                        key={bet.betId || index}
+                        className=" rounded-md cursor-pointer bg-[#2a2a29] "
+                        onClick={() =>
+                          setIsDetailsOpen(isDetailsOpen === index ? null : index)
+                        }
+                      >
+                        <div className="flex justify-between items-center p-3">
+                          <div className="flex items-center space-x-3">
+                            {/* Color Square Box */}
+                            <div className={`w-8 h-8 rounded ${getColorClass(bet.select)}`}></div>
+                            <div className="text-left">
+                              <p className="text-gray-200 text-sm font-medium">{bet.period}</p>
+                              <p className="text-gray-500 text-xs">{bet.orderTime}</p>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-gray-400 text-xs">{bet.result || "Pending"}</p>
+                          </div>
+                          <div className="flex flex-col items-end space-y-1">
+                            <div
+                              className={`border text-xs rounded-md px-2 py-1 ${bet.status === "Won"
+                                ? "border-green-500 text-green-500"
+                                : bet.status === "Lost"
+                                  ? "border-red-500 text-red-500"
+                                  : "border-red-500 text-red-500"
+                                }`}
+                            >
+                              {bet.status === "Won" ? "Success" : "Failed"}
+                            </div>
+                            <p
+                              className={`font-medium text-sm ${bet.winLose?.startsWith("+")
+                                ? "text-green-500"
+                                : bet.winLose?.startsWith("-")
+                                  ? "text-red-500"
+                                  : "text-gray-400"
+                                }`}
+                            >
+                              {bet.winLose}
+                            </p>
+                          </div>
+                        </div>
+
+                        {isDetailsOpen === index && (
+                          <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg">
+                            <div className="mb-4">
+                              <h3 className="text-white text-lg font-medium mb-1">Details</h3>
+                            </div>
+                            <div className="space-y-3 text-sm">
+                              {[
+                                { label: "Order number", value: bet.orderNumber },
+                                { label: "Period", value: bet.period },
+                                { label: "Purchase amount", value: bet.amount },
+                                { label: "Quantity", value: bet.quantity },
+                                {
+                                  label: "Amount after tax",
+                                  value: bet.afterTax,
+                                  valueClass: "text-[#ff5555]",
+                                },
+                                {
+                                  label: "Tax",
+                                  value: bet.tax,
+                                  valueClass: "text-[#ff5555]",
+                                },
+                                {
+                                  label: "Result",
+                                  value: bet.result || "Pending",
+                                  valueClass: "text-green-400",
+                                },
+                                { label: "Select", value: bet.select, valueClass: "text-[#ff5555]" },
+                                {
+                                  label: "Status",
+                                  value: bet.status === "Won" ? "Success" : "Failed",
+                                  valueClass: bet.status === "Won" ? "text-green-400" : "text-[#ff5555]f",
+                                },
+                                {
+                                  label: "Win/lose",
+                                  value: bet.winLose,
+                                  valueClass: bet.winLose?.startsWith("+")
+                                    ? "text-green-400"
+                                    : bet.winLose?.startsWith("-")
+                                      ? "text-[#ff5555]"
+                                      : "text-[#ff5555]",
+                                },
+                                { label: "Order time", value: bet.orderTime },
+                              ].map(({ label, value, valueClass = "text-gray-400" }) => (
+                                <div
+                                  key={label}
+                                  className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                                >
+                                  <span className="text-gray-300 text-sm">{label}</span>
+                                  <span className={`${valueClass} text-sm font-normal`}>
+                                    {value || "N/A"}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* Pagination for My History */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center mt-4 space-x-2">
+                      <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                      >
+                        Previous
+                      </button>
+
+                      <div className="flex items-center space-x-1">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                          if (pageNum > totalPages) return null;
+
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
+                                ? "bg-[#d9ac4f] text-black font-medium"
+                                : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                                }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
-        </>
-      )}
-    </div>
-  )}
 
-</div>
+        </div>
 
         <div className="text-center mb-0 w-full mt-2 relative z-0">
           <div className="bg-[#333332] rounded-xl shadow-lg p-4 flex items-center justify-center space-x-4 relative z-0">

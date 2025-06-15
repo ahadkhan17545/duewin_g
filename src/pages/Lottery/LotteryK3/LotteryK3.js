@@ -50,7 +50,7 @@ const buttonData = [
     id: 0,
     title: (
       <>
-        K3 Lottery <br />
+        K3
         1Min
       </>
     ),
@@ -62,7 +62,7 @@ const buttonData = [
   },
   {
     id: 1,
-    title: "K3 Lottery 3Min",
+    title: "K3 3Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
@@ -71,7 +71,7 @@ const buttonData = [
   },
   {
     id: 2,
-    title: "K3 Lottery 5Min",
+    title: "K3  5Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
@@ -80,7 +80,7 @@ const buttonData = [
   },
   {
     id: 3,
-    title: "K3 Lottery 10Min",
+    title: "K3  10Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
@@ -176,10 +176,10 @@ const BettingModal = ({
       activeImgTab === "total"
         ? "sum"
         : activeImgTab === "2same"
-        ? "pair"
-        : activeImgTab === "3same"
-        ? "triple"
-        : "different";
+          ? "pair"
+          : activeImgTab === "3same"
+            ? "triple"
+            : "different";
 
     let selection = selectedOptions;
     if (activeImgTab === "2same") {
@@ -275,47 +275,47 @@ const BettingModal = ({
 
         {(selectedTwoSameNumbers.length > 0 ||
           (selectedPair.red && selectedPair.green)) && (
-          <div className="mb-2">
-            <p className="text-sm mb-1">2 same numbers:</p>
-            <div className="flex space-x-2">
-              {selectedTwoSameNumbers.map((num) => (
-                <span
-                  key={num}
-                  className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                >
-                  {num}
-                </span>
-              ))}
-              {selectedPair.red && selectedPair.green && (
-                <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-                  {`${selectedPair.red}, ${selectedPair.green}`}
-                </span>
-              )}
+            <div className="mb-2">
+              <p className="text-sm mb-1">2 same numbers:</p>
+              <div className="flex space-x-2">
+                {selectedTwoSameNumbers.map((num) => (
+                  <span
+                    key={num}
+                    className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                  >
+                    {num}
+                  </span>
+                ))}
+                {selectedPair.red && selectedPair.green && (
+                  <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                    {`${selectedPair.red}, ${selectedPair.green}`}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {(selectedThreeSameNumbers.length > 0 ||
           selectedOptions.includes("Any 3")) && (
-          <div className="mb-2">
-            <p className="text-sm mb-1">3 same numbers:</p>
-            <div className="flex space-x-2">
-              {selectedThreeSameNumbers.map((num) => (
-                <span
-                  key={num}
-                  className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                >
-                  {num}
-                </span>
-              ))}
-              {selectedOptions.includes("Any 3") && (
-                <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-                  Any 3 : odds (34.56)
-                </span>
-              )}
+            <div className="mb-2">
+              <p className="text-sm mb-1">3 same numbers:</p>
+              <div className="flex space-x-2">
+                {selectedThreeSameNumbers.map((num) => (
+                  <span
+                    key={num}
+                    className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                  >
+                    {num}
+                  </span>
+                ))}
+                {selectedOptions.includes("Any 3") && (
+                  <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                    Any 3 : odds (34.56)
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm">Balance</p>
@@ -323,11 +323,10 @@ const BettingModal = ({
             {[1, 10, 100, 1000].map((value) => (
               <button
                 key={value}
-                className={`px-3 py-1 rounded text-sm font-medium ${
-                  betAmount === value
-                    ? "bg-[#d6a439] text-black"
-                    : "bg-[#555555] text-gray-300"
-                }`}
+                className={`px-3 py-1 rounded text-sm font-medium ${betAmount === value
+                  ? "bg-[#d6a439] text-black"
+                  : "bg-[#555555] text-gray-300"
+                  }`}
                 onClick={() => setBetAmount(value)}
               >
                 {value}
@@ -365,11 +364,10 @@ const BettingModal = ({
             <button
               key={label}
               onClick={() => handleMultiplierClick(label)}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                selectedMultiplier === label
-                  ? "bg-[#d6a439] text-black"
-                  : "bg-[#555] text-gray-300"
-              }`}
+              className={`px-3 py-1 rounded text-sm font-medium ${selectedMultiplier === label
+                ? "bg-[#d6a439] text-black"
+                : "bg-[#555] text-gray-300"
+                }`}
             >
               {label}
             </button>
@@ -414,8 +412,8 @@ const BettingModal = ({
 
   function shouldShowBettingModal() {
     if (activeImgTab === "2same") {
-      return selectedTwoSameNumbers.length > 0 || 
-             (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green));
+      return selectedTwoSameNumbers.length > 0 ||
+        (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green));
     } else if (activeImgTab === "3same") {
       return selectedThreeSameNumbers.length > 0 || selectedOptions.includes("Any 3");
     } else if (activeImgTab === "different") {
@@ -436,7 +434,7 @@ const BettingModal = ({
 function LotteryK3() {
   const isMounted = useRef(true);
   const gameType = "k3";
-  const API_BASE_URL = "https://strike.atsproduct.in";
+  const API_BASE_URL = "https://api.strikecolor1.com";
 
   const [activeTab, setActiveTab] = useState("gameHistory");
   const [activeImgTab, setActiveImgTab] = useState("total");
@@ -754,8 +752,8 @@ function LotteryK3() {
           const newSelected = prev.includes(option)
             ? prev.filter((num) => num !== option)
             : [...prev, option].filter((num) =>
-                [11, 22, 33, 44, 55, 66].includes(num)
-              );
+              [11, 22, 33, 44, 55, 66].includes(num)
+            );
           setSelectedOptions(newSelected);
           setSelectedPair({ red: null, green: null });
           return newSelected;
@@ -766,12 +764,12 @@ function LotteryK3() {
       ) {
         setSelectedPair((prev) => {
           const newPair = { ...prev, red: prev.red === option ? null : option };
-          
+
           if (newPair.red && newPair.green && !isValidPair(newPair.red, newPair.green)) {
             alert("Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)");
             return prev;
           }
-          
+
           const pair =
             newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
           setSelectedOptions(pair ? [pair] : []);
@@ -784,12 +782,12 @@ function LotteryK3() {
             ...prev,
             green: prev.green === option ? null : option,
           };
-          
+
           if (newPair.red && newPair.green && !isValidPair(newPair.red, newPair.green)) {
             alert("Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)");
             return prev;
           }
-          
+
           const pair =
             newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
           setSelectedOptions(pair ? [pair] : []);
@@ -806,8 +804,8 @@ function LotteryK3() {
           const newSelected = prev.includes(option)
             ? prev.filter((num) => num !== option)
             : [...prev, option].filter((num) =>
-                [111, 222, 333, 444, 555, 666].includes(num)
-              );
+              [111, 222, 333, 444, 555, 666].includes(num)
+            );
           setSelectedOptions(newSelected);
           return newSelected;
         });
@@ -878,23 +876,23 @@ function LotteryK3() {
   const calculateTotalBetAmount = () => {
     if (activeImgTab === "2same") {
       let totalAmount = 0;
-      
+
       totalAmount += selectedTwoSameNumbers.length;
-      
+
       if (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green)) {
         totalAmount += 1;
       }
-      
+
       return totalAmount;
     } else if (activeImgTab === "3same") {
       let totalAmount = 0;
-      
+
       totalAmount += selectedThreeSameNumbers.length;
-      
+
       if (selectedOptions.includes("Any 3")) {
         totalAmount += 1;
       }
-      
+
       return totalAmount;
     } else if (activeImgTab === "different") {
       return calculateDifferentBetAmount();
@@ -922,10 +920,11 @@ function LotteryK3() {
   }
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full mx-auto flex flex-col items-center justify-center p-2 pt-24 pb-24">
+    <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-20 pb-24">
       <LotteryWingoheader />
-      <div className="text-center w-full">
-        <div className="rounded-xl shadow-lg p-4 relative overflow-hidden">
+      <div className="text-center w-full max-w-sm mx-auto">
+        <div className="relative rounded-2xl shadow-lg overflow-hidden">
+          {/* Background image */}
           <div className="absolute inset-0 z-0">
             <img
               src={walletbggame}
@@ -933,55 +932,63 @@ function LotteryK3() {
               className="w-full h-full object-cover"
             />
           </div>
+
+          {/* Overlay */}
           <div className="absolute inset-0 bg-[#4d4d4c] opacity-70 z-10"></div>
-          <div className="relative z-20">
-            <div className="relative flex items-center justify-center mb-2">
-              <div className="text-2xl font-bold text-white">₹{walletBalance.toFixed(2)}</div>
+
+          {/* Main content */}
+          <div className="relative z-20 p-2">
+            {/* Balance + Refresh */}
+            <div className="relative flex items-center justify-center ml-2">
+              <div className="text-lg font-bold text-white">₹{walletBalance.toFixed(2)}</div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-6 h-6 absolute right-16 cursor-pointer transition-transform duration-200 ${
-                  isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
-                }`}
+                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
+                  }`}
                 onClick={handleRefreshBalance}
                 style={{
                   pointerEvents: isRefreshingBalance ? 'none' : 'auto',
-                  filter: isRefreshingBalance ? 'brightness(0.7)' : 'none'
                 }}
               />
             </div>
-            <div className="flex items-center justify-center text-center mb-6">
-              <img src={wallet} alt="icon" className="w-6 h-6 ml-2" />
-              <span className="text-[#f5f3f0] text-base font-medium ml-1">
-                Wallet Balance
-              </span>
+
+            {/* Wallet label */}
+            <div className="flex items-center justify-center mb-4 mt-[-2]">
+              <img src={wallet} alt="icon" className="w-5 h-5" />
+              <span className="ml-2 text-[#f5f3f0] text-xs ">Wallet Balance</span>
             </div>
-            <div className="flex mt-4 justify-between space-x-2 px-2">
-              <Link to="/withdraw" className="flex-1">
-                <button className="bg-[#d23838] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-red-600">
+
+            {/* Buttons */}
+            <div className="flex justify-center gap-10 mb-2">
+              <Link to="/withdraw">
+                <button className="bg-[#d23838] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-red-600 transition-all">
                   Withdraw
                 </button>
               </Link>
-              <Link to="/deposit" className="flex-1">
-                <button className="bg-[#17b15e] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-green-600">
+              <Link to="/deposit">
+                <button className="bg-[#17b15e] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-green-600 transition-all">
                   Deposit
                 </button>
               </Link>
             </div>
+
+
           </div>
         </div>
       </div>
 
-      <div className="bg-[#242424] p-2 shadow-md w-full h-full mt-2 flex flex-col justify-center">
-        <div className="p-2 rounded-full bg-[#333332] shadow-md mt-0">
+
+      <div className="bg-[#242424]  w-full h-full mt-2 flex flex-col justify-center">
+        <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1">
-              Thanks to all our members — past and present — for being part of
-              our journey.
+            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
+              Thanks to all our members — past and present — for being part of our journey.
             </p>
+
             <button
-              className="text-[#333] text-sm px-5 py-1 rounded-lg flex items-center justify-center gap-0"
+              className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
               style={{
                 backgroundImage: `url(${invitation})`,
                 backgroundSize: "cover",
@@ -989,8 +996,10 @@ function LotteryK3() {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <img src={fire} alt="icon" className="w-4 h-4" /> Detail
+              <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
+
+
           </div>
         </div>
 
@@ -1000,11 +1009,10 @@ function LotteryK3() {
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center px-2 py-1 rounded-lg w-full mx-0.5 transition-all duration-300 ${
-                  activeButton === button.id
-                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#4d4d4c] text-[#a8a5a1]"
-                }`}
+                className={`flex flex-col items-center px-2 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${activeButton === button.id
+                  ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#4d4d4c] text-[#a8a5a1]"
+                  }`}
                 style={{
                   textAlign: "center",
                   flexDirection: "column",
@@ -1013,21 +1021,21 @@ function LotteryK3() {
               >
                 <div
                   className="icon"
-                  style={{ fontSize: "20px", marginBottom: "4px" }}
+                  style={{ fontSize: "14px", marginBottom: "2px" }}
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-base leading-tight">{button.title}</span>
+                <span className="text-xs leading-none whitespace-nowrap">{button.title}</span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="bg-[#333332] rounded-lg mt-4 shadow-md mb-4 p-4">
-          <div className="flex justify-between mb-4">
+        <div className="bg-[#333332] rounded-lg mt-4 shadow-md mb-2 p-4">
+          <div className="flex justify-between mb-2">
             <div>
               <div className="flex items-center">
-                <p className="text-[#a8a5a1] mr-3 text-sm">Period</p>
+                <p className="text-[#a8a5a1] mr-3 text-xs">Period</p>
                 <div className="border border-[#d9ac4f] rounded-full px-2 py-0.5 text-[#d9ac4f] text-center">
                   <button
                     className="flex items-center gap-1 text-[#d9ac4f] text-xs px-3 rounded-md"
@@ -1036,18 +1044,18 @@ function LotteryK3() {
                     <img
                       src={howtoplay}
                       alt="How to Play"
-                      className="w-4 h-4"
+                      className="w-2 h-2"
                     />
-                    <span className="text-sm">How to Play</span>
+                    <span className="text-xs">How to Play</span>
                   </button>
                 </div>
               </div>
-              <p className="text-xl font-bold text-[#f5f3f0] mt-1">
+              <p className="text-lg text-[#f5f3f0] mt-1">
                 {getDisplayPeriodId()}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[#a8a5a1] mb-1 text-sm">Time Remaining</p>
+              <p className="text-[#a8a5a1] mb-2 text-xs">Time Remaining</p>
               <div className="flex space-x-0.5 text-[#d9ac4f] justify-end items-center">
                 <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
                   {formatTime(timeRemaining.minutes)[0]}
@@ -1069,42 +1077,49 @@ function LotteryK3() {
           </div>
 
           <FreezePopup timeRemaining={timeRemaining}>
-            <div className="relative bg-[#00b971] p-3 rounded-lg w-full">
-              <div className="relative bg-green-950 p-1 rounded-lg w-full overflow-hidden">
-                <div className="absolute left-[-12px] top-1/2 transform -translate-y-1/2 w-3 h-10 bg-[#00b971] rounded-l-md z-0"></div>
-                <div className="absolute top-0 left-0 h-full w-4 z-10">
-                  <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent border-l-[16px] border-l-[#00b971]"></div>
+            <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
+              <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
+                <div className="absolute left-[-10px] top-1/2 transform -translate-y-1/2 w-2 h-6 bg-[#00b971] rounded-l-md z-0"></div>
+
+                <div className="absolute top-0 left-0 h-full w-3 z-10">
+                  <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[16px] border-t-transparent border-b-[16px] border-b-transparent border-l-[12px] border-l-[#00b971]"></div>
                 </div>
-                <div className="absolute top-0 right-0 h-full w-4 z-10">
-                  <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent border-r-[16px] border-r-[#00b971]"></div>
+
+                <div className="absolute top-0 right-0 h-full w-3 z-10">
+                  <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[16px] border-t-transparent border-b-[16px] border-b-transparent border-r-[12px] border-r-[#00b971]"></div>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="flex bg-gray-600 p-2 rounded justify-center">
+
+                <div className="grid grid-cols-3 gap-1">
+                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
+
                     <img
                       src={isConnected && currentResult?.dice_1 ? getDiceImage(currentResult.dice_1) : num1}
                       alt="Dice 1"
-                      className="w-20 h-20"
+                      className="w-16 h-16"
                     />
                   </div>
-                  <div className="flex bg-gray-600 p-2 rounded justify-center">
+                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
+
                     <img
                       src={isConnected && currentResult?.dice_2 ? getDiceImage(currentResult.dice_2) : num1}
                       alt="Dice 2"
-                      className="w-20 h-20"
+                      className="w-16 h-16"
                     />
                   </div>
-                  <div className="flex bg-gray-600 p-2 rounded justify-center">
+                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
+
                     <img
                       src={isConnected && currentResult?.dice_3 ? getDiceImage(currentResult.dice_3) : num1}
                       alt="Dice 3"
-                      className="w-20 h-20"
+                      className="w-16 h-16"
                     />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between mt-2 mb-2">
+
+            <div className="flex gap-1 justify-between mt-2 mb-2">
               {[
                 { label: "Total", value: "total" },
                 { label: "2 same", value: "2same" },
@@ -1115,24 +1130,25 @@ function LotteryK3() {
                 return (
                   <button
                     key={index}
-                    className={`flex-1 px-4 py-3 text-sm font-medium text-center rounded-t-md ${
-                      isActive
-                        ? "bg-[#d9ac4f] text-[#8f5206]"
-                        : "bg-[#2d2d2d] text-[#a8a5a1]"
-                    } focus:outline-none`}
+                    className={`flex-1 px-2 py-3 text-xs text-center rounded-t-md ${isActive
+                      ? "bg-[#d9ac4f] text-[#8f5206]"
+                      : "text-[#a8a5a1]"
+                      } focus:outline-none`}
+                    style={!isActive ? { backgroundColor: "#4d4d4c" } : {}}
                     onClick={() => setActiveImgTab(tab.value)}
                   >
                     {tab.label}
                   </button>
+
                 );
               })}
             </div>
           </FreezePopup>
 
           {activeImgTab === "total" && (
-            <div className="grid grid-cols-4 gap-4 ml-3">
+            <div className="grid grid-cols-4 gap-3 ml-3">
               {imageUrls.map((image, index) => (
-                <div key={index} className="flex flex-col items-center mt-4 relative w-14 h-14">
+                <div key={index} className="flex flex-col items-center mt-4 relative w-12 h-12">
                   <img
                     src={image.url}
                     alt={`Ball ${image.number}`}
@@ -1148,16 +1164,16 @@ function LotteryK3() {
                   <span className="text-xs text-white mt-1" style={{ color: "#a8a5a1" }}>{image.description}</span>
                 </div>
               ))}
-              <div className="col-span-4 flex justify-between text-xs mb-2 mt-4">
+              <div className="col-span-4 flex justify-between text-xs mt-4 -ml-5 gap-1 -mr-2">
                 {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map((label, idx) => {
                   const commonClasses =
-                    "text-white px-7 py-2 rounded-md hover:opacity-90 text-center cursor-pointer";
+                    "text-white px-6 py-1 rounded-md hover:opacity-90 text-center cursor-pointer";
                   const gradientStyle =
                     idx === 0
                       ? {
-                          background:
-                            "-webkit-linear-gradient(top, #FF827A 0%, #E93333 68.18%)",
-                        }
+                        background:
+                          "-webkit-linear-gradient(top, #FF827A 0%, #E93333 68.18%)",
+                      }
                       : {};
                   const fallbackBg = [
                     "",
@@ -1199,11 +1215,10 @@ function LotteryK3() {
                 {[11, 22, 33, 44, 55, 66].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
-                      selectedTwoSameNumbers.includes(value)
-                        ? "bg-opacity-70"
-                        : ""
-                    }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedTwoSameNumbers.includes(value)
+                      ? "bg-opacity-70"
+                      : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "twoSame")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1228,9 +1243,8 @@ function LotteryK3() {
                 {[11, 22, 33, 44, 55, 66].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-red-500 rounded-md shadow cursor-pointer relative ${
-                      selectedPair.red === value ? "bg-opacity-70" : ""
-                    }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-red-500 rounded-md shadow cursor-pointer relative ${selectedPair.red === value ? "bg-opacity-70" : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "pairRed")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1246,9 +1260,8 @@ function LotteryK3() {
                 {[1, 2, 3, 4, 5, 6].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-green-600 rounded-md shadow cursor-pointer relative ${
-                      selectedPair.green === value ? "bg-opacity-70" : ""
-                    }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-green-600 rounded-md shadow cursor-pointer relative ${selectedPair.green === value ? "bg-opacity-70" : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "pairGreen")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1278,11 +1291,10 @@ function LotteryK3() {
                 {[111, 222, 333, 444, 555, 666].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
-                      selectedThreeSameNumbers.includes(value)
-                        ? "bg-opacity-70"
-                        : ""
-                    }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedThreeSameNumbers.includes(value)
+                      ? "bg-opacity-70"
+                      : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "threeSame")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1305,9 +1317,8 @@ function LotteryK3() {
               </div>
               <div className="flex justify-center">
                 <button
-                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${
-                    selectedOptions.includes("Any 3") ? "bg-opacity-70" : ""
-                  }`}
+                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${selectedOptions.includes("Any 3") ? "bg-opacity-70" : ""
+                    }`}
                   onClick={() => handleOptionClick("Any 3", "anyThree")}
                 >
                   Any 3 of the same number: odds
@@ -1336,9 +1347,8 @@ function LotteryK3() {
                 {[1, 2, 3, 4, 5, 6].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
-                      selectedOptions.includes(value) ? "bg-opacity-70" : ""
-                    }`}
+                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedOptions.includes(value) ? "bg-opacity-70" : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "threeDifferent")}
                   >
                     {value}
@@ -1361,9 +1371,8 @@ function LotteryK3() {
               </div>
               <div className="flex justify-center">
                 <button
-                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${
-                    selectedOptions.includes("3 Continuous") ? "bg-opacity-70" : ""
-                  }`}
+                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${selectedOptions.includes("3 Continuous") ? "bg-opacity-70" : ""
+                    }`}
                   onClick={() => handleOptionClick("3 Continuous", "continuous")}
                 >
                   3 continuous numbers
@@ -1394,9 +1403,8 @@ function LotteryK3() {
                 ].map(({ value, label }, index) => (
                   <div
                     key={index}
-                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
-                      selectedOptions.includes(value) ? "bg-opacity-70" : ""
-                    }`}
+                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedOptions.includes(value) ? "bg-opacity-70" : ""
+                      }`}
                     onClick={() => handleOptionClick(value, "twoDifferent")}
                   >
                     {label}
@@ -1595,33 +1603,30 @@ function LotteryK3() {
           </div>
         )}
 
-        <div className="flex justify-between space-x-2 mb-6 mt-2">
+        <div className="flex justify-between space-x-2 mb-6 ">
           <button
-            className={`w-full min-w-[120px] px-6 py-2 text-base rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
-              activeTab === "gameHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full min-w-[120px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "gameHistory"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("gameHistory")}
           >
             Game history
           </button>
           <button
-            className={`w-full min-w-[100px] px-6 py-2 text-base rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
-              activeTab === "chart"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full min-w-[100px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "chart"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("chart")}
           >
             Chart
           </button>
           <button
-            className={`w-full min-w-[110px] px-6 py-2 text-base rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
-              activeTab === "myHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
+            className={`w-full min-w-[110px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "myHistory"
+              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+              : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("myHistory")}
           >
             My History
@@ -1646,31 +1651,41 @@ function LotteryK3() {
                       const isEven = entry.sum % 2 === 0;
                       return (
                         <tr key={index} className="bg-[#333332]">
-                          <td className="px-2 py-2 text-xs text-[#f5f3f0] text-center">
-                            {entry.periodId}
+                          <td className="text-xs text-[#f5f3f0] ">
+                            <span className="ml-2">{entry.periodId}</span>
                           </td>
-                          <td className="px-2 py-2 text-xs text-[#f5f3f0] text-center whitespace-nowrap">
-                            {entry.sum} {isBig ? "Big" : "Small"}
+                          <td className="px-2 py-2 text-xs text-[#f5f3f0] whitespace-nowrap">
+                            <div className="flex justify-center items-center">
+                              <span className="inline-block w-[19px] text-right">{entry.sum}</span>
+                              <span className="inline-block w-[38px] text-left ml-7">{isBig ? "Big" : "Small"}</span>
+                            </div>
                           </td>
+
+
+
+
+
+
+
                           <td className="px-2 py-2 text-xs text-[#f5f3f0] text-center">
                             <div className="flex items-center justify-center space-x-1 overflow-hidden">
-                              <span className="mr-1">
+                              <span className="mr-3">
                                 {isEven ? "Even" : "Odd"}
                               </span>
                               <img
                                 src={diceImages[entry.dice1] || diceImages[1]}
                                 alt={`Dice ${entry.dice1}`}
-                                className="w-6 h-6 object-contain"
+                                className="w-5 h-5 object-contain"
                               />
                               <img
                                 src={diceImages[entry.dice2] || diceImages[1]}
                                 alt={`Dice ${entry.dice2}`}
-                                className="w-6 h-6 object-contain"
+                                className="w-5 h-5 object-contain"
                               />
                               <img
                                 src={diceImages[entry.dice3] || diceImages[1]}
                                 alt={`Dice ${entry.dice3}`}
-                                className="w-6 h-6 object-contain"
+                                className="w-5 h-5 object-contain"
                               />
                             </div>
                           </td>
