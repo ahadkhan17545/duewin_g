@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import walletbggame from "../../../Assets/walletbggame.png";
 import Timecolor from "../../../Assets/timecolor.png";
 import Timeblack from "../../../Assets/timeblack.png";
@@ -42,28 +42,28 @@ const buttonData = [
     ),
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
-    duration: 60,
+    duration: 30,
   },
   {
     id: 1,
     title: "Trx Wingo 3Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
-    duration: 180,
+    duration: 60,
   },
   {
     id: 2,
     title: "Trx Wingo 5Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
-    duration: 300,
+    duration: 180,
   },
   {
     id: 3,
     title: "Trx Wingo 10Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
-    duration: 600,
+    duration: 300,
   },
 ];
 
@@ -80,9 +80,10 @@ const tailwindColorMap = {
 
 function LotteryTrxWingo() {
   const isMounted = useRef(true);
+  const location = useLocation()
   const gameType = "trx_wix"; // Updated to match Postman response
   const [activeTab, setActiveTab] = useState("gameHistory");
-  const [activeButton, setActiveButton] = useState(buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(location?.state? location?.state :buttonData[0].id);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMultiplier, setSelectedMultiplier] = useState("X1");
   const [isModalOpen, setIsModalOpen] = useState(false);

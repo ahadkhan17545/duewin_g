@@ -37,7 +37,7 @@ function ProfilePage() {
   const [userData, setUserData] = useState(null)
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
+  const {user} = useSelector((store)=>store.login)
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -96,6 +96,18 @@ function ProfilePage() {
   const handleCancelLogout = () => {
     setShowLogoutModal(false);
   };
+    const handleCopy = () => {
+    if (userData?.user_id) {
+      navigator.clipboard.writeText(userData.user_id)
+        .then(() => {
+          // Optional: show a toast or alert
+          console.log("UID copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy UID:", err);
+        });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center pb-20 bg-[#242424] overflow-x-hidden">
@@ -121,7 +133,7 @@ function ProfilePage() {
               <div className="ml-2 mt-1">
                 {/* Name + VIP */}
                 <div className="flex items-center mt-1">
-                  <h2 className="text-base font-semibold text-white uppercase">{userData?.user_name}</h2>
+                  <h2 className="text-base font-semibold text-white uppercase">{user?.member_detail}</h2>
                   <img src={vip} alt="VIP Badge" className="h-5 ml-2 mt-1" />
                 </div>
 
@@ -130,7 +142,7 @@ function ProfilePage() {
                   <span className="font-medium">UID</span>
                   <span className="opacity-70">|</span>
                   <span className="font-medium">{userData?.user_id}</span>
-                  <button className="pl-1">
+                  <button onClick={handleCopy} className="pl-1">
                     <FaCopy className="text-white text-[11px]" />
                   </button>
                 </div>

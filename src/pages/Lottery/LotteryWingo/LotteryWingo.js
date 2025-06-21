@@ -37,7 +37,7 @@ import img6 from "./../../../Assets/WingoNew/n6-a56e0b9a.png";
 import img7 from "./../../../Assets/WingoNew/n7-5961a17f.png";
 import img8 from "./../../../Assets/WingoNew/n8-d4d951a4.png";
 import img9 from "./../../../Assets/WingoNew/n9-a20f6f42.png";
-
+import { useLocation } from 'react-router-dom';
 const imageMap = {
   0: img0,
   1: img1,
@@ -116,13 +116,14 @@ const buttonData = [
 
 function LotteryWingo() {
   const isMounted = useRef(true);
+  const location  = useLocation()
   const gameType = "wingo";
   const { playCountdownAudio, playResultAudio } = useAudio();
   const hasPlayedCountdownRef = useRef(false);
   const previousResult = useRef(null);
   // Component state
   const [activeTab, setActiveTab] = useState("gameHistory");
-  const [activeButton, setActiveButton] = useState(0);
+  const [activeButton, setActiveButton] = useState(location?.state ?location?.state :0);
   const [selectedTitle, setSelectedTitle] = useState(buttonData[0].title);
   const [externalMultiplier, setExternalMultiplier] = useState("X1");
   const [popupMultiplier, setPopupMultiplier] = useState("X1");

@@ -93,9 +93,10 @@ const UserProfile = () => {
       };
 
       const avatarFileName = avatarMap[avatar] || "default.png";
-      let payload = userData
-      payload.profile_picture_id = avatarFileName
-      let data = await apiServices.updateUserProfile(payload)
+      let payload = {
+        profile_picture_id: avatarFileName
+      }
+      let data = await apiServices.updateUserProfilePicture(payload)
       if (data?.success == true) {
         setSelectedAvatar(avatar);
         setShowAvatarPage(false);

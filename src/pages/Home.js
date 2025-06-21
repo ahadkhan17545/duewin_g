@@ -472,6 +472,7 @@ function Home() {
       alt: "Wingo Image",
       title: "Win Go",
       link: "/lotterywingo",
+      value:0
     },
     {
       id: 2,
@@ -479,6 +480,7 @@ function Home() {
       alt: "Wingo 1Min Image",
       title: "Win Go 1Min",
       link: "/lotterywingo",
+      value:1
     },
     {
       id: 3,
@@ -486,6 +488,7 @@ function Home() {
       alt: "Wingo 3Min Image",
       title: "Win Go 3Min",
       link: "/lotterywingo",
+      value:2
     },
     {
       id: 4,
@@ -493,14 +496,16 @@ function Home() {
       alt: "Wingo 5Min Image",
       title: "Win Go 5Min",
       link: "/lotterywingo",
+      value:3
     },
-    { id: 5, imgSrc: K, alt: "K3 Image", title: "K3 1Min", link: "/lotteryK3" },
+    { id: 5, imgSrc: K, alt: "K3 Image", title: "K3 1Min", link: "/lotteryK3",  value:0 },
     {
       id: 6,
       imgSrc: K1,
       alt: "K3 3Min Image",
       title: "K3 3Min",
       link: "/lotteryK3",
+      value:1
     },
     {
       id: 7,
@@ -508,6 +513,7 @@ function Home() {
       alt: "K3 5Min Image",
       title: "K3 5 Min",
       link: "/lotteryK3",
+      value:2
     },
     {
       id: 8,
@@ -515,6 +521,7 @@ function Home() {
       alt: "K3 10Min Image",
       title: "K3 10 Min",
       link: "/lotteryK3",
+      value:3
     },
     {
       id: 9,
@@ -522,6 +529,7 @@ function Home() {
       alt: "5D Image",
       title: "5D 1 Min",
       link: "/lottery5d",
+      value:0
     },
     {
       id: 10,
@@ -529,6 +537,7 @@ function Home() {
       alt: "5D 3Min Image",
       title: "5D 3 Min",
       link: "/lottery5d",
+      value:1
     },
     {
       id: 11,
@@ -536,6 +545,7 @@ function Home() {
       alt: "5D 5Min Image",
       title: "5D 5 Min",
       link: "/lottery5d",
+      value:2
     },
     {
       id: 12,
@@ -543,6 +553,7 @@ function Home() {
       alt: "5D 10Min Image",
       title: "5D 10 Min",
       link: "/lottery5d",
+      value:3
     },
     {
       id: "1",
@@ -550,6 +561,7 @@ function Home() {
       alt: "Trx Image",
       title: "Trx 1min",
       link: "/lotterytrxwing",
+      value:0
     },
     {
       id: 14,
@@ -557,6 +569,7 @@ function Home() {
       alt: "Trx 3min Image",
       title: "Trx 3min",
       link: "/lotterytrxwing",
+      value:1
     },
     {
       id: 15,
@@ -564,6 +577,7 @@ function Home() {
       alt: "Trx 5min Image",
       title: "Trx 5 min",
       link: "/lotterytrxwing",
+      value:2
     },
     {
       id: 16,
@@ -571,6 +585,7 @@ function Home() {
       alt: "Trx 10min Image",
       title: "Trx 10 Min",
       link: "/lotterytrxwing",
+      value:3
     },
   ]);
 
@@ -772,6 +787,7 @@ function Home() {
                             <Link
                               to={slide.link}
                               className="block relative hover:scale-105 transition-transform duration-200"
+                              state={slide?.value}
                             >
                               <img
                                 src={slide.imgSrc}

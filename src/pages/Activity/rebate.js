@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import awardbg from '../../Assets/awardbg.png';
 import HeaderAward from '../../components/HeaderAward';
@@ -6,64 +6,128 @@ import succeed from '../../Assets/succeed.png';
 import lottery from '../../Assets/lottery1.png';
 
 import wallet from '../../Assets/vip/wallets.png';
+import apiServices from '../../api/apiServices';
 
-const missions = [
-  {
-    type: 'Daily mission',
-    status: 'Unfinished',
-    icon: lottery,
-    title: 'Daily betting bonus',
-    progress: '0/500',
-    award: '₹10',
-  },
-  {
-    type: 'Daily mission',
-    status: 'Unfinished',
-    icon: lottery,
-    title: 'Lottery betting bonus',
-    progress: '0/100000',
-    description: 'Lottery betting bonus',
-    award: '₹500.00',
-  },
-  {
-    type: 'Weekly mission',
-    status: 'Unfinished',
-    icon: lottery,
-    title: 'Casino gaming bonus',
-    progress: '0/500000',
-    description: 'Play casino games and win',
-    award: '₹2,000.00',
-  },
-  {
-    type: 'Weekly mission',
-    status: 'Unfinished',
-    icon: lottery,
-    title: 'Sports betting bonus',
-    progress: '0/300000',
-    description: 'Bet on sports and win',
-    award: '₹1,500.00',
-  },
-  {
-    type: 'Monthly mission',
-    status: 'Unfinished',
-    icon: lottery,
-    title: 'VIP exclusive bonus',
-    progress: '0/1000000',
-    description: 'Exclusive rewards for VIPs',
-    award: '₹5,000.00',
-  },
-];
+// const missions = [
+//   {
+//     type: 'Daily mission',
+//     status: 'Unfinished',
+//     icon: lottery,
+//     title: 'Daily betting bonus',
+//     progress: '0/500',
+//     award: '₹10',
+//   },
+//   {
+//     type: 'Daily mission',
+//     status: 'Unfinished',
+//     icon: lottery,
+//     title: 'Lottery betting bonus',
+//     progress: '0/100000',
+//     description: 'Lottery betting bonus',
+//     award: '₹500.00',
+//   },
+//   // {
+//   //   type: 'Weekly mission',
+//   //   status: 'Unfinished',
+//   //   icon: lottery,
+//   //   title: 'Casino gaming bonus',
+//   //   progress: '0/500000',
+//   //   description: 'Play casino games and win',
+//   //   award: '₹2,000.00',
+//   // },
+//   // {
+//   //   type: 'Weekly mission',
+//   //   status: 'Unfinished',
+//   //   icon: lottery,
+//   //   title: 'Sports betting bonus',
+//   //   progress: '0/300000',
+//   //   description: 'Bet on sports and win',
+//   //   award: '₹1,500.00',
+//   // },
+//   // {
+//   //   type: 'Monthly mission',
+//   //   status: 'Unfinished',
+//   //   icon: lottery,
+//   //   title: 'VIP exclusive bonus',
+//   //   progress: '0/1000000',
+//   //   description: 'Exclusive rewards for VIPs',
+//   //   award: '₹5,000.00',
+//   // },
+// ];
 
 const Rebate = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [completedMission, setCompletedMission] = useState(null);
+  const [missions, setMissions] = useState([]);
+
+  const fetchActivity = async () => {
+    try {
+      const data = await apiServices.getActivityStatus();
+      const allGamesMax = 500;
+      const lotteryMax = 100000;
+
+      const allGamesProgress = Math.min(data?.allGames?.betAmount ?? 0, allGamesMax);
+      const lotteryProgress = Math.min(data?.lottery?.betAmount ?? 0, lotteryMax);
+
+      const newMissions = [];
+
+      if (data?.allGames) {
+        newMissions.push({
+          type: 'Daily mission',
+          status: 'Unfinished',
+          icon: lottery,
+          title: 'Daily betting bonus',
+          progress: `${allGamesProgress}/${allGamesMax}`,
+          award: '₹10',
+          disable: data?.allGames?.milestones["500"]?.achieved,
+          isClaimed: data?.allGames?.milestones["500"]?.claimed,
+          milestoneType: "all_games",
+          milestoneKey: "500"
+        });
+      }
+
+      if (data?.lottery) {
+        newMissions.push({
+          type: 'Daily mission',
+          status: 'Unfinished',
+          icon: lottery,
+          title: 'Lottery betting bonus',
+          progress: `${lotteryProgress}/${lotteryMax}`,
+          description: 'Lottery betting bonus',
+          award: '₹500.00',
+          disable: !data?.lottery?.milestones["100K"]?.achieved,
+          isClaimed: data?.lottery?.milestones["100K"]?.claimed,
+          milestoneType: "lottery",
+          milestoneKey: "100K"
+        });
+      }
+
+      setMissions(newMissions);
+    } catch (err) {
+      console.error("Failed to fetch activity", err);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchActivity()
+  }, [])
 
   const handleComplete = (mission) => {
     setCompletedMission(mission);
     setShowPopup(true);
   };
 
-  const closePopup = () => {
+  const closePopup = async () => {
+    console.log(completedMission)
+    let payload = {
+      milestoneKey:completedMission?.milestoneKey,
+      milestoneType:completedMission?.milestoneType
+    }
+    const data =  await apiServices.claimActivity(payload)
+    if(data?.success == true){
+      fetchActivity()
+    }
     setShowPopup(false);
   };
 
@@ -91,7 +155,7 @@ const Rebate = () => {
         </p>
       </div>
 
-   
+
       <div className="p-4">
         {missions.map((mission, index) => (
           <div
@@ -106,13 +170,13 @@ const Rebate = () => {
             </div>
 
             <div className="flex items-center gap-2 mb-2">
-            <div className="rounded-md p-2 flex items-center justify-center w-10 h-10">
-  <img
-    src={mission.icon}
-    alt={mission.title}
-    className="w-full h-full object-contain"
-  />
-</div>
+              <div className="rounded-md p-2 flex items-center justify-center w-10 h-10">
+                <img
+                  src={mission.icon}
+                  alt={mission.title}
+                  className="w-full h-full object-contain"
+                />
+              </div>
 
               <span className="text-gray-300">{mission.title}</span>
               <span className="ml-auto text-orange-500 font-medium">{mission.progress}</span>
@@ -133,6 +197,7 @@ const Rebate = () => {
             <button
               className="w-full py-2 border border-green-500 rounded-full text-green-500 font-medium"
               onClick={() => handleComplete(mission)}
+            disabled={!mission?.disable &&  mission?.isClaimed}
             >
               To Complete
             </button>
@@ -140,11 +205,11 @@ const Rebate = () => {
         ))}
       </div>
 
-      
+
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="relative bg-[#2A2A2A] rounded-xl w-full max-w-xs mx-4 overflow-visible shadow-lg min-h-[250px] p-4 mt-2">
-            
+
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               <img
                 src={succeed}
@@ -153,7 +218,7 @@ const Rebate = () => {
               />
             </div>
 
-            
+
             <div className="pt-12 flex flex-col items-center">
               <h3 className="text-white text-xl font-semibold mb-2">Congratulations!</h3>
               <p className="text-gray-300 text-center mb-4">
@@ -161,7 +226,7 @@ const Rebate = () => {
               </p>
               <p className="text-yellow-400 font-bold text-lg mb-4">{completedMission?.award || '₹55.00'} Earned</p>
 
-              
+
               <button
                 onClick={closePopup}
                 className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black py-3 rounded-full text-center text-sm font-medium"

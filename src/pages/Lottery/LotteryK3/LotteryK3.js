@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Confetti from "react-confetti";
 import Timecolor from "../../../Assets/timecolor.png";
 import Timeblack from "../../../Assets/timeblack.png";
@@ -433,6 +433,7 @@ const BettingModal = ({
 
 function LotteryK3() {
   const isMounted = useRef(true);
+  const location = useLocation()
   const gameType = "k3";
   const API_BASE_URL = "https://api.strikecolor1.com";
 
@@ -441,7 +442,7 @@ function LotteryK3() {
   const [historyData, setHistoryData] = useState([]);
   const [gameHistoryData, setGameHistoryData] = useState([]);
   const [chartData, setChartData] = useState([]);
-  const [activeButton, setActiveButton] = useState(buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(location?.state ? location?.state :buttonData[0].id);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showPreSalePopup, setShowPreSalePopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Timecolor from "../../../Assets/timecolor.png";
 import Timeblack from "../../../Assets/timeblack.png";
 import refresh from "../../../Assets/refresh.png";
@@ -36,11 +36,13 @@ const tailwindColorMap = {
 
 function Lottery5d() {
   const isMounted = useRef(true);
+  const location = useLocation()
+  console.log("location?.state",location?.state)
   const gameType = "fiveD";
   const [activeTab, setActiveTab] = useState("gameHistory");
   const [activeImgTab, setActiveImgTab] = useState("A");
   const [historyData, setHistoryData] = useState([]);
-  const [activeButton, setActiveButton] = useState(buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(location?.state? location?.state :buttonData[0].id);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,7 +72,7 @@ function Lottery5d() {
     timeRemaining: socketTime,
     gameHistory: socketHistory,
     placeBet,
-  } = useSocket(gameType, buttonData[activeButton].duration);
+  } = useSocket(gameType, buttonData[activeButton]?.duration);
 
   // Wallet balance fetching
   useEffect(() => {
@@ -138,7 +140,7 @@ function Lottery5d() {
       setCurrentPeriod({ periodId: "Loading..." });
       const timer = setTimeout(() => {
         if (!isConnected) {
-          const duration = buttonData[activeButton].duration;
+          const duration = buttonData[activeButton]?.duration;
           setTimeRemaining({
             minutes: Math.floor(duration / 60),
             seconds: duration % 60,
@@ -169,7 +171,7 @@ function Lottery5d() {
     setLoading(true);
     setError(null);
     try {
-      const duration = buttonData[activeButton].duration;
+      const duration = buttonData[activeButton]?.duration;
       const response = await gameApi.getGameHistory("5D", duration, currentPage, 10);
       if (response.success && response.data?.results) {
         setHistoryData(response.data.results);
@@ -253,7 +255,7 @@ function Lottery5d() {
       type: betType,
       periodId: currentPeriod.periodId,
       gameType: gameType,
-      duration: buttonData[activeButton].duration,
+      duration: buttonData[activeButton]?.duration,
       position: activeImgTab, // A, B, C, D, E, or SUM
     };
 
@@ -736,7 +738,7 @@ function Lottery5d() {
       {isModalOpen && (
         <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[60] bg-neutral-900 text-white w-full max-w-[400px] shadow-lg rounded-t-lg">
           <div className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} rounded-t-xl flex flex-col items-center text-center`}>
-            <h2 className="text-lg font-bold mt-2">{buttonData[activeButton].title}</h2>
+            <h2 className="text-lg font-bold mt-2">{buttonData[activeButton]?.title}</h2>
             <div className="flex w-full max-w-xs items-center justify-center bg-white text-black gap-2 mt-2 p-2 rounded-lg">
               <span>Select</span>
               <span className="font-bold">{selectedOption} ({activeImgTab})</span>
