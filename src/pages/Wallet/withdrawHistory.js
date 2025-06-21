@@ -40,6 +40,7 @@ function WithdrawHistory() {
   const images = [img6, img7, img8];
   const activeImages = [activeImg6, activeImg7, img8];
   const descriptions = ["All", "Bank", "USDT"];
+  
 
   // Fetch withdrawal history from API
   useEffect(() => {
@@ -460,7 +461,7 @@ function WithdrawHistory() {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-amber-400 font-medium">₹{withdrawal.amount.toFixed(2)}</span>
+                      <span className="text-amber-400 font-medium">₹{Number(withdrawal.amount).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Type</span>

@@ -404,52 +404,75 @@ function LotteryTrxWingo() {
   }
 
   return (
-    <div className="bg-[#242424] min-h-screen flex flex-col w-full max-w-md mx-auto items-center justify-center overflow-x-hidden pt-24 pb-24">
+    <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-3 pl-3   pt-11 pb-24">
       <LotteryWingoheader />
-      <div className="text-center w-full px-4 mt-16">
-        <div className="rounded-xl shadow-lg p-4 relative overflow-hidden">
+      <div className="text-center w-full max-w-sm mt-8">
+        <div className="relative rounded-2xl shadow-lg overflow-hidden">
+          {/* Background image */}
           <div className="absolute inset-0 z-0">
-            <img src={walletbggame} alt="wallet background" className="w-full h-full object-cover" />
+            <img
+              src={walletbggame}
+              alt="wallet background"
+              className="w-full h-full object-cover"
+            />
           </div>
+
+          {/* Overlay */}
           <div className="absolute inset-0 bg-[#4d4d4c] opacity-70 z-10"></div>
-          <div className="relative z-20">
-            <div className="relative flex items-center justify-center mb-2">
-              <div className="text-2xl font-bold text-white">₹{walletBalance.toFixed(2)}</div>
+
+          {/* Main content */}
+          <div className="relative z-20 p-2">
+            {/* Balance + Refresh */}
+            <div className="relative flex items-center justify-center ml-2">
+              <div className="text-lg font-bold text-white">₹{walletBalance.toFixed(2)}</div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className="w-6 h-6 absolute right-12 opacity-50 cursor-not-allowed"
+                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
+                  }`}
+                onClick={handleRefreshBalance}
+                style={{
+                  pointerEvents: isRefreshingBalance ? 'none' : 'auto',
+                }}
               />
             </div>
-            <div className="flex items-center justify-center text-center mb-6">
-              <img src={wallet} alt="icon" className="w-6 h-6 ml-2" />
-              <span className="text-[#f5f3f0] text-base font-medium ml-1">Wallet Balance</span>
+
+            {/* Wallet label */}
+            <div className="flex items-center justify-center mb-4 mt-[-2]">
+              <img src={wallet} alt="icon" className="w-5 h-5" />
+              <span className="ml-2 text-[#f5f3f0] text-xs ">Wallet Balance</span>
             </div>
-            <div className="flex mt-4 justify-between space-x-2 px-2">
-              <Link to="/withdraw" className="flex-1">
-                <button className="bg-[#d23838] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-red-600">
+
+            {/* Buttons */}
+            <div className="flex justify-center gap-10 mb-2">
+              <Link to="/withdraw">
+                <button className="bg-[#d23838] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-red-600 transition-all">
                   Withdraw
                 </button>
               </Link>
-              <Link to="/deposit" className="flex-1">
-                <button className="bg-[#17b15e] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-green-600">
+              <Link to="/deposit">
+                <button className="bg-[#17b15e] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-green-600 transition-all">
                   Deposit
                 </button>
               </Link>
             </div>
+
+
           </div>
         </div>
       </div>
 
-      <div className="bg-[#242424] px-4 p-2 shadow-md w-full h-full mt-4 flex flex-col justify-center">
-        <div className="p-2 rounded-full bg-[#333332] shadow-md mt-0">
+
+      <div className="bg-[#242424] shadow-md w-full h-full mt-1 flex flex-col justify-center">
+        <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1">
+            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
               Thanks to all our members — past and present — for being part of our journey.
             </p>
+
             <button
-              className="text-[#333] text-sm px-5 py-1 rounded-lg flex items-center justify-center gap-0"
+              className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
               style={{
                 backgroundImage: `url(${invitation})`,
                 backgroundSize: "cover",
@@ -457,32 +480,48 @@ function LotteryTrxWingo() {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <img src={fire} alt="icon" className="w-4 h-4" /> Detail
+              <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
+
+
           </div>
         </div>
-
         <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md">
-          <div className="button-container flex justify-between space-x-1">
+          <div className="button-container flex justify-between ">
             {buttonData.map((button) => (
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center px-2 py-1 rounded-lg w-full mx-0.5 transition-all duration-300 ${
-                  activeButton === button.id
+                className={`flex flex-col items-center px-1 py-1 rounded-lg flex-1 transition-all duration-300 
+          ${activeButton === button.id
                     ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#4d4d4c] text-[#a8a5a1]"
-                }`}
-                style={{ textAlign: "center", flexDirection: "column", alignItems: "center" }}
+                    : "bg-[#4d4d4c] text-[#a8a5a1]"}`}
+                style={{
+                  textAlign: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
-                <div className="icon" style={{ fontSize: "20px", marginBottom: "4px" }}>
+                <div
+                  className="icon"
+                  style={{
+                    fontSize: "12px", // Smaller icon
+
+                  }}
+                >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-base leading-tight">{button.title}</span>
+                <span className="text-xs">
+                  {button.title}
+                </span>
+
               </button>
             ))}
           </div>
         </div>
+
+
+
 
         <div
           className="rounded-lg mt-4 shadow-md mb-4 p-4"
@@ -492,39 +531,39 @@ function LotteryTrxWingo() {
             backgroundPosition: "center",
           }}
         >
-          <div className="flex justify-between items-center mb-4 flex-wrap">
+          <div className="flex mb-10">
             <div className="flex flex-col min-w-0">
-              <div className="flex space-x-2 items-center">
-                <p className="text-[#8f5206] border border-[#8f5206] px-2 rounded-lg text-sm">Period</p>
+              <div className="flex gap-1 items-center">
+                <p className="text-[#8f5206] border border-[#8f5206] px-2 rounded-lg text-xs">Period</p>
                 <button
                   onClick={() => setShowHowToPlay(true)}
                   className="border bg-[#333332] border-[#d9ac4f] rounded-full px-2 py-1 flex items-center justify-center gap-1 text-[#8f5206] shrink-0"
                 >
-                  <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
-                  <p className="text-[#d9ac4f] text-xs font-medium">How to Play</p>
+                  <img src={HowToPlay} alt="How to Play" className="w-3 h-3" />
+                  <p className="text-[#d9ac4f] text-xs">How to Play</p>
                 </button>
               </div>
-              <p className="text-lg mt-2 font-bold text-[#8f5206] truncate">{getDisplayPeriodId()}</p>
+              <p className="text-sm mt-2  text-[#8f5206] truncate">{getDisplayPeriodId()}</p>
             </div>
             <div className="flex flex-col items-end min-w-0">
               <div className="bg-[#333332] rounded-full py-1 px-2 inline-flex items-center space-x-1 shrink-0">
-                <img src={searchicon} alt="icon" className="h-3 w-3" />
-                <span className="text-[#d9ac4f] text-xs font-medium">Public Chain Query</span>
+                <img src={searchicon} alt="icon" className="h-2 w-2" />
+                <span className="text-[#d9ac4f] text-xs ">Public Chain Query</span>
               </div>
-              <div className="flex items-center justify-end space-x-1 mt-2">
-                <span className="text-white text-xs font-medium shrink-0">Time Remaining</span>
+              <div className="flex items-center justify-end gap-1 mt-2">
+                <span className="text-[#8f5206] text-xs ml-3 shrink-0">Draw Time</span>
                 <div className="flex space-x-0.5 items-center">
-                  <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.minutes)[0]}
                   </span>
-                  <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.minutes)[1]}
                   </span>
                   <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">:</span>
-                  <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  <span className=" border border-[#8f5206] text-[#8f5206]  text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.seconds)[0]}
                   </span>
-                  <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">
+                  <span className=" border border-[#8f5206] text-[#8f5206]  text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.seconds)[1]}
                   </span>
                 </div>
@@ -548,22 +587,22 @@ function LotteryTrxWingo() {
           </div>
         </div>
 
-        <div className="bg-[#333332] rounded-lg shadow-md mb-2 p-4 space-y-2">
-          <div className="flex justify-between space-x-2 mb-4">
+        <div className="bg-[#333332] rounded-lg shadow-md mb-2 p-2 space-y-2">
+          <div className="flex justify-between space-x-2 mb-2">
             <button
-              className="bg-green-500 flex-1 text-white py-3 rounded-tr-lg rounded-bl-lg text-sm"
+              className="bg-green-500 flex-1 text-white py-2 rounded-tr-lg rounded-bl-lg text-sm"
               onClick={() => handleOptionClick("Green", "color")}
             >
               Green
             </button>
             <button
-              className="bg-violet-500 flex-1 text-white py-3 rounded text-sm"
+              className="bg-violet-500 flex-1 text-white py-2 rounded text-sm"
               onClick={() => handleOptionClick("Violet", "color")}
             >
               Violet
             </button>
             <button
-              className="bg-red-500 flex-1 text-white py-3 rounded-tl-lg rounded-br-lg text-sm"
+              className="bg-red-500 flex-1 text-white py-2 rounded-tl-lg rounded-br-lg text-sm"
               onClick={() => handleOptionClick("Red", "color")}
             >
               Red
@@ -594,18 +633,22 @@ function LotteryTrxWingo() {
             </div>
           </div>
           <div className="flex justify-center items-center space-x-1">
-            <span className="border border-red-700 text-red-500 text-sm px-1 py-2 rounded-lg">Random</span>
-            {multiplierOptions.map((value) => (
-              <button
-                key={value}
-                className={`${
-                  selectedMultiplier === value ? tailwindColorMap[betType === "number" ? "Number" : selectedOption] : "bg-[#242424] text-[#a8a5a1]"
-                } text-sm px-2 py-2 rounded-lg flex-1`}
-                onClick={() => handleMultiplierClick(value)}
-              >
-                {value}
-              </button>
-            ))}
+            <span className="border border-red-700 text-red-500 text-sm px-4 py-2 rounded-lg">Random</span>
+       {multiplierOptions.map((value) => (
+  <button
+    key={value}
+    className={`
+      text-[10px] px-2 py-2 rounded-lg flex-1 border 
+      ${selectedMultiplier === value 
+        ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} border-[#e4c26c]` 
+        : "bg-[#242424] text-[#a8a5a1] border-[#3a3a3a]"}
+    `}
+    onClick={() => handleMultiplierClick(value)}
+  >
+    {value}
+  </button>
+))}
+
           </div>
           <div className="flex justify-center mt-4">
             <button className="bg-blue-500 text-white rounded-full flex overflow-hidden w-full max-w-xs">
@@ -625,38 +668,39 @@ function LotteryTrxWingo() {
           </div>
         </div>
 
-        <div className="flex justify-between space-x-1 mb-6 mt-1">
-          <button
-            className={`w-full px-4 py-3 text-sm rounded-lg shadow text-center ${
-              activeTab === "gameHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-medium"
-            }`}
-            onClick={() => setActiveTab("gameHistory")}
-          >
-            Game History
-          </button>
-          <button
-            className={`w-full px-4 py-3 text-sm rounded-lg shadow text-center ${
-              activeTab === "chart"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
-            onClick={() => setActiveTab("chart")}
-          >
-            Chart
-          </button>
-          <button
-            className={`w-full px-4 py-3 text-sm rounded-lg shadow text-center ${
-              activeTab === "myHistory"
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-                : "bg-[#333332] text-[#a8a5a1] font-normal"
-            }`}
-            onClick={() => setActiveTab("myHistory")}
-          >
-            My History
-          </button>
-        </div>
+    <div className="flex justify-between space-x-1 mb-4 mt-2">
+  <button
+    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${activeTab === "gameHistory"
+        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+        : "bg-[#333332] text-[#a8a5a1] font-normal"
+      }`}
+    onClick={() => setActiveTab("gameHistory")}
+  >
+    Game History
+  </button>
+  <button
+    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${activeTab === "chart"
+        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+        : "bg-[#333332] text-[#a8a5a1] font-normal"
+      }`}
+    onClick={() => setActiveTab("chart")}
+  >
+    Chart
+  </button>
+  <button
+    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${activeTab === "myHistory"
+        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+        : "bg-[#333332] text-[#a8a5a1] font-normal"
+      }`}
+    onClick={() => setActiveTab("myHistory")}
+  >
+    My History
+  </button>
+</div>
+
 
         <div className="mb-2 rounded-lg shadow">
           {activeTab === "gameHistory" && (
@@ -751,13 +795,12 @@ function LotteryTrxWingo() {
                               );
                             })}
                             <span
-                              className={`inline-flex items-center rounded-full justify-center w-10 h-6 ml-1 border text-center ${
-                                row.resultType === "B"
-                                  ? "bg-yellow-600 text-white border-yellow-600"
-                                  : row.resultType === "S"
+                              className={`inline-flex items-center rounded-full justify-center w-10 h-6 ml-1 border text-center ${row.resultType === "B"
+                                ? "bg-yellow-600 text-white border-yellow-600"
+                                : row.resultType === "S"
                                   ? "bg-[#5088d3] text-white border-[#5088d3]"
                                   : "border-gray-500 text-gray-500"
-                              }`}
+                                }`}
                             >
                               {row.resultType}
                             </span>
@@ -819,24 +862,22 @@ function LotteryTrxWingo() {
                           </div>
                           <div className="text-right">
                             <p
-                              className={`mt-1 border text-right rounded text-sm px-2 py-1 ${
-                                bet.status === 'won' ? 'text-green-600 border-green-600' :
+                              className={`mt-1 border text-right rounded text-sm px-2 py-1 ${bet.status === 'won' ? 'text-green-600 border-green-600' :
                                 bet.status === 'lost' ? 'text-red-600 border-red-600' :
-                                'text-[#00b971] border-[#00b971]'
-                              }`}
+                                  'text-[#00b971] border-[#00b971]'
+                                }`}
                             >
                               {bet.status === 'won' ? 'Won' :
-                               bet.status === 'lost' ? 'Lost' :
-                               'Pending'}
+                                bet.status === 'lost' ? 'Lost' :
+                                  'Pending'}
                             </p>
                             <p className="text-black font-medium mt-1">
                               Amount: {bet.amount}
                             </p>
                             {bet.winLose !== '₹0' && (
                               <p
-                                className={`font-medium text-sm mt-1 ${
-                                  bet.winLose.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                                }`}
+                                className={`font-medium text-sm mt-1 ${bet.winLose.startsWith('+') ? 'text-green-600' : 'text-red-600'
+                                  }`}
                               >
                                 {bet.winLose}
                               </p>
@@ -973,11 +1014,10 @@ function LotteryTrxWingo() {
               {multiplierOptions.map((label) => (
                 <button
                   key={label}
-                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${
-                    selectedMultiplier === label
-                      ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} ring-2 ring-white`
-                      : `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")} transition`
-                  }`}
+                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${selectedMultiplier === label
+                    ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} ring-2 ring-white`
+                    : `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")} transition`
+                    }`}
                   onClick={() => handleMultiplierClick(label)}
                 >
                   {label}

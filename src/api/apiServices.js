@@ -90,6 +90,8 @@ const apiRequest = async (endpoint, method = "GET", body = null, queryParams = {
       if (response.status === 401) {
         // Token might be expired, clear it
         localStorage.removeItem("authToken");
+         window.location.href = "/login";
+         localStorage.removeItem("token")
         throw new Error("Authentication failed. Please log in again.");
       }
       
@@ -113,6 +115,10 @@ export const getWalletBalance = async () => {
   return await apiRequest("/wallet/balances");
 };
 
+export const getWalletBalanceForWithDraw = async () => {
+  return await apiRequest("/wallet/balance");
+};
+
 // Specific API methods
 export const getVipInfo = async () => {
   return await apiRequest("/vip/info");
@@ -127,13 +133,12 @@ export const getVipHistory = async () => {
 };
 
 export const getWithdrawalHistory = async (page = 1, limit = 10) => {
-  return await apiRequest("/wallet/withdrawals", "GET", null, { page, limit });
+  return await apiRequest("/wallet/withdrawal-history", "GET", null, { page, limit });
 };
 
 export const getDepositHistory = async (page = 1, limit = 10) => {
-  return await apiRequest("/wallet/deposits", "GET", null, { page, limit });
+  return await apiRequest("/wallet/deposit-history", "GET", null, { page, limit });
 };
-
 export const getDirectReferrals = async () => {
   return await apiRequest("/referrals/direct");
 };
@@ -170,6 +175,188 @@ export const claimInvitationBonus = async () => {
   return await apiRequest("/referrals/invitation/claim", "POST");
 };
 
+export const getVipHistoryData = async (page = 1, limit = 10) => {
+  return await apiRequest(`/vip/experience-history`, "GET", null, { page, limit });
+};
+export const getVipLevelData = async () => {
+  return  [
+  {
+    id: 17,
+    level: 0,
+    required_exp: 0,
+    bonus_amount: "0.00",
+    monthly_reward: "0.00",
+    rebate_rate: "0.0000",
+    vault_interest_rate: null,
+    created_at: "2025-06-13T16:18:19.000Z",
+    updated_at: "2025-06-13T16:18:19.000Z"
+  },
+  {
+    id: 7,
+    level: 1,
+    required_exp: 3000,
+    bonus_amount: "60.00",
+    monthly_reward: "30.00",
+    rebate_rate: "0.0050",
+    vault_interest_rate: "0.0010",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 8,
+    level: 2,
+    required_exp: 30000,
+    bonus_amount: "180.00",
+    monthly_reward: "90.00",
+    rebate_rate: "0.0050",
+    vault_interest_rate: "0.0010",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 9,
+    level: 3,
+    required_exp: 400000,
+    bonus_amount: "690.00",
+    monthly_reward: "290.00",
+    rebate_rate: "0.0100",
+    vault_interest_rate: "0.0015",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 10,
+    level: 4,
+    required_exp: 4000000,
+    bonus_amount: "1890.00",
+    monthly_reward: "890.00",
+    rebate_rate: "0.0100",
+    vault_interest_rate: "0.0020",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 11,
+    level: 5,
+    required_exp: 20000000,
+    bonus_amount: "6900.00",
+    monthly_reward: "1890.00",
+    rebate_rate: "0.0100",
+    vault_interest_rate: "0.0025",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 12,
+    level: 6,
+    required_exp: 80000000,
+    bonus_amount: "16900.00",
+    monthly_reward: "6900.00",
+    rebate_rate: "0.0150",
+    vault_interest_rate: "0.0030",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 13,
+    level: 7,
+    required_exp: 300000000,
+    bonus_amount: "69000.00",
+    monthly_reward: "16900.00",
+    rebate_rate: "0.0150",
+    vault_interest_rate: "0.0035",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 14,
+    level: 8,
+    required_exp: 1000000000,
+    bonus_amount: "169000.00",
+    monthly_reward: "69000.00",
+    rebate_rate: "0.0150",
+    vault_interest_rate: "0.0040",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 15,
+    level: 9,
+    required_exp: 50000000000,
+    bonus_amount: "690000.00",
+    monthly_reward: "169000.00",
+    rebate_rate: "0.0300",
+    vault_interest_rate: "0.0045",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  },
+  {
+    id: 16,
+    level: 10,
+    required_exp: 99999999999,
+    bonus_amount: "1690000.00",
+    monthly_reward: "690000.00",
+    rebate_rate: "0.0300",
+    vault_interest_rate: "0.0050",
+    created_at: "2025-05-12T15:52:16.000Z",
+    updated_at: "2025-05-29T08:19:44.000Z"
+  }
+];    
+  
+};
+
+export const getVaultStatus = async () =>{
+  return await apiRequest(`/vault/status`,'GET')
+}
+export const withdrawVault = async (data) => {
+  return await apiRequest("/vault/withdraw", "POST",data);
+};
+
+export const vaultDeposit = async (data) => {
+  return await apiRequest("/vault/deposit", "POST",data);
+};
+export const getTransactionHistory = async () =>{
+  return await apiRequest(`/vault/history`,'GET')
+}
+
+export const addBankAccount = async (data) =>{
+  return await apiRequest(`/bank-accounts/accounts`,"POST",data)
+}
+export const getBankAccounts = async () =>{
+  return await apiRequest(`/bank-accounts/accounts`,"GET")
+}
+export const deleteBankAccount = async (id) =>{
+  return await apiRequest(`/bank-accounts/accounts/${id}`,"DELETE")
+}
+
+export const addUSDTAccount = async (data) =>{
+  return await apiRequest(`/usdt-accounts`,"POST",data)
+}
+
+export const getUSDTAccounts = async () =>{
+  return await apiRequest(`/usdt-accounts`,"GET")
+}
+export const deleteUSDTAccounts = async (id) =>{
+  return await apiRequest(`/usdt-accounts/${id}`,"DELETE")
+}
+
+export const withDrawMoneyFromWallet = async (data) =>{
+  return await apiRequest(`/wallet/withdraw`,"POST",data)
+}
+export const getBettingBalance = async () =>{
+  return await apiRequest(`/users/betting-requirement`,"GET")
+}
+
+export const updateUserProfilePicture = async (id) =>{
+  return await apiRequest(`/users/profile/picture`,"PUT")
+}
+export const updateUserProfile = async (data) =>{
+  return await apiRequest(`/users/profile`,"PUT",data)
+}
+export const getUserProfile = async () =>{
+  return await apiRequest(`/users/profile`,"GET")
+}
+
 export default {
   getWalletBalance,  
   getVipInfo,
@@ -186,4 +373,22 @@ export default {
   claimAttendanceBonus,
   getInvitationBonusStatus,
   claimInvitationBonus,
+  getVipHistoryData,
+  getVipLevelData,
+  getVaultStatus,
+  withdrawVault,
+  vaultDeposit,
+  getTransactionHistory,
+  addBankAccount,
+  getBankAccounts,
+  getWalletBalanceForWithDraw,
+  getUSDTAccounts,
+  addUSDTAccount,
+  deleteBankAccount,
+  deleteUSDTAccounts,
+  withDrawMoneyFromWallet,
+  getBettingBalance,
+  getUserProfile,
+  updateUserProfilePicture,
+  updateUserProfile
 };

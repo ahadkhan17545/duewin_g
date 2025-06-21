@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RebateRatioHeader from "../../components/RebateRatioHeader";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { calcGeneratorDuration, motion } from "framer-motion";
 import apiServices from "../../api/apiServices";
 
 // Import images (same as before)
@@ -51,7 +51,7 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
 
   const calculateProgress = () => {
     const currentCard = vipCards[selectedIndex];
-    return Math.min(100, Math.round((userExp / currentCard.expRequired) * 100));
+    return Math.min(100, Math.round((userExp / currentCard.required_exp) * 100));
   };
 
   return (
@@ -113,7 +113,7 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
               </button>
             </div>
 
-            <div className="absolute top-24 right-2 text-white text-sm font-serif font-bold">
+            <div className="absolute top-24 text-white text-sm font-serif font-bold" style={{ right: '36px'}}>
               {vipCards[selectedIndex].label}
             </div>
 
@@ -126,12 +126,12 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
                   <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
                 </div>
                 <div className="absolute left-1 top-3 px-1 mt-1 rounded-full bg-gradient-to-r from-[#899fbf] to-[#6f85a5] text-white text-xs">
-                  {userExp}/{vipCards[selectedIndex].expRequired}
+                  {userExp}/{vipCards[selectedIndex].required_exp}
                 </div>
               </div>
 
               <div className="absolute top-4 right-0 text-white text-xs font-serif font-medium">
-                {vipCards[selectedIndex].expRequired} can be leveled up
+                {vipCards[selectedIndex].required_exp} can be leveled up
               </div>
             </div>
 
@@ -184,7 +184,7 @@ const VIPBenefits = ({ selectedCard }) => {
           <div className="flex flex-col gap-1 items-end">
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-500 font-medium text-sm">
               <img src={wallets} alt="Coin Icon" className="w-3 h-3 mr-1" />
-              {selectedCard.benefits.levelUpReward}
+              {selectedCard?.bonus_amount}
             </div>
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-400 font-medium text-sm">
               <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />
@@ -204,7 +204,7 @@ const VIPBenefits = ({ selectedCard }) => {
           <div className="flex flex-col gap-1 items-end">
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-500 font-medium text-sm">
               <img src={wallets} alt="Coin Icon" className="w-3 h-3 mr-1" />
-              {selectedCard.benefits.monthlyReward}
+              {selectedCard?.monthly_reward}
             </div>
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-400 font-medium text-sm">
               <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />
@@ -239,7 +239,7 @@ const VIPBenefits = ({ selectedCard }) => {
           </div>
           <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-500 font-medium text-sm">
             <img src={rebateicon} alt="Coin Icon" className="w-3 h-3 mr-1" />
-            {selectedCard.benefits.rebateRatio}%
+            {selectedCard?.rebate_rate}%
           </div>
         </div>
       </div>
@@ -254,6 +254,8 @@ function VIPProfile() {
   const [vipCards, setVipCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [historyData, setHistoryData] = useState([])
+  const [levels, setLevels] = useState([])
 
   // Fallback data in case API fails
   const defaultVipCards = [
@@ -374,6 +376,19 @@ function VIPProfile() {
       },
       colorGradient: "linear-gradient(117.29deg, rgba(139, 69, 19, 0.8) 21.85%, rgba(205, 133, 63, 0.8) 67.02%)",
     },
+    {
+      id: 10,
+      image: bg9,
+      label: "VIP 10",
+      icon: vipi,
+      expRequired: 4000000,
+      benefits: {
+        levelUpReward: 20000,
+        monthlyReward: 25000,
+        rebateRatio: 3.0,
+      },
+      colorGradient: "linear-gradient(117.29deg, #eeaf3a 21.85%, #f98b3b 67.02%)",
+    },
   ];
 
   useEffect(() => {
@@ -388,39 +403,39 @@ function VIPProfile() {
 
         setUserExp(data.current_exp);
 
-        const levels = [];
-        let currentLevel = data.current_level;
+        // const levels = [];
+        // let currentLevel = data.current_level;
 
-        for (let i = 1; i <= 9; i++) {
-          let levelData;
-          if (i === data.next_level && data.next_level_details) {
-            levelData = data.next_level_details;
-          } else {
-            levelData = {
-              required_exp: [3000, 10000, 40000, 100000, 300000, 600000, 1000000, 2000000, 4000000][i - 1],
-              bonus_amount: [60, 150, 500, 1000, 2000, 3500, 6000, 10000, 20000][i - 1],
-              monthly_reward: [30, 100, 600, 1500, 3000, 5000, 8000, 12000, 25000][i - 1],
-              rebate_rate: [0.05, 0.1, 0.3, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0][i - 1],
-            };
-          }
+        // for (let i = 1; i <= 9; i++) {
+        //   let levelData;
+        //   if (i === data.next_level && data.next_level_details) {
+        //     levelData = data.next_level_details;
+        //   } else {
+        //     levelData = {
+        //       required_exp: [3000, 10000, 40000, 100000, 300000, 600000, 1000000, 2000000, 4000000][i - 1],
+        //       bonus_amount: [60, 150, 500, 1000, 2000, 3500, 6000, 10000, 20000][i - 1],
+        //       monthly_reward: [30, 100, 600, 1500, 3000, 5000, 8000, 12000, 25000][i - 1],
+        //       rebate_rate: [0.05, 0.1, 0.3, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0][i - 1],
+        //     };
+        //   }
 
-          levels.push({
-            id: i,
-            image: defaultVipCards[i - 1].image,
-            label: `VIP ${i}`,
-            icon: vipi,
-            expRequired: levelData.required_exp,
-            benefits: {
-              levelUpReward: levelData.bonus_amount,
-              monthlyReward: levelData.monthly_reward,
-              rebateRatio: levelData.rebate_rate,
-            },
-            colorGradient: defaultVipCards[i - 1].colorGradient,
-          });
-        }
+        //   levels.push({
+        //     id: i,
+        //     image: defaultVipCards[i - 1].image,
+        //     label: `VIP ${i}`,
+        //     icon: vipi,
+        //     expRequired: levelData.required_exp,
+        //     benefits: {
+        //       levelUpReward: levelData.bonus_amount,
+        //       monthlyReward: levelData.monthly_reward,
+        //       rebateRatio: levelData.rebate_rate,
+        //     },
+        //     colorGradient: defaultVipCards[i - 1].colorGradient,
+        //   });
+        // }
 
-        setVipCards(levels);
-        setSelectedIndex(Math.max(0, currentLevel));
+        // setVipCards(levels);
+        setSelectedIndex(Math.max(0, data.current_level));
       } catch (err) {
         console.error("Error fetching VIP data:", err.message);
         setError("Failed to fetch VIP data. Using default data instead.");
@@ -432,8 +447,30 @@ function VIPProfile() {
         setLoading(false);
       }
     };
-
     fetchVipData();
+
+    const fetchVipHistoryData = async () => {
+      const data = await apiServices.getVipHistoryData();
+      setHistoryData(data?.data.history)
+
+    }
+    fetchVipHistoryData()
+
+    const fetchVipLevel = async () => {
+      let levelData  = await apiServices.getVipLevelData()
+      const levelMap = new Map();
+      levelData.forEach((level) => {
+        levelMap.set(level.level, level);
+      });
+
+      const mergedVipCards = defaultVipCards.map((card, index) => {
+        const matchingLevel = levelMap.get(index + 1); 
+        delete card.benefits
+        return matchingLevel ? { ...card, ...matchingLevel } : card;
+      });
+      setVipCards(mergedVipCards);
+    }
+    fetchVipLevel()
   }, []);
 
   return (
@@ -504,21 +541,19 @@ function VIPProfile() {
               <div className="bg-[#333332] mt-4 rounded-lg">
                 <div className="flex text-center border-b border-gray-700">
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
-                      activeTab === "history"
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "history"
                         ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
                         : "text-gray-400 hover:bg-[#3a3a3a]"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("history")}
                   >
                     History
                   </div>
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
-                      activeTab === "rules"
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "rules"
                         ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
                         : "text-gray-400 hover:bg-[#3a3a3a]"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab("rules")}
                   >
                     Rules
@@ -528,10 +563,7 @@ function VIPProfile() {
                 <div className="bg-[#242424] rounded-md text-gray-200 shadow-lg">
                   {activeTab === "history" ? (
                     <div className="space-y-4 p-4">
-                      {[
-                        { date: "2025-02-22 21:57:44", exp: 4 },
-                        { date: "2025-02-21 09:47:42", exp: 5 },
-                      ].map((item, index) => (
+                      {historyData?.slice(0, 10)?.map((item, index) => (
                         <div key={index} className="flex flex-col">
                           <span className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer font-['Roboto',sans-serif]">
                             Experience Bonus
@@ -543,7 +575,7 @@ function VIPProfile() {
                               {item.date}
                             </span>
                             <span className="text-green-500 flex items-center gap-1 font-['Roboto',sans-serif]">
-                              {item.exp} EXP
+                              {item.exp_gained} EXP
                             </span>
                           </div>
                         </div>

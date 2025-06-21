@@ -215,13 +215,13 @@ function DepositHistory() {
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
 
   // Filter deposits based on tab, status, and date range
-  const filteredDeposits = deposits.filter((deposit) => {
+  const filteredDeposits = deposits?.filter((deposit) => {
     const matchesTab =
       descriptions[selectedIndex] === "All" ||
-      (descriptions[selectedIndex] === "UPIPayTM" && deposit.payment_gateway.includes("PayTM")) ||
-      (descriptions[selectedIndex] === "UPI-QRpay" && deposit.payment_gateway.includes("QRpay")) ||
-      (descriptions[selectedIndex] === "Wake UP-APP" && deposit.payment_gateway.includes("Wake UP")) ||
-      (descriptions[selectedIndex] === "USDT" && deposit.payment_gateway === "USDT");
+      (descriptions[selectedIndex] === "UPIPayTM" && deposit.payment_method.includes("PayTM")) ||
+      (descriptions[selectedIndex] === "UPI-QRpay" && deposit.payment_method.includes("QRpay")) ||
+      (descriptions[selectedIndex] === "Wake UP-APP" && deposit.payment_method.includes("Wake UP")) ||
+      (descriptions[selectedIndex] === "USDT" && deposit.payment_method === "USDT");
 
     const matchesStatus =
       selectedStatus === "All" ||
@@ -529,24 +529,21 @@ function DepositHistory() {
                                 ? "text-yellow-500"
                                 : "text-red-500"
                             }`}
+                            style={{textTransform:'capitalize'}}
                           >
-                            {deposit.status === "completed"
-                              ? "Complete"
-                              : deposit.status === "pending"
-                              ? "To Be Paid"
-                              : "Failed"}
+                            {deposit.status}
                           </span>
                         </div>
                         <div className="space-y-2 text-zinc-400 mt-4">
                           <div className="flex justify-between">
                             <span>Balance</span>
                             <span className="text-amber-500">
-                              ₹{(deposit.amount + (deposit.bonus_amount || 0)).toFixed(2)}
+                              ₹{(parseFloat(deposit?.amount || '0') + parseFloat(deposit?.bonus_amount || '0')).toFixed(2)}
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span>Type</span>
-                            <span className="text-white">{deposit.payment_gateway}</span>
+                            <span className="text-white">{deposit.payment_method}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Time</span>

@@ -300,58 +300,89 @@ function Lottery5d() {
   }
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full max-w-full md:max-w-[400px] mx-auto flex flex-col items-center justify-center overflow-x-hidden pb-24">
+    <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-11 pb-24">
       <LotteryWingoheader />
 
-      <div className="text-center w-full px-2 mt-16">
-        <div className="rounded-3xl shadow-2xl p-4 relative overflow-hidden min-h-[150px]">
+      <div className="text-center w-full max-w-sm mt-8">
+        <div className="relative rounded-2xl shadow-lg overflow-hidden">
+          {/* Background image */}
           <div className="absolute inset-0 z-0">
-            <img src={walletbggame} alt="wallet background" className="w-full h-full object-cover" />
+            <img
+              src={walletbggame}
+              alt="wallet background"
+              className="w-full h-full object-cover"
+            />
           </div>
+
+          {/* Overlay */}
           <div className="absolute inset-0 bg-[#4d4d4c] opacity-70 z-10"></div>
-          <div className="relative z-20">
-            <div className="relative flex items-center justify-center mb-2">
-              <div className="text-2xl font-bold text-white">₹{walletBalance.toFixed(2)}</div>
+
+          {/* Main content */}
+          <div className="relative z-20 p-2">
+            {/* Balance + Refresh */}
+            <div className="relative flex items-center justify-center ml-2">
+              <div className="text-lg font-bold text-white">₹{walletBalance.toFixed(2)}</div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-6 h-6 absolute right-12 cursor-pointer transition-transform duration-200 ${
-                  isRefreshingBalance ? "animate-spin opacity-50" : "hover:scale-110"
-                }`}
+                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
+                  }`}
                 onClick={handleRefreshBalance}
-                style={{ pointerEvents: isRefreshingBalance ? "none" : "auto" }}
+                style={{
+                  pointerEvents: isRefreshingBalance ? 'none' : 'auto',
+                }}
               />
             </div>
-            <div className="flex items-center justify-center text-center mb-6">
-              <img src={wallet} alt="icon" className="w-6 h-6 ml-2" />
-              <span className="text-[#f5f3f0] text-base font-medium ml-1">Wallet Balance</span>
+
+            {/* Wallet label */}
+            <div className="flex items-center justify-center mb-4 mt-[-2]">
+              <img src={wallet} alt="icon" className="w-5 h-5" />
+              <span className="ml-2 text-[#f5f3f0] text-xs ">Wallet Balance</span>
             </div>
-            <div className="flex mt-4 justify-between space-x-2 px-2">
-              <Link to="/withdraw" className="flex-1">
-                <button className="bg-[#d23838] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-red-600">
+
+            {/* Buttons */}
+            <div className="flex justify-center gap-10 mb-2">
+              <Link to="/withdraw">
+                <button className="bg-[#d23838] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-red-600 transition-all">
                   Withdraw
                 </button>
               </Link>
-              <Link to="/deposit" className="flex-1">
-                <button className="bg-[#17b15e] w-full text-white text-lg font-bold py-2 rounded-full hover:bg-green-600">
+              <Link to="/deposit">
+                <button className="bg-[#17b15e] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-green-600 transition-all">
                   Deposit
                 </button>
               </Link>
             </div>
+
+
           </div>
         </div>
       </div>
 
-      <div className="bg-[#242424] px-2 p-2 shadow-md w-full h-full mt-2 flex flex-col justify-center">
-        <div className="p-2 rounded-full bg-[#333332] shadow-md mt-0">
+      <div className="bg-[#242424]  w-full h-full mt-2 flex flex-col justify-center">
+        <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1">Thanks to all our members — past and present — for being part of our journey.</p>
-            <button className="text-[#333] text-sm px-5 py-1 rounded-lg flex items-center justify-center gap-0" style={{ backgroundImage: `url(${invitation})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
-              <img src={fire} alt="icon" className="w-4 h-4" /> Detail
+            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
+              Thanks to all our members — past and present — for being part of our journey.
+            </p>
+
+            <button
+              className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
+              style={{
+                backgroundImage: `url(${invitation})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
+
+
           </div>
         </div>
+
 
         <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md">
           <div className="button-container flex justify-between space-x-1">
@@ -359,102 +390,131 @@ function Lottery5d() {
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center px-1 py-0.5 rounded-lg flex-1 transition-all duration-300 ${activeButton === button.id ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]" : "bg-[#4d4d4c] text-[#a8a5a1]"}`}
-                style={{ textAlign: "center", flexDirection: "column", alignItems: "center" }}
+                className={`flex flex-col items-center px-1 py-1 rounded-lg flex-1 transition-all duration-300 
+          ${activeButton === button.id
+                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#4d4d4c] text-[#a8a5a1]"}`}
+                style={{
+                  textAlign: "center",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
-                <div className="icon" style={{ fontSize: "20px", marginBottom: "4px" }}>{activeButton === button.id ? button.activeIcon : button.icon}</div>
-                <span className="text-base leading-tight">{button.title}</span>
+                <div
+                  className="icon"
+                  style={{
+                    fontSize: "16px", // Smaller icon
+                    marginBottom: "2px", // Less gap
+                  }}
+                >
+                  {activeButton === button.id ? button.activeIcon : button.icon}
+                </div>
+                <span className="text-xs leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+                  {button.title}
+                </span>
+
               </button>
             ))}
           </div>
         </div>
 
-        <div className="bg-[#2e2e2d] flex items-center justify-between rounded-lg mt-4 shadow-md mb-4 p-3 w-full">
+
+        <div className="bg-[#2e2e2d] flex items-center justify-between rounded-lg mt-3 shadow-md mb-3 px-3 py-2 w-full">
           <div className="text-[#a8a5a1] text-sm leading-tight flex flex-col items-center justify-center mr-2">
-            <span className="-mt-6">Lottery</span>
-            <span className="mt-4">results</span>
+            <span className="-mt-2">Lottery</span>
+            <span className="mt-2">results</span>
           </div>
-          <div className="flex">
-            {historyData[0]?.result ? (
-              ["A", "B", "C", "D", "E"].map((pos, idx) => (
-                <div key={idx} className="flex flex-col items-center">
-                  <div className="w-10 h-10 ml-2 flex items-center justify-center rounded-full bg-[#444] text-white text-sm">{historyData[0].result[pos]}</div>
-                  <div className="text-[#a8a5a1] text-xs mt-1">{pos}</div>
+
+          <div className="flex items-center space-x-2 px-1">
+            {(historyData[0]?.result ? ["A", "B", "C", "D", "E"].map((pos, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#444] text-white text-xs">
+                  {historyData[0].result[pos]}
                 </div>
-              ))
-            ) : (
-              ["5", "9", "5", "0", "7"].map((num, idx) => (
-                <div key={idx} className="flex flex-col items-center">
-                  <div className="w-10 h-10 ml-2 flex items-center justify-center rounded-full bg-[#444] text-white text-sm">{num}</div>
-                  <div className="text-[#a8a5a1] text-xs mt-1">{["A", "B", "C", "D", "E"][idx]}</div>
+                <div className="text-[#a8a5a1] text-xs mt-1">{pos}</div> {/* made text-xs (bigger than 10px) */}
+              </div>
+            )) : ["5", "9", "5", "0", "7"].map((num, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#444] text-white text-xs">
+                  {num}
                 </div>
-              ))
-            )}
+                <div className="text-[#a8a5a1] text-xs mt-1">{["A", "B", "C", "D", "E"][idx]}</div>
+              </div>
+            )))}
           </div>
-          <div className="text-[#a8a5a1] text-lg mx-2">=</div>
-          <div className="w-10 h-10 flex items-center justify-center relative -top-1 rounded-full bg-[#d9ac4f] text-[#8f5206] text-sm">
-            {historyData[0]?.result
-              ? Object.values(historyData[0].result).reduce((acc, n) => acc + (Number(n) || 0), 0)
-              : [5, 9, 5, 0, 7].reduce((acc, n) => acc + Number(n), 0)}
+
+          <div className="flex items-center space-x-2">
+            <div className="text-[#a8a5a1] text-lg mb-4">=</div>
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#d9ac4f] text-[#8f5206] text-sm mb-4">
+              {historyData[0]?.result
+                ? Object.values(historyData[0].result).reduce((acc, n) => acc + (Number(n) || 0), 0)
+                : [5, 9, 5, 0, 7].reduce((acc, n) => acc + Number(n), 0)}
+            </div>
           </div>
         </div>
 
-        <div className="bg-[#333332] rounded-lg mt-2 shadow-md mb-2 p-2">
+
+
+        <div className="bg-[#333332] rounded-lg  shadow-md mb-2 p-2">
           <div className="flex justify-between mb-4 flex-wrap">
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
-                <p className="text-[#a8a5a1] text-sm">Period</p>
-                <button onClick={() => setShowHowToPlay(true)} className="border border-[#d9ac4f] rounded-full px-5 py-1 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0">
-                  <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
-                  <p className="text-[#d9ac4f] text-xs font-medium">How to Play</p>
+                <p className="text-[#a8a5a1] text-xs">Period</p>
+                <button onClick={() => setShowHowToPlay(true)} className="border border-[#d9ac4f] rounded-full px-3 py-0.5 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0">
+                  <img src={HowToPlay} alt="How to Play" className="w-1 h-1" />
+                  <p className="text-[#d9ac4f] text-xs ">How to Play</p>
                 </button>
               </div>
-              <p className="text-lg mt-2 font-bold text-[#f5f3f0] truncate">{getDisplayPeriodId()}</p>
+              <p className="text-md mt-1 font-bold text-[#f5f3f0] truncate">{getDisplayPeriodId()}</p>
             </div>
-            <div className="text-right min-w-0 mt-2 sm:mt-0">
-              <p className="text-[#a8a5a1] mb-2 text-sm">Time Remaining</p>
+            <div className="text-right min-w-0  sm:mt-0">
+              <p className="text-[#a8a5a1] mb-1 text-xs">Time Remaining</p>
               <div className="flex space-x-0.5 justify-end items-center">
-                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">{formatTime(timeRemaining.minutes)[0]}</span>
-                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">{formatTime(timeRemaining.minutes)[1]}</span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-5 text-center">{formatTime(timeRemaining.minutes)[0]}</span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-5 text-center">{formatTime(timeRemaining.minutes)[1]}</span>
                 <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">:</span>
-                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">{formatTime(timeRemaining.seconds)[0]}</span>
-                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-6 text-center">{formatTime(timeRemaining.seconds)[1]}</span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-5 text-center">{formatTime(timeRemaining.seconds)[0]}</span>
+                <span className="bg-[#f7e2c5] text-[#8f5206] font-bold text-lg rounded px-1 py-0.5 w-5 text-center">{formatTime(timeRemaining.seconds)[1]}</span>
               </div>
             </div>
           </div>
           <div className="bg-[#00b977] rounded-lg w-full p-2 relative">
+            {/* Left Triangle */}
             <div className="absolute top-0 left-0 h-full w-6 z-10">
-              <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent border-l-[24px] border-l-[#00b971]"></div>
+              <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[19px] border-t-transparent border-b-[19px] border-b-transparent border-l-[26px] border-l-[#00b971]"></div>
             </div>
+
+            {/* Right Triangle */}
             <div className="absolute top-0 right-0 h-full w-6 z-10">
-              <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[20px] border-t-transparent border-b-[20px] border-b-transparent border-r-[24px] border-r-[#00b971]"></div>
+              <div className="absolute top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[19px] border-b-transparent border-r-[26px] border-r-[#00b971]"></div>
             </div>
+
+            {/* Main Content */}
             <div className="bg-[#003c26] rounded-lg w-full h-full p-1 flex space-x-1">
-              {historyData[0]?.result ? (
-                ["A", "B", "C", "D", "E"].map((pos, index) => (
-                  <div key={index} className="flex-1 bg-[#727272] rounded flex flex-col items-center py-1">
-                    <div className="w-10 h-3 bg-[#e1e1ec] rounded-t-none rounded-b-full"></div>
-                    <div className={`flex items-center justify-center ${index === 0 ? "bg-emerald-500 text-white" : "bg-[#e1e1ec] text-[#a8a5a1]"} rounded-full w-14 h-14 text-4xl font-bold my-1`}>{historyData[0].result[pos]}</div>
-                    <div className="w-10 h-3 bg-[#e1e1ec] rounded-b-none rounded-t-full"></div>
+              {(historyData[0]?.result ? ["A", "B", "C", "D", "E"] : [5, 9, 9, 8, 6]).map((item, index) => {
+                const value = historyData[0]?.result ? historyData[0].result[item] : item;
+                return (
+                  <div key={index} className="flex-1 bg-[#727272] rounded flex flex-col items-center py-[4px]">
+                    <div className="w-8 h-[6px] bg-[#e1e1ec] rounded-t-none rounded-b-full"></div>
+                    <div className={`flex items-center justify-center ${index === 0 ? "bg-emerald-500 text-white" : "bg-[#e1e1ec] text-[#a8a5a1]"} rounded-full w-12 h-12 text-3xl font-bold my-1`}>
+                      {value}
+                    </div>
+                    <div className="w-8 h-[6px] bg-[#e1e1ec] rounded-b-none rounded-t-full"></div>
                   </div>
-                ))
-              ) : (
-                [5, 9, 9, 8, 6].map((num, index) => (
-                  <div key={index} className="flex-1 bg-[#727272] rounded flex flex-col items-center py-1">
-                    <div className="w-10 h-3 bg-[#e1e1ec] rounded-t-none rounded-b-full"></div>
-                    <div className={`flex items-center justify-center ${index === 0 ? "bg-emerald-500 text-white" : "bg-[#e1e1ec] text-[#a8a5a1]"} rounded-full w-14 h-14 text-4xl font-bold my-1`}>{num}</div>
-                    <div className="w-10 h-3 bg-[#e1e1ec] rounded-b-none rounded-t-full"></div>
-                  </div>
-                ))
-              )}
+                );
+              })}
             </div>
           </div>
 
-          <div className="flex mt-4 justify-start space-x-2 mb-4 overflow-x-auto">
+
+          <div className="flex mt-8 justify-start space-x-2 mb-2 overflow-x-auto">
             {["A", "B", "C", "D", "E", "SUM"].map((tab) => (
-              <button 
-                key={tab} 
-                className={`px-3 py-1 rounded-tl-lg text-xl font-bold rounded-tr-lg shrink-0 ${activeImgTab === tab ? "bg-[#d9ac4f] text-[#8f5206]" : "bg-[#6f7381] text-white"}`} 
+              <button
+                key={tab}
+                className={`w-10 h-10 shrink-0 flex items-center justify-center font-bold rounded-t-full ${activeImgTab === tab
+                    ? "bg-[#d9ac4f] text-[#8f5206]"
+                    : "bg-[#6f7381] text-white"
+                  }`}
                 onClick={() => setActiveImgTab(tab)}
               >
                 {tab}
@@ -462,21 +522,25 @@ function Lottery5d() {
             ))}
           </div>
 
-          {["A", "B", "C", "D", "E", "SUM"].map((tab) => (
+          {["A", "B", "C", "D", "E", "SUM"].map((tab) =>
             activeImgTab === tab && (
               <div key={tab} className="grid grid-cols-4 gap-2">
-                <div className="col-span-4 flex justify-between mt-2 space-x-1">
+
+                {/* Top Buttons: Big Small Odd Even */}
+                <div className="col-span-4 flex justify-between mt-2 space-x-2 px-1">
                   {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map((label) => (
                     <button
                       key={label}
-                      className={`bg-[#6f7381] text-white px-1 py-2 rounded-md hover:bg-[#d9ac4f] flex-1 text-lg`}
+                      className="bg-[#57554f] text-white text-xs px-1.5 py-[10px] rounded-md  flex-1"
                       onClick={() => handleOptionClick(label.split(" ")[0], "size")}
                     >
                       {label}
                     </button>
                   ))}
                 </div>
-                <div className="flex flex-col px-1 col-span-4 mt-2">
+
+                {/* Number Circles */}
+                <div className="flex flex-col px-1 col-span-4 mt-1">
                   {activeImgTab !== "SUM" ? (
                     <>
                       <div className="flex justify-between px-1 mb-2 space-x-1">
@@ -486,10 +550,10 @@ function Lottery5d() {
                             className="flex flex-col items-center cursor-pointer"
                             onClick={() => handleOptionClick(number, "number")}
                           >
-                            <div className="w-10 h-10 flex border border-[#666462] items-center justify-center text-[#666462] rounded-full text-lg font-bold">
+                            <div className="w-8 h-8 flex items-center justify-center text-[#a8a5a1 border border-[#a8a5a] rounded-full text-[#a8a5a1]">
                               {number}
                             </div>
-                            <p className="text-lg text-[#a8a5a1]">{number}</p>
+                            <p className="text-sm text-[#a8a5a1] mt-1">9X</p>
                           </div>
                         ))}
                       </div>
@@ -500,10 +564,10 @@ function Lottery5d() {
                             className="flex flex-col items-center cursor-pointer"
                             onClick={() => handleOptionClick(number, "number")}
                           >
-                            <div className="w-10 h-10 flex border border-[#666462] items-center justify-center text-[#666462] rounded-full text-sm font-bold">
+                            <div className="w-8 h-8 flex items-center justify-center text-[#a8a5a1] border border-[#a8a5a] rounded-full">
                               {number}
                             </div>
-                            <p className="text-lg text-[#a8a5a1]">{number}</p>
+                            <p className="text-xs text-[#a8a5a1] mt-1">9X</p>
                           </div>
                         ))}
                       </div>
@@ -514,29 +578,40 @@ function Lottery5d() {
                 </div>
               </div>
             )
-          ))}
+          )}
+
         </div>
 
         <div className="flex justify-between space-x-1 mb-6 mt-2">
-          <button 
-            className={`w-full px-3 py-2 text-base rounded-lg shadow text-center ${activeTab === "gameHistory" ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold" : "bg-[#333332] text-[#a8a5a1] font-normal"}`} 
+          <button
+            className={`w-full px-3 py-2 text-sm rounded-lg shadow text-center ${activeTab === "gameHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("gameHistory")}
           >
             Game history
           </button>
-          <button 
-            className={`w-full px-3 py-2 text-base rounded-lg shadow text-center ${activeTab === "chart" ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold" : "bg-[#333332] text-[#a8a5a1] font-normal"}`} 
+          <button
+            className={`w-full px-3 py-1 text-sm rounded-lg shadow text-center ${activeTab === "chart"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("chart")}
           >
             Chart
           </button>
-          <button 
-            className={`w-full px-3 py-2 text-base rounded-lg shadow text-center ${activeTab === "myHistory" ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold" : "bg-[#333332] text-[#a8a5a1] font-normal"}`} 
+          <button
+            className={`w-full px-3 py-1 text-sm rounded-lg shadow text-center ${activeTab === "myHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+              }`}
             onClick={() => setActiveTab("myHistory")}
           >
             My History
           </button>
         </div>
+
 
         <div className="mb-2 rounded-lg shadow">
           {activeTab === "gameHistory" && (
@@ -564,16 +639,16 @@ function Lottery5d() {
                         "N/A";
                       return (
                         <tr key={index} className="bg-[#3f3f3e] relative">
-                          <td className="px-2 text-sm text-[#f5f3f0] py-2">{record.periodId}</td>
-                          <td className="px-2 py-2 text-sm text-center">
+                          <td className="px-2 text-xs text-[#f5f3f0] py-2">{record.periodId}</td>
+                          <td className="px-2 py-2 text-xs text-center">
                             <div className="flex justify-center items-center space-x-1">
                               {[record.result.A, record.result.B, record.result.C, record.result.D, record.result.E].map((number, idx) => (
-                                <div key={idx} className="w-6 h-6 flex items-center justify-center text-[#f5f3f0] bg-[#3f3f3e] rounded-full border border-gray-400">{number}</div>
+                                <div key={idx} className="w-5 h-5 flex items-center justify-center text-[#f5f3f0] bg-[#3f3f3e] rounded-full border border-gray-400">{number}</div>
                               ))}
                             </div>
                           </td>
                           <td className="px-2 py-2 text-sm text-center">
-                            <div className="w-6 h-6 flex items-center justify-center bg-[#d9ac4f] rounded-full border border-gray-400">{totalSum}</div>
+                            <div className="w-5 h-5 flex items-center justify-center bg-[#d9ac4f] rounded-full border border-gray-400">{totalSum}</div>
                           </td>
                         </tr>
                       );
@@ -638,17 +713,17 @@ function Lottery5d() {
           )}
           <div className="text-center mb-0 w-full mt-2">
             <div className="bg-[#333332] rounded-xl shadow-lg p-4 flex items-center justify-center space-x-4">
-              <button 
-                className="p-3 text-[#666462] bg-[#4d4d4c] rounded-lg disabled:opacity-50" 
-                onClick={() => handlePageChange(currentPage - 1)} 
+              <button
+                className="p-3 text-[#666462] bg-[#4d4d4c] rounded-lg disabled:opacity-50"
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
                 <IoIosArrowBack className="w-5 h-5" />
               </button>
               <span className="px-6 text-sm text-[#a8a5a1] font-semibold">{currentPage} / {totalPages}</span>
-              <button 
-                className="p-3 text-[#8f5206] bg-[#d9ac4f] rounded-lg disabled:opacity-50" 
-                onClick={() => handlePageChange(currentPage + 1)} 
+              <button
+                className="p-3 text-[#8f5206] bg-[#d9ac4f] rounded-lg disabled:opacity-50"
+                onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
                 <IoIosArrowForward />
@@ -713,11 +788,10 @@ function Lottery5d() {
               {multiplierOptions.map((label) => (
                 <button
                   key={label}
-                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${
-                    popupMultiplier === label
-                      ? tailwindColorMap[betType === "number" ? "Number" : selectedOption]
-                      : tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")
-                  } transition ${popupMultiplier === label ? "ring-2 ring-white" : ""}`}
+                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${popupMultiplier === label
+                    ? tailwindColorMap[betType === "number" ? "Number" : selectedOption]
+                    : tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")
+                    } transition ${popupMultiplier === label ? "ring-2 ring-white" : ""}`}
                   onClick={() => handleMultiplierClick(label)}
                 >
                   {label}

@@ -1,13 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import wcard from "../../Assets/wcard.png";
 import SafeHeader from './Safeheader';
 import { Link } from "react-router-dom";
+import apiServices from '../../api/apiServices';
 
 const FinancialCard = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showTransferInPopup, setShowTransferInPopup] = useState(false);
   const [transferAmount, setTransferAmount] = useState(100);
   const [error, setError] = useState(false);
+  const [vaultStatus, setVaultStatus] = useState(null)
+  const [transactionHistory,setTransactionHistory] = useState([])
+  
+  const fetchVaultStatus = async () => {
+    let data = await apiServices.getVaultStatus();
+    setVaultStatus(data)
+  }
+
+    const fetchTransactionHistory = async () => {
+    let data = await apiServices.getTransactionHistory();
+    setTransactionHistory(data?.transactions)
+  }
+  useEffect(() => {
+    fetchVaultStatus()
+    fetchTransactionHistory()
+  }, [])
 
   const handleTransferOutClick = () => {
     setShowPopup(true);
@@ -26,7 +43,7 @@ const FinancialCard = () => {
   const handleAmountChange = (e) => {
     const amount = parseInt(e.target.value) || 0;
     setTransferAmount(amount);
-    if (amount > 200.00) {
+    if (amount > vaultStatus?.walletBalance) {
       setError(true);
     } else {
       setError(false);
@@ -36,7 +53,7 @@ const FinancialCard = () => {
   const handleSliderChange = (e) => {
     const amount = parseInt(e.target.value) || 0;
     setTransferAmount(amount);
-    if (amount > 200.00) {
+    if (amount > vaultStatus?.vaultBalance) {
       setError(true);
     } else {
       setError(false);
@@ -44,14 +61,14 @@ const FinancialCard = () => {
   };
 
   const handleAllClick = () => {
-    setTransferAmount(200.00);
+    setTransferAmount(vaultStatus?.walletBalance);
     setError(false);
   };
 
   const handleMultiplierClick = (multiplier) => {
     const newAmount = transferAmount * multiplier;
     setTransferAmount(newAmount);
-    if (newAmount > 200.00) {
+    if (newAmount > vaultStatus?.walletBalance) {
       setError(true);
     } else {
       setError(false);
@@ -92,11 +109,28 @@ const FinancialCard = () => {
     },
   ];
 
+  const handleTransferOut = async () => {
+    let data = await apiServices.withdrawVault({ amount: transferAmount })
+    if(data?.success == true){
+      fetchVaultStatus();
+      setShowPopup(false)
+      setTransferAmount(1)
+    }
+  }
+  const handleTransferIn = async() => {
+ let data = await apiServices?.vaultDeposit({ amount: transferAmount })
+    if(data?.success == true){
+      fetchVaultStatus();
+      setShowTransferInPopup(false)
+      setTransferAmount(1)
+    }
+  }
+
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-[#242424] shadow-sm p-4 relative">
       <SafeHeader />
       <div className="text-center mb-2 mt-10">
-        <p className="text-rose-500 text-sm">Interest rate 0.10%</p>
+        <p className="text-rose-500 text-sm">Interest rate {vaultStatus?.currentInterestRate}%</p>
       </div>
 
       <div className="rounded-lg mb-4 text-white relative">
@@ -114,7 +148,7 @@ const FinancialCard = () => {
             </div>
           </div>
           <div className="absolute top-10 left-4">
-            <h2 className="text-3xl font-bold text-[#8f5206]">₹200.00</h2>
+            <h2 className="text-3xl font-bold text-[#8f5206]">₹{vaultStatus?.vaultBalance}</h2>
           </div>
           <div className="absolute bottom-12 left-4 text-xs text-[#8f5206]">
             <span className='text-sm font-normal'>24-hour estimated revenue </span>
@@ -126,7 +160,7 @@ const FinancialCard = () => {
       <div className="bg-[#333332] rounded-lg p-5 mb-5 text-white">
         <div className="flex justify-between mb-6">
           <div className="text-center flex-1">
-            <p className="text-rose-500 font-medium">₹0.00</p>
+            <p className="text-rose-500 font-medium">₹{vaultStatus?.totalInterestEarned}</p>
             <p className="text-gray-400 text-xs">Generated revenue</p>
           </div>
           <div className="text-center flex-1">
@@ -136,7 +170,7 @@ const FinancialCard = () => {
         </div>
         <div className="text-center mb-6">
           <div className="border border-gray-600 rounded-full px-4 py-1 text-xs text-gray-300 inline-block">
-            My interest rate 0.1
+            My interest rate {vaultStatus?.currentInterestRate}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-5">
@@ -158,23 +192,25 @@ const FinancialCard = () => {
           <span>Funds are safe and secure, and can be transferred at any time</span>
         </div>
         <div className="text-center">
-  <a href="/about-safe" className="text-gray-400 text-sm">
-    Learn about safes »
-  </a>
-</div>
+          <a href="/about-safe" className="text-gray-400 text-sm">
+            Learn about safes »
+          </a>
+        </div>
 
       </div>
 
       {/* Updated Historical Records Section */}
       <div className="space-y-4">
         <h3 className="text-white text-lg font-semibold">Historical records</h3>
-        {historicalRecords.map((record, index) => (
+        {transactionHistory.slice(0,10)?.map((record, index) => (
           <div key={index} className="bg-[#333332] rounded-lg p-4 text-white">
             <div className="flex justify-between items-center mb-3">
-              <button className={`${record.buttonColor} text-white px-3 py-1 rounded-md text-sm font-medium`}>
-                {record.type}
+              <button className={`${record?.type == 'deposit'?'bg-green-500':'bg-orange-500'} text-white px-3 py-1 rounded-md text-sm font-medium`}
+              style={{textTransform:'capitalize'}}
+              >
+                {record?.type == 'deposit' ? 'Transfer In' :'Transfer Out'}
               </button>
-              <span className={`${record.color} text-lg font-bold`}>{record.amount}</span>
+              <span className={`${record?.type == 'deposit'?'text-green-500':'text-red-500'} text-lg font-bold`}>{record?.type == 'deposit' ? '+' :'-'}₹{record.amount}</span>
             </div>
             <div className="mt-4 bg-[#2a2a2a] p-5 rounded-lg shadow-lg">
               <div className="text-gray-400 text-sm space-y-3">
@@ -189,7 +225,7 @@ const FinancialCard = () => {
               </div>
             </div>
             <div className="flex justify-between mt-3 text-gray-400 text-xs">
-              <span>{record.id}</span>
+              <span>{record.orderNo}</span>
               <span>{record.date}</span>
             </div>
           </div>
@@ -226,7 +262,7 @@ const FinancialCard = () => {
               <input
                 type="range"
                 min="0"
-                max="200"
+                max={vaultStatus?.vaultBalance}
                 value={transferAmount}
                 onChange={handleSliderChange}
                 className="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer"
@@ -234,7 +270,7 @@ const FinancialCard = () => {
               <div className="flex justify-between text-xs text-gray-500 mt-1">
                 <span>0</span>
                 <span>{transferAmount}</span>
-                <span>200</span>
+                <span>{vaultStatus?.vaultBalance}</span>
               </div>
             </div>
             {error && (
@@ -246,7 +282,7 @@ const FinancialCard = () => {
             <div className="text-sm text-white space-y-2">
               <div className="flex justify-between">
                 <span>Amount available</span>
-                <span>₹200.00</span>
+                <span>₹{vaultStatus?.vaultBalance}</span>
               </div>
               <div className="flex justify-between">
                 <span>Amount transferred</span>
@@ -254,7 +290,7 @@ const FinancialCard = () => {
               </div>
               <div className="flex justify-between">
                 <span>Daily interest rate</span>
-                <span>0.1%</span>
+                <span>{vaultStatus?.currentInterestRate * 100}</span>
               </div>
               <div className="flex justify-between">
                 <span>Income</span>
@@ -263,8 +299,9 @@ const FinancialCard = () => {
             </div>
             <div className="mt-4">
               <button
-                onClick={handleCancel}
+                onClick={handleTransferOut}
                 className="w-full bg-green-500 text-white py-2 rounded-md font-medium"
+                disabled={error}
               >
                 Transfer Out
               </button>
@@ -316,11 +353,10 @@ const FinancialCard = () => {
                   <button
                     key={index}
                     onClick={() => handleMultiplierClick(btn.multiplier)}
-                    className={`py-1 px-2 rounded-md text-sm font-medium ${
-                      btn.highlight
+                    className={`py-1 px-2 rounded-md text-sm font-medium ${btn.highlight
                         ? "bg-green-500 text-white"
                         : "bg-gray-200 text-gray-800"
-                    }`}
+                      }`}
                   >
                     {btn.label}
                   </button>
@@ -329,22 +365,23 @@ const FinancialCard = () => {
               <div className="text-sm text-white space-y-1">
                 <div className="flex justify-between">
                   <span>Amount available</span>
-                  <span>11.87</span>
+                  <span>{vaultStatus?.walletBalance}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Amount transferred</span>
-                  <span className="text-red-500">200.00</span>
+                  <span className="text-red-500">{transferAmount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>24-hour estimated revenue</span>
-                  <span>0.20</span>
+                  <span>{(transferAmount*(vaultStatus?.currentInterestRate*100)/100).toFixed(2)}</span>
                 </div>
               </div>
             </div>
             <div className="bg-[#333332] py-3 px-4">
               <button
-                onClick={handleCancel}
+                onClick={handleTransferIn}
                 className="w-full bg-[#242424] text-white py-2 rounded-md font-medium"
+                disabled={error}
               >
                 Transfer In
               </button>

@@ -18,60 +18,61 @@ import user8 from "../Assets/Userimg/user8.png";
 import user9 from "../Assets/Userimg/user9.png";
 import user10 from "../Assets/Userimg/user10.png";
 import { Link } from "react-router-dom";
+import apiServices from "../api/apiServices";
+export const avatarMap = {
+  1: user1,
+  2: user2,
+  3: user3,
+  4: user4,
+  5: user5,
+  6: user6,
+  7: user7,
+  8: user8,
+  9: user9,
+  10: user10,
+};
+
 
 const UserProfile = () => {
   const [showAvatarPage, setShowAvatarPage] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(settingicon);
   const [showNicknamePopup, setShowNicknamePopup] = useState(false);
-  const [nickname, setNickname] = useState("MemberNNGHEGCK");
+  const [nickname, setNickname] = useState(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [userData, setUserData] = useState(null)
   const navigate = useNavigate();
 
   // Fetch user profile (unchanged)
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("authToken");
-        const response = await fetch("/api/user/profile", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      const data = await apiServices.getUserProfile();
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
-        }
-
-        const data = await response.json();
-        if (data.avatar) {
-          const avatarMap = {
-            "user1.png": user1,
-            "user2.png": user2,
-            "user3.png": user3,
-            "user4.png": user4,
-            "user5.png": user5,
-            "user6.png": user6,
-            "user7.png": user7,
-            "user8.png": user8,
-            "user9.png": user9,
-            "user10.png": user10,
-          };
-          setSelectedAvatar(avatarMap[data.avatar] || settingicon);
-        }
-      } catch (err) {
-        setError("Error fetching profile: " + err.message);
-      } finally {
-        setLoading(false);
+      if (!data?.success) {
+        console.error("Error fetching user data");
+        return;
       }
-    };
+
+      const user = data.user;
+      const avatarId = parseInt(user.profile_picture_id, 10); // assuming profile_picture_id exists
+
+      setSelectedAvatar(avatarId);
+      setUserData(user);
+      setNickname(user?.user_name)
+    } catch (err) {
+      setError("Error fetching profile: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+
 
     fetchUserProfile();
   }, []);
+
 
   const handleAvatarChange = async (avatar) => {
     try {
@@ -79,36 +80,28 @@ const UserProfile = () => {
       setError(null);
 
       const avatarMap = {
-        [user1]: "user1.png",
-        [user2]: "user2.png",
-        [user3]: "user3.png",
-        [user4]: "user4.png",
-        [user5]: "user5.png",
-        [user6]: "user6.png",
-        [user7]: "user7.png",
-        [user8]: "user8.png",
-        [user9]: "user9.png",
-        [user10]: "user10.png",
+        [user1]: "1",
+        [user2]: "2",
+        [user3]: "3",
+        [user4]: "4",
+        [user5]: "5",
+        [user6]: "6",
+        [user7]: "7",
+        [user8]: "8",
+        [user9]: "9",
+        [user10]: "10",
       };
 
       const avatarFileName = avatarMap[avatar] || "default.png";
-      const token = localStorage.getItem("authToken");
-
-      const response = await fetch("/api/user/avatar", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ avatar: avatarFileName }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update avatar");
+      let payload = userData
+      payload.profile_picture_id = avatarFileName
+      let data = await apiServices.updateUserProfile(payload)
+      if (data?.success == true) {
+        setSelectedAvatar(avatar);
+        setShowAvatarPage(false);
+        fetchUserProfile()
       }
 
-      setSelectedAvatar(avatar);
-      setShowAvatarPage(false);
     } catch (err) {
       setError("Error updating avatar: " + err.message);
     } finally {
@@ -116,12 +109,14 @@ const UserProfile = () => {
     }
   };
 
-  const handleNicknameChange = (e) => {
-    setNickname(e.target.value);
-  };
+  const handleConfirm = async () => {
+    let payload = userData
+    payload.user_name = nickname
+    let data = await apiServices.updateUserProfile(payload)
+    if (data?.success == true) {
+      setShowNicknamePopup(false);
+    }
 
-  const handleConfirm = () => {
-    setShowNicknamePopup(false);
   };
 
   const handleCopy = (text) => {
@@ -185,7 +180,7 @@ const UserProfile = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="w-24 h-24 rounded-full bg-gray-500 overflow-hidden">
               <img
-                src={selectedAvatar}
+                src={avatarMap[Number(userData?.profile_picture_id)]}
                 alt="User avatar"
                 className="w-full h-full object-cover"
               />
@@ -205,7 +200,7 @@ const UserProfile = () => {
           >
             <div className="text-gray-300 text-lg">Nickname</div>
             <div className="flex items-center">
-              <span className="mr-2 text-lg font-normal">{nickname}</span>
+              <span className="mr-2 text-lg font-normal">{userData?.user_name}</span>
               <ChevronRight className="w-5 h-5 text-gray-400" />
             </div>
           </div>
@@ -215,13 +210,13 @@ const UserProfile = () => {
             <div className="flex items-center">
               <span
                 className="mr-3 text-white text-normal font-normal cursor-pointer"
-                onClick={() => handleCopy("1952877")}
+                onClick={() => handleCopy(userData?.user_id)}
               >
-                1952877
+                {userData?.user_id}
               </span>
               <button
                 className="w-6 h-6 flex items-center justify-center rounded bg-gray-700 hover:bg-gray-600"
-                onClick={() => handleCopy("1952877")}
+                onClick={() => handleCopy(userData?.user_id)}
               >
                 <Copy className="w-4 h-4 text-white" />
               </button>
@@ -312,7 +307,7 @@ const UserProfile = () => {
                 <input
                   type="text"
                   value={nickname}
-                  onChange={handleNicknameChange}
+                  onChange={(e) => setNickname(e.target.value)}
                   className="w-full py-3 px-5 bg-[#1b1b1b] text-white rounded-full mb-8 border border-[#444] focus:outline-none text-base"
                 />
               </div>

@@ -167,9 +167,10 @@ function App() {
                                         <Route path="/depositk3" element={<DepositK3 />} />
                                         <Route path="/withdrawk3" element={<WithdrawK3 />} />
                                         <Route path="/lottery5d" element={<Lottery5d />} />
+                                         <Route path="/lotterytrxwing" element={<LotteryTrxWingo />} />
                                         <Route path="/deposit5d" element={<Deposit5d />} />
                                         <Route path="/withdraw5d" element={<Withdraw5d />} />
-                                        <Route path="/lotterytrxwingo" element={<LotteryTrxWingo />} />
+                                       
                                         <Route path="/deposittrx" element={<DepositTrx />} />
                                         <Route path="/withdrawtrx" element={<WithdrawTrx />} />
                                         <Route path="/orderdetail" element={<OrderDetailsComponent />} />

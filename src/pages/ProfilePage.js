@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Slice/loginSlice"; // Import logout action
 import { AiOutlineRight } from "react-icons/ai";
 import wallet from "../../src/Assets/wallets.png";
@@ -27,14 +27,35 @@ import Footer from "../components/Footer";
 import { FaCopy } from "react-icons/fa";
 import refreshicon from '../Assets/refresh.png'
 import vip from "../Assets/vip/vip1.png"
+import Avatar from "../components/common/Avatar";
+import apiServices from "../api/apiServices";
+import { avatarMap } from "./Settings";
 
 function ProfilePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // Add state for controlling the logout modal
+  const [userData, setUserData] = useState(null)
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const data = await apiServices.getUserProfile();
+
+        if (!data?.success) {
+          console.error("Error fetching user data");
+          return;
+        }
+        const user = data.user;
+        setUserData(user);
+      } catch (err) {
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
 
   // Handle logout button click
   const handleLogoutClick = (e) => {
@@ -93,19 +114,14 @@ function ProfilePage() {
           <div className="px-4 py-4">
             <div className="flex items-center">
               {/* Profile Image */}
-              <div className="w-16 h-16 rounded-full overflow-hidden border mt-1">
-                <img
-                  src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fd2qp0siotla746.cloudfront.net%2Fimg%2Fuse-cases%2Fprofile-picture%2Ftemplate_3.jpg&f=1&nofb=1"
-                  alt="User Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+
+              <Avatar src={avatarMap[Number(userData?.profile_picture_id)]} />
 
               {/* Profile Details */}
               <div className="ml-2 mt-1">
                 {/* Name + VIP */}
                 <div className="flex items-center mt-1">
-                  <h2 className="text-base font-semibold text-white uppercase">MEMBERNNGHEGCK</h2>
+                  <h2 className="text-base font-semibold text-white uppercase">{userData?.user_name}</h2>
                   <img src={vip} alt="VIP Badge" className="h-5 ml-2 mt-1" />
                 </div>
 
@@ -113,7 +129,7 @@ function ProfilePage() {
                 <div className="flex items-center bg-[#dd9138] rounded-full text-white mt-1 px-3 py-[2px] text-xs w-fit space-x-1.5">
                   <span className="font-medium">UID</span>
                   <span className="opacity-70">|</span>
-                  <span className="font-medium">1952877</span>
+                  <span className="font-medium">{userData?.user_id}</span>
                   <button className="pl-1">
                     <FaCopy className="text-white text-[11px]" />
                   </button>
@@ -121,7 +137,7 @@ function ProfilePage() {
 
 
                 {/* Login Time */}
-                <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p>
+                {/* <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p> */}
               </div>
             </div>
           </div>
@@ -134,7 +150,7 @@ function ProfilePage() {
               {/* Total balance */}
               <div className="text-gray-400 text-xs font-normal">Total balance</div>
               <div className="flex items-center gap-4 mt-1">
-                <div className="text-white text-base font-semibold">₹9.43</div>
+                <div className="text-white text-base font-semibold">₹{userData?.wallet_balance}</div>
                 <button className="text-white">
                   <img src={refreshicon} alt="refresh" className="w-5 h-5" />
                 </button>
@@ -181,20 +197,20 @@ function ProfilePage() {
             <Link to="/safe" className="block">
               <div className="bg-[#333332] p-1 rounded-lg shadow-md  cursor-pointer">
                 <div className="flex justify-between items-center mb-2">
-                 <div className="flex">
-  <img
-    src={safe}
-    alt="Safe Icon"
-    className="w-14 h-12 mt-3 ml-4 flex-shrink-0"
-  />
-  <div className="text-[#a8a5a1] ml-4 leading-tight">
-    <div className="text-base">Vault</div>
-    <div className="text-xs leading-snug">
-      the daily interest rate is 0.1%, and the income is<br />
-      calculated once every 1 minute.
-    </div>
-  </div>
-</div>
+                  <div className="flex">
+                    <img
+                      src={safe}
+                      alt="Safe Icon"
+                      className="w-14 h-12 mt-3 ml-4 flex-shrink-0"
+                    />
+                    <div className="text-[#a8a5a1] ml-4 leading-tight">
+                      <div className="text-base">Vault</div>
+                      <div className="text-xs leading-snug">
+                        the daily interest rate is 0.1%, and the income is<br />
+                        calculated once every 1 minute.
+                      </div>
+                    </div>
+                  </div>
 
                 </div>
               </div>
@@ -273,85 +289,85 @@ function ProfilePage() {
 
 
 
-           <div className="bg-[#333332] p-4 rounded-lg shadow-md mt-4">
-  <div className="space-y-6">
-    {/* Notification */}
-    <div>
-      <Link
-        to="/notificationProfile"
-        className="w-full text-base font-normal text-white flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <img
-            src={NotifyIcon}
-            alt="Notification Icon"
-            className="w-6 h-6 flex-shrink-0"
-          />
-          Notification
-        </div>
-        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-      </Link>
-      <hr className="my-4 border-[#525167]" />
-    </div>
+            <div className="bg-[#333332] p-4 rounded-lg shadow-md mt-4">
+              <div className="space-y-6">
+                {/* Notification */}
+                <div>
+                  <Link
+                    to="/notificationProfile"
+                    className="w-full text-base font-normal text-white flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={NotifyIcon}
+                        alt="Notification Icon"
+                        className="w-6 h-6 flex-shrink-0"
+                      />
+                      Notification
+                    </div>
+                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+                  </Link>
+                  <hr className="my-4 border-[#525167]" />
+                </div>
 
-    {/* Gifts */}
-    <div>
-      <Link
-        to="/Gift"
-        className="w-full text-base font-normal text-white flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <img src={gift} alt="Gift Icon" className="w-6 h-6 flex-shrink-0" />
-          Gifts
-        </div>
-        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-      </Link>
-      <hr className="my-4 border-[#525167]" />
-    </div>
+                {/* Gifts */}
+                <div>
+                  <Link
+                    to="/Gift"
+                    className="w-full text-base font-normal text-white flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img src={gift} alt="Gift Icon" className="w-6 h-6 flex-shrink-0" />
+                      Gifts
+                    </div>
+                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+                  </Link>
+                  <hr className="my-4 border-[#525167]" />
+                </div>
 
-    {/* Game Statistics */}
-    <div>
-      <Link
-        to="/gamestatistics"
-        className="w-full text-base font-normal text-white flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <img
-            src={gameStatistics}
-            alt="Game Statistics Icon"
-            className="w-6 h-6 flex-shrink-0"
-          />
-          Game Statistics
-        </div>
-        <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
-      </Link>
-      <hr className="my-4 border-[#525167]" />
-    </div>
+                {/* Game Statistics */}
+                <div>
+                  <Link
+                    to="/gamestatistics"
+                    className="w-full text-base font-normal text-white flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={gameStatistics}
+                        alt="Game Statistics Icon"
+                        className="w-6 h-6 flex-shrink-0"
+                      />
+                      Game Statistics
+                    </div>
+                    <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
+                  </Link>
+                  <hr className="my-4 border-[#525167]" />
+                </div>
 
-    {/* Language */}
-    <div>
-      <Link
-        to="/language"
-        className="w-full text-base font-normal text-white flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <img
-            src={languageIcon}
-            alt="Language Icon"
-            className="w-6 h-6 flex-shrink-0"
-          />
-          <span>Language</span>
-        </div>
+                {/* Language */}
+                <div>
+                  <Link
+                    to="/language"
+                    className="w-full text-base font-normal text-white flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={languageIcon}
+                        alt="Language Icon"
+                        className="w-6 h-6 flex-shrink-0"
+                      />
+                      <span>Language</span>
+                    </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-sm text-[#a8a5a1]">English</span>
-          <AiOutlineRight className="text-[#666666] text-base" />
-        </div>
-      </Link>
-      <hr className="my-4 border-[#525167]" />
-    </div>
-  </div>
-</div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-sm text-[#a8a5a1]">English</span>
+                      <AiOutlineRight className="text-[#666666] text-base" />
+                    </div>
+                  </Link>
+                  <hr className="my-4 border-[#525167]" />
+                </div>
+              </div>
+            </div>
 
 
             <div className="bg-[#333332] text-[#a8a5a1] p-4 rounded-lg shadow-md mt-4">

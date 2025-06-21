@@ -1,7 +1,7 @@
 // auth.js - Enhanced with automatic logout and redirect
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import {jwtDecode} from "jwt-decode"
 // Use CORS proxy for development, direct URL for production
 const BASE_URL = "https://api.strikecolor1.com";
 
@@ -179,19 +179,32 @@ export const isAuthenticated = () => {
     if (typeof localStorage === 'undefined') {
       return false;
     }
-    
+
     const token = localStorage.getItem("token");
-    
     if (!token) {
       return false;
     }
-    
-    // Optional: Add token expiry check here if your tokens have expiry info
-    // You can decode JWT and check exp field
-    
+
+    // Decode token to check expiration
+    const decoded = jwtDecode(token); // { exp: 1718911000, ... }
+
+    if (decoded.exp) {
+      const currentTime = Date.now() / 1000; // in seconds
+      if (decoded.exp < currentTime) {
+        // Token expired
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("token")
+        window.location.href = "/login"
+        return false;
+      }
+    }
+
     return true;
   } catch (error) {
-    console.error('Error checking authentication:', error);
+    console.error("Invalid token or error checking auth:", error);
+    localStorage.removeItem("authToken"); // clean up
+    window.location.href = "/login"
+    localStorage.removeItem("token")
     return false;
   }
 };
