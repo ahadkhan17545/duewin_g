@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Promotionheader from "./../components/Promotionheader";
 import { FaGreaterThan } from "react-icons/fa6";
 import CopyLink from "./../Assets/copy link.png";
@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import subordinate from "../Assets/finalicons/subordinate.png";
 import { MdOutlineContentCopy } from "react-icons/md";
 import Footer from "../components/Footer";
+import apiServices from "../api/apiServices";
 
 // Disable browser scroll restoration
 if (typeof window !== "undefined" && window.history.scrollRestoration) {
@@ -34,12 +35,39 @@ function PromotionPage() {
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [rememberPassword, setRememberPassword] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [referral, setReferal] = useState(null)
+  const [totalReferral, setTotalReferral] = useState(null)
+  const [userData ,setUserData] = useState(null)
 
   const invitationCode = "185853395581";
+  const fetchReferal = async () => {
+    let data = await apiServices?.getReferral()
+    if (data?.success == true) {
+      setReferal(data?.directReferrals)
+      setTotalReferral(data?.total)
+    }
+  }
+  const fetchUserProfile = async () => {
+    try {
+      const data = await apiServices.getUserProfile();
+
+      if (!data?.success) {
+        console.error("Error fetching user data");
+        return;
+      }
+      const user = data.user;
+      setUserData(user);
+    } catch (err) {
+    }
+  };
+  useEffect(() => {
+    fetchReferal()
+    fetchUserProfile()
+  }, [])
 
   const handleCopy = () => {
     navigator.clipboard
-      .writeText(invitationCode)
+      .writeText(userData?.referring_code)
       .then(() => {
         setCopied(true);
         setTimeout(() => {
@@ -85,7 +113,7 @@ function PromotionPage() {
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-[#242424] font-sans">
       <Promotionheader className="fixed top-0 left-0 w-full z-50" />
-      
+
       {/* Center Copy success notification */}
       {copied && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -99,7 +127,7 @@ function PromotionPage() {
           </div>
         </div>
       )}
-      
+
       {/* Top section with background image - Full width */}
       <div
         className="relative w-screen overflow-hidden"
@@ -121,7 +149,7 @@ function PromotionPage() {
           />
         </div>
       </div>
-      
+
       {/* Content section that partially overlaps with the background */}
       <div className="relative z-20 w-full px-4 mx-auto mt-[-16rem] max-w-md">
         <h1 className="text-[#8f5206] text-3xl text-center mb-1 font-sans">0</h1>
@@ -136,7 +164,7 @@ function PromotionPage() {
         <p className="text-[#8f5206] text-sm text-center mt-1 mb-2 font-sans">
           Upgrade the level to increase commission income
         </p>
-        
+
         {/* Table section with semi-transparent background */}
         <div className="bg-[#242424] bg-opacity-90 rounded-lg overflow-hidden">
           <table className="table-auto w-full bg-[#333332] bg-opacity-90 font-sans">
@@ -158,7 +186,7 @@ function PromotionPage() {
             </thead>
             <tbody className="text-center">
               <tr>
-                <td className="text-white border-r border-[#242424] p-[2px]">0</td>
+                <td className="text-white border-r border-[#242424] p-[2px]">{totalReferral}</td>
                 <td className="text-white p-[2px]">0</td>
               </tr>
               <tr>
@@ -220,7 +248,7 @@ function PromotionPage() {
             </button>
           </Link>
         </div>
-        
+
         {/* Additional menu items */}
         <div className="bg-[#333332] bg-opacity-90 p-4 rounded-lg mb-3">
           <div className="flex justify-between items-center">
@@ -232,7 +260,7 @@ function PromotionPage() {
               <p className="text-base font-sans">Copy invitation code</p>
             </div>
             <div className="flex items-center text-gray-400 space-x-2">
-              <span className="text-sm truncate max-w-20">{invitationCode}</span>
+              <span className="text-sm truncate max-w-20">{userData?.referring_code}</span>
               <button
                 className="flex items-center text-gray-400"
                 onClick={handleCopy}
@@ -326,35 +354,35 @@ function PromotionPage() {
         </Link>
 
         <div className="bg-[#333332] bg-opacity-90 p-2 rounded-lg mb-24">
-  <div className="flex items-center mb-2">
-    <img src={Money} alt="Money Icon" className="mr-2 w-8 h-8" />
-    <h2 className="font-bold text-white text-sm font-sans">Promotion data</h2>
-  </div>
+          <div className="flex items-center mb-2">
+            <img src={Money} alt="Money Icon" className="mr-2 w-8 h-8" />
+            <h2 className="font-bold text-white text-sm font-sans">Promotion data</h2>
+          </div>
 
-  <div className="grid grid-cols-2 mb-2">
-    <div className="flex flex-col items-center gap-1">
-      <span className="text-white text-base">0</span>
-      <span className="text-sm text-[#a8a5a1] font-sans">This week</span>
-    </div>
-    <div className="flex flex-col border-l border-gray-700 items-center gap-1">
-      <span className="text-white text-base">0</span>
-      <span className="text-sm text-[#a8a5a1] font-sans">Total Commission</span>
-    </div>
-  </div>
+          <div className="grid grid-cols-2 mb-2">
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-white text-base">0</span>
+              <span className="text-sm text-[#a8a5a1] font-sans">This week</span>
+            </div>
+            <div className="flex flex-col border-l border-gray-700 items-center gap-1">
+              <span className="text-white text-base">0</span>
+              <span className="text-sm text-[#a8a5a1] font-sans">Total Commission</span>
+            </div>
+          </div>
 
-  <div className="grid grid-cols-2">
-    <div className="flex flex-col items-center gap-1">
-      <span className="text-white text-base">0</span>
-      <span className="text-sm text-[#a8a5a1] font-sans">direct subordinate</span>
-    </div>
-    <div className="flex flex-col border-l border-gray-700 items-center gap-1 text-center px-1">
-      <span className="text-white text-base">0</span>
-      <span className="text-xs text-[#a8a5a1] font-sans leading-tight">
-        Total number of subordinates in the team
-      </span>
-    </div>
-  </div>
-</div>
+          <div className="grid grid-cols-2">
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-white text-base">0</span>
+              <span className="text-sm text-[#a8a5a1] font-sans">direct subordinate</span>
+            </div>
+            <div className="flex flex-col border-l border-gray-700 items-center gap-1 text-center px-1">
+              <span className="text-white text-base">0</span>
+              <span className="text-xs text-[#a8a5a1] font-sans leading-tight">
+                Total number of subordinates in the team
+              </span>
+            </div>
+          </div>
+        </div>
 
       </div>
       <Footer />

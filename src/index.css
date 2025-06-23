@@ -63,3 +63,14 @@ body {
     padding: 10px;
   }
 }
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%) scale(1.1);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

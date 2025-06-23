@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DepositHeader from '../../components/DepositHeader';
 import { AiOutlineFileText } from "react-icons/ai";
 import { BsDiamondFill } from "react-icons/bs";
@@ -15,6 +15,7 @@ import { FaCopy } from "react-icons/fa"; // Copy icon
 import { Check } from 'lucide-react'; // White tick icon from lucide-react
 import iconquickpay from "../../Assets/finalicons/iconquickpay.png"
 import refresh from "../../Assets/finalicons/refresh.png"
+import apiServices from '../../api/apiServices';
 
 const Deposit = () => {
   const [inputAmount, setInputAmount] = useState('');
@@ -22,6 +23,36 @@ const Deposit = () => {
   const [selectedPayment, setSelectedPayment] = useState("UPI-QRpay");
   const [selectedChannel, setSelectedChannel] = useState("Upay-USDT");
   const [showPopup, setShowPopup] = useState({ visible: false, orderNumber: '' }); // State for popup
+  const [withdrawHistory, setWithDrawHistory] = useState([])
+  const [walletBalance,setWalletBalance] =useState(0)
+  const [page, setPage] = useState(1);
+  const fetchWithdrawals = async () => {
+    try {
+      const data = await apiServices.getDepositHistory(page, 10);
+      setWithDrawHistory(data.recharges || []);
+    } catch (err) {
+      // setError("Failed to fetch withdrawal history");
+      console.log(err)
+    }
+  };
+   const fetchWalletBalance = async () => {
+      try {
+        const response = await apiServices?.getWalletBalance();
+        if (response?.success && response?.mainWallet) {
+          const balance = Number(response.mainWallet.balance) || 0;
+          setWalletBalance(balance);
+        } else {
+          setWalletBalance(0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch wallet balance:", error);
+        setWalletBalance(0);
+      }
+    };
+  useEffect(() => {
+    fetchWithdrawals()
+    fetchWalletBalance()
+  }, [])
 
   const handlePresetAmountClick = (amount) => {
     const numericAmount = amount.includes('K')
@@ -63,19 +94,19 @@ const Deposit = () => {
       <div className="w-full min-h-screen mt-8 bg-[#242424] p-3 text-[#8f5206] font-sans">
         {/* Balance Card */}
         <div
-  style={{ backgroundImage: `url(${bgImage})` }}
-  className="bg-cover bg-center p-4 rounded-xl mb-4 h-[145px] flex flex-col justify-between relative"
->
-  <div className="flex items-center space-x-2">
-    <img src={balanceIcon} alt="Balance Icon" className="w-4 h-4" />
-    <span className="text-sm">Balance</span>
-  </div>
+          style={{ backgroundImage: `url(${bgImage})` }}
+          className="bg-cover bg-center p-4 rounded-xl mb-4 h-[145px] flex flex-col justify-between relative"
+        >
+          <div className="flex items-center space-x-2">
+            <img src={balanceIcon} alt="Balance Icon" className="w-4 h-4" />
+            <span className="text-sm">Balance</span>
+          </div>
 
-  <div className="absolute top-[30%] left-4 flex items-center gap-2 text-3xl font-bold">
-    ₹115.41
-    <img src={refresh} alt="icon" className="h-5 w-7" />
-  </div>
-</div>
+          <div className="absolute top-[30%] left-4 flex items-center gap-2 text-3xl font-bold">
+            ₹{walletBalance}
+            <img onClick={fetchWalletBalance} src={refresh} alt="icon" className="h-5 w-7" />
+          </div>
+        </div>
 
 
         {/* Payment Options */}
@@ -89,11 +120,10 @@ const Deposit = () => {
             <div
               key={index}
               onClick={() => handlePaymentSelect(item.name)}
-              className={`p-3 py-3 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${
-                selectedPayment === item.name 
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]" 
-                  : "bg-[#333332] hover:bg-neutral-700"
-              }`}
+              className={`p-3 py-3 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${selectedPayment === item.name
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                : "bg-[#333332] hover:bg-neutral-700"
+                }`}
             >
               <img src={item.img} className="w-12 h-12 mx-auto mb-2" alt={item.name} />
               <div className="text-base" style={{ color: selectedPayment === item.name ? "#8f5206" : "#a8a5a1" }}>
@@ -109,7 +139,7 @@ const Deposit = () => {
             {/* Select Channel Section */}
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
               <div className="flex items-center gap-2 mb-3">
-                <img src={iconquickpay} alt='icon' className='h-7 w-7'/>
+                <img src={iconquickpay} alt='icon' className='h-7 w-7' />
                 <span className="font-semibold text-white">Select channel</span>
               </div>
               <div className="space-y-2">
@@ -120,14 +150,13 @@ const Deposit = () => {
                   <div
                     key={index}
                     onClick={() => handleChannelSelect(item.name)}
-                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${
-                      selectedChannel === item.name
-                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                        : "bg-[#4d4d4c] hover:bg-neutral-700"
-                    }`}
+                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${selectedChannel === item.name
+                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                      : "bg-[#4d4d4c] hover:bg-neutral-700"
+                      }`}
                   >
                     <div className="flex items-center">
-                    <img src={tpay} alt='icon' className='h-10 w-10 mr-4'/>
+                      <img src={tpay} alt='icon' className='h-10 w-10 mr-4' />
                       <div>
                         <div className="font-semibold text-neutral-400">{item.name}</div>
                         <div className="text-neutral-400 text-sm">{item.balance}</div>
@@ -142,7 +171,7 @@ const Deposit = () => {
             {/* Select Amount of USDT */}
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
               <div className="flex items-center gap-2 mb-6">
-                <img src={tpay} alt='icon' className='h-7 w-7'/>
+                <img src={tpay} alt='icon' className='h-7 w-7' />
                 <h2 className="text-lg font-semibold">Select amount of USDT</h2>
               </div>
 
@@ -192,11 +221,10 @@ const Deposit = () => {
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 ${
-                  isAmountSelected
-                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#6f7381] text-white"
-                }`}
+                className={`w-full transition-colors rounded-full py-3 ${isAmountSelected
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#6f7381] text-white"
+                  }`}
               >
                 Deposit
               </button>
@@ -233,129 +261,7 @@ const Deposit = () => {
                 <h2 className="text-neutral-200 text-lg font-medium">Deposit history</h2>
               </div>
 
-              <div className="space-y-4">
-                {/* First Deposit Entry - Completed */}
-                <div className="bg-[#333332] p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
-                      Deposit
-                    </button>
-                    <span className="text-emerald-500 text-sm">Complete</span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-[#dd9138]">₹100.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Type</span>
-                      <span className="text-[#a8a5a1]">ICE-QRpay</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Time</span>
-                      <span className="text-[#a8a5a1]">2025-02-16 13:18:19</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[#a8a5a1]">Order number</span>
-                      <div className="flex items-center">
-                        <span className="text-[#a8a5a1]">
-                          RC20250216131819825449900
-                        </span>
-                        <button
-                          onClick={() => handleCopyOrderNumber("RC20250216131819825449900")}
-                          className="ml-2 text-neutral-400 hover:text-neutral-300"
-                        >
-                          <FaCopy />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Second Deposit Entry - Failed */}
-                <div className="bg-[#333332] p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
-                      Deposit
-                    </button>
-                    <span className="text-red-500 text-sm">Failed</span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-[#dd9138]">₹100.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Type</span>
-                      <span className="text-[#a8a5a1]">Super-QRpay</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Time</span>
-                      <span className="text-[#a8a5a1]">2025-02-03 23:43:40</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[#a8a5a1]">Order number</span>
-                      <div className="flex items-center">
-                        <span className="text-[#a8a5a1]">
-                          RC202502032343408653769977
-                        </span>
-                        <button
-                          onClick={() => handleCopyOrderNumber("RC202502032343408653769977")}
-                          className="ml-2 text-neutral-400 hover:text-neutral-300"
-                        >
-                          <FaCopy />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Deposit Entries */}
-                {[...Array(3)].map((_, index) => (
-                  <div key={index} className="bg-[#333332] p-4 rounded-lg">
-                    <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                      <button className="bg-emerald-600 transition px-4 py-1.5 rounded-md text-white text-sm">
-                        Deposit
-                      </button>
-                      <span className="text-red-500 text-sm">Failed</span>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Balance</span>
-                        <span className="text-[#dd9138]">₹100.00</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Type</span>
-                        <span className="text-[#a8a5a1]">Super-QRpay</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Time</span>
-                        <span className="text-[#a8a5a1]">2025-02-03 23:43:40</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[#a8a5a1]">Order number</span>
-                        <div className="flex items-center">
-                          <span className="text-[#a8a5a1]">
-                            RC202502032343408653769977
-                          </span>
-                          <button
-                            onClick={() => handleCopyOrderNumber("RC202502032343408653769977")}
-                            className="ml-2 text-neutral-400 hover:text-neutral-300"
-                          >
-                            <FaCopy />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="px-2">
-                  <button className="w-full mb-4 bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] transition py-2 rounded-full font-medium">
-                    All history
-                  </button>
-                </div>
-              </div>
             </div>
           </>
         ) : (
@@ -387,9 +293,8 @@ const Deposit = () => {
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-xl cursor-pointer transition relative ${
-                      item.highlight ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]" : "bg-[#4d4d4c] hover:bg-neutral-700"
-                    }`}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${item.highlight ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]" : "bg-[#4d4d4c] hover:bg-neutral-700"
+                      }`}
                   >
                     <div className="font-semibold text-neutral-400">{item.name}</div>
                     <div className="text-neutral-400">Balance: {item.balance}</div>
@@ -434,11 +339,10 @@ const Deposit = () => {
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 mb-2 ${
-                  isAmountSelected
-                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#6f7381] text-white"
-                }`}
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${isAmountSelected
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#6f7381] text-white"
+                  }`}
               >
                 Deposit
               </button>
@@ -468,156 +372,86 @@ const Deposit = () => {
               </div>
             </div>
 
-            {/* Deposit History */}
-            <div className="bg-[#242424] rounded-xl font-sans mt-6">
-              <div className="flex items-center gap-3 mb-4">
-                <img src={deposit} alt="icon" className="h-6 w-6" />
-                <h2 className="text-neutral-200 text-lg font-medium">Deposit history</h2>
-              </div>
 
-              <div className="space-y-4">
-                {/* First Deposit Entry - Completed */}
-                <div className="bg-[#333332] p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
-                      Deposit
-                    </button>
-                    <span className="text-emerald-500 text-sm">Complete</span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-[#dd9138]">₹100.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Type</span>
-                      <span className="text-[#a8a5a1]">ICE-QRpay</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Time</span>
-                      <span className="text-[#a8a5a1]">2025-02-16 13:18:19</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[#a8a5a1]">Order number</span>
-                      <div className="flex items-center">
-                        <span className="text-[#a8a5a1]">
-                          RC20250216131819825449900口
-                        </span>
-                        <button
-                          onClick={() => handleCopyOrderNumber("RC20250216131819825449900口")}
-                          className="ml-2 text-neutral-400 hover:text-neutral-300"
-                        >
-                          <FaCopy />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Second Deposit Entry - Failed */}
-                <div className="bg-[#333332] p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                    <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
-                      Deposit
-                    </button>
-                    <span className="text-red-500 text-sm">Failed</span>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-[#dd9138]">₹100.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Type</span>
-                      <span className="text-[#a8a5a1]">Super-QRpay</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Time</span>
-                      <span className="text-[#a8a5a1]">2025-02-03 23:43:40</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[#a8a5a1]">Order number</span>
-                      <div className="flex items-center">
-                        <span className="text-[#a8a5a1]">
-                          RC202502032343408653769977
-                        </span>
-                        <button
-                          onClick={() => handleCopyOrderNumber("RC202502032343408653769977")}
-                          className="ml-2 text-neutral-400 hover:text-neutral-300"
-                        >
-                          <FaCopy />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Deposit Entries */}
-                {[...Array(3)].map((_, index) => (
-                  <div key={index} className="bg-[#333332] p-4 rounded-lg">
-                    <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
-                      <button className="bg-emerald-600 transition px-4 py-1.5 rounded-md text-white text-sm">
-                        Deposit
-                      </button>
-                      <span className="text-red-500 text-sm">Failed</span>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Balance</span>
-                        <span className="text-[#dd9138]">₹100.00</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Type</span>
-                        <span className="text-[#a8a5a1]">Super-QRpay</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#a8a5a1]">Time</span>
-                        <span className="text-[#a8a5a1]">2025-02-03 23:43:40</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[#a8a5a1]">Order number</span>
-                        <div className="flex items-center">
-                          <span className="text-[#a8a5a1]">
-                            RC202502032343408653769977
-                          </span>
-                          <button
-                            onClick={() => handleCopyOrderNumber("RC202502032343408653769977")}
-                            className="ml-2 text-neutral-400 hover:text-neutral-300"
-                          >
-                            <FaCopy />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="px-2">
-                  <button className="w-full mb-4 bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] transition py-2 rounded-full font-medium">
-                    All history
-                  </button>
-                </div>
-              </div>
-            </div>
           </>
         )}
+        <div className="bg-[#242424] rounded-xl font-sans mt-6">
+          <div className="flex items-center gap-3 mb-4">
+            <img src={deposit} alt="icon" className="h-6 w-6" />
+            <h2 className="text-neutral-200 text-lg font-medium">Deposit history</h2>
+          </div>
+
+
+        </div>
+        {withdrawHistory?.length > 0 && withdrawHistory?.map((item, index) => {
+          return (
+            <div key={index} className="space-y-4">
+              {/* First Deposit Entry - Completed */}
+              <div className="bg-[#333332] p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
+                  <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
+                    Deposit
+                  </button>
+                  <span className="text-emerald-500 text-sm" style={{ textTransform: 'capitalize' }}>{item?.status}</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-[#a8a5a1]">Balance</span>
+                    <span className="text-[#dd9138]">₹{item?.amount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#a8a5a1]">Type</span>
+                    <span className="text-[#a8a5a1]">{item?.payment_method}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#a8a5a1]">Time</span>
+                    <span className="text-[#a8a5a1]">{(item?.created_at).split('T')[0]}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#a8a5a1]">Order number</span>
+                    <div className="flex items-center">
+                      <span className="text-[#a8a5a1]">
+                        {item?.order_id}
+                      </span>
+                      <button
+                        onClick={() => handleCopyOrderNumber("RC20250216131819825449900")}
+                        className="ml-2 text-neutral-400 hover:text-neutral-300"
+                      >
+                        <FaCopy />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+            </div>
+          )
+        })}
+        <div className="px-2 mt-6">
+          <button className="w-full mb-4 bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] transition py-2 rounded-full font-medium">
+            All history
+          </button>
+        </div>
 
         {/* Popup for Copy Success (Moved outside conditional rendering) */}
         {showPopup.visible && (
-           <div className="fixed inset-0 flex items-center justify-center z-50">
-           <div className="bg-black bg-opacity-80 text-white p-4 rounded-lg shadow-lg flex flex-col items-center w-32 h-32">
-             <svg
-               className="w-20 h-20 text-white mb-1"
-               fill="none"
-               stroke="currentColor"
-               viewBox="0 0 48 48"
-               xmlns="http://www.w3.org/2000/svg"
-             >
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M10 24l10 10L38 14"></path>
-             </svg>
-             <span className="text-sm font-sans text-center">Copy successful</span>
-           </div>
-         </div>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-black bg-opacity-80 text-white p-4 rounded-lg shadow-lg flex flex-col items-center w-32 h-32">
+              <svg
+                className="w-20 h-20 text-white mb-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M10 24l10 10L38 14"></path>
+              </svg>
+              <span className="text-sm font-sans text-center">Copy successful</span>
+            </div>
+          </div>
         )}
       </div>
     </div>

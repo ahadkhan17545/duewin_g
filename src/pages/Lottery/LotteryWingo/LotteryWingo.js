@@ -150,6 +150,7 @@ function LotteryWingo() {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [fetchDataFlag,setFetchDataFlag] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState({
     minutes: 0,
     seconds: 0,
@@ -302,7 +303,7 @@ function LotteryWingo() {
   );
 
   useEffect(() => {
-    const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds;
+    const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds
 
     console.log("⏰ Time remaining:", {
       totalSeconds,
@@ -331,6 +332,8 @@ function LotteryWingo() {
     // Log when timer reaches 0
     if (totalSeconds === 0) {
       console.log("⏰ Timer reached 0");
+      setFetchDataFlag(prev =>!prev)
+      
     }
   }, [timeRemaining, playCountdownAudio, playResultAudio]);
 
@@ -578,7 +581,7 @@ function LotteryWingo() {
       };
       fetchGameHistory().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton]);
+  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
 
   // Chart useEffect
   useEffect(() => {
@@ -595,13 +598,13 @@ function LotteryWingo() {
       };
       fetchChartData().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton]);
+  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
 
   useEffect(() => {
     if (activeTab === "myHistory") {
       fetchUserBets(currentPage).catch(console.error);
     }
-  }, [activeTab, currentPage, fetchUserBets]);
+  }, [activeTab, currentPage, fetchUserBets,fetchDataFlag]);
 
   // Initial timer setup
   useEffect(() => {
@@ -1176,7 +1179,7 @@ function LotteryWingo() {
                       {gameHistoryData[0]?.size || "Big"}
                     </p>
                     <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded">
-                      {gameHistoryData[0]?.parity || "Even"}
+                      {gameHistoryData[0]?.parity || "Even"}Thanks to all our members — past and present — for being part of our journey
                     </p>
                   </div>
                   <div className="mt-4 text-center">

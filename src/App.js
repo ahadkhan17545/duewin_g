@@ -85,6 +85,8 @@ import CasinoGames from "./pages/LiveCasino";
 import CollectReward from "./pages/Activity/CollectReward";
 import { Outlet } from "react-router-dom";
 import { AudioProvider } from "./contexts/AudioContext";
+import AttendanceHistory from "./pages/Activity/AttendanceHistory";
+import SubordinateLevelPage from "./pages/Promotion/SubordinateLevelPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -208,6 +210,8 @@ function App() {
                                         <Route path="/SportsGame" element={<SportsGame />} />
                                         <Route path="/casino-games" element={<CasinoGames />} />
                                         <Route path="/collect-reward" element={<CollectReward />} />
+                                         <Route path="/attendance-history" element={<AttendanceHistory />} />
+                                         <Route path="/subordinate/level/:id" element={<SubordinateLevelPage />} />
                                     </Route>
 
                                     {/* Default Redirect */}

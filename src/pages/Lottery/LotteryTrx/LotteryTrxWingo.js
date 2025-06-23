@@ -106,6 +106,7 @@ function LotteryTrxWingo() {
   const [userBets, setUserBets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
+    const [fetchDataFlag,setFetchDataFlag] = useState(false)
   const API_BASE_URL = "https://api.strikecolor1.com";
 
   // WebSocket hook (used only for period and time, not game history)

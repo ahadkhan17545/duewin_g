@@ -25,7 +25,7 @@ const InviteFriendsComponent = () => {
     const fetchBonusStatus = async () => {
       setIsLoading(true);
       try {
-        const response = await apiServices.getInvitationBonusStatus();
+        const response = await apiServices.getReferralInvitation();
         if (response.success) {
           setBonusStatus({
             totalReferrals: response.totalReferrals,

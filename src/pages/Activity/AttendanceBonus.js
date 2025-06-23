@@ -7,6 +7,7 @@ import attendance from "../../Assets/attendance.png";
 import coin from "../../Assets/coin.png";
 import giftattd from "../../Assets/giftattd.png";
 
+
 const Attandancebonus = () => {
   const [unclaimedBonuses, setUnclaimedBonuses] = useState([]);
   const [consecutiveDays, setConsecutiveDays] = useState(0);
@@ -14,34 +15,38 @@ const Attandancebonus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch unclaimed bonuses on component mount
-  useEffect(() => {
-    const fetchUnclaimedBonuses = async () => {
-      setIsLoading(true);
-      try {
-        const response = await apiServices.getUnclaimedAttendanceBonuses();
-        if (response.success) {
-          setUnclaimedBonuses(response.unclaimedBonuses);
-          // Calculate consecutive days based on the latest streak
-          const latestBonus = response.unclaimedBonuses[0];
-          setConsecutiveDays(latestBonus ? latestBonus.streak : 0);
-          // Calculate accumulated amount
-          const total = response.unclaimedBonuses.reduce(
-            (sum, bonus) => sum + bonus.totalBonus,
-            0
-          );
-          setAccumulatedAmount(total);
-        } else {
-          setError("Failed to fetch unclaimed bonuses.");
-        }
-      } catch (err) {
-        setError(err.message || "An error occurred while fetching bonuses.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchUnclaimedBonuses();
+
+  // Fetch unclaimed bonuses on component mount
+
+  useEffect(() => {
+    // const fetchUnclaimedBonuses = async () => {
+    //   setIsLoading(true);
+    //   try {
+    //     const response = await apiServices.getUnclaimedAttendanceBonuses();
+    //     if (response.success) {
+    //       setUnclaimedBonuses(response.unclaimedBonuses);
+    //       // Calculate consecutive days based on the latest streak
+    //       const latestBonus = response.unclaimedBonuses[0];
+    //       setConsecutiveDays(latestBonus ? latestBonus.streak : 0);
+    //       // Calculate accumulated amount
+    //       const total = response.unclaimedBonuses.reduce(
+    //         (sum, bonus) => sum + bonus.totalBonus,
+    //         0
+    //       );
+    //       setAccumulatedAmount(total);
+    //     } else {
+    //       setError("Failed to fetch unclaimed bonuses.");
+    //     }
+    //   } catch (err) {
+    //     setError(err.message || "An error occurred while fetching bonuses.");
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+
+    // fetchUnclaimedBonuses();
+
   }, []);
 
   // Handle attendance bonus claim
@@ -80,15 +85,15 @@ const Attandancebonus = () => {
     }
   };
 
-  // Reward tiers for display
+
   const rewardTiers = [
-    { days: 1, amount: 7 },
-    { days: 2, amount: 20 },
-    { days: 3, amount: 100 },
-    { days: 4, amount: 200 },
-    { days: 5, amount: 450 },
-    { days: 6, amount: 2400 },
-    { days: 7, amount: 6400, isSpecial: true },
+    { days: 300, amount: 10 },
+    { days: 1000, amount: 30 },
+    { days: 3000, amount: 130 },
+    { days: 8000, amount: 300 },
+    { days: 20000, amount: 650 },
+    { days: 80000, amount: 3150 },
+    { days: 200000, amount: 6400, isSpecial: true },
   ];
 
   return (
@@ -140,7 +145,7 @@ const Attandancebonus = () => {
             <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mb-2">
               <img src={coin} alt="coin" className="w-10 h-10" />
             </div>
-            <p className="text-white text-sm">{tier.days} Day{tier.days !== 1 ? "s" : ""}</p>
+            <p className="text-white text-sm">{tier.days}</p>
           </div>
         ))}
       </div>
@@ -174,9 +179,8 @@ const Attandancebonus = () => {
         <button
           onClick={handleAttendanceClick}
           disabled={isLoading || unclaimedBonuses.length === 0}
-          className={`w-full py-3 rounded-full text-amber-900 text-lg font-normal ${
-            isLoading || unclaimedBonuses.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`w-full py-3 rounded-full text-amber-900 text-lg font-normal ${isLoading || unclaimedBonuses.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           style={{ background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)" }}
         >
           {isLoading ? "Processing..." : "Attendance"}

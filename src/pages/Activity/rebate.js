@@ -95,7 +95,7 @@ const Rebate = () => {
           progress: `${lotteryProgress}/${lotteryMax}`,
           description: 'Lottery betting bonus',
           award: '₹500.00',
-          disable: !data?.lottery?.milestones["100K"]?.achieved,
+          disable: data?.lottery?.milestones["100K"]?.achieved,
           isClaimed: data?.lottery?.milestones["100K"]?.claimed,
           milestoneType: "lottery",
           milestoneKey: "100K"
@@ -121,11 +121,11 @@ const Rebate = () => {
   const closePopup = async () => {
     console.log(completedMission)
     let payload = {
-      milestoneKey:completedMission?.milestoneKey,
-      milestoneType:completedMission?.milestoneType
+      milestoneKey: completedMission?.milestoneKey,
+      milestoneType: completedMission?.milestoneType
     }
-    const data =  await apiServices.claimActivity(payload)
-    if(data?.success == true){
+    const data = await apiServices.claimActivity(payload)
+    if (data?.success == true) {
       fetchActivity()
     }
     setShowPopup(false);
@@ -193,14 +193,14 @@ const Rebate = () => {
                 <div className="text-orange-400 font-bold">{mission.award}</div>
               </div>
             </div>
-
             <button
               className="w-full py-2 border border-green-500 rounded-full text-green-500 font-medium"
               onClick={() => handleComplete(mission)}
-            disabled={!mission?.disable &&  mission?.isClaimed}
+              disabled={!(mission?.disable && !mission?.isClaimed)}
             >
               To Complete
             </button>
+
           </div>
         ))}
       </div>

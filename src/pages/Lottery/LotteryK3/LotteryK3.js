@@ -471,6 +471,7 @@ function LotteryK3() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
+    const [fetchDataFlag,setFetchDataFlag] = useState(false)
 
   const {
     isConnected,
@@ -561,7 +562,11 @@ function LotteryK3() {
   ]);
 
   useEffect(() => {
+    if(timeRemaining.minutes == 0 && timeRemaining.seconds < 2){
+            setFetchDataFlag(prev =>!prev)
+    }
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
+      console.log("Hello")
       const currentId = parseInt(currentPeriod.periodId) || 0;
       const nextPeriodId = (currentId + 1).toString();
 
@@ -672,7 +677,7 @@ function LotteryK3() {
       };
       fetchGameHistory().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton]);
+  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
 
   useEffect(() => {
     if (activeTab === "chart") {
@@ -688,7 +693,7 @@ function LotteryK3() {
       };
       fetchChartData().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton]);
+  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
 
   const fetchUserBets = useCallback(async () => {
     if (!isMounted.current) return;
@@ -713,7 +718,7 @@ function LotteryK3() {
     if (activeTab === "myHistory") {
       fetchUserBets();
     }
-  }, [activeTab, fetchUserBets]);
+  }, [activeTab, fetchUserBets,fetchDataFlag]);
 
   useEffect(() => {
     const duration = buttonData[activeButton].duration;

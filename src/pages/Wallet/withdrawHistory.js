@@ -49,7 +49,7 @@ function WithdrawHistory() {
         setLoading(true);
         const data = await apiServices.getWithdrawalHistory(page, pagination.limit);
         setWithdrawals(data.withdrawals || []);
-        setPagination(data.pagination || { total: 0, page: 1, limit: 10, pages: 1 });
+        setPagination(data.pagination);
       } catch (err) {
         setError("Failed to fetch withdrawal history");
       } finally {
@@ -424,7 +424,7 @@ function WithdrawHistory() {
           </div>
 
           {/* Content Section */}
-          <div className="rounded-lg shadow-md mt-4 max-h-screen overflow-y-auto">
+          <div className="rounded-lg shadow-md mt-4 max-h-screen overflow-y-auto" style={{maxHeight:'500px'}}>
             {loading ? (
               <div className="text-white text-center p-4">Loading...</div>
             ) : error ? (
@@ -451,10 +451,10 @@ function WithdrawHistory() {
                     <div className="ml-auto text-right">
                       <span
                         className={`text-sm font-medium ${
-                          withdrawal.status === "completed" ? "text-green-500" : "text-red-500"
+                          withdrawal.status === "completed" ? "text-green-500" : ( withdrawal.status === "pending" ? "text-yellow-500" : "text-red-500")
                         }`}
                       >
-                        {withdrawal.status === "completed" ? "Completed" : "Failed"}
+                        {withdrawal.status}
                       </span>
                     </div>
                   </div>
@@ -482,7 +482,7 @@ function WithdrawHistory() {
           </div>
 
           {/* Pagination Controls */}
-          {pagination.pages > 1 && (
+          {pagination.pages > 0 && (
             <div className="flex justify-center gap-4 mt-4 mb-4">
               <button
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}

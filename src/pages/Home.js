@@ -472,7 +472,7 @@ function Home() {
       alt: "Wingo Image",
       title: "Win Go",
       link: "/lotterywingo",
-      value:0
+      value: 0
     },
     {
       id: 2,
@@ -480,7 +480,7 @@ function Home() {
       alt: "Wingo 1Min Image",
       title: "Win Go 1Min",
       link: "/lotterywingo",
-      value:1
+      value: 1
     },
     {
       id: 3,
@@ -488,7 +488,7 @@ function Home() {
       alt: "Wingo 3Min Image",
       title: "Win Go 3Min",
       link: "/lotterywingo",
-      value:2
+      value: 2
     },
     {
       id: 4,
@@ -496,16 +496,16 @@ function Home() {
       alt: "Wingo 5Min Image",
       title: "Win Go 5Min",
       link: "/lotterywingo",
-      value:3
+      value: 3
     },
-    { id: 5, imgSrc: K, alt: "K3 Image", title: "K3 1Min", link: "/lotteryK3",  value:0 },
+    { id: 5, imgSrc: K, alt: "K3 Image", title: "K3 1Min", link: "/lotteryK3", value: 0 },
     {
       id: 6,
       imgSrc: K1,
       alt: "K3 3Min Image",
       title: "K3 3Min",
       link: "/lotteryK3",
-      value:1
+      value: 1
     },
     {
       id: 7,
@@ -513,7 +513,7 @@ function Home() {
       alt: "K3 5Min Image",
       title: "K3 5 Min",
       link: "/lotteryK3",
-      value:2
+      value: 2
     },
     {
       id: 8,
@@ -521,7 +521,7 @@ function Home() {
       alt: "K3 10Min Image",
       title: "K3 10 Min",
       link: "/lotteryK3",
-      value:3
+      value: 3
     },
     {
       id: 9,
@@ -529,7 +529,7 @@ function Home() {
       alt: "5D Image",
       title: "5D 1 Min",
       link: "/lottery5d",
-      value:0
+      value: 0
     },
     {
       id: 10,
@@ -537,7 +537,7 @@ function Home() {
       alt: "5D 3Min Image",
       title: "5D 3 Min",
       link: "/lottery5d",
-      value:1
+      value: 1
     },
     {
       id: 11,
@@ -545,7 +545,7 @@ function Home() {
       alt: "5D 5Min Image",
       title: "5D 5 Min",
       link: "/lottery5d",
-      value:2
+      value: 2
     },
     {
       id: 12,
@@ -553,7 +553,7 @@ function Home() {
       alt: "5D 10Min Image",
       title: "5D 10 Min",
       link: "/lottery5d",
-      value:3
+      value: 3
     },
     {
       id: "1",
@@ -561,7 +561,7 @@ function Home() {
       alt: "Trx Image",
       title: "Trx 1min",
       link: "/lotterytrxwing",
-      value:0
+      value: 0
     },
     {
       id: 14,
@@ -569,7 +569,7 @@ function Home() {
       alt: "Trx 3min Image",
       title: "Trx 3min",
       link: "/lotterytrxwing",
-      value:1
+      value: 1
     },
     {
       id: 15,
@@ -577,7 +577,7 @@ function Home() {
       alt: "Trx 5min Image",
       title: "Trx 5 min",
       link: "/lotterytrxwing",
-      value:2
+      value: 2
     },
     {
       id: 16,
@@ -585,7 +585,7 @@ function Home() {
       alt: "Trx 10min Image",
       title: "Trx 10 Min",
       link: "/lotterytrxwing",
-      value:3
+      value: 3
     },
   ]);
 
@@ -697,15 +697,13 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
-                    activeCategory === category.title
+                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
                       ? "opacity-100"
                       : "opacity-80"
-                  }`}
+                    }`}
                   style={{
-                    background: `linear-gradient(135deg, ${
-                      category.title === "Lottery" ? "#2A3E4C" : "#3E2A4C"
-                    } 0%, #1A2529 100%)`,
+                    background: `linear-gradient(135deg, ${category.title === "Lottery" ? "#2A3E4C" : "#3E2A4C"
+                      } 0%, #1A2529 100%)`,
                   }}
                 >
                   <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
@@ -715,11 +713,10 @@ function Home() {
                     <img
                       src={category.image}
                       alt={category.title}
-                      className={`w-[220px] object-contain -mt-4 -mr-4 ${
-                        category.title === "Hot Games"
+                      className={`w-[220px] object-contain -mt-4 -mr-4 ${category.title === "Hot Games"
                           ? "h-[300px]"
                           : "h-[220px] -mt-9"
-                      }`}
+                        }`}
                     />
                   </div>
                 </div>
@@ -730,19 +727,17 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
-                    activeCategory === category.title
+                  className={`flex-1 h-[120px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
                       ? "opacity-100"
                       : "opacity-80"
-                  }`}
+                    }`}
                   style={{
-                    background: `linear-gradient(135deg, ${
-                      category.title === "Original"
+                    background: `linear-gradient(135deg, ${category.title === "Original"
                         ? "#4C3E2A"
                         : category.title === "Slots"
-                        ? "#3E4C2A"
-                        : "#4C2A4C"
-                    } 0%, #1A2529 100%)`,
+                          ? "#3E4C2A"
+                          : "#4C2A4C"
+                      } 0%, #1A2529 100%)`,
                   }}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
@@ -841,8 +836,8 @@ function Home() {
                               className="w-full h-auto object-contain rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -900,8 +895,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -958,8 +953,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -988,51 +983,39 @@ function Home() {
               className="space-y-2 ml-1 relative"
               style={{ height: "320px", overflow: "hidden" }}
             >
-              {winners.map((winner, index) => (
-                <div
-                  key={`${winner.id}-${currentWinnerIndex}`}
-                  className="flex items-center justify-between bg-[#333332] p-2 rounded-lg transition-all duration-500 ease-in-out"
-                  style={{
-                    opacity:
-                      index === 0
-                        ? 1
-                        : index === 1
-                        ? 0.9
-                        : index === 2
-                        ? 0.8
-                        : index === 3
-                        ? 0.7
-                        : 0.6,
-                    transform: `scale(${index === 0 ? 1 : index === 1 ? 0.98 : index === 2 ? 0.96 : index === 3 ? 0.94 : 0.92})`,
-                    zIndex: winners.length - index,
-                    animation: index === 0 ? "none" : "none",
-                  }}
-                >
-                  <div className="flex items-center gap-1">
-                    <img
-                      src={winner.image}
-                      alt="User"
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <span className="text-[#a8a5a1] font-medium text-sm">
-                      {winner.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <img
-                      src={evo}
-                      alt="User"
-                      className="w-20 h-14 rounded-sm object-cover"
-                    />
-                    <div className="text-right">
-                      <p className="text-[#C4933F] font-semibold text-xs">
-                        Receive ₹{winner.amount.toFixed(2)}
-                      </p>
-                      <p className="text-gray-400 text-xs">Winning amount</p>
+              <div className="relative w-[320px] h-[320px] overflow-hidden bg-[#1e1e1e] rounded-lg p-2">
+                {winners.map((winner, index) => (
+                  <div
+                    key={winner.id}
+                    className="absolute left-0 right-0 mx-auto flex items-center justify-between bg-[#333332] p-2 rounded-lg transition-all duration-500 ease-in-out"
+                    style={{
+                      top: `${index * 65}px`,
+                      opacity: 1 - index * 0.1,
+                      // transform: `scale(${1 - index * 0.02})`,
+                      zIndex: winners.length - index,
+                      animation: index === 0 ? 'slideDown 0.4s ease-out' : 'none',
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={winner.image}
+                        alt="User"
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <span className="text-[#a8a5a1] font-medium text-sm">{winner.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <img src={evo} alt="Icon" className="w-14 h-10 rounded-sm object-cover" />
+                      <div className="text-right">
+                        <p className="text-[#C4933F] font-semibold text-xs">
+                          Receive ₹{winner.amount.toFixed(2)}
+                        </p>
+                        <p className="text-gray-400 text-xs">Winning amount</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <div className="w-full py-1 rounded-lg shadow-lg">
               <h2 className="text-lg font-bold text-[#C4933F] mb-4 border-l-4 border-[#C4933F] pl-2 mt-4">

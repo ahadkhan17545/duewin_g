@@ -62,6 +62,7 @@ function Lottery5d() {
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
   const [checked, setChecked] = useState(false);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
+    const [fetchDataFlag,setFetchDataFlag] = useState(false)
   const API_BASE_URL = "https://api.strikecolor1.com";
 
   // WebSocket hook
@@ -135,6 +136,9 @@ function Lottery5d() {
   }, [isConnected, socketTime]);
 
   useEffect(() => {
+    if (timeRemaining.minutes === 0 && timeRemaining.seconds < 2) {
+      setFetchDataFlag(prev =>!prev)
+    }
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
       setIsPeriodTransitioning(true);
       setCurrentPeriod({ periodId: "Loading..." });
@@ -190,7 +194,7 @@ function Lottery5d() {
     if (activeTab === "gameHistory") {
       fetchGameHistory();
     }
-  }, [activeTab, fetchGameHistory]);
+  }, [activeTab, fetchGameHistory,fetchDataFlag]);
 
   // Event handlers
   const handlePageChange = (page) => {

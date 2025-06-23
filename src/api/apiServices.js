@@ -390,6 +390,21 @@ export const getActivityStatus = async () => {
 export const claimActivity = async (payload) => {
   return await apiRequest(`/activity/claim`, "POST",payload);
 };
+
+export const getAttendanceBonus = async () => {
+  return await apiRequest(`/referral/attendance/history`, "GET");
+};
+
+export const getReferral = async () => {
+  return await apiRequest(`/referral/direct`, "GET");
+};
+export const getReferralTeam = async () => {
+  return await apiRequest(`/referral/team`, "GET");
+};
+
+export const getReferralInvitation = async () => {
+  return await apiRequest(`/referral/invitation/status`, "GET");
+};
 export default {
   getWalletBalance,
   getVipInfo,
@@ -430,5 +445,9 @@ export default {
   getRebateHistory,
   getRebateHistoryStats,
   getActivityStatus,
-  claimActivity
+  claimActivity,
+  getAttendanceBonus,
+  getReferral,
+  getReferralTeam,
+  getReferralInvitation
 };
