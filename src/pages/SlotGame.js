@@ -33,22 +33,25 @@ const providerImages = {
 };
 
 const providers = [
-  { key: "playtech", name: "Playtech" },
-  { key: "goldenrace", name: "Goldenrace" },
-  { key: "smartsoft", name: "SmartSoft" },
-  { key: "habanero", name: "Habanero" },
-  { key: "betsoft", name: "Betsoft" },
-  { key: "isoftbet", name: "iSoftBet" },
-  { key: "pgsoft", name: "PG Soft" },
-  { key: "onetouch", name: "One Touch" },
   { key: "evoplay", name: "Evoplay" },
-  
-  { key: "blueprint", name: "Blueprint" },
-  { key: "galaxsys", name: "Galaxsys" },
+  { key: "pf", name: "PG Soft" },
+  { key: "gv", name: "G Games" },
+  { key: "ss", name: "SmartSoft" },
+  { key: "gr", name: "Golden Race" },
+  { key: "bs", name: "Betsoft" },
+  { key: "gz", name: "Gamzix" },
+  { key: "ha", name: "Habanero" },
+  { key: "p0", name: "Pragmatic Play" },
+  { key: "hs", name: "Hacksaw" },
+  { key: "pe", name: "PlayPearls" },
+  { key: "asiagaming", name: "Asia Gaming (AG)" },
+  { key: "fc", name: "Fachai" },
+  { key: "ae", name: "Felix Gaming" },
 ];
 
+
 function SlotGame() {
-  const [activeProvider, setActiveProvider] = useState("playtech");
+  const [activeProvider, setActiveProvider] = useState("evoplay");
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -123,27 +126,27 @@ function SlotGame() {
 
     try {
       console.log('Launching game:', game.name, 'ID:', game.id, 'Provider:', game.provider);
-      
+
       // Use the launchGame method from gameApi
       const launchResponse = await gameApi.launchGame(game.id);
-      
+
       // Extract the game URL from the response
-      const gameUrl = launchResponse?.url || 
-                    launchResponse?.gameUrl || 
-                    launchResponse?.game_url || 
-                    launchResponse?.launchUrl ||
-                    launchResponse?.redirect_url;
+      const gameUrl = launchResponse?.url ||
+        launchResponse?.gameUrl ||
+        launchResponse?.game_url ||
+        launchResponse?.launchUrl ||
+        launchResponse?.redirect_url;
 
       if (gameUrl) {
         console.log('Game URL received:', gameUrl);
-        
+
         // Open game in new window/tab
         const gameWindow = window.open(
-          gameUrl, 
-          '_blank', 
+          gameUrl,
+          '_blank',
           'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
         );
-        
+
         if (!gameWindow) {
           // If popup was blocked, try redirecting in same tab
           window.location.href = gameUrl;
@@ -155,7 +158,7 @@ function SlotGame() {
 
     } catch (error) {
       console.error("Error launching game:", error);
-      
+
       if (error.response?.status === 401 || error.status === 401) {
         setError("Please log in to play games.");
         navigate("/login");
@@ -191,20 +194,18 @@ function SlotGame() {
             <button
               key={provider.key}
               onClick={() => setActiveProvider(provider.key)}
-              className={`flex-shrink-0 px-2 py-2 rounded-md text-white flex flex-col items-center justify-center w-20 h-20 ${
-                activeProvider === provider.key
+              className={`flex-shrink-0 px-2 py-2 rounded-md text-white flex flex-col items-center justify-center w-20 h-20 ${activeProvider === provider.key
                   ? "bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-black"
                   : "bg-[#3a3a3a] hover:bg-[#4a4a4a]"
-              }`}
+                }`}
             >
               <img
-                src={providerImages[provider.key] || "https://via.placeholder.com/50?text=No+Image"}
+                src={providerImages[provider.key]}
                 alt={`${provider.name} logo`}
-                className={`w-8 h-8 object-contain mb-1 ${
-                  activeProvider === provider.key
+                className={`w-8 h-8 object-contain mb-1 ${activeProvider === provider.key
                     ? "filter brightness-75 sepia-[100%] hue-rotate-[15deg] saturate-[300%]"
                     : ""
-                }`}
+                  }`}
                 onError={(e) => {
                   e.target.src = "https://via.placeholder.com/50?text=Image+Not+Found";
                 }}
@@ -221,8 +222,8 @@ function SlotGame() {
         ) : Array.isArray(games) && games.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {games.map((game) => (
-              <div 
-                key={game.id} 
+              <div
+                key={game.id}
                 className="flex flex-col items-center cursor-pointer relative"
                 onClick={(e) => {
                   e.preventDefault();

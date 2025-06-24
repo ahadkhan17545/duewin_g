@@ -61,6 +61,8 @@ import notify from "../Assets/finalicons/notifyicon.png";
 import bannerone from "../Assets/finalicons/Banner1.png";
 import bannerthree from "../Assets/finalicons/Banner3.png";
 import whitetick from "../Assets/whitetick.png";
+import apiServices from "../api/apiServices";
+import { useSelector } from "react-redux";
 
 // Game categories
 const gameCategories = [
@@ -97,6 +99,18 @@ function Home() {
   const navigate = useNavigate();
   const gameSectionRef = React.useRef(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [user, setUser] = useState(null)
+  // const [games,setGames] = useState([])
+
+
+  const fetchAllGame = async () => {
+    try {
+      const data = await apiServices?.getGames();
+      return data
+    } catch (error) {
+      console.error('Error fetching games:', error);
+    }
+  }
 
   // State for winners carousel
   const [winners, setWinners] = useState([
@@ -124,7 +138,14 @@ function Home() {
     };
   };
 
+  const getUserData = async () => {
+    let data = await apiServices.getUserProfile()
+    setUser(data?.user)
+  }
+
   useEffect(() => {
+    getUserData()
+    // fetchAllGame()
     const interval = setInterval(() => {
       setWinners((prevWinners) => {
         const newWinners = [
@@ -190,6 +211,7 @@ function Home() {
   };
 
   const fetchGames = async (category) => {
+    let fewNeededGames = ["aviator", "mines", "dice", "plinko", "hilo", "keno"]
     setLoading(true);
     setError(null);
     try {
@@ -202,7 +224,7 @@ function Home() {
 
       if (category === "Hot Games") {
         const response = await fetch(
-          "https://api.strikecolor1.com/api/seamless-wallet/games?category=popular&limit=20",
+          "https://api.strikecolor1.com/api/seamless/hot-games",
           {
             method: "GET",
             headers: {
@@ -217,9 +239,33 @@ function Home() {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+        let filteredGames = []
+        let dataOfOriginal = await fetchAllGame()
+        if (dataOfOriginal?.success) {
+          const seenNames = new Set();
+          const normalizedNeeded = fewNeededGames.map(id => id.replace('-', '').toLowerCase());
+          filteredGames = dataOfOriginal?.games?.filter(game =>
+            normalizedNeeded.includes(game.id.replace('-', '').toLowerCase())
+          );
+          const processedGames = filteredGames.reduce((uniqueGames, game) => {
+            const gameName = (game.name || "").toLowerCase().trim();
+            if (!seenNames.has(gameName) && gameName && game.isActive) {
+              seenNames.add(gameName);
+              uniqueGames.push({
+                id: game.id,
+                name: game.name || "Unnamed Game",
+                thumbnailUrl: game.thumbnailUrl || null,
+                provider: game.provider || "spribe_crypto",
+              });
+            }
+            return uniqueGames;
+          }, []);
+          setOriginalGames(processedGames)
+        }
         const data = await response.json();
         if (data.success) {
           const gamesArray = data.games || [];
+          console.log("Before", filteredGames)
           const seenNames = new Set();
           const processedGames = gamesArray.reduce((uniqueGames, game) => {
             const gameName = (game.name || "").toLowerCase().trim();
@@ -251,23 +297,7 @@ function Home() {
           throw new Error("API returned unsuccessful response");
         }
       } else if (category === "Original") {
-        const response = await fetch(
-          "https://api.strikecolor1.com/api/spribe/games",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.status === 401) {
-          throw new Error("Session expired. Please login again.");
-        }
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
+        let data = await fetchAllGame()
         const gamesArray = Array.isArray(data.games) ? data.games : Array.isArray(data) ? data : [];
         const seenNames = new Set();
         const processedGames = gamesArray.reduce((uniqueGames, game) => {
@@ -363,7 +393,7 @@ function Home() {
       if (game.provider.includes("spribe")) {
         const token = getAuthToken();
         const response = await fetch(
-          `https://api.strikecolor1.com/api/spribe/launch/${game.id}`,
+          `https://api.strikecolor1.com/api/spribe/launch/${game.id}?userId=${user?.user_id}`,
           {
             method: "GET",
             headers: {
@@ -698,8 +728,8 @@ function Home() {
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
                   className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
+                    ? "opacity-100"
+                    : "opacity-80"
                     }`}
                   style={{
                     background: `linear-gradient(135deg, ${category.title === "Lottery" ? "#2A3E4C" : "#3E2A4C"
@@ -714,8 +744,8 @@ function Home() {
                       src={category.image}
                       alt={category.title}
                       className={`w-[220px] object-contain -mt-4 -mr-4 ${category.title === "Hot Games"
-                          ? "h-[300px]"
-                          : "h-[220px] -mt-9"
+                        ? "h-[300px]"
+                        : "h-[220px] -mt-9"
                         }`}
                     />
                   </div>
@@ -728,15 +758,15 @@ function Home() {
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
                   className={`flex-1 h-[120px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
+                    ? "opacity-100"
+                    : "opacity-80"
                     }`}
                   style={{
                     background: `linear-gradient(135deg, ${category.title === "Original"
-                        ? "#4C3E2A"
-                        : category.title === "Slots"
-                          ? "#3E4C2A"
-                          : "#4C2A4C"
+                      ? "#4C3E2A"
+                      : category.title === "Slots"
+                        ? "#3E4C2A"
+                        : "#4C2A4C"
                       } 0%, #1A2529 100%)`,
                   }}
                 >
@@ -850,7 +880,44 @@ function Home() {
                           </p>
                         </div>
                       ))}
+
+                      {originalGames.map((game) => (
+                        <div
+                          key={game.id}
+                          className="flex flex-col items-center cursor-pointer relative"
+                          onClick={(e) => handleGameLaunch(game, e)}
+                        >
+                          {launchingGame === game.id && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md z-10">
+                              <div className="text-white text-sm">
+                                Launching...
+                              </div>
+                            </div>
+                          )}
+                          {game.imagePortrait ? (
+                            <img
+                              src={game.imagePortrait}
+                              alt={game.name || "Game Image"}
+                              className="w-full h-40 object-cover rounded-md mb-2"
+                              loading="lazy"
+                              onError={(e) =>
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                              }
+                            />
+                          ) : (
+                            <div className="w-full h-32 flex items-center justify-center bg-gray-500 rounded-md mb-2">
+                              <span className="text-gray-300">No Image</span>
+                            </div>
+                          )}
+                          <p className="text-white text-center text-sm">
+                            {game.name || "Game Title"}
+                          </p>
+                        </div>
+                      ))}
+
                     </div>
+
                   ) : (
                     <p className="text-white text-center">No games found.</p>
                   )}
@@ -974,6 +1041,7 @@ function Home() {
                 </div>
               </div>
             )}
+
           </div>
           <div className="w-full py-2 bg-[#242424] rounded-lg shadow-lg mt-2 mb-3">
             <h2 className="text-lg font-bold text-[#C4933F] mb-2 border-l-4 ml-1 border-[#C4933F] pl-2">

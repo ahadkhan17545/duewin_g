@@ -405,6 +405,10 @@ export const getReferralTeam = async () => {
 export const getReferralInvitation = async () => {
   return await apiRequest(`/referral/invitation/status`, "GET");
 };
+
+export const getGames = async () => {
+  return await apiRequest(`/spribe/games`, "GET");
+};
 export default {
   getWalletBalance,
   getVipInfo,
@@ -449,5 +453,6 @@ export default {
   getAttendanceBonus,
   getReferral,
   getReferralTeam,
-  getReferralInvitation
+  getReferralInvitation,
+  getGames
 };
