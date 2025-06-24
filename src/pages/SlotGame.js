@@ -206,9 +206,6 @@ function SlotGame() {
                     ? "filter brightness-75 sepia-[100%] hue-rotate-[15deg] saturate-[300%]"
                     : ""
                   }`}
-                onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/50?text=Image+Not+Found";
-                }}
               />
               <span className="text-[10px] text-center font-medium">{provider.name}</span>
             </button>

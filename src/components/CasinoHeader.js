@@ -9,7 +9,7 @@ const  CasinoHeader = () => {
       <BackButton className="text-[#f5f3f0] text-xl cursor-pointer ml-2" />
 
       {/* Notification Title in the Center */}
-      <p className="text-[#f5f3f0] text-xl mx-auto">Casino</p>
+      <p className="text-[#f5f3f0] text-xl mx-auto">Live Casino</p>
     </header>
   );
 };

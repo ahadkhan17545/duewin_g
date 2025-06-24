@@ -71,7 +71,7 @@ const gameCategories = [
   { id: 3, title: "Original", image: originalIcon },
   { id: 4, title: "Slots", image: slotsIcon },
   { id: 5, title: "Sports", image: sportsIcon },
-  { id: 6, title: "Casino", image: casinoIcon },
+  { id: 6, title: "Live Casino", image: casinoIcon },
 ];
 
 // Array of user images for random selection
@@ -315,7 +315,7 @@ function Home() {
         }, []);
         return processedGames;
       } else if (category === "Sports") {
-        const providers = ["digitain", "inplaynet"];
+        const providers = ["digitain"];
         let allGames = [];
         const seenNames = new Set();
         for (const provider of providers) {

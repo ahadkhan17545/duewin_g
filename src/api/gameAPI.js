@@ -405,7 +405,7 @@ const gameApi = {
   fetchGames: async (provider) => {
     return makeAuthenticatedRequest(
       async () => {
-        const url = `${API_BASE_URL}/api/seamless-wallet/games`;
+        const url = `${API_BASE_URL}/api/seamless/games`;
         const cacheKey = getCacheKey(url, { provider, page: 1, limit: 50 });
         
         // Check cache first

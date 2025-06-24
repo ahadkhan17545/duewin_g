@@ -5,16 +5,13 @@ import { isAuthenticated } from "../api/auth";
 import CasinoHeader from "../components/CasinoHeader";
 
 const providers = [
-  // { key: "ezugi", name: "Ezugi Games" },
-  { key: "evolution", name: "Evolution Games" },
-  { key: "ebet", name: "eBET Games" },
-  { key: "bombay", name: "Bombay Live Games" },
-  
-  { key: "pragmatic", name: "Pragmatic Play Games" },
-  { key: "betconstruct", name: "Betconstruct Live Games" },
-  { key: "g24", name: "LiveG24 Games" },
-  { key: "tvbet", name: "TVbet Games" },
+  { key: "bombaylive", name: "Bombay Live" },
+  { key: "lg", name: "Live G24" },
+  { key: "es", name: "Evolution" },
+  { key: "ez", name: "Ezugi" },
+  { key: "cl", name: "Betconstruct Live Games" },
 ];
+
 
 const CasinoGames = () => {
   const [activeTab, setActiveTab] = useState(providers[0].key);
@@ -139,6 +136,10 @@ const CasinoGames = () => {
     }
     fetchGamesForProvider(activeTab);
   }, [activeTab, navigate]);
+  const handleImageError = (gameId) => {
+    setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+  };
+
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
@@ -150,11 +151,10 @@ const CasinoGames = () => {
             <button
               key={provider.key}
               onClick={() => setActiveTab(provider.key)}
-              className={`flex-shrink-0 px-4 py-2 rounded-md text-white whitespace-nowrap ${
-                activeTab === provider.key
+              className={`flex-shrink-0 px-4 py-2 rounded-md text-white whitespace-nowrap ${activeTab === provider.key
                   ? "bg-[#ff4d4d]"
                   : "bg-[#3a3a3a] hover:bg-[#4a4a4a]"
-              }`}
+                }`}
             >
               {provider.name}
             </button>
@@ -185,10 +185,7 @@ const CasinoGames = () => {
                     alt={game.name || "Game Image"}
                     className="w-full h-auto object-contain rounded-md mb-2"
                     loading="lazy"
-                    onError={(e) => {
-                      e.target.src =
-                        "https://via.placeholder.com/150?text=Image+Not+Found";
-                    }}
+                    onError={() => handleImageError(game.id)}
                   />
                 ) : (
                   <div className="w-full h-32 flex items-center justify-center bg-gray-500 rounded-md mb-2">
