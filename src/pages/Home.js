@@ -204,9 +204,14 @@ function Home() {
         gameSectionRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
-    if (category === "Slots" || category === "Casino") {
-      const routes = { Slots: "/SlotGame", Casino: "/casino-games" };
-      navigate(routes[category] || "/");
+    console.log(category,category == "Live Casino")
+    if (category === "Slots" || category == "Live Casino") {
+      if(category == "Live Casino"){
+         navigate("/casino-games");
+      }else{
+        const routes = { Slots: "/SlotGame", Casino: "/casino-games" };
+        navigate(routes[category] || "/");
+      }
     }
   };
 
