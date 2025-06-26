@@ -25,7 +25,7 @@ function PromotionRule() {
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
       <PromotionRuleheader className="z-100" />
-      <div className="bg-[#242424] min-h-screen flex flex-col items-center justify-center mt-10">
+      <div className="bg-[#242424] min-h-screen flex flex-col items-center justify-center">
         <div className="w-full bg-[#242424] p-4 font-sans text-sm">
           <div className="flex flex-col items-center text-center">
             <header className="flex items-center text-lg font-bold justify-center">
@@ -79,7 +79,7 @@ function PromotionRule() {
                   </div>
                 </div>
 
-                <p className="text-[#a8a5a1] leading-relaxed">{item.text}</p>
+                <p className="text-[#a8a5a1] leading-relaxed text-xs">{item.text}</p>
               </div>
             ))}
 

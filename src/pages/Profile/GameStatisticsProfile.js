@@ -4,6 +4,7 @@ import GameStatisticsHeader from "../../components/GameStatisticsHeader";
 import lotteryion8 from "../../Assets/lotteryicon8.png";
 import gameStatsSteps from "../../Assets/gameStatsSteps.png"
 import apiServices from "../../api/apiServices";
+import CommanHeader from "../../components/CommanHeader";
 
 const allowedPeriods = ["today", "yesterday", "this_week", "this_month"];
 function GameStatistics() {
@@ -26,7 +27,7 @@ function GameStatistics() {
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col">
-      <GameStatisticsHeader />
+      <CommanHeader title="Game Statistics" />
       <div className="px-4">
         <div className="mt-16 rounded-xl ">
           {/* Navigation Buttons */}
@@ -34,11 +35,11 @@ function GameStatistics() {
             {allowedPeriods?.map((tab) => (
               <button
                 key={tab}
-                className={`px-3 py-1.5 rounded-full transition-colors text-base font-medium ${selectedTab === tab
+                className={` transition-colors text-base text-sm font-medium ${selectedTab === tab
                   ? "bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-[#8f5206]"
                   : "bg-[#333332] text-neutral-400"
                   }`}
-                  style={{textTransform:'capitalize'}}
+                  style={{textTransform:'capitalize',borderRadius:'20px',padding:'10px'}}
                 onClick={() => setSelectedTab(tab)}
               >
                 {tab?.split("_").join(" ")}
@@ -63,12 +64,117 @@ function GameStatistics() {
               <div className="flex items-center gap-2 mb-4 -ml-2">
                 <img src={lotteryion8} alt="icongame" className="h-8 w-8" />
                 <span className="material-symbols-outlined font-bold text-xl text-white">
-                  lottery
+                  Lottery
                 </span>
               </div>
 
               {/* Stats Section with Image */}
               <div className="flex items-center gap-4">
+                {/* Left Side - Image */}
+                <img src={gameStatsSteps} alt="gamestats" className="h-20" />
+
+                {/* Right Side - Stats Section */}
+                <div className="flex flex-col space-y-2 w-full">
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Total bet</span>
+                    <span className="text-gray-300 font-semibold">₹{gameStats?.total_bet_amount}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Number of bets</span>
+                    <span className="text-gray-300 font-semibold">{gameStats?.total_bets}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Winning amount</span>
+                    <span className="text-[#dd9138] font-semibold">₹{gameStats?.total_win_amount}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+               { (
+            <div className="bg-[#333332] rounded-lg p-4 mt-4">
+              {/* Header with Icon and Title */}
+              <div className="flex items-center gap-2 mb-4 -ml-2">
+                <img src={lotteryion8} alt="icongame" className="h-8 w-8" />
+                <span className="material-symbols-outlined font-bold text-xl text-white">
+                  Hot Games
+                </span>
+              </div>
+
+              {/* Stats Section with Image */}
+              <div className="flex items-center gap-4">
+                {/* Left Side - Image */}
+                <img src={gameStatsSteps} alt="gamestats" className="h-20" />
+
+                {/* Right Side - Stats Section */}
+                <div className="flex flex-col space-y-2 w-full">
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Total bet</span>
+                    <span className="text-gray-300 font-semibold">₹{gameStats?.total_bet_amount}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Number of bets</span>
+                    <span className="text-gray-300 font-semibold">{gameStats?.total_bets}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Winning amount</span>
+                    <span className="text-[#dd9138] font-semibold">₹{gameStats?.total_win_amount}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+               { (
+            <div className="bg-[#333332] rounded-lg p-4 mt-4">
+              {/* Header with Icon and Title */}
+              <div className="flex items-center gap-2 mb-4 -ml-2">
+                <img src={lotteryion8} alt="icongame" className="h-8 w-8" />
+                <span className="material-symbols-outlined font-bold text-xl text-white">
+                  Live Casino
+                </span>
+              </div>
+
+              {/* Stats Section with Image */}
+              <div className="flex items-center gap-4">
+                {/* Left Side - Image */}
+                <img src={gameStatsSteps} alt="gamestats" className="h-20" />
+
+                {/* Right Side - Stats Section */}
+                <div className="flex flex-col space-y-2 w-full">
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Total bet</span>
+                    <span className="text-gray-300 font-semibold">₹{gameStats?.total_bet_amount}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Number of bets</span>
+                    <span className="text-gray-300 font-semibold">{gameStats?.total_bets}</span>
+                  </div>
+
+                  <div className="flex justify-between w-full">
+                    <span className="text-gray-400">Winning amount</span>
+                    <span className="text-[#dd9138] font-semibold">₹{gameStats?.total_win_amount}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+               { (
+            <div className="bg-[#333332] rounded-lg p-4 mt-4 mb-4">
+              {/* Header with Icon and Title */}
+              <div className="flex items-center gap-2 mb-4 -ml-2">
+                <img src={lotteryion8} alt="icongame" className="h-8 w-8" />
+                <span className="material-symbols-outlined font-bold text-xl text-white">
+                  Slot
+                </span>
+              </div>
+
+              {/* Stats Section with Image */}
+              <div className="flex items-center gap-4 mb-4">
                 {/* Left Side - Image */}
                 <img src={gameStatsSteps} alt="gamestats" className="h-20" />
 

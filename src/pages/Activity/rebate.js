@@ -156,17 +156,26 @@ const Rebate = () => {
       </div>
 
 
-      <div className="p-4">
+      <div className="p-4" style={{minHeight: '75vh'}}>
         {missions.map((mission, index) => (
           <div
             key={index}
-            className="p-4 bg-[#333332] rounded-lg shadow-md border border-gray-700 mt-4"
+            className="p-4 bg-[#333332] rounded-lg shadow-md border border-gray-700 mt-4 relative"
           >
-            <div className="flex justify-between items-center mb-2">
-              <div className="text-white py-1 px-3 rounded-full text-sm font-semibold">
+            {/* <div className="flex justify-between items-center mb-2">
+              <div className="text-white py-1 px-3 rounded-full text-sm font-semibold flex items-center bg-[#17b15e] text-white px-6 py-2 rounded-br-3xl h-12">
                 {mission.type}
               </div>
               <div className="text-gray-400 text-sm">{mission.status}</div>
+            </div> */}
+            <div className="flex justify-between items-center pb-2 border-b border-gray-700 mt-6">
+              <div className="absolute top-0 left-0 flex items-center justify-between" style={{width:'100%'}}>
+                <div className="flex items-center bg-[#17b15e] text-white px-6 py-2 rounded-br-3xl h-12" style={{borderStartStartRadius: '7px'}}>
+                  <span className="font-medium font-semibold text-[16px]">{mission?.type}</span>
+                </div>
+                <span className='text-gray-400 text-sm mr-1'>  {mission.status}</span>
+              </div>
+
             </div>
 
             <div className="flex items-center gap-2 mb-2">
@@ -182,10 +191,10 @@ const Rebate = () => {
               <span className="ml-auto text-orange-500 font-medium">{mission.progress}</span>
             </div>
 
-            <div className="text-gray-400 text-sm ml-9 mb-3">{mission.description}</div>
+            {/* <div className="text-gray-400 text-sm ml-9 mb-3">{mission.description}</div> */}
 
             <div className="flex justify-between items-center mb-3">
-              <div className="text-gray-300">Award amount</div>
+              <div className="text-gray-300 pl-4">Award amount</div>
               <div className="flex items-center">
                 <div className="mr-1">
                   <img src={wallet} alt="Wallet" className="w-4 h-4" />

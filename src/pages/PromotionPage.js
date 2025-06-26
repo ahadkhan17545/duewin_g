@@ -156,12 +156,12 @@ function PromotionPage() {
         <div className="flex justify-center w-full">
           <button
             type="submit"
-            className="px-4 py-1 text-center text-base bg-[#333332] text-[#d9ac4f] rounded-full font-sans"
+            className="px-4 py-0.5 text-center text-[12px] bg-[#333332] text-[#d9ac4f] rounded-full font-sans"
           >
             Yesterday's total commission
           </button>
         </div>
-        <p className="text-[#8f5206] text-sm text-center mt-1 mb-2 font-sans">
+        <p className="text-[#8f5206] text-[11px] text-center mt-1 mb-2 font-sans">
           Upgrade the level to increase commission income
         </p>
 
@@ -173,13 +173,13 @@ function PromotionPage() {
                 <th className="bg-[#3a3947] text-base font-normal text-white p-2 border-r border-[#242424]">
                   <div className="flex items-center justify-center leading-tight">
                     <img src={subordinate} alt="Direct Icon" className="mr-1 w-6 h-6" />
-                    <span>Direct subordinates</span>
+                    <span className="text-xs">Direct subordinates</span>
                   </div>
                 </th>
                 <th className="bg-[#3a3947] text-base font-normal text-white p-2">
                   <div className="flex items-center justify-center leading-tight">
                     <img src={teamsubordinate} alt="Team Icon" className="mr-1 w-6 h-6" />
-                    <span>Team subordinates</span>
+                    <span className="text-xs">Team subordinates</span>
                   </div>
                 </th>
               </tr>
@@ -226,10 +226,10 @@ function PromotionPage() {
                 <td className="text-white p-[2px] leading-tight">0</td>
               </tr>
               <tr>
-                <td className="text-white px-[2px] py-[2px] font-medium text-xs border-r border-[#242424] leading-tight">
+                <td className="text-white px-[2px] py-[8px] font-medium text-xs border-r border-[#242424] leading-tight">
                   Number of people making first deposit
                 </td>
-                <td className="text-white px-[2px] py-[2px] font-medium text-xs leading-tight">
+                <td className="text-white px-[2px] py-[8px] font-medium text-xs leading-tight">
                   Number of people making first deposit
                 </td>
               </tr>
@@ -238,11 +238,11 @@ function PromotionPage() {
         </div>
 
         {/* Invitation Link Button */}
-        <div className="w-full flex justify-center mt-6 mb-4">
+        <div className="w-full flex justify-center mt-4 mb-3">
           <Link to="/invitepage" className="w-11/12">
             <button
               type="button"
-              className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] p-1 text-center text-[#8f5206] font-bold text-lg rounded-full font-sans"
+              className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] p-2 text-sm text-center text-[#8f5206] font-bold text-lg rounded-full font-sans"
             >
               INVITATION LINK
             </button>
@@ -250,16 +250,16 @@ function PromotionPage() {
         </div>
 
         {/* Additional menu items */}
-        <div className="bg-[#333332] bg-opacity-90 p-4 rounded-lg mb-3">
+        <div className="bg-[#333332] bg-opacity-90 p-3 rounded-lg mb-2" style={{height:'55px'}}>
           <div className="flex justify-between items-center">
             <div
               className="flex text-white items-center cursor-pointer"
               onClick={handleCopy}
             >
-              <img src={CopyLink} alt="Copy Icon" className="mr-2 w-8 h-8" />
-              <p className="text-base font-sans">Copy invitation code</p>
+              <img src={CopyLink} alt="Copy Icon" className="mr-2 w- h-8 text-xs" />
+              <p className="text-base font-sans text-sm">Copy invitation code</p>
             </div>
-            <div className="flex items-center text-gray-400 space-x-2">
+            <div className="flex items-center text-gray-400 space-x-2 text-xs">
               <span className="text-sm truncate max-w-20">{userData?.referring_code}</span>
               <button
                 className="flex items-center text-gray-400"
@@ -272,15 +272,15 @@ function PromotionPage() {
         </div>
 
         <Link to="/subordinate" className="w-full block">
-          <div className="bg-[#333332] bg-opacity-90 p-3  rounded-lg mb-3">
+          <div className="bg-[#333332] bg-opacity-90 p-3  rounded-lg mb-2">
             <div className="flex justify-between items-center">
               <div className="flex text-white items-center">
                 <img
                   src={Team_port}
                   alt="Team Icon"
-                  className="w-10 h-10 mr-1"
+                  className="w-8 h-8 mr-1"
                 />
-                <p className="text-base font-sans">Subordinate data</p>
+                <p className="text-base font-sans text-sm">Subordinate data</p>
               </div>
               <span className="text-white">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -298,7 +298,7 @@ function PromotionPage() {
                   alt="Commission Icon"
                   className="w-8 h-8 mr-1"
                 />
-                <p className="text-base font-sans">Commission detail</p>
+                <p className="text-base font-sans text-sm">Commission detail</p>
               </div>
               <span className="text-white">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -311,8 +311,8 @@ function PromotionPage() {
           <div className="bg-[#333332] bg-opacity-90 p-3 rounded-lg mb-3">
             <div className="flex justify-between items-center">
               <div className="flex text-white items-center">
-                <img src={Rule} alt="Rule Icon" className="mr-1 w-10 h-10" />
-                <p className="text-base font-sans">Invitation rules</p>
+                <img src={Rule} alt="Rule Icon" className="mr-1 w-8 h-8" />
+                <p className="text-base font-sans text-sm">Invitation rules</p>
               </div>
               <span className="text-gray-400">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -325,8 +325,8 @@ function PromotionPage() {
           <div className="bg-[#333332] bg-opacity-90 p-3 rounded-lg mb-3">
             <div className="flex justify-between items-center">
               <div className="flex text-white items-center">
-                <img src={Server} alt="Server Icon" className="mr-1 w-10 h-10" />
-                <p className="text-base font-sans">Agent line customer service</p>
+                <img src={Server} alt="Server Icon" className="mr-1 w-8 h-8" />
+                <p className="text-base font-sans text-sm">Agent line customer service</p>
               </div>
               <span className="text-gray-400">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -342,9 +342,9 @@ function PromotionPage() {
                 <img
                   src={RebateRatio}
                   alt="Rebate Icon"
-                  className="mr-1 w-10 h-10"
+                  className="mr-1 w-8 h-8"
                 />
-                <p className="text-base font-sans">Rebate ratio</p>
+                <p className="text-base font-sans text-sm">Rebate ratio</p>
               </div>
               <span className="text-gray-400">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -355,29 +355,29 @@ function PromotionPage() {
 
         <div className="bg-[#333332] bg-opacity-90 p-2 rounded-lg mb-24">
           <div className="flex items-center mb-2">
-            <img src={Money} alt="Money Icon" className="mr-2 w-8 h-8" />
-            <h2 className="font-bold text-white text-sm font-sans">Promotion data</h2>
+            <img src={Money} alt="Money Icon" className="mr-2 w-6 h-6" />
+            <h2 className="font-bold text-white text-lg font-sans text-xs">Promotion data</h2>
           </div>
 
-          <div className="grid grid-cols-2 mb-2">
-            <div className="flex flex-col items-center gap-1">
+          <div className="grid grid-cols-2 mb-1">
+            <div className="flex flex-col items-center ">
               <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans">This week</span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">This week</span>
             </div>
-            <div className="flex flex-col border-l border-gray-700 items-center gap-1">
+            <div className="flex flex-col border-l border-gray-700 items-center ">
               <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans">Total Commission</span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">Total Commission</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2">
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-col items-center ">
               <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans">direct subordinate</span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">direct subordinate</span>
             </div>
             <div className="flex flex-col border-l border-gray-700 items-center gap-1 text-center px-1">
               <span className="text-white text-base">0</span>
-              <span className="text-xs text-[#a8a5a1] font-sans leading-tight">
+              <span className="text-xs text-[#a8a5a1] font-sans leading-tight text-xs">
                 Total number of subordinates in the team
               </span>
             </div>

@@ -16,6 +16,7 @@ import { Check } from 'lucide-react'; // White tick icon from lucide-react
 import iconquickpay from "../../Assets/finalicons/iconquickpay.png"
 import refresh from "../../Assets/finalicons/refresh.png"
 import apiServices from '../../api/apiServices';
+import CommanHeader from '../../components/CommanHeader';
 
 const Deposit = () => {
   const [inputAmount, setInputAmount] = useState('');
@@ -24,7 +25,7 @@ const Deposit = () => {
   const [selectedChannel, setSelectedChannel] = useState("Upay-USDT");
   const [showPopup, setShowPopup] = useState({ visible: false, orderNumber: '' }); // State for popup
   const [withdrawHistory, setWithDrawHistory] = useState([])
-  const [walletBalance,setWalletBalance] =useState(0)
+  const [walletBalance, setWalletBalance] = useState(0)
   const [page, setPage] = useState(1);
   const fetchWithdrawals = async () => {
     try {
@@ -35,20 +36,21 @@ const Deposit = () => {
       console.log(err)
     }
   };
-   const fetchWalletBalance = async () => {
-      try {
-        const response = await apiServices?.getWalletBalance();
-        if (response?.success && response?.mainWallet) {
-          const balance = Number(response.mainWallet.balance) || 0;
-          setWalletBalance(balance);
-        } else {
-          setWalletBalance(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch wallet balance:", error);
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await apiServices?.getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        const thirdPartyBalance = Number(response?.thirdPartyWallet?.balance) || 0;
+        setWalletBalance((balance+thirdPartyBalance).toFixed(2));
+      } else {
         setWalletBalance(0);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch wallet balance:", error);
+      setWalletBalance(0);
+    }
+  };
   useEffect(() => {
     fetchWithdrawals()
     fetchWalletBalance()
@@ -90,12 +92,15 @@ const Deposit = () => {
 
   return (
     <div className="bg-[#242424] min-h-screen flex flex-col w-full items-center justify-center mt-4">
-      <DepositHeader />
+      <CommanHeader   title = "Deposit" rightButtonText="Deposit History" navigateValue="/deposit-history"/>
       <div className="w-full min-h-screen mt-8 bg-[#242424] p-3 text-[#8f5206] font-sans">
         {/* Balance Card */}
         <div
-          style={{ backgroundImage: `url(${bgImage})` }}
-          className="bg-cover bg-center p-4 rounded-xl mb-4 h-[145px] flex flex-col justify-between relative"
+          style={{
+            backgroundImage: `url(${bgImage})`,
+            backgroundRepeat: 'no-repeat', backgroundSize: '100%', backgroundPosition: 'top', borderRadius: '.26667rem',
+          }}
+          className="bg-cover bg-center p-4 rounded-xl h-[145px] flex flex-col justify-between relative"
         >
           <div className="flex items-center space-x-2">
             <img src={balanceIcon} alt="Balance Icon" className="w-4 h-4" />
@@ -110,7 +115,7 @@ const Deposit = () => {
 
 
         {/* Payment Options */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-4 gap-1 mb-4">
           {[
             { name: "UPI-QRpay", img: upi },
             { name: "Wake UP-APP", img: all },
@@ -120,13 +125,14 @@ const Deposit = () => {
             <div
               key={index}
               onClick={() => handlePaymentSelect(item.name)}
-              className={`p-3 py-3 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${selectedPayment === item.name
+              className={`p-1 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${selectedPayment === item.name
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
                 : "bg-[#333332] hover:bg-neutral-700"
                 }`}
+                style={{width:'79px',height:'87px'}}
             >
               <img src={item.img} className="w-12 h-12 mx-auto mb-2" alt={item.name} />
-              <div className="text-base" style={{ color: selectedPayment === item.name ? "#8f5206" : "#a8a5a1" }}>
+              <div className="text-base text-xs" style={{ color: selectedPayment === item.name ? "#8f5206" : "#a8a5a1" }}>
                 {item.name}
               </div>
             </div>
@@ -158,8 +164,8 @@ const Deposit = () => {
                     <div className="flex items-center">
                       <img src={tpay} alt='icon' className='h-10 w-10 mr-4' />
                       <div>
-                        <div className="font-semibold text-neutral-400">{item.name}</div>
-                        <div className="text-neutral-400 text-sm">{item.balance}</div>
+                        <div className="font-semibold  text-[14px]">{item.name}</div>
+                        <div className="text-[14px]">{item.balance}</div>
                       </div>
                     </div>
                     <div className="text-amber-500 text-sm">{item.bonus}</div>
@@ -296,8 +302,8 @@ const Deposit = () => {
                     className={`p-3 rounded-xl cursor-pointer transition relative ${item.highlight ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]" : "bg-[#4d4d4c] hover:bg-neutral-700"
                       }`}
                   >
-                    <div className="font-semibold text-neutral-400">{item.name}</div>
-                    <div className="text-neutral-400">Balance: {item.balance}</div>
+                    <div className="font-semibold text-neutral-400 text-sm">{item.name}</div>
+                    <div className="text-neutral-400 text-sm">Balance: {item.balance}</div>
                   </div>
                 ))}
               </div>
@@ -387,7 +393,7 @@ const Deposit = () => {
           return (
             <div key={index} className="space-y-4">
               {/* First Deposit Entry - Completed */}
-              <div className="bg-[#333332] p-4 rounded-lg">
+              <div className="bg-[#333332] p-2 rounded-lg">
                 <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
                   <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
                     Deposit

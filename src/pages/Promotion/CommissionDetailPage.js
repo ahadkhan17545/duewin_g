@@ -56,8 +56,8 @@ function CommissionDetailPage() {
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
       <CommissionDetailHeader />
 
-      <div className="px-4 py-6">
-        <div className="w-full max-w-md mx-auto text-gray-200 mt-10">
+      <div className="px-4 py-3">
+        <div className="w-full max-w-md mx-auto text-gray-200 ">
           <details className="group" onClick={(e) => { e.preventDefault(); openModal(); }}>
             <summary className="flex items-center bg-[#333332] rounded-lg justify-between px-4 py-3 cursor-pointer">
               <span className="text-[#a8a5a1]">{`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`}</span>

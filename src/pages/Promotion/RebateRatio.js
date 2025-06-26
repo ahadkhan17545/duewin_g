@@ -84,7 +84,8 @@ function RebateRatio() {
   const selectedRebates = getRebatePercentages();
 
   return (
-    <div className="bg-[#242424] w-full min-h-screen flex flex-col items-center">
+    <>  <RebateRatioHeader />
+    <div className="bg-[#242424] w-full min-h-screen flex flex-col items-center p-3">
       {/* Inline CSS to ensure scrollbar is hidden */}
       <style jsx>{`
         .scrollbar-hidden::-webkit-scrollbar {
@@ -96,12 +97,12 @@ function RebateRatio() {
         }
       `}</style>
 
-      <RebateRatioHeader />
+    
 
       {/* Main content wrapper with max width and proper alignment */}
-      <div className="w-full mx-auto sm:px-4 md:px-4 mt-16 flex flex-col items-center">
+      <div className="w-full mx-auto sm:px-4 md:px-4  flex flex-col items-center">
         {/* Selection Items - Reduced width with horizontal scroll */}
-        <div className="flex w-full mb-6 overflow-x-auto flex-nowrap scrollbar-hidden">
+        <div className="flex w-full mb-2 overflow-x-auto flex-nowrap scrollbar-hidden">
           {descriptions.map((desc, index) => (
             <div
               key={index}
@@ -113,7 +114,7 @@ function RebateRatio() {
               <img
                 src={selectedIndex === index ? activeImages[index] : images[index]}
                 alt={desc}
-                className="w-8 h-8 object-contain"
+                className="w-5 h-5 object-contain"
               />
               <p className={`text-xs font-semibold ${selectedIndex === index ? "text-[#8f5206]" : "text-[#a8a5a1]"}`}>
                 {desc}
@@ -126,24 +127,24 @@ function RebateRatio() {
         <div className="w-full flex justify-center">
           <div className="w-full max-w-[400px]">
             {[...Array(11)].map((_, levelIndex) => (
-              <div key={levelIndex} className="bg-[#333332] p-4 rounded-lg mb-4 w-full">
-                <h2 className="text-lg text-[#f5f3f0] mb-2 text-left">
+              <div key={levelIndex} className="bg-[#333332] p-3 rounded-lg mb-2 w-full">
+                <h2 className="text-sm text-[#f5f3f0] mb-1 text-left">
                   Rebate Level <span className="text-[#d9ac4f] font-bold italic">L{levelIndex}</span>
                 </h2>
 
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {[...Array(6)].map((_, rebateIndex) => (
                     <div key={rebateIndex} className="flex justify-between items-center text-base">
                       <div className="flex items-center flex-shrink-0">
                         <div className="flex flex-col items-center mr-2">
-                          <img src={iconround} alt="File Icon" className="w-4 h-4" />
+                          <img src={iconround} alt="File Icon" className="w-3 h-3" />
                           {rebateIndex < 5 && <PiLineVerticalDuotone className="w-[0.8px] h-2 bg-[#d9ac4f]" />}
                         </div>
-                        <p className="text-[#a8a5a1] whitespace-nowrap text-sm">
+                        <p className="text-[#a8a5a1] whitespace-nowrap text-xs">
                           {rebateIndex + 1} level lower level commission rebate
                         </p>
                       </div>
-                      <span className="text-[#f5f3f0] flex-shrink-0 text-sm">
+                      <span className="text-[#f5f3f0] flex-shrink-0 text-xs">
                         {selectedRebates[`L${levelIndex}`][rebateIndex]}%
                       </span>
                     </div>
@@ -155,6 +156,7 @@ function RebateRatio() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

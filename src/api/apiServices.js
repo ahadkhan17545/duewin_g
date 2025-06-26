@@ -356,7 +356,7 @@ export const getUserProfile = async () => {
   return await apiRequest(`/users/profile`, "GET")
 }
 
-export const getUserBets = async (gameType, duration, limit = 10, page = 0) => {
+export const getUserBets = async (gameType, duration, limit = 10, page = 1) => {
   return await apiRequest(`/games/${gameType}/${duration}/my-bets`, "GET", null, { page, limit })
 }
 

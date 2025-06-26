@@ -13,6 +13,7 @@ import img8 from "../../Assets/finalicons/Usdt.png";
 // Import active state images
 import activeImg6 from "../../Assets/finalicons/allicon2.png";
 import activeImg7 from "../../Assets/finalicons/bankcardicon1.png";
+import CommanHeader from "../../components/CommanHeader";
 
 function WithdrawHistory() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -40,7 +41,7 @@ function WithdrawHistory() {
   const images = [img6, img7, img8];
   const activeImages = [activeImg6, activeImg7, img8];
   const descriptions = ["All", "Bank", "USDT"];
-  
+
 
   // Fetch withdrawal history from API
   useEffect(() => {
@@ -165,8 +166,8 @@ function WithdrawHistory() {
     const withdrawalDate = new Date(withdrawal.created_at);
     const matchesDate = selectedDate
       ? withdrawalDate.getFullYear() === selectedDate.getFullYear() &&
-        withdrawalDate.getMonth() === selectedDate.getMonth() &&
-        withdrawalDate.getDate() === selectedDate.getDate()
+      withdrawalDate.getMonth() === selectedDate.getMonth() &&
+      withdrawalDate.getDate() === selectedDate.getDate()
       : true;
 
     return matchesTab && matchesStatus && matchesDate;
@@ -179,14 +180,14 @@ function WithdrawHistory() {
       .getDate()
       .toString()
       .padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
   };
 
   return (
     <div className="bg-[#242424] w-full max-w-[440px] min-h-screen flex flex-col mx-auto">
-      <WithdrawHistoryHeader />
+      <CommanHeader title="Withdraw History" />
 
       {/* Buttons Section */}
       <div className="flex flex-row items-center gap-2 mt-14">
@@ -212,10 +213,9 @@ function WithdrawHistory() {
               <div
                 key={index}
                 className={`px-2 py-2 w-28 rounded-lg shadow-md mb-1 mt-2 flex-shrink-0 transition-all duration-300 
-                  ${
-                    selectedIndex === index
-                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                      : "bg-[#333332]"
+                  ${selectedIndex === index
+                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                    : "bg-[#333332]"
                   }
                   ${isDragging ? "cursor-grabbing" : "cursor-pointer"}`}
                 onClick={() => {
@@ -231,9 +231,8 @@ function WithdrawHistory() {
                     className="w-8 h-6 object-contain"
                   />
                   <p
-                    className={`text-sm font-semibold ${
-                      selectedIndex === index ? "text-[#8f5206]" : "text-[#a8a5a1]"
-                    }`}
+                    className={`text-sm font-semibold ${selectedIndex === index ? "text-[#8f5206]" : "text-[#a8a5a1]"
+                      }`}
                   >
                     {desc}
                   </p>
@@ -279,11 +278,10 @@ function WithdrawHistory() {
                         {["All", "Complete", "Failed"].map((status) => (
                           <div
                             key={status}
-                            className={`p-2 rounded-lg cursor-pointer text-center ${
-                              selectedStatus === status
+                            className={`p-2 rounded-lg cursor-pointer text-center ${selectedStatus === status
                                 ? "bg-[#4a4a4a] text-white"
                                 : "text-gray-400 hover:bg-[#4a4a4a] hover:text-white"
-                            }`}
+                              }`}
                             onClick={() => handleStatusSelect(status)}
                           >
                             {status}
@@ -342,11 +340,10 @@ function WithdrawHistory() {
                               {years.map((year) => (
                                 <div
                                   key={year}
-                                  className={`h-[40px] flex items-center justify-center text-center ${
-                                    selectedDate && selectedDate.getFullYear() === year
+                                  className={`h-[40px] flex items-center justify-center text-center ${selectedDate && selectedDate.getFullYear() === year
                                       ? "text-white font-medium"
                                       : "text-gray-500"
-                                  } cursor-pointer`}
+                                    } cursor-pointer`}
                                   onClick={() => handleDateSelect("year", year)}
                                 >
                                   {year}
@@ -369,9 +366,8 @@ function WithdrawHistory() {
                                 return (
                                   <div
                                     key={month}
-                                    className={`h-[40px] flex items-center justify-center text-center ${
-                                      isSelected ? "text-white font-medium" : "text-gray-500"
-                                    } cursor-pointer`}
+                                    className={`h-[40px] flex items-center justify-center text-center ${isSelected ? "text-white font-medium" : "text-gray-500"
+                                      } cursor-pointer`}
                                     onClick={() => handleDateSelect("month", month)}
                                   >
                                     {month}
@@ -400,9 +396,8 @@ function WithdrawHistory() {
                                 return (
                                   <div
                                     key={day}
-                                    className={`h-[40px] flex items-center justify-center text-center ${
-                                      isSelected ? "text-white font-medium" : "text-gray-500"
-                                    } cursor-pointer`}
+                                    className={`h-[40px] flex items-center justify-center text-center ${isSelected ? "text-white font-medium" : "text-gray-500"
+                                      } cursor-pointer`}
                                     onClick={() => handleDateSelect("day", day)}
                                   >
                                     {day}
@@ -424,7 +419,7 @@ function WithdrawHistory() {
           </div>
 
           {/* Content Section */}
-          <div className="rounded-lg shadow-md mt-4 max-h-screen overflow-y-auto" style={{maxHeight:'500px'}}>
+          <div className="rounded-lg shadow-md mt-4 max-h-screen overflow-y-auto" style={{ maxHeight: '500px' }}>
             {loading ? (
               <div className="text-white text-center p-4">Loading...</div>
             ) : error ? (
@@ -442,7 +437,10 @@ function WithdrawHistory() {
             ) : (
               filteredWithdrawals.map((withdrawal) => (
                 <div key={withdrawal.id} className="bg-[#333332] rounded-xl p-4 mb-4">
-                  <div className="flex items-center justify-between mb-2">
+                  <div style={{
+                    borderBottom: '.01333rem solid #525167'
+                    , paddingBottom: '8px'
+                  }} className="flex items-center justify-between mb-2">
                     <div>
                       <span className="bg-[#cc2f2f] text-white font-medium text-sm px-2 py-1 rounded">
                         Withdraw
@@ -450,9 +448,8 @@ function WithdrawHistory() {
                     </div>
                     <div className="ml-auto text-right">
                       <span
-                        className={`text-sm font-medium ${
-                          withdrawal.status === "completed" ? "text-green-500" : ( withdrawal.status === "pending" ? "text-yellow-500" : "text-red-500")
-                        }`}
+                        className={`text-sm font-medium ${withdrawal.status === "completed" ? "text-green-500" : (withdrawal.status === "pending" ? "text-yellow-500" : "text-red-500")
+                          }`}
                       >
                         {withdrawal.status}
                       </span>
@@ -487,9 +484,8 @@ function WithdrawHistory() {
               <button
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`px-4 py-2 rounded-lg ${
-                  page === 1 ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
-                }`}
+                className={`px-4 py-2 rounded-lg ${page === 1 ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
+                  }`}
               >
                 Previous
               </button>
@@ -499,9 +495,8 @@ function WithdrawHistory() {
               <button
                 onClick={() => setPage((prev) => Math.min(prev + 1, pagination.pages))}
                 disabled={page === pagination.pages}
-                className={`px-4 py-2 rounded-lg ${
-                  page === pagination.pages ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
-                }`}
+                className={`px-4 py-2 rounded-lg ${page === pagination.pages ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
+                  }`}
               >
                 Next
               </button>

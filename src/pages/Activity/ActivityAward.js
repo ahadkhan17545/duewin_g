@@ -103,7 +103,7 @@ const InviteFriendsComponent = () => {
       {/* Top banner */}
       <div className="relative w-full">
         <div
-          className="p-2 h-[220px] text-white relative overflow-hidden bg-cover bg-center w-full"
+          className="p-2 h-[180px] text-white relative overflow-hidden bg-cover bg-center w-full"
           style={{
             backgroundImage: `linear-gradient(94deg, rgb(249, 153, 55) 2.72%, rgb(255, 105, 34) 43.54%, rgb(255, 128, 57) 98.54%), url(${invitation})`,
             backgroundBlendMode: "overlay",
@@ -111,24 +111,24 @@ const InviteFriendsComponent = () => {
             backgroundPosition: "center",
           }}
         >
-          <h2 className="text-2xl mb-4">Invite friends and deposit</h2>
-          <p className="text-sm mb-1">Both parties can receive rewards</p>
-          <p className="text-sm mb-2">
+          <h2 className="text-lg mb-2">Invite friends and deposit</h2>
+          <p className="text-xs mb-1">Both parties can receive rewards</p>
+          <p className="text-xs mb-2">
             Invite friends to register and recharge <br />
             to receive rewards
           </p>
-          <p className="text-sm mb-1">Activity date</p>
-          <p className="text-xl font-medium">2024-05-03 - 2099-05-03</p>
+          <p className="text-xs mb-1">Activity date</p>
+          <p className="text-lg font-medium">2024-05-03 - 2099-05-03</p>
         </div>
 
         {/* Navigation */}
-        <div className="bg-[#4d4d4c] p-3 flex justify-around w-[90%] -bottom-20 mx-auto absolute left-1/2 transform -translate-x-1/2 rounded-2xl shadow-lg">
+        <div className="bg-[#4d4d4c] p-2 h-[99px] flex justify-around w-[90%] -bottom-20 mx-auto absolute left-1/2 transform -translate-x-1/2 rounded-2xl shadow-lg">
           <a
             href="/invitationrule"
             className="flex flex-col items-center w-[48%]"
           >
-            <img src={inviterule} alt="Rules icon" className="w-14 h-14" />
-            <span className="text-gray-400 text-sm mt-1">
+            <img src={inviterule} alt="Rules icon" className="w-12 h-12" />
+            <span className="text-gray-400 text-xs mt-1">
               Invitation reward rules
             </span>
           </a>
@@ -136,14 +136,14 @@ const InviteFriendsComponent = () => {
             href="/invitaionrecord"
             className="flex flex-col items-center w-[48%]"
           >
-            <img src={inviterecord} alt="Record icon" className="w-14 h-14" />
-            <span className="text-gray-400 text-sm mt-1">Invitation record</span>
+            <img src={inviterecord} alt="Record icon" className="w-12 h-12" />
+            <span className="text-gray-400 text-xs mt-1">Invitation record</span>
           </a>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col w-full py-2 mt-28 px-4">
+      <div className="flex-1 flex flex-col w-full  mt-28 px-4">
         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
         {bonusTiers.map((bonus, index) => {
           const isClaimed = bonusStatus.claimedTiers.some((t) => t.tier === bonus.tier);

@@ -15,10 +15,10 @@ const HeaderAward = () => {
       </button>
 
       {/* Center with icon & text */}
-     <Link to="/collect-reward" className="flex items-center">
-  <GiBackwardTime className="text-white w-6 h-6 mr-2" />
-  <p className="text-gray-100 text-sm">Collection record</p>
-</Link>
+      <Link to="/collect-reward" className="flex items-center">
+        <GiBackwardTime className="text-white w-6 h-6 mr-2" />
+        <p className="text-gray-100 text-sm">Collection record</p>
+      </Link>
     </header>
   );
 };

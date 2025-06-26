@@ -204,11 +204,11 @@ function Home() {
         gameSectionRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
-    console.log(category,category == "Live Casino")
+    console.log(category, category == "Live Casino")
     if (category === "Slots" || category == "Live Casino") {
-      if(category == "Live Casino"){
-         navigate("/casino-games");
-      }else{
+      if (category == "Live Casino") {
+        navigate("/casino-games");
+      } else {
         const routes = { Slots: "/SlotGame", Casino: "/casino-games" };
         navigate(routes[category] || "/");
       }
@@ -498,6 +498,7 @@ function Home() {
     { id: 7, name: "Mem***ZJ0", amount: 106615180.0 },
     { id: 8, name: "Mem***Q21", amount: 541543016.0 },
     { id: 9, name: "Sah***dhi", amount: 528783489.0 },
+    { id: 10, name: "Ram***dhi", amount: 5287832134.0 },
   ];
 
   const [lotterycardData] = useState([
@@ -737,9 +738,12 @@ function Home() {
                     : "opacity-80"
                     }`}
                   style={{
-                    background: `linear-gradient(135deg, ${category.title === "Lottery" ? "#2A3E4C" : "#3E2A4C"
-                      } 0%, #1A2529 100%)`,
+                    background: `linear-gradient(60deg, ${category.title === "Lottery"
+                      ? "#323838, #30413B,#2D4D40"
+                      : "#323838, #3B3541,#542E57"
+                      })`
                   }}
+
                 >
                   <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
                     <span className="text-white text-sm font-bold self-start">
@@ -762,24 +766,27 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
+                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
                     ? "opacity-100"
                     : "opacity-80"
                     }`}
                   style={{
-                    background: `linear-gradient(135deg, ${category.title === "Original"
-                      ? "#4C3E2A"
-                      : category.title === "Slots"
-                        ? "#3E4C2A"
-                        : "#4C2A4C"
-                      } 0%, #1A2529 100%)`,
+                    background: `linear-gradient(90deg, ${category.title === "Live Casino"
+                      ? "#323838,#433767"
+                      : category.title === "Sports"
+                        ? "#323838, #303D36,#2E4A33"
+                        : category.title === "Slots"
+                          ? "#323838,#4B3F31"
+                          : "#323838,#333937,#404D33"
+                      })`
                   }}
+
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
                     <img
                       src={category.image}
                       alt={category.title}
-                      className="w-full h-[120px] object-contain"
+                      className="w-full h-[60px] object-contain"
                     />
                     <div className="w-full text-center -mt-1">
                       <span className="text-white text-xs font-bold">
@@ -1048,15 +1055,15 @@ function Home() {
             )}
 
           </div>
-          <div className="w-full py-2 bg-[#242424] rounded-lg shadow-lg mt-2 mb-3">
+          <div className="w-full  bg-[#242424] rounded-lg shadow-lg mb-3">
             <h2 className="text-lg font-bold text-[#C4933F] mb-2 border-l-4 ml-1 border-[#C4933F] pl-2">
               Winning Information
             </h2>
             <div
-              className="space-y-2 ml-1 relative"
-              style={{ height: "320px", overflow: "hidden" }}
+              className="space-y-2 relative"
+              style={{ height: "320px", overflow: "hidden", display: 'flex', justifyContent: 'space-around' }}
             >
-              <div className="relative w-[320px] h-[320px] overflow-hidden bg-[#1e1e1e] rounded-lg p-2">
+              <div className="relative w-[320px] h-[320px] overflow-hidden rounded-lg p-2" style={{width:"336px"}}>
                 {winners.map((winner, index) => (
                   <div
                     key={winner.id}
@@ -1067,6 +1074,8 @@ function Home() {
                       // transform: `scale(${1 - index * 0.02})`,
                       zIndex: winners.length - index,
                       animation: index === 0 ? 'slideDown 0.4s ease-out' : 'none',
+                      maxHeight:'57px',
+                      minWidth:'336px'
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -1075,7 +1084,7 @@ function Home() {
                         alt="User"
                         className="w-12 h-12 rounded-full object-cover"
                       />
-                      <span className="text-[#a8a5a1] font-medium text-sm">{winner.name}</span>
+                      <span className="text-[#a8a5a1] font-medium text-xs">{winner.name}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <img src={evo} alt="Icon" className="w-14 h-10 rounded-sm object-cover" />
@@ -1095,7 +1104,7 @@ function Home() {
                 Today's Earnings Chart
               </h2>
               <div
-                className="relative w-full h-32 bg-cover bg-center mb-6 mt-24"
+                className="relative w-full h-32 bg-cover bg-center mb-6 mt-24 text-xs"
                 style={{ backgroundImage: `url(${rank})` }}
               >
                 {earnings.slice(0, 3).map((earner, index) => (
@@ -1127,8 +1136,8 @@ function Home() {
                       alt={`Place ${index + 1}`}
                       className="w-12 h-4 mx-auto mt-0"
                     />
-                    <p className="font-medium mt-4 text-sm">{earner.name}</p>
-                    <p className="text-[#8f5206] font-medium rounded-full px-2 py-0.5 bg-gradient-to-r from-[#fae59f] to-[#c4933f] mt-2 text-sm">
+                    <p className="font-medium mt-4 text-xs">{earner.name}</p>
+                    <p className="text-[#8f5206] font-medium rounded-full px-2 py-0.5 bg-gradient-to-r from-[#fae59f] to-[#c4933f] mt-2 text-xs">
                       ₹{earner.amount.toLocaleString()}
                     </p>
                   </div>
@@ -1138,7 +1147,8 @@ function Home() {
                 {earnings.slice(3).map((earner, index) => (
                   <div
                     key={earner.id}
-                    className="flex items-center justify-between bg-[#333332] p-2 rounded-lg text-xl"
+                    className="flex items-center justify-between bg-[#333332] p-2 rounded-lg text-xs"
+                    style={{maxHeight:'48px'}}
                   >
                     <div className="flex items-center gap-1">
                       <p className="text-[#a8a5a1] text-base font-semibold">
@@ -1149,11 +1159,11 @@ function Home() {
                         alt="User"
                         className="w-10 h-10 rounded-full object-cover ml-3"
                       />
-                      <span className="text-[#a8a5a1] text-sm ml-3 font-medium">
+                      <span className="text-[#a8a5a1] text-xs ml-3">
                         {earner.name}
                       </span>
                     </div>
-                    <p className="text-[#8f5206] text-base px-6 py-0.5 rounded-full font-semibold bg-gradient-to-r from-[#fae59f] to-[#c4933f]">
+                    <p className="text-[#8f5206] text-base px-6 py-0.5 rounded-full font-semibold bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-sm">
                       ₹{earner.amount.toLocaleString()}
                     </p>
                   </div>

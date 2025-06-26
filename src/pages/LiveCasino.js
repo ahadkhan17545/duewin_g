@@ -166,7 +166,7 @@ const CasinoGames = () => {
         {loading ? (
           <p className="text-white text-center">Loading games...</p>
         ) : Array.isArray(games) && games.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
             {games.map((game) => (
               <div
                 key={game.id}

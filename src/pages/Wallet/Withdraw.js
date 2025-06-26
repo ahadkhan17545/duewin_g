@@ -16,6 +16,7 @@ import { CiBank } from "react-icons/ci";
 import { CiWallet } from "react-icons/ci";
 import { FaTrash } from "react-icons/fa";
 import { formatDate } from "../../utils/formatters"
+import CommanHeader from "../../components/CommanHeader";
 const BankCard = ({ bank, isSelected, onSelect, onDelete }) => {
   const maskAccountNumber = (accNum) => {
     if (!accNum || accNum.length < 8) return accNum;
@@ -508,7 +509,7 @@ const Withdraw = () => {
 
   return (
     <div className="bg-[#333332] min-h-screen flex flex-col items-center justify-center w-full mx-auto">
-      <WithdrawHeader />
+      <CommanHeader   title = "Withdraw" rightButtonText="Withdraw History" navigateValue="/withdraw-history"/>
       <div className="w-full max-w-[400px] min-h-screen mt-8 bg-[#242424] p-3 text-[#8f5206] font-sans">
         {/* Balance Card */}
         <div
@@ -650,7 +651,7 @@ const Withdraw = () => {
           </div>
         )}
 
-        <div id="webcrumbs" className="mt-4 p-4 rounded-xl">
+        <div id="webcrumbs" className="mt-4 rounded-xl">
           <div className="flex items-center gap-2 mb-8">
             <img src={copyicon} alt="icon" className="h-5 w-5" />
             <h2 className="text-white text-lg font-medium">

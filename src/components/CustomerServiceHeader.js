@@ -9,7 +9,7 @@ const CustomerServiceHeader = () => {
       <BackButton className="text-[#f5f3f0] text-xl cursor-pointer" />
 
       {/* Notification Title in the Center */}
-      <p className="text-[#f5f3f0] text-xl p-2 mx-auto">
+      <p className="text-[#f5f3f0] text-lg p-2 mx-auto">
         Agent line customer service
       </p>
     </header>

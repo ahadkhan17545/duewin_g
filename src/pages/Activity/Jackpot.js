@@ -21,6 +21,7 @@ import activeImg6 from "../../Assets/finalicons/allicon2.png"
 import verticalLineImage from '../../Assets/gameStatsSteps.png';
 import succeed from '../../Assets/succeed.png';
 import apiServices from '../../api/apiServices';
+import CommanHeader from '../../components/CommanHeader';
 
 const Jackpot = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -33,7 +34,7 @@ const Jackpot = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [rebateStats,setRebateStats] = useState(null)
+  const [rebateStats, setRebateStats] = useState(null)
   const fetchRebate = async (page = 1) => {
     setIsLoading(true);
     try {
@@ -119,7 +120,7 @@ const Jackpot = () => {
   return (
     <div className="w-full flex justify-center bg-[#242424] min-h-screen text-white overflow-x-hidden">
       <div className="w-[450px] bg-[#242424] text-white rounded-lg overflow-y-auto min-h-screen p-2">
-        <RebateHeader />
+        <CommanHeader title='Rebate' />
 
         {/* Tab Images with Selection */}
         <div
@@ -128,7 +129,7 @@ const Jackpot = () => {
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
-          className="flex overflow-x-auto space-x-2 py-4 px-4 mt-2 scrollbar-hide"
+          className="flex overflow-x-auto space-x-2 py-4 px-2 mt-2 scrollbar-hide"
         >
           {images.map((img, index) => (
             <div
@@ -145,9 +146,9 @@ const Jackpot = () => {
               <img
                 src={selectedTab === index ? activeImages[index] : img}
                 alt={tabNames[index]}
-                className="w-[26px] h-[26px] object-contain mb-1" // Smaller image size like in the provided image
+                className="w-[24px] h-[24px] object-contain mb-1" // Smaller image size like in the provided image
               />
-              <span className={`text-sm ${selectedTab === index ? 'text-black' : 'text-gray-400'
+              <span className={`text-xs ${selectedTab === index ? 'text-black' : 'text-gray-400'
                 }`}>
                 {tabNames[index]}
               </span>
@@ -157,7 +158,7 @@ const Jackpot = () => {
 
         {/* Grey Box */}
         <div className="max-w-[420px] w-full bg-[#333332] rounded-lg  p-2 shadow-lg">
-          <span className="text-white text-lg">All-Total betting rebate</span>
+          <span className="text-white text-[14px]">All-Total betting rebate</span>
 
           <div className="mb-2">
             <div className="inline-flex items-center space-x-2 border py-1 border-[#d9ac4f] rounded w-fit">
@@ -171,27 +172,27 @@ const Jackpot = () => {
             <span className="text-xl font-semibold text-white">{rebateStats?.totalRebateAmount}</span>
           </div>
 
-          <div className="bg-[#4d4d4c] p-2 rounded text-center w-4/5 mb-2 text-[#a8a5a1] text-sm">
+          <div className="bg-[#4d4d4c] p-2 rounded w-4/5 mb-2 text-[#a8a5a1] text-xs">
             Upgrade VIP level to increase rebate rate
           </div>
 
           <div className="grid grid-cols-2 gap-1 mb-2">
             <div className="bg-[#4d4d4c] p-2 rounded">
-              <div className="text-[#a8a5a1] text-sm">Today rebate</div>
+              <div className="text-[#a8a5a1] text-xs">Today rebate</div>
               <div className="text-[#dd9138] text-lg font-medium">{rebateStats?.todayRebateAmount}</div>
             </div>
             <div className="bg-[#4d4d4c] p-2 rounded">
-              <div className="text-[#a8a5a1] text-sm">Total rebate</div>
+              <div className="text-[#a8a5a1] text-xs">Total rebate</div>
               <div className="text-[#dd9138] text-lg font-medium">{rebateStats?.totalRebates}</div>
             </div>
           </div>
 
-          <div className="text-[#a8a5a1] text-sm mb-5">
+          <div className="text-[#a8a5a1] text-xs mb-5">
             Automatic code washing at 01:00:00 every morning
           </div>
 
           <button
-            className="w-full bg-[#6f7381] text-white p-1.5 text-lg rounded-full"
+            className="w-full bg-[#6f7381] text-white p-1.5 text-lg rounded-full text-[15px]"
             onClick={openPopup}
           >
             One-Click Rebate
@@ -199,45 +200,46 @@ const Jackpot = () => {
         </div>
 
         {/* Rebate history section */}
-        <div className="p-2 max-w-[420px] w-full text-white mt-5">
+        <div className="p-2 max-w-[420px] w-full text-white mt-1">
           <div className="flex items-center mb-4">
             <div className="w-1 h-5 bg-yellow-300 mr-2"></div>
-            <h2 className="text-white font-medium text-2xl">Rebate history</h2>
+            <h2 className="text-white font-medium text-[18px]">Rebate history</h2>
           </div>
           {rebateHistory?.length > 0 &&
             rebateHistory?.map((rebate, index) => {
               return (
                 <div key={index} className="bg-[#333332] rounded-lg p-2 mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-lg font-bold">Lottery ({rebate?.gameType})</span>
-                    <span className="text-green-500">Completed</span>
+                    <span className="text-[15px] font-bold">Lottery ({rebate?.gameType})</span>
+                    <span className="text-green-500 text-[15px]">Completed</span>
                   </div>
-                  <div className="text-gray-400 text-xs mb-4">{moment(rebate?.createdAt).format("DD-MM-YYYY hh:mm A")}</div>
+                  <div className="text-gray-400 text-xs mb-1">{moment(rebate?.createdAt).format("DD-MM-YYYY hh:mm A")}</div>
                   <hr className="border-gray-700 mb-4" />
 
                   <div className="flex items-start">
                     <div className="mr-4 flex-shrink-0">
                       <img
+                        style={{ marginTop: '-3px' }}
                         src={verticalLineImage}
                         alt="Timeline"
-                        className="h-24 object-contain"
+                        className="h-20 object-contain"
                       />
                     </div>
 
                     <div className="flex-grow space-y-4 -mt-1">
                       <div className="flex items-center justify-between">
-                        <span>Betting rebate</span>
-                        <span className="text-white">{rebate?.betAmount}</span>
+                        <span className='text-xs'>Betting rebate</span>
+                        <span className="text-white text-xs">{rebate?.betAmount}</span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span>Rebate rate</span>
-                        <span className="text-red-400">{rebate?.rate}%</span>
+                        <span className='text-xs'>Rebate rate</span>
+                        <span className="text-red-400 text-xs">{rebate?.rate}%</span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span>Rebate amount</span>
-                        <span className="text-[#d9ac4f]">{rebate?.rebateAmount}</span>
+                        <span className='text-xs'>Rebate amount</span>
+                        <span className="text-[#d9ac4f] text-xs">{rebate?.rebateAmount}</span>
                       </div>
                     </div>
                   </div>
@@ -284,7 +286,7 @@ const Jackpot = () => {
                 onClick={closePopup}
                 className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black py-3 rounded-full text-center text-sm font-medium"
               >
-                 Close
+                Close
               </button>
             </div>
           </div>

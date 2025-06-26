@@ -15,6 +15,7 @@ import whitetick from "../../Assets/whitetick.png";
 
 import activeImg6 from "../../Assets/finalicons/allicon2.png";
 import activeImg7 from "../../Assets/finalicons/bankcardicon1.png";
+import CommanHeader from "../../components/CommanHeader";
 
 function DepositHistory() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -252,7 +253,7 @@ function DepositHistory() {
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col">
-      <DepositHistoryHeader />
+      <CommanHeader title="Deposit History" />
 
       <div className="bg-[#242424] flex flex-col items-center mt-12">
         <div className="w-full px-3">
@@ -516,7 +517,7 @@ function DepositHistory() {
                   {filteredDeposits.map((deposit) => {
                     const orderId = `RC${deposit.created_at.replace(/[-T:Z]/g, "")}${deposit.id}`; // Generate a mock order ID
                     return (
-                      <div key={deposit.id} className="bg-[#333332] p-4 rounded-xl">
+                      <div key={deposit.id} className="bg-[#333332] p-2 rounded-xl">
                         <div className="flex items-center justify-between pb-4 border-b border-white">
                           <button className="bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-1.5 rounded-lg transition-colors">
                             Deposit

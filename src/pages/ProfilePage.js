@@ -37,7 +37,23 @@ function ProfilePage() {
   const [userData, setUserData] = useState(null)
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const {user} = useSelector((store)=>store.login)
+  const [walletBalance, setWalletBalance] = useState(0)
+  const { user } = useSelector((store) => store.login)
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await apiServices?.getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        const thirdPartyBalance = Number(response?.thirdPartyWallet?.balance) || 0;
+        setWalletBalance((balance + thirdPartyBalance).toFixed(2));
+      } else {
+        setWalletBalance(0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch wallet balance:", error);
+      setWalletBalance(0);
+    }
+  };
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -53,6 +69,7 @@ function ProfilePage() {
       }
     };
 
+    fetchWalletBalance()
     fetchUserProfile();
   }, []);
 
@@ -96,7 +113,7 @@ function ProfilePage() {
   const handleCancelLogout = () => {
     setShowLogoutModal(false);
   };
-    const handleCopy = () => {
+  const handleCopy = () => {
     if (userData?.user_id) {
       navigator.clipboard.writeText(userData.user_id)
         .then(() => {
@@ -162,9 +179,9 @@ function ProfilePage() {
               {/* Total balance */}
               <div className="text-gray-400 text-xs font-normal">Total balance</div>
               <div className="flex items-center gap-4 mt-1">
-                <div className="text-white text-base font-semibold">₹{userData?.wallet_balance}</div>
+                <div className="text-white text-base font-semibold">₹{walletBalance}</div>
                 <button className="text-white">
-                  <img src={refreshicon} alt="refresh" className="w-5 h-5" />
+                  <img onClick={fetchWalletBalance} src={refreshicon} alt="refresh" className="w-5 h-5" />
                 </button>
               </div>
 
