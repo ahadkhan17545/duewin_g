@@ -3,6 +3,7 @@ import LoginVerficationHeader from '../components/LoginVerificationHeader';
 import apiServices from '../api/apiServices';
 import emailIcon from '../Assets/settingicon/resetemailicon.png';
 import { useNavigate } from 'react-router-dom';
+import CommanHeader from '../components/CommanHeader';
 const LoginVerificationForm = () => {
   const [email, setEmail] = useState(null);
   const [userData, setUserData] = useState(null)
@@ -28,7 +29,7 @@ const LoginVerificationForm = () => {
   }
   return (
     <div className="min-h-screen w-full bg-[#242424] flex flex-col items-center justify-start px-4 py-6">
-      <LoginVerficationHeader />
+      <CommanHeader title='Blind Mailbox' />
       <div className="w-full space-y-8 mt-14">
         {/* Email Field */}
         <div>

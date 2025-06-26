@@ -388,7 +388,7 @@ export const getActivityStatus = async () => {
   return await apiRequest(`/activity/status`, "GET",);
 };
 export const claimActivity = async (payload) => {
-  return await apiRequest(`/activity/claim`, "POST",payload);
+  return await apiRequest(`/activity/claim`, "POST", payload);
 };
 
 export const getAttendanceBonus = async () => {
@@ -409,6 +409,22 @@ export const getReferralInvitation = async () => {
 export const getGames = async () => {
   return await apiRequest(`/spribe/games`, "GET");
 };
+
+export const getAnnouncements = async () => {
+  return await apiRequest(`/announcements/latest`, "GET");
+};
+export const addFeedback = async (payload) => {
+  return await apiRequest(`/feedback`, "POST", payload);
+};
+
+export const getFeedbacks = async () => {
+  return await apiRequest(`/feedback/my`, "GET");
+};
+export const getGameTransactions = async (params) => {
+  const query = new URLSearchParams(params).toString();
+  return await apiRequest(`/game-move-transactions/my?${query}`, "GET");
+};
+
 export default {
   getWalletBalance,
   getVipInfo,
@@ -454,5 +470,9 @@ export default {
   getReferral,
   getReferralTeam,
   getReferralInvitation,
-  getGames
+  getGames,
+  getAnnouncements,
+  addFeedback,
+  getFeedbacks,
+  getGameTransactions
 };

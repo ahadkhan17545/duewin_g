@@ -1,15 +1,46 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdExpandMore } from "react-icons/md";
 import TransactionHistoryHeader from "../../components/TransactionHistoryHeader";
+import CommanHeader from "../../components/CommanHeader";
+import apiServices from "../../api/apiServices";
 
 function TransactionProfile() {
   // State for filter and date selections
   const [filter, setFilter] = useState({ selected: "All", temp: "All" });
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
   const [date, setDate] = useState({
     selected: { year: "2025", month: "04", day: "10" },
     temp: { year: "2025", month: "04", day: "10" },
   });
+
+  const fetchTransactions = async (pageNum = 1) => {
+    setLoading(true);
+    try {
+      const params = {
+        page: pageNum,
+        limit: 10,
+        // type: "transfer_in",
+        // game_type: "wingo",
+        // start_date: "2024-01-01",
+        // end_date: "2024-01-31",
+      };
+
+      const res = await apiServices.getGameTransactions(params);
+      setTransactions(res?.data || []);
+      setPagination(res?.pagination || {});
+    } catch (err) {
+      console.error("Failed to fetch transactions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   const [modal, setModal] = useState({ type: null, isOpen: false });
+  useEffect(() => {
+    fetchTransactions(page);
+  }, [page]);
 
   const filterRef = useRef(null);
   const dateRefs = {
@@ -21,59 +52,59 @@ function TransactionProfile() {
   // Dropdown and date options
   const filterOptions = [
     "Bet",
-"Agent commission",
-"Win",
-"Red envelope",
-"Deposit",
-"Withdraw",
-"Cancel withdraw",
-"Attendance bonus",
-"Agent’s red envelope",
-"Withdrawal rejected",
-"Deposit gift",
-"Manual deposit",
-"Sign up bonus",
-"Bonus",
-"First deposit bonus",
-"First deposit rebate",
-"Investment and financial management",
-"Financial income",
-"Financial capital",
-"Capital",
-"Mission rewards",
-"Game moved in",
-"Game moved out",
-"Wining slots",
-"Bank binding bonus",
-"Game refunded",
-"Usdt deposit",
-"Betting rebate",
-"Vip level up increase",
-"Vip monthly reward",
-"Vip deposit bonus",
-"Bonus deduction",
-"Manual withdrawal",
-"One-click rebate",
-"Slots jackpot",
-"Bind mobile number rewards",
-"Xoso issue cancelled",
-"Bind email rewards",
-"Weekly award",
-"C2c withdraw awards",
-"C2c withdraw",
-"C2c withdraw back",
-"C2c recharge",
-"C2c recharge awards",
-"Newbie gift pack",
-"Tournament rewards",
-"Return awards",
-"New members will receive bonuses if they make a loss on their first deposit",
-"New members get bonuses by playing games",
-"Daily rewards",
-"Turntable awards",
-"Partner rewards",
+    "Agent commission",
+    "Win",
+    "Red envelope",
+    "Deposit",
+    "Withdraw",
+    "Cancel withdraw",
+    "Attendance bonus",
+    "Agent’s red envelope",
+    "Withdrawal rejected",
+    "Deposit gift",
+    "Manual deposit",
+    "Sign up bonus",
+    "Bonus",
+    "First deposit bonus",
+    "First deposit rebate",
+    "Investment and financial management",
+    "Financial income",
+    "Financial capital",
+    "Capital",
+    "Mission rewards",
+    "Game moved in",
+    "Game moved out",
+    "Wining slots",
+    "Bank binding bonus",
+    "Game refunded",
+    "Usdt deposit",
+    "Betting rebate",
+    "Vip level up increase",
+    "Vip monthly reward",
+    "Vip deposit bonus",
+    "Bonus deduction",
+    "Manual withdrawal",
+    "One-click rebate",
+    "Slots jackpot",
+    "Bind mobile number rewards",
+    "Xoso issue cancelled",
+    "Bind email rewards",
+    "Weekly award",
+    "C2c withdraw awards",
+    "C2c withdraw",
+    "C2c withdraw back",
+    "C2c recharge",
+    "C2c recharge awards",
+    "Newbie gift pack",
+    "Tournament rewards",
+    "Return awards",
+    "New members will receive bonuses if they make a loss on their first deposit",
+    "New members get bonuses by playing games",
+    "Daily rewards",
+    "Turntable awards",
+    "Partner rewards",
 
-"Join channel rewards",
+    "Join channel rewards",
 
     // Add other options as needed
   ];
@@ -177,7 +208,7 @@ function TransactionProfile() {
   return (
     <div className="flex flex-col min-h-screen bg-[#242424] w-full">
       <div className="w-full max-w-[400px] mx-auto flex flex-col flex-1">
-        <TransactionHistoryHeader />
+        <CommanHeader title="Transaction History" />
 
         <div className="flex-1 flex flex-col mt-14">
           {/* Filter and Date Buttons */}
@@ -230,6 +261,35 @@ function TransactionProfile() {
               </div>
             ))}
           </div>
+          {pagination.pages > 0 && (
+            <div className="flex justify-center gap-4 mt-4 mb-4">
+              <button
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={page === 1}
+                className={`px-4 py-2 rounded-lg ${page === 1
+                    ? "bg-gray-500 text-white cursor-not-allowed"
+                    : "bg-[#fae59f] text-[#8f5206]"
+                  }`}
+              >
+                Previous
+              </button>
+
+              <span className="text-white">
+                Page {pagination.page} of {pagination.pages}
+              </span>
+
+              <button
+                onClick={() => setPage((prev) => Math.min(prev + 1, pagination.pages))}
+                disabled={page === pagination.pages}
+                className={`px-4 py-2 rounded-lg ${page === pagination.pages
+                    ? "bg-gray-500 text-white cursor-not-allowed"
+                    : "bg-[#fae59f] text-[#8f5206]"
+                  }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -244,11 +304,10 @@ function TransactionProfile() {
           {filterOptions.map((option, index) => (
             <div
               key={index}
-              className={`py-4 w-full text-center cursor-pointer transition-colors ${
-                filter.temp === option
-                  ? "text-white bg-[#333332]"
-                  : "text-[#a8a5a1]"
-              }`}
+              className={`py-4 w-full text-center cursor-pointer transition-colors ${filter.temp === option
+                ? "text-white bg-[#333332]"
+                : "text-[#a8a5a1]"
+                }`}
               onClick={() => handleFilterSelect(option)}
             >
               {option}
@@ -278,16 +337,15 @@ function TransactionProfile() {
                   {(type === "year"
                     ? yearOptions
                     : type === "month"
-                    ? monthOptions
-                    : dayOptions
+                      ? monthOptions
+                      : dayOptions
                   ).map((value) => (
                     <div
                       key={value}
-                      className={`h-[40px] flex items-center justify-center text-center cursor-pointer ${
-                        date.temp[type] === value
-                          ? "text-white font-medium"
-                          : "text-gray-500"
-                      }`}
+                      className={`h-[40px] flex items-center justify-center text-center cursor-pointer ${date.temp[type] === value
+                        ? "text-white font-medium"
+                        : "text-gray-500"
+                        }`}
                       onClick={() => handleDateSelect(type, value)}
                     >
                       {value}

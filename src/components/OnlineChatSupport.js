@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import SupportHeader from "./SupportHeader";
+import CommanHeader from "./CommanHeader";
 
 const ChatFlow = () => {
   const [messages, setMessages] = useState([
@@ -34,7 +35,7 @@ const ChatFlow = () => {
 
   return (
     <div className="bg-[#242424] min-h-screen flex flex-col">
-      <SupportHeader />
+      <CommanHeader title="Online" />
       <div className="flex-1 flex flex-col bg-black">
         {/* Header with gradient background */}
         <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-6 text-white">

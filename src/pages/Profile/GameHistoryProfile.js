@@ -16,6 +16,7 @@ import line from "../../Assets/finalicons/line.png";
 import bets from "../../Assets/Newicons/betrecordsicon.png";
 import apiServices from "../../api/apiServices";
 import moment from 'moment'
+import CommanHeader from "../../components/CommanHeader";
 function GameHistoryProfile() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [startX, setStartX] = useState(0);
@@ -179,7 +180,7 @@ function GameHistoryProfile() {
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col items-center">
-      <GameHistoryHeader />
+      <CommanHeader title="Game History" />
       <div className="bg-[#242424] flex flex-col w-full max-w-[400px] mx-auto items-center mt-12">
         <div className="w-full px-3">
           <div
@@ -328,7 +329,7 @@ function GameHistoryProfile() {
                         {bet?.result?.number}
                       </span>
                       <span className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-md">{bet?.result?.size}</span>
-                      <span className="bg-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-md">{bet?.result?.color}</span>
+                      <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md">{bet?.result?.color}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">

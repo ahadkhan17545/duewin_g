@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import gameApi from "../api/gameAPI";
 import { isAuthenticated } from "../api/auth";
 import CasinoHeader from "../components/CasinoHeader";
+import CommanHeader from "../components/CommanHeader";
 
 const providers = [
   { key: "bombaylive", name: "Bombay Live" },
@@ -143,7 +144,7 @@ const CasinoGames = () => {
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
-      <CasinoHeader />
+      <CommanHeader title="Live Casino" />
       <div className="bg-[#242424] p-3 w-full max-w-md mx-auto flex flex-col mt-12">
         {/* Horizontal scrollable tabs */}
         <div className="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-hide">

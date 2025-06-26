@@ -3,6 +3,7 @@ import Footer from "../../components/Footer";
 import NotificationHeader from "../../components/NotificationHeader";
 import Notification from "../../Assets/notification.png";
 import Delete from "../../Assets/delete.png";
+import CommanHeader from "../../components/CommanHeader";
 
 function NotificationProfile() {
   const [showPopup, setShowPopup] = useState(false);
@@ -14,7 +15,7 @@ function NotificationProfile() {
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
-      <NotificationHeader />
+      <CommanHeader title="Notifications" />
 
       <div className="bg-[#242424] p-4 w-full  h-full flex flex-col">
         <div className="bg-[#333332] px-4 py-2 mt-14 rounded-lg shadow-md">
