@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FaAngleRight, FaTimes } from "react-icons/fa"; // Added FaTimes for close button
 import { Link } from "react-router-dom";
 import aboutBg from "../../Assets/aboutBg.png";
-import AboutusHeader from "../../components/AboutusHeader";
 import iconrisk from "../../Assets/iconrisk.png";
 import iconcon from "../../Assets/iconcon.png";
 import CustomerServiceHeader from "../../components/CustomerServiceHeader";

@@ -29,30 +29,30 @@ const useSocket = (gameType = 'wingo', duration = 60) => {
       'connect': '🔌'
     };
     
-    console.group(`${prefix[type] || '📝'} [${timestamp}] SOCKET ${type.toUpperCase()}: ${message}`);
+    // console.group(`${prefix[type] || '📝'} [${timestamp}] SOCKET ${type.toUpperCase()}: ${message}`);
     if (data) {
-      console.log('Data:', data);
+      // console.log('Data:', data);
     }
-    console.log('Socket ID:', socketRef.current?.id || 'Not connected');
-    console.log('Connection Status:', isConnected);
-    console.log('Game Type:', gameType, 'Duration:', duration);
+    // console.log('Socket ID:', socketRef.current?.id || 'Not connected');
+    // console.log('Connection Status:', isConnected);
+    // console.log('Game Type:', gameType, 'Duration:', duration);
     console.groupEnd();
   };
 
   // Generate a new period ID based on current time
-  const generatePeriodId = useCallback(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
+  // const generatePeriodId = useCallback(() => {
+  //   const now = new Date();
+  //   const year = now.getFullYear();
+  //   const month = String(now.getMonth() + 1).padStart(2, '0');
+  //   const day = String(now.getDate()).padStart(2, '0');
+  //   const hours = String(now.getHours()).padStart(2, '0');
+  //   const minutes = String(now.getMinutes()).padStart(2, '0');
+  //   const seconds = String(now.getSeconds()).padStart(2, '0');
     
-    const periodId = `${year}${month}${day}${hours}${minutes}${seconds.substring(0, 1)}`;
-    logSocket('info', 'Generated new period ID', { periodId });
-    return periodId;
-  }, []);
+  //   const periodId = `${year}${month}${day}${hours}${minutes}${seconds.substring(0, 1)}`;
+  //   logSocket('info', 'Generated new period ID', { periodId });
+  //   return periodId;
+  // }, []);
 
   // Get token from localStorage
   const getToken = useCallback(() => {

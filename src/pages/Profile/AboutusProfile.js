@@ -1,9 +1,9 @@
 import React from "react";
 import { FaAngleRight } from "react-icons/fa"; // Right arrow icon
 import aboutBg from "../../Assets/aboutBg.png";
-import AboutusHeader from "../../components/AboutusHeader";
 import iconrisk from "../../Assets/iconrisk.png";
 import iconcon from "../../Assets/iconcon.png"; // Fixed variable name
+import CommanHeader from "../../components/CommanHeader";
 
 const agreements = [
   {
@@ -21,7 +21,7 @@ const agreements = [
 function AboutusProfile() {
   return (
     <div className="w-full h-screen flex justify-center items-center bg-[#242424] text-white">
-      <AboutusHeader />
+      <CommanHeader title="About Us" />
       <div className="w-full max-w-[450px] h-screen mt-30 flex flex-col bg-[#242424] mx-auto">
         {/* Header Image */}
         <div className="w-full">

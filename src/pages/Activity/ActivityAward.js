@@ -6,6 +6,7 @@ import inviterule from "../../Assets/inviterule.svg";
 import inviterecord from "../../Assets/inviterecord.svg";
 import succeed from "../../Assets/succeed.png";
 import cross from "../../Assets/cross.svg";
+import CommanHeader from "../../components/CommanHeader";
 
 const InviteFriendsComponent = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -39,7 +40,9 @@ const InviteFriendsComponent = () => {
           setError("Failed to fetch invitation bonus status.");
         }
       } catch (err) {
-        setError(err.message || "An error occurred while fetching bonus status.");
+        setError(
+          err.message || "An error occurred while fetching bonus status."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -92,16 +95,27 @@ const InviteFriendsComponent = () => {
 
   // Define bonus tiers for display (based on the original code)
   const bonusTiers = [
-    { tier: 1, invitees: 1, amount: 55.00, rechargePerPerson: 300.00 },
-    { tier: 3, invitees: 3, amount: 155.00, rechargePerPerson: 300.00 },
+    { tier: 1, invitees: 1, amount: 65.0, rechargePerPerson: 300.0 },
+    { tier: 2, invitees: 3, amount: 185.0, rechargePerPerson: 300.0 },
+    { tier: 3, invitees: 10, amount: 650.0, rechargePerPerson: 300.0 },
+    { tier: 4, invitees: 30, amount: 1850.0, rechargePerPerson: 300.0 },
+    { tier: 5, invitees: 60, amount: 3550.0, rechargePerPerson: 300.0 },
+    { tier: 6, invitees: 100, amount: 6550.0, rechargePerPerson: 300.0 },
+    { tier: 7, invitees: 200, amount: 13050.0, rechargePerPerson: 300.0 },
+    { tier: 8, invitees: 500, amount: 32325.0, rechargePerPerson: 300.0 },
+    { tier: 9, invitees: 1000, amount: 65995.0, rechargePerPerson: 300.0 },
+    { tier: 10, invitees: 5000, amount: 402975.0, rechargePerPerson: 300.0 },
+    { tier: 11, invitees: 10000, amount: 810955.0, rechargePerPerson: 300.0 },
+    { tier: 12, invitees: 20000, amount: 1721915.0, rechargePerPerson: 300.0 },
+    { tier: 13, invitees: 50000, amount: 3804785.0, rechargePerPerson: 300.0 },
   ];
 
   return (
     <div className="bg-[#242424] min-h-screen flex flex-col w-full">
-      <InvitationBonusHeader />
+      <CommanHeader title="Invitation bonus" />
 
       {/* Top banner */}
-      <div className="relative w-full">
+      <div className="relative w-full mt-12">
         <div
           className="p-2 h-[180px] text-white relative overflow-hidden bg-cover bg-center w-full"
           style={{
@@ -137,17 +151,25 @@ const InviteFriendsComponent = () => {
             className="flex flex-col items-center w-[48%]"
           >
             <img src={inviterecord} alt="Record icon" className="w-12 h-12" />
-            <span className="text-gray-400 text-xs mt-1">Invitation record</span>
+            <span className="text-gray-400 text-xs mt-1">
+              Invitation record
+            </span>
           </a>
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 flex flex-col w-full  mt-28 px-4">
-        {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+        )}
         {bonusTiers.map((bonus, index) => {
-          const isClaimed = bonusStatus.claimedTiers.some((t) => t.tier === bonus.tier);
-          const isUnclaimed = bonusStatus.hasUnclaimedBonus && bonusStatus.unclaimedTier?.tier === bonus.tier;
+          const isClaimed = bonusStatus.claimedTiers.some(
+            (t) => t.tier === bonus.tier
+          );
+          const isUnclaimed =
+            bonusStatus.hasUnclaimedBonus &&
+            bonusStatus.unclaimedTier?.tier === bonus.tier;
           const inviteesMet = bonusStatus.validReferrals >= bonus.invitees;
           const depositMet = bonusStatus.validReferrals >= bonus.invitees; // Assuming validReferrals implies deposit condition met
 
@@ -179,14 +201,22 @@ const InviteFriendsComponent = () => {
               <div className="mt-4">
                 <div className="bg-[#4d4d4c] p-1 rounded mb-2">
                   <div className="flex justify-between">
-                    <span className="text-white text-sm">Number of invitees</span>
-                    <span className="text-white text-base">{bonus.invitees}</span>
+                    <span className="text-white text-sm">
+                      Number of invitees
+                    </span>
+                    <span className="text-white text-base">
+                      {bonus.invitees}
+                    </span>
                   </div>
                 </div>
                 <div className="bg-[#4d4d4c] p-1 rounded mb-3">
                   <div className="flex justify-between">
-                    <span className="text-white text-sm">Recharge per people</span>
-                    <span className="text-red-500 text-base">₹{bonus.rechargePerPerson.toFixed(2)}</span>
+                    <span className="text-white text-sm">
+                      Recharge per people
+                    </span>
+                    <span className="text-red-500 text-base">
+                      ₹{bonus.rechargePerPerson.toFixed(2)}
+                    </span>
                   </div>
                 </div>
                 {/* Progress */}
@@ -194,7 +224,8 @@ const InviteFriendsComponent = () => {
                   <div className="flex mt-4">
                     <div className="flex-1 border-r border-[#525167]">
                       <div className="text-[#dd9138] text-center text-xl">
-                        {Math.min(bonusStatus.validReferrals, bonus.invitees)} / {bonus.invitees}
+                        {Math.min(bonusStatus.validReferrals, bonus.invitees)} /{" "}
+                        {bonus.invitees}
                       </div>
                       <div className="text-gray-400 text-sm text-center">
                         Number of invitees
@@ -202,7 +233,8 @@ const InviteFriendsComponent = () => {
                     </div>
                     <div className="flex-1">
                       <div className="text-[#d23838] text-center text-xl">
-                        {Math.min(bonusStatus.validReferrals, bonus.invitees)} / {bonus.invitees}
+                        {Math.min(bonusStatus.validReferrals, bonus.invitees)} /{" "}
+                        {bonus.invitees}
                       </div>
                       <div className="text-gray-400 text-sm text-center">
                         Deposit number
@@ -252,7 +284,8 @@ const InviteFriendsComponent = () => {
                 Congratulations!
               </h3>
               <p className="text-gray-300 text-center mb-4">
-                You have successfully completed Bonus {bonusStatus.unclaimedTier?.tier || 1} challenge!
+                You have successfully completed Bonus{" "}
+                {bonusStatus.unclaimedTier?.tier || 1} challenge!
               </p>
               <p className="text-yellow-400 font-bold text-lg mb-4">
                 ₹{bonusStatus.unclaimedTier?.amount.toFixed(2) || "0.00"} Earned

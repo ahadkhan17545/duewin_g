@@ -116,14 +116,14 @@ const buttonData = [
 
 function LotteryWingo() {
   const isMounted = useRef(true);
-  const location  = useLocation()
+  const location = useLocation()
   const gameType = "wingo";
   const { playCountdownAudio, playResultAudio } = useAudio();
   const hasPlayedCountdownRef = useRef(false);
   const previousResult = useRef(null);
   // Component state
   const [activeTab, setActiveTab] = useState("gameHistory");
-  const [activeButton, setActiveButton] = useState(location?.state ?location?.state :0);
+  const [activeButton, setActiveButton] = useState(location?.state ? location?.state : 0);
   const [selectedTitle, setSelectedTitle] = useState(buttonData[0].title);
   const [externalMultiplier, setExternalMultiplier] = useState("X1");
   const [popupMultiplier, setPopupMultiplier] = useState("X1");
@@ -131,7 +131,7 @@ function LotteryWingo() {
   const [walletBalance, setWalletBalance] = useState(0.0);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedBigOption, setSelectedBigOption] = useState(null);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [showPopup, setShowPopup] = useState(null);
   const [showBigPopup, setShowBigPopup] = useState(null);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -150,7 +150,7 @@ function LotteryWingo() {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [fetchDataFlag,setFetchDataFlag] = useState(false)
+  const [fetchDataFlag, setFetchDataFlag] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState({
     minutes: 0,
     seconds: 0,
@@ -159,186 +159,133 @@ function LotteryWingo() {
     periodId: "",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
+  const [refetchData, setRefetchData] = useState(false)
 
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const API_BASE_URL = "https://api.strikecolor1.com";
 
-  const fetchUserBets = useCallback(
-    async (page = 1, limit = 10) => {
-      if (!isMounted.current) return;
+  const fetchUserBets = async (page = 1, limit = 10) => {
+    if (!isMounted.current) return;
+    setIsLoading(true);
+    setError(null);
 
-      console.log("🔄 Starting fetchUserBets...", {
+    try {
+      const duration = buttonData[activeButton].duration;
+      // Use the gameApi to fetch user bets
+      const response = await gameApi.getUserBets(gameType, duration,
         page,
         limit,
-        activeButton,
-        gameType,
-      });
+      );
 
-      setIsLoading(true);
-      setError(null);
+      if (isMounted.current) {
+        if (response && response.success) {
+          // Handle different possible response structures
+          let betsData = [];
 
-      try {
-        const duration = buttonData[activeButton].duration;
-        console.log("📊 Fetching with params:", {
-          gameType,
-          duration,
-          page,
-          limit,
-        });
-
-        // Use the gameApi to fetch user bets
-        const response = await gameApi.getUserBets(gameType, duration, {
-          page,
-          limit,
-        });
-        console.log("📥 Raw API Response:", response);
-
-        if (isMounted.current) {
-          if (response && response.success) {
-            // Handle different possible response structures
-            let betsData = [];
-
-            if (Array.isArray(response.data)) {
-              betsData = response.data;
-            } else if (response.data && Array.isArray(response.data.results)) {
-              betsData = response.data.results;
-            } else if (response.data && Array.isArray(response.data.bets)) {
-              betsData = response.data.bets;
-            } else {
-              console.log("⚠️ Unexpected response structure:", response);
-            }
-
-            console.log("📋 Processed bets data:", betsData);
-
-            if (betsData.length > 0) {
-              const formattedBets = betsData.map((bet, index) => {
-                console.log(`🎯 Processing bet ${index}:`, bet);
-
-                return {
-                  betId: bet.betId || bet._id || bet.id || `bet-${index}`,
-                  period: bet.periodId || bet.period || "N/A",
-                  orderTime: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleString()
-                    : bet.orderTime || new Date().toLocaleString(),
-                  orderNumber:
-                    bet.betId ||
-                    bet.orderNumber ||
-                    `ORD-${Date.now()}-${index}`,
-                  amount: `₹${bet.betAmount || bet.amount || 0}`,
-                  quantity: bet.quantity || 1,
-                  afterTax: `₹${((bet.betAmount || bet.amount || 0) * 0.98).toFixed(2)}`,
-                  tax: `₹${((bet.betAmount || bet.amount || 0) * 0.02).toFixed(2)}`,
-                  result: bet.result
-                    ? typeof bet.result === "string"
-                      ? bet.result
-                      : `${bet.result.number || "?"} (${bet.result.size || "?"}, ${bet.result.color || "?"})`
-                    : "Pending",
-                  select:
-                    bet.betType && bet.betValue
-                      ? `${bet.betType}: ${bet.betValue}`
-                      : bet.select || "N/A",
-                  status:
-                    bet.status ||
-                    (bet.profitLoss > 0
-                      ? "Won"
-                      : bet.profitLoss < 0
-                        ? "Lost"
-                        : "Pending"),
-                  winLose:
-                    bet.profitLoss !== undefined
-                      ? bet.profitLoss >= 0
-                        ? `+₹${bet.profitLoss}`
-                        : `-₹${Math.abs(bet.profitLoss)}`
-                      : bet.winLose || "₹0",
-                  // Additional fields for display
-                  date: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleDateString()
-                    : new Date().toLocaleDateString(),
-                  time: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleTimeString()
-                    : new Date().toLocaleTimeString(),
-                };
-              });
-
-              console.log("✅ Formatted bets:", formattedBets);
-              setUserBets(formattedBets);
-
-              // Handle pagination
-              const totalPagesCalc =
-                response.pagination?.total_pages ||
-                Math.ceil((response.total || formattedBets.length) / limit) ||
-                1;
-              setTotalPages(totalPagesCalc);
-
-              console.log("✅ User bets fetched successfully", {
-                count: formattedBets.length,
-                totalPages: totalPagesCalc,
-              });
-            } else {
-              console.log("ℹ️ No bets found in response");
-              setUserBets([]);
-              setTotalPages(1);
-            }
+          if (Array.isArray(response.data)) {
+            betsData = response.data;
+          } else if (response.data && Array.isArray(response.data.results)) {
+            betsData = response.data.results;
+          } else if (response.data && Array.isArray(response.data.bets)) {
+            betsData = response.data.bets;
           } else {
-            console.log("❌ API response not successful:", response);
+            console.log("⚠️ Unexpected response structure:", response);
+          }
+          if (betsData.length > 0) {
+            const formattedBets = betsData.map((bet, index) => {
+
+              return {
+                betId: bet.betId || bet._id || bet.id || `bet-${index}`,
+                period: bet.periodId || bet.period || "N/A",
+                orderTime: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleString()
+                  : bet.orderTime || new Date().toLocaleString(),
+                orderNumber:
+                  bet.betId ||
+                  bet.orderNumber ||
+                  `ORD-${Date.now()}-${index}`,
+                amount: `₹${bet.betAmount || bet.amount || 0}`,
+                quantity: bet.quantity || 1,
+                afterTax: `₹${(bet.amountAfterTax).toFixed(2)}`,
+                tax: `₹${((bet.taxAmount || 0)).toFixed(2)}`,
+                result: bet.result
+                  ? typeof bet.result === "string"
+                    ? bet.result
+                    : `${bet.result.number || "?"} (${bet.result.size || "?"}, ${bet.result.color || "?"})`
+                  : "Pending",
+                select:
+                  bet.betType && bet.betValue
+                    ? `${bet.betType}: ${bet.betValue}`
+                    : bet.select || "N/A",
+                status: bet.status,
+                winLose:
+                  bet.profitLoss !== undefined
+                    ? bet.profitLoss >= 0
+                      ? `+₹${bet.profitLoss}`
+                      : `-₹${Math.abs(bet.profitLoss)}`
+                    : bet.winLose || "₹0",
+                // Additional fields for display
+                date: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleDateString()
+                  : new Date().toLocaleDateString(),
+                time: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleTimeString()
+                  : new Date().toLocaleTimeString(),
+              };
+            });
+
+            setUserBets(formattedBets);
+
+            // Handle pagination
+            const totalPagesCalc =
+              response.pagination?.total_pages ||
+              Math.ceil((response.total || formattedBets.length) / limit) ||
+              1;
+            setTotalPages(totalPagesCalc);
+          } else {
             setUserBets([]);
             setTotalPages(1);
-            setError("Failed to fetch betting history");
           }
-        }
-      } catch (error) {
-        console.error("❌ Error in fetchUserBets:", error);
-        if (isMounted.current) {
-          setError("Failed to fetch user bets: " + error.message);
+        } else {
           setUserBets([]);
           setTotalPages(1);
-        }
-      } finally {
-        if (isMounted.current) {
-          setIsLoading(false);
+          setError("Failed to fetch betting history");
         }
       }
-    },
-    [activeButton, gameType]
-  );
+    } catch (error) {
+      console.error("❌ Error in fetchUserBets:", error);
+      if (isMounted.current) {
+        setError("Failed to fetch user bets: " + error.message);
+        setUserBets([]);
+        setTotalPages(1);
+      }
+    } finally {
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    }
+  }
 
   useEffect(() => {
     const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds
-
-    console.log("⏰ Time remaining:", {
-      totalSeconds,
-      minutes: timeRemaining.minutes,
-      seconds: timeRemaining.seconds,
-    });
-
     // Play countdown audio when exactly 4 seconds remain (changed from 5)
     if (totalSeconds === 4 && !hasPlayedCountdownRef.current) {
-      console.log("🔊 Triggering countdown audio - 4 seconds remaining");
       playCountdownAudio();
       hasPlayedCountdownRef.current = true;
     }
-
     // Play result audio when exactly 0 seconds remain (changed from 1)
     if (totalSeconds === 0 && hasPlayedCountdownRef.current) {
-      console.log("🔊 Triggering result audio - 0 seconds remaining (countdown at 00)");
       playResultAudio();
     }
-
     // Reset countdown flag when new period starts (more than 4 seconds, changed from 5)
     if (totalSeconds > 4) {
       hasPlayedCountdownRef.current = false;
     }
-
     // Log when timer reaches 0
     if (totalSeconds === 0) {
-      console.log("⏰ Timer reached 0");
-      setFetchDataFlag(prev =>!prev)
-      
+      setFetchDataFlag(prev => !prev)
     }
   }, [timeRemaining, playCountdownAudio, playResultAudio]);
-
-  // Also add this useEffect to handle result audio when new results come in
-
   // Update the wallet balance fetching logic
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -497,7 +444,6 @@ function LotteryWingo() {
 
   useEffect(() => {
     if (currentResult && currentResult !== previousResult.current) {
-      console.log("🔊 New result received, playing result audio");
       setTimeout(() => playResultAudio(), 300); // Reduced from 1000ms to 300ms
       previousResult.current = currentResult;
     }
@@ -563,6 +509,9 @@ function LotteryWingo() {
       return { results: [], pagination: { total_pages: 1 } };
     }
   };
+  useEffect(()=>{
+      setRefetchData(prev=>!prev)
+  },[activeButton])
 
   // Fetch user bets
 
@@ -581,7 +530,7 @@ function LotteryWingo() {
       };
       fetchGameHistory().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
 
   // Chart useEffect
   useEffect(() => {
@@ -598,13 +547,13 @@ function LotteryWingo() {
       };
       fetchChartData().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
 
   useEffect(() => {
     if (activeTab === "myHistory") {
       fetchUserBets(currentPage).catch(console.error);
     }
-  }, [activeTab, currentPage, fetchUserBets,fetchDataFlag]);
+  }, [activeTab, currentPage, fetchDataFlag, refetchData]);
 
   // Initial timer setup
   useEffect(() => {
@@ -627,10 +576,6 @@ function LotteryWingo() {
   // Debug token status
   const debugTokenStatus = () => {
     const token = localStorage.getItem("token");
-    console.log("🔍 Token Status:", {
-      hasToken: !!token,
-      tokenLength: token?.length || 0,
-    });
   };
 
   useEffect(() => {
@@ -745,19 +690,10 @@ function LotteryWingo() {
       duration: buttonData[activeButton].duration,
     };
 
-    console.log("🎯 Placing Bet:", {
-      amount: totalAmount,
-      selection: selection,
-      type: betType,
-      periodId: currentPeriod.periodId,
-      gameType: gameType,
-      duration: buttonData[activeButton].duration,
-    });
 
     const betPlaced = placeBet(betData);
 
     if (betPlaced) {
-      console.log("✅ Bet sent to WebSocket successfully");
       setShowPopup(null);
       setShowBigPopup(null);
       setSelectedNumberPopup(null);
@@ -805,22 +741,22 @@ function LotteryWingo() {
     return (
       <div className="overflow-x-auto">
         <table className="table-auto rounded-lg w-full text-sm text-center bg-[#333332] text-[#f5f3f0]">
-<thead>
-  <tr className="bg-[#3a3947] p-4">
-    <th className="px-2 py-4 text-white rounded-tl-lg text-xs font-normal">
-      Period
-    </th>
-    <th className="px-2 py-4 text-white text-xs font-normal">
-      Number
-    </th>
-    <th className="px-2 py-4 text-xs text-white font-normal">
-      Big/Small
-    </th>
-    <th className="px-2 py-4 text-white rounded-tr-lg text-xs font-normal">
-      Color
-    </th>
-  </tr>
-</thead>
+          <thead>
+            <tr className="bg-[#3a3947] p-4">
+              <th className="px-2 py-4 text-white rounded-tl-lg text-xs font-normal">
+                Period
+              </th>
+              <th className="px-2 py-4 text-white text-xs font-normal">
+                Number
+              </th>
+              <th className="px-2 py-4 text-xs text-white font-normal">
+                Big/Small
+              </th>
+              <th className="px-2 py-4 text-white rounded-tr-lg text-xs font-normal">
+                Color
+              </th>
+            </tr>
+          </thead>
 
           <tbody>
             {gameHistoryData.map((row, index) => {
@@ -894,7 +830,7 @@ function LotteryWingo() {
     const multiplierValue = parseInt(popupMultiplier.replace("X", "")) || 1;
     return (betAmount * quantity * multiplierValue).toFixed(2);
   };
-
+  const isInsufficient = Number(walletBalance) < Number(calculateTotalAmount());
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center  pr-2 pl-2   pt-20 pb-24">
       <style>
@@ -1237,13 +1173,13 @@ function LotteryWingo() {
 
         {showSuccessPopup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]">
-            <div className="bg-black bg-opacity-80 rounded-2xl shadow-lg w-[10%] max-w-[300px] p-2 text-center">
+            <div className="bg-black bg-opacity-80 rounded-2xl shadow-lg w-[10%] w-[300px] p-2 text-center">
               <div className="text-white text-lg font-bold">Success</div>
             </div>
           </div>
         )}
 
-        <FreezePopup timeRemaining={timeRemaining}>
+        <FreezePopup timeRemaining={timeRemaining} duration={buttonData[activeButton].duration} handleRefresh={() => setRefetchData(prev => !prev)}>
           <div className="bg-[#333332] rounded-lg shadow-md  p-2 pt-1 space-y-2">
             {isLoading && (
               <div className="text-center text-gray-500">Loading...</div>
@@ -1388,6 +1324,12 @@ function LotteryWingo() {
                       Pre-sale rules
                     </button>
                   </div>
+
+                  {isInsufficient && (
+                    <span className="text-red-500 text-xs">
+                      Insufficient balance
+                    </span>
+                  )}
                   <div className="flex w-[calc(100%+16px)] -mx-2">
                     <button
                       onClick={handleCancelBet}
@@ -1398,9 +1340,11 @@ function LotteryWingo() {
                     <button
                       className={`${tailwindColorMap[showPopup]} flex-1 py-3 transition text-sm`}
                       onClick={handlePlaceBet}
+                      disabled={isInsufficient}
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
+
                   </div>
                 </div>
               </div>
@@ -1501,6 +1445,11 @@ function LotteryWingo() {
                       Pre-sale rules
                     </button>
                   </div>
+                  {isInsufficient && (
+                    <span className="text-red-500 text-xs">
+                      Insufficient balance
+                    </span>
+                  )}
                   <div className="flex w-[calc(100%+16px)] -mx-2">
                     <button
                       onClick={handleCancelBet}
@@ -1511,9 +1460,12 @@ function LotteryWingo() {
                     <button
                       className={`${tailwindColorMap[selectedNumberPopup.color]} flex-1 py-3 transition text-sm`}
                       onClick={handlePlaceBet}
+                      disabled={isInsufficient}
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
+
+
                   </div>
                 </div>
               </div>
@@ -1655,6 +1607,11 @@ function LotteryWingo() {
                       Pre-sale rules
                     </button>
                   </div>
+                  {isInsufficient && (
+                    <span className="text-red-500 text-xs">
+                      Insufficient balance
+                    </span>
+                  )}
                   <div className="flex w-[calc(100%+16px)] -mx-2">
                     <button
                       onClick={handleCancelBet}
@@ -1665,9 +1622,12 @@ function LotteryWingo() {
                     <button
                       className={`${tailwindColorMap[selectedBigOption]} flex-1 py-3 transition text-sm`}
                       onClick={handlePlaceBet}
+                      disabled={isInsufficient}
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
+
+
                   </div>
                 </div>
               </div>
@@ -1967,14 +1927,15 @@ function LotteryWingo() {
                           </div>
                           <div className="flex flex-col items-end space-y-1">
                             <div
-                              className={`border text-xs rounded-md px-2 py-1 ${bet.status === "Won"
+                              className={`border text-xs rounded-md px-2 py-1 ${bet.status === "won"
                                 ? "border-green-500 text-green-500"
-                                : bet.status === "Lost"
+                                : bet.status === "lost"
                                   ? "border-red-500 text-red-500"
                                   : "border-red-500 text-red-500"
                                 }`}
+                                style={{textTransform:'capitalize'}}
                             >
-                              {bet.status === "Won" ? "Success" : "Failed"}
+                              {bet.status === "won" ? "Success" : "Failed"}
                             </div>
                             <p
                               className={`font-medium text-sm ${bet.winLose?.startsWith("+")
@@ -1996,7 +1957,9 @@ function LotteryWingo() {
                             </div>
                             <div className="space-y-3 text-sm">
                               {[
-                                { label: "Order number", value: bet.orderNumber },
+                                { label: "Order number", value: bet.orderNumber 
+                                  ,valueClass:"text-right text-white"
+                                },
                                 { label: "Period", value: bet.period },
                                 { label: "Purchase amount", value: bet.amount },
                                 { label: "Quantity", value: bet.quantity },
@@ -2018,8 +1981,8 @@ function LotteryWingo() {
                                 { label: "Select", value: bet.select, valueClass: "text-[#ff5555]" },
                                 {
                                   label: "Status",
-                                  value: bet.status === "Won" ? "Success" : "Failed",
-                                  valueClass: bet.status === "Won" ? "text-green-400" : "text-[#ff5555]f",
+                                  value: bet.status === "won" ? 'Success' : 'Failed',
+                                  valueClass: bet.status === "won" ? "text-green-400" : "text-[#ff5555]",
                                 },
                                 {
                                   label: "Win/lose",

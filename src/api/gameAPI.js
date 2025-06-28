@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { redirectToLogin, validateToken } from './auth';
+import apiServices from './apiServices';
 
 const API_BASE_URL = 'https://api.strikecolor1.com';
 const CACHE_DURATION = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
@@ -175,111 +176,11 @@ export const transferFromThirdParty = async () => {
 };
 
 const gameApi = {
-  // Test function to check API connectivity and auth
-  testConnection: async () => {
-    try {
-      console.log('Testing API connection...');
-      
-      // Check auth first
-      if (!await validateToken()) {
-        return { success: false, error: 'Authentication required' };
-      }
-      
-      const token = getToken();
-      console.log('Token available:', !!token);
-      
-      const response = await axios.get(`${API_BASE_URL}/api/health`, {
-        timeout: 10000
-      });
-      console.log('Connection test successful:', response.data);
-      return { success: true, data: response.data };
-    } catch (error) {
-      console.error('Connection test failed:', error);
-      
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        redirectToLogin();
-        return { success: false, error: 'Authentication failed' };
-      }
-      
-      return { success: false, error: error.message };
-    }
-  },
-
   // Enhanced getUserBets function with auth checking
-  getUserBets: async (gameType, duration, { page = 1, limit = 10 } = {}) => {
-    return makeAuthenticatedRequest(
-      async () => {
-        console.log(`🔄 Fetching user bets for ${gameType}/${duration}, page ${page}, limit ${limit}`);
-        
-        // Try multiple possible endpoint variations
-        const possibleEndpoints = [
-          `${API_BASE_URL}/api/games/${gameType}/${duration}/my-bets`,
-          `${API_BASE_URL}/api/games/${gameType}/my-bets`,
-          `${API_BASE_URL}/api/games/${gameType}/user-bets`,
-          `${API_BASE_URL}/api/user/bets/${gameType}/${duration}`,
-          `${API_BASE_URL}/api/user/bets/${gameType}`,
-          `${API_BASE_URL}/api/bets/user/${gameType}/${duration}`,
-          `${API_BASE_URL}/api/bets/user/${gameType}`
-        ];
-
-        let lastError;
-        
-        for (const endpoint of possibleEndpoints) {
-          try {
-            console.log(`🔍 Trying endpoint: ${endpoint}`);
-            
-            const cacheKey = getCacheKey(endpoint, { page, limit });
-            
-            // Check cache first
-            const cachedData = cache.get(cacheKey);
-            if (isCacheValid(cachedData)) {
-              console.log('✅ Returning cached user bets data');
-              return cachedData.data;
-            }
-
-            const response = await axios.get(endpoint, { 
-              params: { page, limit },
-              timeout: 15000
-            });
-            
-            console.log(`✅ Success with endpoint: ${endpoint}`);
-            
-            // Cache the successful response
-            cache.set(cacheKey, { data: response.data, timestamp: Date.now() });
-            
-            return response.data;
-            
-          } catch (error) {
-            console.log(`❌ Failed endpoint ${endpoint}:`, error.response?.status || error.message);
-            lastError = error;
-            
-            // If it's an auth error, don't try other endpoints
-            if (error.response?.status === 401 || error.response?.status === 403) {
-              throw error;
-            }
-            
-            // If it's not a 404, break early as it might be a server issue
-            if (error.response?.status !== 404) {
-              break;
-            }
-            continue;
-          }
-        }
-        
-        // If all endpoints failed, throw the last error
-        throw lastError;
-      },
-      `Error fetching user bets for ${gameType}/${duration}`
-    ).catch(error => {
-      // Return empty data structure instead of throwing
-      return {
-        success: false,
-        data: [],
-        pagination: { total_pages: 1, current_page: page, total: 0 },
-        error: error.message
-      };
-    });
-  },
+  getUserBets: async (gameType, duration,  limit = 10  ,page = 1, ) => {
+      let data =  await apiServices.getUserBets(gameType,duration,page,limit)
+      return data
+  },  
 
   getBetDetails: async (betId) => {
     return makeAuthenticatedRequest(

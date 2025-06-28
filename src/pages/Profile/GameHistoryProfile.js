@@ -15,7 +15,7 @@ import activeImg5 from "../../Assets/slot2.png";
 import line from "../../Assets/finalicons/line.png";
 import bets from "../../Assets/Newicons/betrecordsicon.png";
 import apiServices from "../../api/apiServices";
-import moment from 'moment'
+import moment from "moment";
 import CommanHeader from "../../components/CommanHeader";
 function GameHistoryProfile() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -24,18 +24,39 @@ function GameHistoryProfile() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState({ year: new Date().getFullYear(), month: new Date().getMonth() + 1, day: new Date().getDate() });
+  const [selectedDate, setSelectedDate] = useState({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    day: new Date().getDate(),
+  });
   const [selectedOption, setSelectedOption] = useState("");
-  const [betHistory, setBetHistory] = useState([])
+  const [betHistory, setBetHistory] = useState([]);
 
   const tabsContainerRef = useRef(null);
   const yearRef = useRef(null);
   const monthRef = useRef(null);
   const dayRef = useRef(null);
+  const detailsRef = useRef(null);
 
-  const descriptions = ["Lottery", "Casino", "Fishing", "Rummy", "Original", "Slots"];
+  const descriptions = [
+    "Lottery",
+    "Casino",
+    "Fishing",
+    "Rummy",
+    "Original",
+    "Slots",
+  ];
   const inactiveImages = [Img1, Img2, Img3, Img4, Img5, Img1];
-  const activeImages = [activeImg1, activeImg2, activeImg3, activeImg4, activeImg5, activeImg1];
+  const activeImages = [
+    activeImg1,
+    activeImg2,
+    activeImg3,
+    activeImg4,
+    activeImg5,
+    activeImg1,
+  ];
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
   const dropdownOptions = {
     Lottery: ["wingo", "trx_wix", "5d", "k3"],
@@ -43,37 +64,44 @@ function GameHistoryProfile() {
     Fishing: ["All", "Jili", "JDB", "CQ9", "V8Card"],
     Rummy: ["All", "V8Card", "Card365"],
     Original: ["All", "Jili", "JDB", "TB Chess", "Spribe"],
-    Slots: ["All", "Jili", "JDB", "Evo Electronic", "MG", "CQ9", "AG Electronic", "9G"],
+    Slots: [
+      "All",
+      "Jili",
+      "JDB",
+      "Evo Electronic",
+      "MG",
+      "CQ9",
+      "AG Electronic",
+      "9G",
+    ],
   };
-  const fetchUserBet = async (gameType, duration) => {
-    let data = await apiServices.getUserBets(gameType, duration);
-    return data?.data?.bets
-  }
+  const fetchUserBet = async (gameType, page, limit) => {
+    let data = await apiServices.getUserBets(gameType, limit, page);
+    return data?.data;
+  };
   useEffect(() => {
     const currentOptions = dropdownOptions[descriptions[selectedIndex]];
     const selected = currentOptions ? currentOptions[0] : "All";
     setSelectedOption(selected);
   }, [selectedIndex]);
+  const fetchAllBets = async (currentPage = 1) => {
+    try {
+      const durationMap = apiServices.getListOfGameAndDuration();
+      const durationArr = durationMap[selectedOption];
+      console.log("durationArr", durationArr);
 
+      if (!durationArr || durationArr.length === 0) return;
+      const results = await fetchUserBet(selectedOption, currentPage, 10);
+      console.log("flatData", results);
+      setBetHistory(results?.bets);
+      setPagination(results?.pagination || {});
+    } catch (error) {
+      console.error("Error fetching user bets:", error);
+    }
+  };
   useEffect(() => {
-    const fetchAllBets = async () => {
-      try {
-        const durationMap = apiServices.getListOfGameAndDuration();
-        const durationArr = durationMap[selectedOption];
-        console.log("durationArr", durationArr)
-
-        if (!durationArr || durationArr.length === 0) return;
-        const results = await Promise.all(
-          durationArr.map(duration => fetchUserBet(selectedOption, duration))
-        );
-        setBetHistory(results.flat());
-      } catch (error) {
-        console.error("Error fetching user bets:", error);
-      }
-    };
-
-    fetchAllBets();
-  }, [selectedOption])
+    fetchAllBets(page);
+  }, [selectedOption, page]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -120,7 +148,8 @@ function GameHistoryProfile() {
     if (tabsContainer) {
       const handleMouseLeave = () => setIsDragging(false);
       tabsContainer.addEventListener("mouseleave", handleMouseLeave);
-      return () => tabsContainer.removeEventListener("mouseleave", handleMouseLeave);
+      return () =>
+        tabsContainer.removeEventListener("mouseleave", handleMouseLeave);
     }
   }, []);
 
@@ -134,8 +163,12 @@ function GameHistoryProfile() {
   };
 
   const years = Array.from({ length: 5 }, (_, i) => 2022 + i);
-  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+  const months = Array.from({ length: 12 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
+  const days = Array.from({ length: 31 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
 
   const handleDateSelect = (type, value) => {
     setSelectedDate((prev) => ({
@@ -144,15 +177,17 @@ function GameHistoryProfile() {
     }));
 
     const containerRef =
-      type === "year" ? yearRef.current :
-        type === "month" ? monthRef.current :
-          dayRef.current;
+      type === "year"
+        ? yearRef.current
+        : type === "month"
+          ? monthRef.current
+          : dayRef.current;
 
-    const items = type === "year" ? years :
-      type === "month" ? months : days;
+    const items = type === "year" ? years : type === "month" ? months : days;
 
-    const selectedIndex = items.findIndex(item =>
-      item.toString() === value.toString().padStart(2, "0"));
+    const selectedIndex = items.findIndex(
+      (item) => item.toString() === value.toString().padStart(2, "0")
+    );
 
     if (containerRef && selectedIndex !== -1) {
       const rowHeight = 40;
@@ -161,7 +196,11 @@ function GameHistoryProfile() {
   };
 
   const handleOptionSelect = (option) => {
+    setPage(1)
     setSelectedOption(option);
+    if (detailsRef.current) {
+      detailsRef.current.removeAttribute("open");
+    }
   };
   function getNumberBgClass(number) {
     if (number === 0) {
@@ -176,7 +215,6 @@ function GameHistoryProfile() {
       return "bg-yellow-500"; // default fallback
     }
   }
-
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col items-center">
@@ -212,7 +250,11 @@ function GameHistoryProfile() {
               >
                 <div className="flex flex-col justify-center items-center text-center">
                   <img
-                    src={selectedIndex === index ? activeImages[index] : inactiveImages[index]}
+                    src={
+                      selectedIndex === index
+                        ? activeImages[index]
+                        : inactiveImages[index]
+                    }
                     alt={`Box ${index}`}
                     className="w-6 h-6 object-contain"
                   />
@@ -230,23 +272,26 @@ function GameHistoryProfile() {
         <div className="bg-[#242424] flex flex-col items-center justify-start w-full max-w-[400px] mx-auto">
           {/* Filter Options */}
           <div className="flex w-full p-3 gap-3 mb-4 text-[#f5f3f0]">
-            <details className="relative w-1/2">
+            <details ref={detailsRef} className="relative w-1/2">
               <summary className="bg-[#333332] p-3 rounded-lg cursor-pointer transition-colors flex justify-between items-center list-none appearance-none">
-                {selectedOption || (descriptions[selectedIndex] in dropdownOptions
-                  ? dropdownOptions[descriptions[selectedIndex]][0]
-                  : "All")}
+                {selectedOption ||
+                  (descriptions[selectedIndex] in dropdownOptions
+                    ? dropdownOptions[descriptions[selectedIndex]][0]
+                    : "All")}
                 <MdExpandMore className="text-gray-400" />
               </summary>
               <ul className="absolute bg-[#333332] mt-2 rounded-lg shadow-lg p-2 w-full z-10">
-                {dropdownOptions[descriptions[selectedIndex]]?.map((option, i) => (
-                  <li
-                    key={i}
-                    className="p-2 hover:bg-[#444] cursor-pointer"
-                    onClick={() => handleOptionSelect(option)}
-                  >
-                    {option}
-                  </li>
-                ))}
+                {dropdownOptions[descriptions[selectedIndex]]?.map(
+                  (option, i) => (
+                    <li
+                      key={i}
+                      className="p-2 hover:bg-[#444] cursor-pointer"
+                      onClick={() => handleOptionSelect(option)}
+                    >
+                      {option}
+                    </li>
+                  )
+                )}
               </ul>
             </details>
             <div className="relative w-1/2" onClick={openDateModal}>
@@ -258,41 +303,56 @@ function GameHistoryProfile() {
           </div>
 
           {/* Transaction Card (Win Go) - Modified to match the image */}
-          {
-            betHistory?.length > 0 && betHistory?.map((bet, index) => {
+          {betHistory?.length > 0 &&
+            betHistory?.map((bet, index) => {
               return (
                 <>
                   <div className="bg-[#333332] w-full rounded-md p-3 shadow-lg border border-gray-700 mt-4">
                     <div className="flex justify-between items-center mb-2">
-                      <h2 className="text-white font-semibold text-lg" style={{ textTransform: 'capitalize' }}>{selectedOption}</h2>
+                      <h2
+                        className="text-white font-semibold text-lg"
+                        style={{ textTransform: "capitalize" }}
+                      >
+                        {selectedOption}
+                      </h2>
                       <span
-                        className={`font-medium text-lg ${bet?.status === "won"
-                          ? "text-green-500"
-                          : bet?.status === "lost"
-                            ? "text-red-500"
-                            : "text-yellow-500"
-                          }`}
+                        className={`font-medium text-lg ${
+                          bet?.status === "won"
+                            ? "text-green-500"
+                            : bet?.status === "lost"
+                              ? "text-red-500"
+                              : "text-yellow-500"
+                        }`}
                       >
                         {bet?.status}
                       </span>
-
                     </div>
 
-                    <p className="text-gray-500 text-xs mb-2" style={{ textTransform: 'capitalize' }}>{moment(bet?.updatedAt).format("DD-MM-YYYY hh:mm A")}</p>
+                    <p
+                      className="text-gray-500 text-xs mb-2"
+                      style={{ textTransform: "capitalize" }}
+                    >
+                      {moment(bet?.updatedAt).format("DD-MM-YYYY hh:mm A")}
+                    </p>
                     <div className="border-b border-gray-600 my-2"></div>
 
                     <div className="flex">
                       {/* Left vertical image */}
                       <div className="mr-3 pt-1">
-                        <img src={bets} alt="Bets Line" className="h-32 object-contain" />
-
+                        <img
+                          src={bets}
+                          alt="Bets Line"
+                          className="h-32 object-contain"
+                        />
                       </div>
 
                       {/* Info Items */}
                       <div className="space-y-2 text-sm flex-1">
                         <div className="flex justify-between">
                           <span className="text-white">Type</span>
-                          <span className="text-white">Win Go {bet?.duration} second</span>
+                          <span className="text-white">
+                            Win Go {bet?.duration} second
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-white">Period</span>
@@ -308,7 +368,9 @@ function GameHistoryProfile() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-white">Total bet</span>
-                          <span className="text-yellow-500 font-semibold">₹{bet?.betAmount}</span>
+                          <span className="text-yellow-500 font-semibold">
+                            ₹{bet?.betAmount}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -323,45 +385,90 @@ function GameHistoryProfile() {
 
                   {/* Lottery Results Section */}
                   <div className="bg-[#333332] w-full rounded-md p-4 shadow-lg border border-gray-700">
-                    <h2 className="text-white font-semibold text-sm mb-3">Lottery Results</h2>
+                    <h2 className="text-white font-semibold text-sm mb-3">
+                      Lottery Results
+                    </h2>
                     <div className="flex items-center space-x-2 mb-4">
-                      <span className={`${getNumberBgClass(bet?.result?.number)} text-white text-xs font-bold px-2 py-1 rounded-md`}>
+                      <span
+                        className={`${getNumberBgClass(bet?.result?.number)} text-white text-xs font-bold px-2 py-1 rounded-md`}
+                      >
                         {bet?.result?.number}
                       </span>
-                      <span className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-md">{bet?.result?.size}</span>
-                      <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md">{bet?.result?.color}</span>
+                      <span className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-md">
+                        {bet?.result?.size}
+                      </span>
+                      <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-md">
+                        {bet?.result?.color}
+                      </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">
-                        <p className="text-[#a8a5a1] font-semibold">₹{bet?.amountAfterTax}</p>
+                        <p className="text-[#a8a5a1] font-semibold">
+                          ₹{bet?.amountAfterTax}
+                        </p>
                         <p className="text-[#a8a5a1] text-xs">Actual amount</p>
                       </div>
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">
-                        <p className="text-[#a8a5a1] font-semibold">₹{bet?.payout}</p>
+                        <p className="text-[#a8a5a1] font-semibold">
+                          ₹{bet?.payout}
+                        </p>
                         <p className="text-[#a8a5a1] text-xs">Winnings</p>
                       </div>
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">
-                        <p className="text-[#a8a5a1] font-semibold">₹{bet?.taxAmount}</p>
+                        <p className="text-[#a8a5a1] font-semibold">
+                          ₹{bet?.taxAmount}
+                        </p>
                         <p className="text-[#a8a5a1] text-xs">Handling fee</p>
                       </div>
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">
-                        <p className="text-[#a8a5a1] font-semibold">₹{bet?.profitLoss}</p>
+                        <p className="text-[#a8a5a1] font-semibold">
+                          ₹{bet?.profitLoss}
+                        </p>
                         <p className="text-[#a8a5a1] text-xs">Profit/loss</p>
                       </div>
                     </div>
                   </div>
                 </>
-              )
-
-            })
-          }
-
-
-
-
-
+              );
+            })}
+          {betHistory?.length < 1 && (
+            <div className="text-white">No Data Found</div>
+          )}
         </div>
       </div>
+      {pagination?.total_pages > 1 && (
+        <div className="flex justify-center gap-4 mt-4 mb-6">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className={`px-4 py-2 rounded-lg ${
+              page === 1
+                ? "bg-gray-500 text-white cursor-not-allowed"
+                : "bg-[#fae59f] text-[#8f5206]"
+            }`}
+          >
+            Previous
+          </button>
+
+          <span className="text-white">
+            Page {pagination.current_page || page} of {pagination.total_pages}
+          </span>
+
+          <button
+            onClick={() =>
+              setPage((prev) => Math.min(prev + 1, pagination.total_pages))
+            }
+            disabled={page === pagination.total_pages}
+            className={`px-4 py-2 rounded-lg ${
+              page === pagination.total_pages
+                ? "bg-gray-500 text-white cursor-not-allowed"
+                : "bg-[#fae59f] text-[#8f5206]"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Date Modal */}
       {isModalOpen && (
@@ -369,7 +476,8 @@ function GameHistoryProfile() {
           <div
             className="rounded-t-3xl shadow-xl w-full max-w-[400px] bg-[#333332]"
             style={{
-              background: 'linear-gradient(180deg, rgba(32, 29, 43, 0.9), rgba(32, 29, 43, 0.4)), linear-gradient(0deg, rgba(32, 29, 43, 0.9), rgba(32, 29, 43, 0.4))'
+              background:
+                "linear-gradient(180deg, rgba(32, 29, 43, 0.9), rgba(32, 29, 43, 0.4)), linear-gradient(0deg, rgba(32, 29, 43, 0.9), rgba(32, 29, 43, 0.4))",
             }}
           >
             <div className="flex justify-between items-center px-4 py-3 bg-[#333332]">
@@ -392,18 +500,24 @@ function GameHistoryProfile() {
             <div className="flex w-full">
               {/* Year Column */}
               <div className="flex-1">
-                <div className="w-full text-center text-gray-500 py-2">Year</div>
-                <div className="h-[160px] relative overflow-hidden" ref={yearRef}>
+                <div className="w-full text-center text-gray-500 py-2">
+                  Year
+                </div>
+                <div
+                  className="h-[160px] relative overflow-hidden"
+                  ref={yearRef}
+                >
                   <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                   <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                     <div className="h-[60px]"></div>
                     {years.map((year) => (
                       <div
                         key={year}
-                        className={`h-[40px] flex items-center justify-center text-center ${parseInt(selectedDate.year) === year
-                          ? "text-white font-medium"
-                          : "text-gray-500"
-                          } cursor-pointer`}
+                        className={`h-[40px] flex items-center justify-center text-center ${
+                          parseInt(selectedDate.year) === year
+                            ? "text-white font-medium"
+                            : "text-gray-500"
+                        } cursor-pointer`}
                         onClick={() => handleDateSelect("year", year)}
                       >
                         {year}
@@ -416,18 +530,24 @@ function GameHistoryProfile() {
 
               {/* Month Column */}
               <div className="flex-1">
-                <div className="w-full text-center text-gray-500 py-2">Month</div>
-                <div className="h-[160px] relative overflow-hidden" ref={monthRef}>
+                <div className="w-full text-center text-gray-500 py-2">
+                  Month
+                </div>
+                <div
+                  className="h-[160px] relative overflow-hidden"
+                  ref={monthRef}
+                >
                   <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                   <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                     <div className="h-[60px]"></div>
                     {months.map((month) => (
                       <div
                         key={month}
-                        className={`h-[40px] flex items-center justify-center text-center ${selectedDate.month === month
-                          ? "text-white font-medium"
-                          : "text-gray-500"
-                          } cursor-pointer`}
+                        className={`h-[40px] flex items-center justify-center text-center ${
+                          selectedDate.month === month
+                            ? "text-white font-medium"
+                            : "text-gray-500"
+                        } cursor-pointer`}
                         onClick={() => handleDateSelect("month", month)}
                       >
                         {month}
@@ -441,17 +561,21 @@ function GameHistoryProfile() {
               {/* Day Column */}
               <div className="flex-1">
                 <div className="w-full text-center text-gray-500 py-2">Day</div>
-                <div className="h-[160px] relative overflow-hidden" ref={dayRef}>
+                <div
+                  className="h-[160px] relative overflow-hidden"
+                  ref={dayRef}
+                >
                   <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                   <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                     <div className="h-[60px]"></div>
                     {days.map((day) => (
                       <div
                         key={day}
-                        className={`h-[40px] flex items-center justify-center text-center ${selectedDate.day === day
-                          ? "text-white font-medium"
-                          : "text-gray-500"
-                          } cursor-pointer`}
+                        className={`h-[40px] flex items-center justify-center text-center ${
+                          selectedDate.day === day
+                            ? "text-white font-medium"
+                            : "text-gray-500"
+                        } cursor-pointer`}
                         onClick={() => handleDateSelect("day", day)}
                       >
                         {day}

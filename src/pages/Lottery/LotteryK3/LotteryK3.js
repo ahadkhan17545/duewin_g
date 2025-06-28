@@ -442,7 +442,7 @@ function LotteryK3() {
   const [historyData, setHistoryData] = useState([]);
   const [gameHistoryData, setGameHistoryData] = useState([]);
   const [chartData, setChartData] = useState([]);
-  const [activeButton, setActiveButton] = useState(location?.state ? location?.state :buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(location?.state ? location?.state : buttonData[0].id);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showPreSalePopup, setShowPreSalePopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -471,8 +471,8 @@ function LotteryK3() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-    const [fetchDataFlag,setFetchDataFlag] = useState(false)
-
+  const [fetchDataFlag, setFetchDataFlag] = useState(false)
+  const [refetchData, setRefetchData] = useState(false)
   const {
     isConnected,
     connectionError,
@@ -562,11 +562,10 @@ function LotteryK3() {
   ]);
 
   useEffect(() => {
-    if(timeRemaining.minutes == 0 && timeRemaining.seconds < 2){
-            setFetchDataFlag(prev =>!prev)
+    if (timeRemaining.minutes == 0 && timeRemaining.seconds < 2) {
+      setFetchDataFlag(prev => !prev)
     }
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
-      console.log("Hello")
       const currentId = parseInt(currentPeriod.periodId) || 0;
       const nextPeriodId = (currentId + 1).toString();
 
@@ -677,7 +676,7 @@ function LotteryK3() {
       };
       fetchGameHistory().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag,refetchData]);
 
   useEffect(() => {
     if (activeTab === "chart") {
@@ -693,9 +692,9 @@ function LotteryK3() {
       };
       fetchChartData().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton,fetchDataFlag]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag,refetchData]);
 
-  const fetchUserBets = useCallback(async () => {
+  const fetchUserBets =   async () => {
     if (!isMounted.current) return;
     setIsLoading(true);
     try {
@@ -712,13 +711,13 @@ function LotteryK3() {
         setIsLoading(false);
       }
     }
-  }, []);
+  }
 
   useEffect(() => {
     if (activeTab === "myHistory") {
       fetchUserBets();
     }
-  }, [activeTab, fetchUserBets,fetchDataFlag]);
+  }, [activeTab, refetchData, fetchDataFlag]);
 
   useEffect(() => {
     const duration = buttonData[activeButton].duration;
@@ -1082,7 +1081,7 @@ function LotteryK3() {
             </div>
           </div>
 
-          <FreezePopup timeRemaining={timeRemaining}>
+          <FreezePopup timeRemaining={timeRemaining} handleRefresh={()=>setRefetchData(prev=>!prev)}>
             <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
               <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
                 <div className="absolute left-[-10px] top-1/2 transform -translate-y-1/2 w-2 h-6 bg-[#00b971] rounded-l-md z-0"></div>

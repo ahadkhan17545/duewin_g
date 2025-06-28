@@ -42,7 +42,7 @@ function DepositHistory() {
 
   const images = [img6, paytm, upi, all, img8];
   const activeImages = [activeImg6, paytm, upi, all, img8];
-  const descriptions = ["All", "UPIPayTM", "UPI-QRpay", "Wake UP-APP", "USDT"];
+  const descriptions = ["All","UPI-QRpay",  "USDT"];
 
   // Current date as per system instructions (May 23, 2025)
   const currentDate = new Date(2025, 4, 23);
@@ -219,9 +219,7 @@ function DepositHistory() {
   const filteredDeposits = deposits?.filter((deposit) => {
     const matchesTab =
       descriptions[selectedIndex] === "All" ||
-      (descriptions[selectedIndex] === "UPIPayTM" && deposit.payment_method.includes("PayTM")) ||
       (descriptions[selectedIndex] === "UPI-QRpay" && deposit.payment_method.includes("QRpay")) ||
-      (descriptions[selectedIndex] === "Wake UP-APP" && deposit.payment_method.includes("Wake UP")) ||
       (descriptions[selectedIndex] === "USDT" && deposit.payment_method === "USDT");
 
     const matchesStatus =

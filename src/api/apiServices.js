@@ -15,8 +15,6 @@ const getAuthToken = () => {
 
   // Check if token already has 'Bearer ' prefix
   const bearerToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-  console.log("Final Authorization header:", bearerToken);
-
   return bearerToken;
 };
 
@@ -74,12 +72,6 @@ const apiRequest = async (endpoint, method = "GET", body = null, queryParams = {
     config.body = JSON.stringify(body);
   }
 
-  console.log("Making API request:", {
-    url,
-    method,
-    headers: { ...headers, Authorization: "Bearer [TOKEN_HIDDEN]" } // Hide token in logs
-  });
-
   try {
     const response = await fetch(url, config);
 
@@ -106,7 +98,7 @@ const apiRequest = async (endpoint, method = "GET", body = null, queryParams = {
     return data;
   } catch (error) {
     console.error(`Failed to fetch ${endpoint}:`, error.message);
-    throw error;
+    // throw error;
   }
 };
 
@@ -171,7 +163,7 @@ export const getInvitationBonusStatus = async () => {
 };
 
 export const claimInvitationBonus = async () => {
-  return await apiRequest("/referrals/invitation/claim", "POST");
+  return await apiRequest("/referral/invitation/claim", "POST");
 };
 
 export const getVipHistoryData = async (page = 1, limit = 10) => {
@@ -356,8 +348,8 @@ export const getUserProfile = async () => {
   return await apiRequest(`/users/profile`, "GET")
 }
 
-export const getUserBets = async (gameType, duration, limit = 10, page = 1) => {
-  return await apiRequest(`/games/${gameType}/${duration}/my-bets`, "GET", null, { page, limit })
+export const getUserBets = async (gameType, limit = 10, page = 1) => {
+  return await apiRequest(`/games/${gameType}/my-bets`, "GET", null, { page, limit })
 }
 
 export const getListOfGameAndDuration = () => {
@@ -422,7 +414,20 @@ export const getFeedbacks = async () => {
 };
 export const getGameTransactions = async (params) => {
   const query = new URLSearchParams(params).toString();
-  return await apiRequest(`/game-move-transactions/my?${query}`, "GET");
+  return await apiRequest(`/transaction-reports/my?${query}`, "GET");
+};
+
+export const addGift = async (payload) => {
+  return await apiRequest(`/gift/claim`, "POST", payload);
+};
+
+export const getAllGifts = async (params) => {
+  const query = new URLSearchParams(params).toString();
+  return await apiRequest(`/gift/history?${query}`, "GET");
+};
+
+export const depositPayment = async (payload) => {
+  return await apiRequest(`/payments/payin`, "POST", payload);
 };
 
 export default {
@@ -474,5 +479,8 @@ export default {
   getAnnouncements,
   addFeedback,
   getFeedbacks,
-  getGameTransactions
+  getGameTransactions,
+  addGift,
+  getAllGifts,
+  depositPayment
 };

@@ -1,114 +1,49 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdExpandMore } from "react-icons/md";
-import TransactionHistoryHeader from "../../components/TransactionHistoryHeader";
 import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
+const filterOptions = [
+  "game_win",
+  "deposit",
+  "withdrawal",
+  "admin_credit",
+  "admin_debit",
+  "game_loss",
+  "gift_code",
+  "referral_bonus",
+  "rebate",
+  "vip_reward",
+  "transfer_in",
+  "transfer_out",
+  "refund",
+  "game_move_in",
+  "game_move_out",
+  "activity_reward",
+];
 
 function TransactionProfile() {
-  // State for filter and date selections
-  const [filter, setFilter] = useState({ selected: "All", temp: "All" });
+  const [filter, setFilter] = useState(filterOptions[0]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({});
-  const [date, setDate] = useState({
-    selected: { year: "2025", month: "04", day: "10" },
-    temp: { year: "2025", month: "04", day: "10" },
+  const today = new Date();
+
+  const [selectedDate, setSelectedDate] = useState({
+    year: today.getFullYear().toString(),
+    month: (today.getMonth() + 1).toString().padStart(2, "0"),
+    day: today.getDate().toString().padStart(2, "0"),
   });
 
-  const fetchTransactions = async (pageNum = 1) => {
-    setLoading(true);
-    try {
-      const params = {
-        page: pageNum,
-        limit: 10,
-        // type: "transfer_in",
-        // game_type: "wingo",
-        // start_date: "2024-01-01",
-        // end_date: "2024-01-31",
-      };
+  const [tempDate, setTempDate] = useState({
+    year: today.getFullYear().toString(),
+    month: (today.getMonth() + 1).toString().padStart(2, "0"),
+    day: today.getDate().toString().padStart(2, "0"),
+  });
 
-      const res = await apiServices.getGameTransactions(params);
-      setTransactions(res?.data || []);
-      setPagination(res?.pagination || {});
-    } catch (err) {
-      console.error("Failed to fetch transactions:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const [modal, setModal] = useState({ type: null, isOpen: false });
-  useEffect(() => {
-    fetchTransactions(page);
-  }, [page]);
-
-  const filterRef = useRef(null);
-  const dateRefs = {
-    year: useRef(null),
-    month: useRef(null),
-    day: useRef(null),
-  };
-
-  // Dropdown and date options
-  const filterOptions = [
-    "Bet",
-    "Agent commission",
-    "Win",
-    "Red envelope",
-    "Deposit",
-    "Withdraw",
-    "Cancel withdraw",
-    "Attendance bonus",
-    "Agent’s red envelope",
-    "Withdrawal rejected",
-    "Deposit gift",
-    "Manual deposit",
-    "Sign up bonus",
-    "Bonus",
-    "First deposit bonus",
-    "First deposit rebate",
-    "Investment and financial management",
-    "Financial income",
-    "Financial capital",
-    "Capital",
-    "Mission rewards",
-    "Game moved in",
-    "Game moved out",
-    "Wining slots",
-    "Bank binding bonus",
-    "Game refunded",
-    "Usdt deposit",
-    "Betting rebate",
-    "Vip level up increase",
-    "Vip monthly reward",
-    "Vip deposit bonus",
-    "Bonus deduction",
-    "Manual withdrawal",
-    "One-click rebate",
-    "Slots jackpot",
-    "Bind mobile number rewards",
-    "Xoso issue cancelled",
-    "Bind email rewards",
-    "Weekly award",
-    "C2c withdraw awards",
-    "C2c withdraw",
-    "C2c withdraw back",
-    "C2c recharge",
-    "C2c recharge awards",
-    "Newbie gift pack",
-    "Tournament rewards",
-    "Return awards",
-    "New members will receive bonuses if they make a loss on their first deposit",
-    "New members get bonuses by playing games",
-    "Daily rewards",
-    "Turntable awards",
-    "Partner rewards",
-
-    "Join channel rewards",
-
-    // Add other options as needed
-  ];
-  const yearOptions = Array.from({ length: 5 }, (_, i) => (2022 + i).toString());
+  const yearOptions = Array.from({ length: 5 }, (_, i) =>
+    (2022 + i).toString()
+  );
   const monthOptions = Array.from({ length: 12 }, (_, i) =>
     (i + 1).toString().padStart(2, "0")
   );
@@ -116,13 +51,43 @@ function TransactionProfile() {
     (i + 1).toString().padStart(2, "0")
   );
 
-  // Handle modal open/close
+  const dateRefs = {
+    year: useRef(null),
+    month: useRef(null),
+    day: useRef(null),
+  };
+  const filterRef = useRef(null);
+
+  const fetchTransactions = async (pageNum = 1) => {
+    setLoading(true);
+    try {
+      const params = {
+        page: pageNum,
+        limit: 10,
+        type: filter,
+        ...getDateFilterParams(selectedDate),
+      };
+
+      const res = await apiServices.getGameTransactions(params);
+      setTransactions(res?.data?.transactions || []);
+      setPagination(res?.data?.pagination || {});
+    } catch (err) {
+      console.error("Failed to fetch transactions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions(page);
+  }, [page, filter, selectedDate]);
+
+  const [modal, setModal] = useState({ type: null, isOpen: false });
+
   const openModal = (type) => {
     setModal({ type, isOpen: true });
-    if (type === "filter") {
-      setFilter((prev) => ({ ...prev, temp: prev.selected }));
-    } else if (type === "date") {
-      setDate((prev) => ({ ...prev, temp: { ...prev.selected } }));
+    if (type === "date") {
+      setTempDate({ ...selectedDate });
     }
   };
 
@@ -130,37 +95,35 @@ function TransactionProfile() {
     setModal({ type: null, isOpen: false });
   };
 
-  // Handle filter selection
   const handleFilterSelect = (option) => {
-    setFilter((prev) => ({ ...prev, temp: option }));
+    setFilter(option);
+    closeModal();
   };
 
-  // Handle date selection
   const handleDateSelect = (type, value) => {
-    setDate((prev) => ({
-      ...prev,
-      temp: { ...prev.temp, [type]: value },
-    }));
+    setTempDate((prev) => ({ ...prev, [type]: value }));
 
     const ref = dateRefs[type].current;
-    const options = type === "year" ? yearOptions : type === "month" ? monthOptions : dayOptions;
+    const options =
+      type === "year"
+        ? yearOptions
+        : type === "month"
+          ? monthOptions
+          : dayOptions;
     const index = options.indexOf(value);
+
     if (ref && index !== -1) {
-      ref.scrollTop = index * 40 - 80; // Center the selected item
+      ref.scrollTop = index * 40 - 80;
     }
   };
 
-  // Confirm selections
   const handleConfirm = () => {
-    if (modal.type === "filter") {
-      setFilter((prev) => ({ ...prev, selected: prev.temp }));
-    } else if (modal.type === "date") {
-      setDate((prev) => ({ ...prev, selected: { ...prev.temp } }));
+    if (modal.type === "date") {
+      setSelectedDate(tempDate);
     }
     closeModal();
   };
 
-  // Handle click outside to close modal
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -176,10 +139,21 @@ function TransactionProfile() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [modal.isOpen]);
 
-  // Format date for display
-  const getFormattedDate = () => {
-    const { year, month, day } = date.selected;
+  const formatDateString = (dateObj) => {
+    const { year, month, day } = dateObj;
     return `${year}-${month}-${day}`;
+  };
+
+  const getDateFilterParams = (dateObj) => {
+    const { year, month, day } = dateObj;
+
+    const start = new Date(`${year}-${month}-${day}T00:00:00`);
+    const end = new Date(`${year}-${month}-${day}T23:59:59.999`);
+
+    return {
+      start_date: start.toISOString(), 
+      end_date: end.toISOString(), 
+    };
   };
 
   // Modal component
@@ -217,74 +191,99 @@ function TransactionProfile() {
               className="modal-button flex-1 bg-[#2d2d2d] p-3 rounded-lg flex justify-between items-center"
               onClick={() => openModal("filter")}
             >
-              <span className="truncate">{filter.selected}</span>
+              <span className="truncate">{filter}</span>
               <MdExpandMore className="text-gray-400 ml-1" />
             </button>
             <button
               className="modal-button flex-1 bg-[#2d2d2d] p-3 rounded-lg flex justify-between items-center"
               onClick={() => openModal("date")}
             >
-              <span className="truncate">{getFormattedDate()}</span>
+              <span className="truncate">{formatDateString(selectedDate)}</span>
               <MdExpandMore className="text-gray-400 ml-1" />
             </button>
           </div>
 
           {/* Transaction List */}
           <div className="flex-1 px-3 pb-4 overflow-y-auto w-full max-w-[400px]">
-            {[
-              { detail: "Bet", time: "2025-04-02 09:29:36", balance: "₹1.00" },
-              { detail: "Bet", time: "2025-04-02 09:28:30", balance: "₹1.00" },
-            ].map((txn, index) => (
+            {loading && <span className="text-white">Loading...</span>}
+            {transactions?.map((txn, index) => (
               <div
                 key={index}
                 className="bg-[#2d2d2d] rounded-lg mb-4 shadow-md w-full"
               >
                 <div className="bg-[#4d4d4c] py-2 px-4 rounded-t-lg">
-                  <h2 className="text-white font-medium text-base">Bet</h2>
+                  <h2 className="text-white font-medium text-base">
+                    {txn?.game_type}
+                  </h2>
                 </div>
                 <div className="px-4 py-3">
                   <div className="bg-[#242424] flex justify-between items-center py-2 px-3 rounded-md mb-1">
                     <span className="text-gray-400 text-sm">Detail</span>
-                    <span className="text-white text-sm">{txn.detail}</span>
+                    <span className="text-white text-sm">{txn.type}</span>
                   </div>
                   <div className="bg-[#242424] flex justify-between items-center py-2 px-3 rounded-md mb-1">
                     <span className="text-gray-400 text-sm">Time</span>
-                    <span className="text-white text-sm">{txn.time}</span>
+                    <span className="text-white text-sm">
+                      {new Date(txn?.created_at).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
                   </div>
                   <div className="bg-[#242424] flex justify-between items-center py-2 px-3 rounded-md">
                     <span className="text-gray-400 text-sm">Balance</span>
                     <span className="text-red-500 text-sm font-medium">
-                      {txn.balance}
+                      {txn.amount}
                     </span>
                   </div>
+                  <div
+                    className="bg-[#333332] flex justify-between items-center py-2 px-3 rounded-md height-[50px]"
+                    style={{
+                      marginTop: "10px",
+                      height: "56px",
+                      border: "1px solid #4D4D4C",
+                    }}
+                  ></div>
                 </div>
               </div>
             ))}
+            {transactions?.length < 1 && !loading && (
+              <p className="text-white text-center">No data found.</p>
+            )}
           </div>
-          {pagination.pages > 0 && (
+          {pagination.total_pages > 0 && (
             <div className="flex justify-center gap-4 mt-4 mb-4">
               <button
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                disabled={page === 1}
-                className={`px-4 py-2 rounded-lg ${page === 1
+                disabled={!pagination.has_prev_page}
+                className={`px-4 py-2 rounded-lg ${
+                  !pagination.has_prev_page
                     ? "bg-gray-500 text-white cursor-not-allowed"
                     : "bg-[#fae59f] text-[#8f5206]"
-                  }`}
+                }`}
               >
                 Previous
               </button>
 
               <span className="text-white">
-                Page {pagination.page} of {pagination.pages}
+                Page {pagination.current_page} of {pagination.total_pages}
               </span>
 
               <button
-                onClick={() => setPage((prev) => Math.min(prev + 1, pagination.pages))}
-                disabled={page === pagination.pages}
-                className={`px-4 py-2 rounded-lg ${page === pagination.pages
+                onClick={() =>
+                  setPage((prev) => Math.min(prev + 1, pagination.total_pages))
+                }
+                disabled={!pagination.has_next_page}
+                className={`px-4 py-2 rounded-lg ${
+                  !pagination.has_next_page
                     ? "bg-gray-500 text-white cursor-not-allowed"
                     : "bg-[#fae59f] text-[#8f5206]"
-                  }`}
+                }`}
               >
                 Next
               </button>
@@ -304,10 +303,11 @@ function TransactionProfile() {
           {filterOptions.map((option, index) => (
             <div
               key={index}
-              className={`py-4 w-full text-center cursor-pointer transition-colors ${filter.temp === option
-                ? "text-white bg-[#333332]"
-                : "text-[#a8a5a1]"
-                }`}
+              className={`py-4 w-full text-center cursor-pointer transition-colors ${
+                filter.temp === option
+                  ? "text-white bg-[#333332]"
+                  : "text-[#a8a5a1]"
+              }`}
               onClick={() => handleFilterSelect(option)}
             >
               {option}
@@ -316,7 +316,6 @@ function TransactionProfile() {
         </div>
       </Modal>
 
-      {/* Date Modal */}
       <Modal
         type="date"
         isOpen={modal.type === "date" && modal.isOpen}
@@ -326,7 +325,9 @@ function TransactionProfile() {
         <div className="flex w-full max-w-[400px]">
           {["year", "month", "day"].map((type) => (
             <div key={type} className="flex-1">
-              <div className="text-center text-gray-500 py-2 capitalize">{type}</div>
+              <div className="text-center text-gray-500 py-2 capitalize">
+                {type}
+              </div>
               <div className="h-[160px] relative overflow-hidden">
                 <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                 <div
@@ -342,10 +343,11 @@ function TransactionProfile() {
                   ).map((value) => (
                     <div
                       key={value}
-                      className={`h-[40px] flex items-center justify-center text-center cursor-pointer ${date.temp[type] === value
-                        ? "text-white font-medium"
-                        : "text-gray-500"
-                        }`}
+                      className={`h-[40px] flex items-center justify-center text-center cursor-pointer transition-colors duration-150 ${
+                        tempDate[type] === value
+                          ? "text-white font-medium"
+                          : "text-gray-500"
+                      }`}
                       onClick={() => handleDateSelect(type, value)}
                     >
                       {value}

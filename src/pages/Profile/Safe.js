@@ -3,6 +3,7 @@ import wcard from "../../Assets/wcard.png";
 import SafeHeader from './Safeheader';
 import { Link } from "react-router-dom";
 import apiServices from '../../api/apiServices';
+import CommanHeader from '../../components/CommanHeader';
 
 const FinancialCard = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -128,7 +129,7 @@ const FinancialCard = () => {
 
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-[#242424] shadow-sm p-4 relative">
-      <SafeHeader />
+      <CommanHeader title='Safe' />
       <div className="text-center mb-2 mt-10">
         <p className="text-rose-500 text-sm">Interest rate {vaultStatus?.currentInterestRate}%</p>
       </div>
