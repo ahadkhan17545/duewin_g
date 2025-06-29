@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import download from "../Assets/download.png";
 import IconWallet from "../Assets/homewallet.png";
 import flagIcon from "../Assets/usFlag.png";
-
+import headerLogo from '../Assets/vip1/headerLogo.png'; 
 const Homeheader = () => {
   const [walletBalance, setWalletBalance] = useState("0.00");
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -183,10 +183,10 @@ const Homeheader = () => {
       >
         <div className="flex flex-col justify-center">
           <img
-            src="https://ossimg.diuacting.com/DiuWin/other/h5setting_20240724134835hng9.png"
-            alt="Logo"
-            className="w-24 h-10 mb-4 sm:w-28 sm:h-12 md:w-32 md:h-14"
-          />
+         src={headerLogo}
+         alt="Logo"
+         className="w-34 h-12 mb-5"
+       />
           <div className="flex items-center space-x-1">
             <img
               src={flagIcon}

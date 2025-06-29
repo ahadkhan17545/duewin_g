@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser, resetError } from "../redux/Slice/signupSlice";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../components/Header";
 import lockicon from "../Assets/loginicons/lockicon.png";
@@ -20,6 +20,8 @@ const countryCodes = [
 function SignupPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralFromURL = searchParams.get("referralCode");
   const { loading, error, user } = useSelector((state) => state.signup);
 
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -33,7 +35,8 @@ function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword((prev) => !prev);
 
   const handleInputChange = (setter) => (e) => {
     if (setter === setPhoneNumber) {
@@ -51,6 +54,12 @@ function SignupPage() {
       navigate("/home");
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (referralFromURL) {
+      setInviteCode(referralFromURL);
+    }
+  }, [referralFromURL]);
 
   useEffect(() => {
     dispatch(resetError());
@@ -71,23 +80,38 @@ function SignupPage() {
 
     // Client-side validation
     if (!/^\d{10}$/.test(phoneNumber)) {
-      dispatch({ type: "signup/signupUser/rejected", payload: "Phone number must be exactly 10 digits" });
+      dispatch({
+        type: "signup/signupUser/rejected",
+        payload: "Phone number must be exactly 10 digits",
+      });
       return;
     }
     if (password !== confirmPassword) {
-      dispatch({ type: "signup/signupUser/rejected", payload: "Passwords do not match" });
+      dispatch({
+        type: "signup/signupUser/rejected",
+        payload: "Passwords do not match",
+      });
       return;
     }
     if (password.length < 6) {
-      dispatch({ type: "signup/signupUser/rejected", payload: "Password must be at least 6 characters long" });
+      dispatch({
+        type: "signup/signupUser/rejected",
+        payload: "Password must be at least 6 characters long",
+      });
       return;
     }
     if (!inviteCode) {
-      dispatch({ type: "signup/signupUser/rejected", payload: "Invite code is required" });
+      dispatch({
+        type: "signup/signupUser/rejected",
+        payload: "Invite code is required",
+      });
       return;
     }
     if (!privacyAgreement) {
-      dispatch({ type: "signup/signupUser/rejected", payload: "Please agree to the Privacy Agreement" });
+      dispatch({
+        type: "signup/signupUser/rejected",
+        payload: "Please agree to the Privacy Agreement",
+      });
       return;
     }
 
@@ -109,11 +133,17 @@ function SignupPage() {
   let displayError = error;
   if (typeof error === "string") {
     if (error.includes("Phone number already exists")) {
-      displayError = "This phone number is already registered. Please use a different number or log in.";
-    } else if (error.includes("Referral code is required") || error.includes("Invalid referral code")) {
-      displayError = "The invite code is invalid or required. Please check and try again.";
+      displayError =
+        "This phone number is already registered. Please use a different number or log in.";
+    } else if (
+      error.includes("Referral code is required") ||
+      error.includes("Invalid referral code")
+    ) {
+      displayError =
+        "The invite code is invalid or required. Please check and try again.";
     } else if (error.includes("Password")) {
-      displayError = "Password does not meet requirements. Please try a different password.";
+      displayError =
+        "Password does not meet requirements. Please try a different password.";
     }
   }
 
@@ -123,7 +153,9 @@ function SignupPage() {
         <Header />
         <div className="text-left mb-0 w-full px-4 sm:px-10 mt-20">
           <h1 className="text-2xl font-bold text-white mb-1">Register</h1>
-          <p className="text-white text-sm sm:text-base">Please register by phone number</p>
+          <p className="text-white text-sm sm:text-base">
+            Please register by phone number
+          </p>
         </div>
 
         <div className="bg-[#242424] p-4 sm:p-8 shadow-md w-full mt-10 flex flex-col justify-center">
@@ -131,15 +163,22 @@ function SignupPage() {
             <div className="flex justify-center mb-2">
               <img src={phoneicon} alt="Phone" className="w-8 h-8" />
             </div>
-            <span className="text-yellow-500 font-medium text-lg">Register your phone</span>
+            <span className="text-yellow-500 font-medium text-lg">
+              Register your phone
+            </span>
             <div className="border-b-2 border-yellow-500 w-full mt-2"></div>
           </div>
 
-          {displayError && <p className="text-red-500 mt-4 text-center">{displayError}</p>}
+          {displayError && (
+            <p className="text-red-500 mt-4 text-center">{displayError}</p>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6 w-full">
             <div>
-              <label htmlFor="phone" className="block mb-2 text-md font-medium text-white flex items-center gap-2">
+              <label
+                htmlFor="phone"
+                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+              >
                 <img src={phoneicon} alt="Phone" className="w-7 h-7" />
                 Phone number
               </label>
@@ -151,8 +190,18 @@ function SignupPage() {
                     className="bg-[#333332] text-gray-400 rounded-l-lg py-2 px-4 flex items-center gap-1 h-12 border-none"
                   >
                     {selectedCode}
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
                   {showDropdown && (
@@ -187,7 +236,10 @@ function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block mb-2 text-md font-medium text-white flex items-center gap-2">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+              >
                 <img src={lockicon} alt="Lock" className="w-7 h-7" />
                 Set password
               </label>
@@ -202,14 +254,24 @@ function SignupPage() {
                   style={{ border: "none" }}
                   required
                 />
-                <div className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer" onClick={togglePasswordVisibility}>
-                  {showPassword ? <FaEyeSlash className="text-gray-500" /> : <FaEye className="text-gray-500" />}
+                <div
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="text-gray-500" />
+                  ) : (
+                    <FaEye className="text-gray-500" />
+                  )}
                 </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block mb-2 text-md font-medium text-white flex items-center gap-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+              >
                 <img src={lockicon} alt="Lock" className="w-7 h-7" />
                 Confirm password
               </label>
@@ -224,15 +286,29 @@ function SignupPage() {
                   style={{ border: "none" }}
                   required
                 />
-                <div className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer" onClick={toggleConfirmPasswordVisibility}>
-                  {showConfirmPassword ? <FaEyeSlash className="text-gray-500" /> : <FaEye className="text-gray-500" />}
+                <div
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="text-gray-500" />
+                  ) : (
+                    <FaEye className="text-gray-500" />
+                  )}
                 </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="inviteCode" className="block mb-2 text-md font-medium text-white flex items-center gap-2">
-                <img src={invitecodeicon} alt="Invite Code" className="w-7 h-7" />
+              <label
+                htmlFor="inviteCode"
+                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+              >
+                <img
+                  src={invitecodeicon}
+                  alt="Invite Code"
+                  className="w-7 h-7"
+                />
                 Invite code
               </label>
               <input
@@ -274,17 +350,35 @@ function SignupPage() {
                   )}
                 </div>
               </div>
-              <label htmlFor="privacyAgreement" className="ml-2 text-sm text-white">
-                I have read and agree <span className="text-custom-pink">[Privacy Agreement]</span>
+              <label
+                htmlFor="privacyAgreement"
+                className="ml-2 text-sm text-white"
+              >
+                I have read and agree{" "}
+                <span className="text-custom-pink">[Privacy Agreement]</span>
               </label>
             </div>
 
             <button
               type="submit"
               className={`w-full bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] py-3 rounded-full focus:outline-none ${
-                loading || !phoneNumber || !password || !confirmPassword || !inviteCode || !privacyAgreement ? "opacity-50 cursor-not-allowed" : ""
+                loading ||
+                !phoneNumber ||
+                !password ||
+                !confirmPassword ||
+                !inviteCode ||
+                !privacyAgreement
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
               }`}
-              disabled={loading || !phoneNumber || !password || !confirmPassword || !inviteCode || !privacyAgreement}
+              disabled={
+                loading ||
+                !phoneNumber ||
+                !password ||
+                !confirmPassword ||
+                !inviteCode ||
+                !privacyAgreement
+              }
             >
               {loading ? "Registering..." : "Register"}
             </button>
@@ -293,7 +387,8 @@ function SignupPage() {
                 type="button"
                 className="w-full border mt-4 border-[#d9ac4f] text-[#a8a5a1] py-3 rounded-full focus:outline-none"
               >
-                I have an account, <span className="font-bold text-[#d9ac4f]">Login</span>
+                I have an account,{" "}
+                <span className="font-bold text-[#d9ac4f]">Login</span>
               </button>
             </Link>
           </form>

@@ -27,14 +27,14 @@ import close from "../../../Assets/finalicons/close.png";
 import { getWalletBalance } from "../../../api/apiServices";
 import useSocket from "../../../hooks/useSocket";
 import FreezePopup from "../../../components/FreezePopup";
-import redball from '../../../Assets/WingoNew/redBall.png';
-import greenball from '../../../Assets/WingoNew/greenBall.png';
-import dice1 from '../../../Assets/WingoNew/n1-584b8878.png';
-import dice2 from '../../../Assets/WingoNew/n2-447499dc.png';
-import dice3 from '../../../Assets/WingoNew/n3-1432a6bd.png';
-import dice4 from '../../../Assets/WingoNew/n4-9d453819.png';
-import dice5 from '../../../Assets/WingoNew/n5-09b70e91.png';
-import dice6 from '../../../Assets/WingoNew/n6-b68c6bb6.png';
+import redball from "../../../Assets/WingoNew/redBall.png";
+import greenball from "../../../Assets/WingoNew/greenBall.png";
+import dice1 from "../../../Assets/WingoNew/n1-584b8878.png";
+import dice2 from "../../../Assets/WingoNew/n2-447499dc.png";
+import dice3 from "../../../Assets/WingoNew/n3-1432a6bd.png";
+import dice4 from "../../../Assets/WingoNew/n4-9d453819.png";
+import dice5 from "../../../Assets/WingoNew/n5-09b70e91.png";
+import dice6 from "../../../Assets/WingoNew/n6-b68c6bb6.png";
 
 const diceImages = {
   1: dice1,
@@ -48,12 +48,7 @@ const diceImages = {
 const buttonData = [
   {
     id: 0,
-    title: (
-      <>
-        K3
-        1Min
-      </>
-    ),
+    title: <>K3 1Min</>,
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
@@ -90,22 +85,22 @@ const buttonData = [
 ];
 
 const imageUrls = [
-  { number: 3, url: redball, textColor: '#ff0000', description: "207.36X" },
-  { number: 4, url: greenball, textColor: '#00b971', description: "69.12X" },
-  { number: 5, url: redball, textColor: '#ff0000', description: "34.56X" },
-  { number: 6, url: greenball, textColor: '#00b971', description: "20.74X" },
-  { number: 7, url: redball, textColor: '#ff0000', description: "13.83X" },
-  { number: 8, url: greenball, textColor: '#00b971', description: "9.88X" },
-  { number: 9, url: redball, textColor: '#ff0000', description: "8.3X" },
-  { number: 10, url: greenball, textColor: '#00b971', description: "7.68X" },
-  { number: 11, url: redball, textColor: '#ff0000', description: "7.68X" },
-  { number: 12, url: greenball, textColor: '#00b971', description: "8.3X" },
-  { number: 13, url: redball, textColor: '#ff0000', description: "9.88X" },
-  { number: 14, url: greenball, textColor: '#00b971', description: "13.83X" },
-  { number: 15, url: redball, textColor: '#ff0000', description: "20.74X" },
-  { number: 16, url: greenball, textColor: '#00b971', description: "34.56X" },
-  { number: 17, url: redball, textColor: '#ff0000', description: "69.12X" },
-  { number: 18, url: greenball, textColor: '#00b971', description: "207.36X" },
+  { number: 3, url: redball, textColor: "#ff0000", description: "207.36X" },
+  { number: 4, url: greenball, textColor: "#00b971", description: "69.12X" },
+  { number: 5, url: redball, textColor: "#ff0000", description: "34.56X" },
+  { number: 6, url: greenball, textColor: "#00b971", description: "20.74X" },
+  { number: 7, url: redball, textColor: "#ff0000", description: "13.83X" },
+  { number: 8, url: greenball, textColor: "#00b971", description: "9.88X" },
+  { number: 9, url: redball, textColor: "#ff0000", description: "8.3X" },
+  { number: 10, url: greenball, textColor: "#00b971", description: "7.68X" },
+  { number: 11, url: redball, textColor: "#ff0000", description: "7.68X" },
+  { number: 12, url: greenball, textColor: "#00b971", description: "8.3X" },
+  { number: 13, url: redball, textColor: "#ff0000", description: "9.88X" },
+  { number: 14, url: greenball, textColor: "#00b971", description: "13.83X" },
+  { number: 15, url: redball, textColor: "#ff0000", description: "20.74X" },
+  { number: 16, url: greenball, textColor: "#00b971", description: "34.56X" },
+  { number: 17, url: redball, textColor: "#ff0000", description: "69.12X" },
+  { number: 18, url: greenball, textColor: "#00b971", description: "207.36X" },
 ];
 
 const BettingModal = ({
@@ -184,7 +179,11 @@ const BettingModal = ({
     let selection = selectedOptions;
     if (activeImgTab === "2same") {
       selection = [...selectedTwoSameNumbers];
-      if (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green)) {
+      if (
+        selectedPair.red &&
+        selectedPair.green &&
+        isValidPair(selectedPair.red, selectedPair.green)
+      ) {
         selection.push([selectedPair.red, selectedPair.green]);
       }
     } else if (activeImgTab === "3same") {
@@ -224,7 +223,12 @@ const BettingModal = ({
         {selectedOptions.some((option) => option >= 1 && option <= 6) && (
           <div className="mb-2">
             <p className="text-sm mb-1">
-              3 different numbers: {getCombinationCount(selectedOptions.filter((opt) => opt >= 1 && opt <= 6).length, 3)} bets
+              3 different numbers:{" "}
+              {getCombinationCount(
+                selectedOptions.filter((opt) => opt >= 1 && opt <= 6).length,
+                3
+              )}{" "}
+              bets
             </p>
             <div className="flex space-x-2">
               {selectedOptions
@@ -256,7 +260,13 @@ const BettingModal = ({
           !selectedPair.green && (
             <div className="mb-2">
               <p className="text-sm mb-1">
-                2 different numbers: {getCombinationCount(selectedOptions.filter((opt) => opt >= 11 && opt <= 16).length, 2)} bets
+                2 different numbers:{" "}
+                {getCombinationCount(
+                  selectedOptions.filter((opt) => opt >= 11 && opt <= 16)
+                    .length,
+                  2
+                )}{" "}
+                bets
               </p>
               <div className="flex space-x-2">
                 {selectedOptions
@@ -275,47 +285,47 @@ const BettingModal = ({
 
         {(selectedTwoSameNumbers.length > 0 ||
           (selectedPair.red && selectedPair.green)) && (
-            <div className="mb-2">
-              <p className="text-sm mb-1">2 same numbers:</p>
-              <div className="flex space-x-2">
-                {selectedTwoSameNumbers.map((num) => (
-                  <span
-                    key={num}
-                    className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                  >
-                    {num}
-                  </span>
-                ))}
-                {selectedPair.red && selectedPair.green && (
-                  <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-                    {`${selectedPair.red}, ${selectedPair.green}`}
-                  </span>
-                )}
-              </div>
+          <div className="mb-2">
+            <p className="text-sm mb-1">2 same numbers:</p>
+            <div className="flex space-x-2">
+              {selectedTwoSameNumbers.map((num) => (
+                <span
+                  key={num}
+                  className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                >
+                  {num}
+                </span>
+              ))}
+              {selectedPair.red && selectedPair.green && (
+                <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                  {`${selectedPair.red}, ${selectedPair.green}`}
+                </span>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
         {(selectedThreeSameNumbers.length > 0 ||
           selectedOptions.includes("Any 3")) && (
-            <div className="mb-2">
-              <p className="text-sm mb-1">3 same numbers:</p>
-              <div className="flex space-x-2">
-                {selectedThreeSameNumbers.map((num) => (
-                  <span
-                    key={num}
-                    className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                  >
-                    {num}
-                  </span>
-                ))}
-                {selectedOptions.includes("Any 3") && (
-                  <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-                    Any 3 : odds (34.56)
-                  </span>
-                )}
-              </div>
+          <div className="mb-2">
+            <p className="text-sm mb-1">3 same numbers:</p>
+            <div className="flex space-x-2">
+              {selectedThreeSameNumbers.map((num) => (
+                <span
+                  key={num}
+                  className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                >
+                  {num}
+                </span>
+              ))}
+              {selectedOptions.includes("Any 3") && (
+                <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                  Any 3 : odds (34.56)
+                </span>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm">Balance</p>
@@ -323,10 +333,11 @@ const BettingModal = ({
             {[1, 10, 100, 1000].map((value) => (
               <button
                 key={value}
-                className={`px-3 py-1 rounded text-sm font-medium ${betAmount === value
-                  ? "bg-[#d6a439] text-black"
-                  : "bg-[#555555] text-gray-300"
-                  }`}
+                className={`px-3 py-1 rounded text-sm font-medium ${
+                  betAmount === value
+                    ? "bg-[#d6a439] text-black"
+                    : "bg-[#555555] text-gray-300"
+                }`}
                 onClick={() => setBetAmount(value)}
               >
                 {value}
@@ -364,10 +375,11 @@ const BettingModal = ({
             <button
               key={label}
               onClick={() => handleMultiplierClick(label)}
-              className={`px-3 py-1 rounded text-sm font-medium ${selectedMultiplier === label
-                ? "bg-[#d6a439] text-black"
-                : "bg-[#555] text-gray-300"
-                }`}
+              className={`px-3 py-1 rounded text-sm font-medium ${
+                selectedMultiplier === label
+                  ? "bg-[#d6a439] text-black"
+                  : "bg-[#555] text-gray-300"
+              }`}
             >
               {label}
             </button>
@@ -412,10 +424,16 @@ const BettingModal = ({
 
   function shouldShowBettingModal() {
     if (activeImgTab === "2same") {
-      return selectedTwoSameNumbers.length > 0 ||
-        (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green));
+      return (
+        selectedTwoSameNumbers.length > 0 ||
+        (selectedPair.red &&
+          selectedPair.green &&
+          isValidPair(selectedPair.red, selectedPair.green))
+      );
     } else if (activeImgTab === "3same") {
-      return selectedThreeSameNumbers.length > 0 || selectedOptions.includes("Any 3");
+      return (
+        selectedThreeSameNumbers.length > 0 || selectedOptions.includes("Any 3")
+      );
     } else if (activeImgTab === "different") {
       const threeDifferentCount = selectedOptions.filter(
         (opt) => opt >= 1 && opt <= 6
@@ -425,7 +443,9 @@ const BettingModal = ({
       ).length;
       const hasContinuous = selectedOptions.includes("3 Continuous");
 
-      return threeDifferentCount >= 3 || twoDifferentCount >= 2 || hasContinuous;
+      return (
+        threeDifferentCount >= 3 || twoDifferentCount >= 2 || hasContinuous
+      );
     }
     return selectedOptions.length > 0;
   }
@@ -433,7 +453,7 @@ const BettingModal = ({
 
 function LotteryK3() {
   const isMounted = useRef(true);
-  const location = useLocation()
+  const location = useLocation();
   const gameType = "k3";
   const API_BASE_URL = "https://api.strikecolor1.com";
 
@@ -442,7 +462,9 @@ function LotteryK3() {
   const [historyData, setHistoryData] = useState([]);
   const [gameHistoryData, setGameHistoryData] = useState([]);
   const [chartData, setChartData] = useState([]);
-  const [activeButton, setActiveButton] = useState(location?.state ? location?.state : buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(
+    location?.state ? location?.state : buttonData[0].id
+  );
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showPreSalePopup, setShowPreSalePopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -471,8 +493,8 @@ function LotteryK3() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-  const [fetchDataFlag, setFetchDataFlag] = useState(false)
-  const [refetchData, setRefetchData] = useState(false)
+  const [fetchDataFlag, setFetchDataFlag] = useState(false);
+  const [refetchData, setRefetchData] = useState(false);
   const {
     isConnected,
     connectionError,
@@ -563,7 +585,7 @@ function LotteryK3() {
 
   useEffect(() => {
     if (timeRemaining.minutes == 0 && timeRemaining.seconds < 2) {
-      setFetchDataFlag(prev => !prev)
+      setFetchDataFlag((prev) => !prev);
     }
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
       const currentId = parseInt(currentPeriod.periodId) || 0;
@@ -585,7 +607,13 @@ function LotteryK3() {
         return () => clearTimeout(timer);
       }
     }
-  }, [timeRemaining.minutes, timeRemaining.seconds, activeButton, isConnected, currentPeriod.periodId]);
+  }, [
+    timeRemaining.minutes,
+    timeRemaining.seconds,
+    activeButton,
+    isConnected,
+    currentPeriod.periodId,
+  ]);
 
   useEffect(() => {
     if (showSuccessPopup) {
@@ -637,18 +665,20 @@ function LotteryK3() {
             sumParity: item.result?.sum_parity || "N/A",
           }));
         } else if (typeof data.data === "object") {
-          results = [{
-            periodId: data.data.periodId || "N/A",
-            dice1: data.data.result?.dice_1 || 1,
-            dice2: data.data.result?.dice_2 || 1,
-            dice3: data.data.result?.dice_3 || 1,
-            sum: data.data.result?.sum || 0,
-            sumSize: data.data.result?.sum_size || "N/A",
-            hasPair: data.data.result?.has_pair || false,
-            hasTriple: data.data.result?.has_triple || false,
-            isStraight: data.data.result?.is_straight || false,
-            sumParity: data.data.result?.sum_parity || "N/A",
-          }];
+          results = [
+            {
+              periodId: data.data.periodId || "N/A",
+              dice1: data.data.result?.dice_1 || 1,
+              dice2: data.data.result?.dice_2 || 1,
+              dice3: data.data.result?.dice_3 || 1,
+              sum: data.data.result?.sum || 0,
+              sumSize: data.data.result?.sum_size || "N/A",
+              hasPair: data.data.result?.has_pair || false,
+              hasTriple: data.data.result?.has_triple || false,
+              isStraight: data.data.result?.is_straight || false,
+              sumParity: data.data.result?.sum_parity || "N/A",
+            },
+          ];
         }
       }
 
@@ -676,7 +706,7 @@ function LotteryK3() {
       };
       fetchGameHistory().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton, fetchDataFlag,refetchData]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
 
   useEffect(() => {
     if (activeTab === "chart") {
@@ -692,9 +722,9 @@ function LotteryK3() {
       };
       fetchChartData().catch(console.error);
     }
-  }, [activeTab, currentPage, activeButton, fetchDataFlag,refetchData]);
+  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
 
-  const fetchUserBets =   async () => {
+  const fetchUserBets = async () => {
     if (!isMounted.current) return;
     setIsLoading(true);
     try {
@@ -711,7 +741,7 @@ function LotteryK3() {
         setIsLoading(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (activeTab === "myHistory") {
@@ -757,8 +787,8 @@ function LotteryK3() {
           const newSelected = prev.includes(option)
             ? prev.filter((num) => num !== option)
             : [...prev, option].filter((num) =>
-              [11, 22, 33, 44, 55, 66].includes(num)
-            );
+                [11, 22, 33, 44, 55, 66].includes(num)
+              );
           setSelectedOptions(newSelected);
           setSelectedPair({ red: null, green: null });
           return newSelected;
@@ -770,8 +800,14 @@ function LotteryK3() {
         setSelectedPair((prev) => {
           const newPair = { ...prev, red: prev.red === option ? null : option };
 
-          if (newPair.red && newPair.green && !isValidPair(newPair.red, newPair.green)) {
-            alert("Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)");
+          if (
+            newPair.red &&
+            newPair.green &&
+            !isValidPair(newPair.red, newPair.green)
+          ) {
+            alert(
+              "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
+            );
             return prev;
           }
 
@@ -788,8 +824,14 @@ function LotteryK3() {
             green: prev.green === option ? null : option,
           };
 
-          if (newPair.red && newPair.green && !isValidPair(newPair.red, newPair.green)) {
-            alert("Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)");
+          if (
+            newPair.red &&
+            newPair.green &&
+            !isValidPair(newPair.red, newPair.green)
+          ) {
+            alert(
+              "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
+            );
             return prev;
           }
 
@@ -809,8 +851,8 @@ function LotteryK3() {
           const newSelected = prev.includes(option)
             ? prev.filter((num) => num !== option)
             : [...prev, option].filter((num) =>
-              [111, 222, 333, 444, 555, 666].includes(num)
-            );
+                [111, 222, 333, 444, 555, 666].includes(num)
+              );
           setSelectedOptions(newSelected);
           return newSelected;
         });
@@ -845,7 +887,7 @@ function LotteryK3() {
 
     let result = 1;
     for (let i = 0; i < r; i++) {
-      result = result * (n - i) / (i + 1);
+      result = (result * (n - i)) / (i + 1);
     }
     return Math.floor(result);
   };
@@ -884,7 +926,11 @@ function LotteryK3() {
 
       totalAmount += selectedTwoSameNumbers.length;
 
-      if (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green)) {
+      if (
+        selectedPair.red &&
+        selectedPair.green &&
+        isValidPair(selectedPair.red, selectedPair.green)
+      ) {
         totalAmount += 1;
       }
 
@@ -945,15 +991,20 @@ function LotteryK3() {
           <div className="relative z-20 p-2">
             {/* Balance + Refresh */}
             <div className="relative flex items-center justify-center ml-2">
-              <div className="text-lg font-bold text-white">₹{walletBalance.toFixed(2)}</div>
+              <div className="text-lg font-bold text-white">
+                ₹{walletBalance.toFixed(2)}
+              </div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
-                  }`}
+                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${
+                  isRefreshingBalance
+                    ? "animate-spin opacity-50"
+                    : "hover:scale-110"
+                }`}
                 onClick={handleRefreshBalance}
                 style={{
-                  pointerEvents: isRefreshingBalance ? 'none' : 'auto',
+                  pointerEvents: isRefreshingBalance ? "none" : "auto",
                 }}
               />
             </div>
@@ -961,7 +1012,9 @@ function LotteryK3() {
             {/* Wallet label */}
             <div className="flex items-center justify-center mb-4 mt-[-2]">
               <img src={wallet} alt="icon" className="w-5 h-5" />
-              <span className="ml-2 text-[#f5f3f0] text-xs ">Wallet Balance</span>
+              <span className="ml-2 text-[#f5f3f0] text-xs ">
+                Wallet Balance
+              </span>
             </div>
 
             {/* Buttons */}
@@ -977,19 +1030,17 @@ function LotteryK3() {
                 </button>
               </Link>
             </div>
-
-
           </div>
         </div>
       </div>
-
 
       <div className="bg-[#242424]  w-full h-full mt-2 flex flex-col justify-center">
         <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
             <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
-              Thanks to all our members — past and present — for being part of our journey.
+              Thanks to all our members — past and present — for being part of
+              our journey.
             </p>
 
             <button
@@ -1003,8 +1054,6 @@ function LotteryK3() {
             >
               <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
-
-
           </div>
         </div>
 
@@ -1014,10 +1063,11 @@ function LotteryK3() {
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center px-2 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${activeButton === button.id
-                  ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#4d4d4c] text-[#a8a5a1]"
-                  }`}
+                className={`flex flex-col items-center px-2 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${
+                  activeButton === button.id
+                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#4d4d4c] text-[#a8a5a1]"
+                }`}
                 style={{
                   textAlign: "center",
                   flexDirection: "column",
@@ -1030,7 +1080,9 @@ function LotteryK3() {
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-xs leading-none whitespace-nowrap">{button.title}</span>
+                <span className="text-xs leading-none whitespace-nowrap">
+                  {button.title}
+                </span>
               </button>
             ))}
           </div>
@@ -1081,7 +1133,10 @@ function LotteryK3() {
             </div>
           </div>
 
-          <FreezePopup timeRemaining={timeRemaining} handleRefresh={()=>setRefetchData(prev=>!prev)}>
+          <FreezePopup
+            timeRemaining={timeRemaining}
+            handleRefresh={() => setRefetchData((prev) => !prev)}
+          >
             <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
               <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
                 <div className="absolute left-[-10px] top-1/2 transform -translate-y-1/2 w-2 h-6 bg-[#00b971] rounded-l-md z-0"></div>
@@ -1096,25 +1151,34 @@ function LotteryK3() {
 
                 <div className="grid grid-cols-3 gap-1">
                   <div className="flex bg-zinc-500 p-1 rounded justify-center">
-
                     <img
-                      src={isConnected && currentResult?.dice_1 ? getDiceImage(currentResult.dice_1) : num1}
+                      src={
+                        isConnected && currentResult?.dice_1
+                          ? getDiceImage(currentResult.dice_1)
+                          : num1
+                      }
                       alt="Dice 1"
                       className="w-16 h-16"
                     />
                   </div>
                   <div className="flex bg-zinc-500 p-1 rounded justify-center">
-
                     <img
-                      src={isConnected && currentResult?.dice_2 ? getDiceImage(currentResult.dice_2) : num1}
+                      src={
+                        isConnected && currentResult?.dice_2
+                          ? getDiceImage(currentResult.dice_2)
+                          : num1
+                      }
                       alt="Dice 2"
                       className="w-16 h-16"
                     />
                   </div>
                   <div className="flex bg-zinc-500 p-1 rounded justify-center">
-
                     <img
-                      src={isConnected && currentResult?.dice_3 ? getDiceImage(currentResult.dice_3) : num1}
+                      src={
+                        isConnected && currentResult?.dice_3
+                          ? getDiceImage(currentResult.dice_3)
+                          : num1
+                      }
                       alt="Dice 3"
                       className="w-16 h-16"
                     />
@@ -1122,7 +1186,6 @@ function LotteryK3() {
                 </div>
               </div>
             </div>
-
 
             <div className="flex gap-1 justify-between mt-2 mb-2">
               {[
@@ -1135,16 +1198,16 @@ function LotteryK3() {
                 return (
                   <button
                     key={index}
-                    className={`flex-1 px-2 py-3 text-xs text-center rounded-t-md ${isActive
-                      ? "bg-[#d9ac4f] text-[#8f5206]"
-                      : "text-[#a8a5a1]"
-                      } focus:outline-none`}
+                    className={`flex-1 px-2 py-3 text-xs text-center rounded-t-md ${
+                      isActive
+                        ? "bg-[#d9ac4f] text-[#8f5206]"
+                        : "text-[#a8a5a1]"
+                    } focus:outline-none`}
                     style={!isActive ? { backgroundColor: "#4d4d4c" } : {}}
                     onClick={() => setActiveImgTab(tab.value)}
                   >
                     {tab.label}
                   </button>
-
                 );
               })}
             </div>
@@ -1153,7 +1216,10 @@ function LotteryK3() {
           {activeImgTab === "total" && (
             <div className="grid grid-cols-4 gap-3 ml-3">
               {imageUrls.map((image, index) => (
-                <div key={index} className="flex flex-col items-center mt-4 relative w-12 h-12">
+                <div
+                  key={index}
+                  className="flex flex-col items-center mt-4 relative w-12 h-12"
+                >
                   <img
                     src={image.url}
                     alt={`Ball ${image.number}`}
@@ -1166,41 +1232,48 @@ function LotteryK3() {
                   >
                     {image.number}
                   </span>
-                  <span className="text-xs text-white mt-1" style={{ color: "#a8a5a1" }}>{image.description}</span>
+                  <span
+                    className="text-xs text-white mt-1"
+                    style={{ color: "#a8a5a1" }}
+                  >
+                    {image.description}
+                  </span>
                 </div>
               ))}
               <div className="col-span-4 flex justify-between text-xs mt-4 -ml-5 gap-1 -mr-2">
-                {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map((label, idx) => {
-                  const commonClasses =
-                    "text-white px-6 py-1 rounded-md hover:opacity-90 text-center cursor-pointer";
-                  const gradientStyle =
-                    idx === 0
-                      ? {
-                        background:
-                          "-webkit-linear-gradient(top, #FF827A 0%, #E93333 68.18%)",
-                      }
-                      : {};
-                  const fallbackBg = [
-                    "",
-                    "bg-[#00b971]",
-                    "bg-blue-500",
-                    "bg-yellow-500",
-                  ];
-                  return (
-                    <button
-                      key={idx}
-                      className={`${commonClasses} ${idx !== 0 ? fallbackBg[idx] : ""}`}
-                      style={gradientStyle}
-                      onClick={() => handleOptionClick(label.split(" ")[0])}
-                    >
-                      {label.split(" ").map((word, i) => (
-                        <span key={i} className="block">
-                          {word}
-                        </span>
-                      ))}
-                    </button>
-                  );
-                })}
+                {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map(
+                  (label, idx) => {
+                    const commonClasses =
+                      "text-white px-6 py-1 rounded-md hover:opacity-90 text-center cursor-pointer";
+                    const gradientStyle =
+                      idx === 0
+                        ? {
+                            background:
+                              "-webkit-linear-gradient(top, #FF827A 0%, #E93333 68.18%)",
+                          }
+                        : {};
+                    const fallbackBg = [
+                      "",
+                      "bg-[#00b971]",
+                      "bg-blue-500",
+                      "bg-yellow-500",
+                    ];
+                    return (
+                      <button
+                        key={idx}
+                        className={`${commonClasses} ${idx !== 0 ? fallbackBg[idx] : ""}`}
+                        style={gradientStyle}
+                        onClick={() => handleOptionClick(label.split(" ")[0])}
+                      >
+                        {label.split(" ").map((word, i) => (
+                          <span key={i} className="block">
+                            {word}
+                          </span>
+                        ))}
+                      </button>
+                    );
+                  }
+                )}
               </div>
             </div>
           )}
@@ -1220,10 +1293,11 @@ function LotteryK3() {
                 {[11, 22, 33, 44, 55, 66].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedTwoSameNumbers.includes(value)
-                      ? "bg-opacity-70"
-                      : ""
-                      }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
+                      selectedTwoSameNumbers.includes(value)
+                        ? "bg-opacity-70"
+                        : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "twoSame")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1248,8 +1322,9 @@ function LotteryK3() {
                 {[11, 22, 33, 44, 55, 66].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-red-500 rounded-md shadow cursor-pointer relative ${selectedPair.red === value ? "bg-opacity-70" : ""
-                      }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-red-500 rounded-md shadow cursor-pointer relative ${
+                      selectedPair.red === value ? "bg-opacity-70" : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "pairRed")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1265,8 +1340,9 @@ function LotteryK3() {
                 {[1, 2, 3, 4, 5, 6].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-green-600 rounded-md shadow cursor-pointer relative ${selectedPair.green === value ? "bg-opacity-70" : ""
-                      }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-green-600 rounded-md shadow cursor-pointer relative ${
+                      selectedPair.green === value ? "bg-opacity-70" : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "pairGreen")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1296,10 +1372,11 @@ function LotteryK3() {
                 {[111, 222, 333, 444, 555, 666].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedThreeSameNumbers.includes(value)
-                      ? "bg-opacity-70"
-                      : ""
-                      }`}
+                    className={`w-14 h-12 flex flex-col justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
+                      selectedThreeSameNumbers.includes(value)
+                        ? "bg-opacity-70"
+                        : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "threeSame")}
                   >
                     <span className="text-lg">{value}</span>
@@ -1322,8 +1399,9 @@ function LotteryK3() {
               </div>
               <div className="flex justify-center">
                 <button
-                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${selectedOptions.includes("Any 3") ? "bg-opacity-70" : ""
-                    }`}
+                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${
+                    selectedOptions.includes("Any 3") ? "bg-opacity-70" : ""
+                  }`}
                   onClick={() => handleOptionClick("Any 3", "anyThree")}
                 >
                   Any 3 of the same number: odds
@@ -1352,8 +1430,9 @@ function LotteryK3() {
                 {[1, 2, 3, 4, 5, 6].map((value, index) => (
                   <div
                     key={index}
-                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedOptions.includes(value) ? "bg-opacity-70" : ""
-                      }`}
+                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
+                      selectedOptions.includes(value) ? "bg-opacity-70" : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "threeDifferent")}
                   >
                     {value}
@@ -1376,9 +1455,14 @@ function LotteryK3() {
               </div>
               <div className="flex justify-center">
                 <button
-                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${selectedOptions.includes("3 Continuous") ? "bg-opacity-70" : ""
-                    }`}
-                  onClick={() => handleOptionClick("3 Continuous", "continuous")}
+                  className={`w-full bg-red-600 text-white text-sm font-semibold py-3 rounded-md shadow cursor-pointer ${
+                    selectedOptions.includes("3 Continuous")
+                      ? "bg-opacity-70"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    handleOptionClick("3 Continuous", "continuous")
+                  }
                 >
                   3 continuous numbers
                   {selectedOptions.includes("3 Continuous") && (
@@ -1408,8 +1492,9 @@ function LotteryK3() {
                 ].map(({ value, label }, index) => (
                   <div
                     key={index}
-                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${selectedOptions.includes(value) ? "bg-opacity-70" : ""
-                      }`}
+                    className={`w-12 h-10 flex justify-center items-center text-white bg-purple-600 rounded-md shadow cursor-pointer relative ${
+                      selectedOptions.includes(value) ? "bg-opacity-70" : ""
+                    }`}
                     onClick={() => handleOptionClick(value, "twoDifferent")}
                   >
                     {label}
@@ -1610,28 +1695,31 @@ function LotteryK3() {
 
         <div className="flex justify-between space-x-2 mb-6 ">
           <button
-            className={`w-full min-w-[120px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "gameHistory"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full min-w-[120px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
+              activeTab === "gameHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("gameHistory")}
           >
             Game history
           </button>
           <button
-            className={`w-full min-w-[100px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "chart"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full min-w-[100px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
+              activeTab === "chart"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("chart")}
           >
             Chart
           </button>
           <button
-            className={`w-full min-w-[110px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${activeTab === "myHistory"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full min-w-[110px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
+              activeTab === "myHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("myHistory")}
           >
             My History
@@ -1661,16 +1749,14 @@ function LotteryK3() {
                           </td>
                           <td className="px-2 py-2 text-xs text-[#f5f3f0] whitespace-nowrap">
                             <div className="flex justify-center items-center">
-                              <span className="inline-block w-[19px] text-right">{entry.sum}</span>
-                              <span className="inline-block w-[38px] text-left ml-7">{isBig ? "Big" : "Small"}</span>
+                              <span className="inline-block w-[19px] text-right">
+                                {entry.sum}
+                              </span>
+                              <span className="inline-block w-[38px] text-left ml-7">
+                                {isBig ? "Big" : "Small"}
+                              </span>
                             </div>
                           </td>
-
-
-
-
-
-
 
                           <td className="px-2 py-2 text-xs text-[#f5f3f0] text-center">
                             <div className="flex items-center justify-center space-x-1 overflow-hidden">
@@ -1699,7 +1785,10 @@ function LotteryK3() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan="3" className="px-2 py-2 text-xs text-[#f5f3f0] text-center">
+                      <td
+                        colSpan="3"
+                        className="px-2 py-2 text-xs text-[#f5f3f0] text-center"
+                      >
                         No data available
                       </td>
                     </tr>
@@ -1748,7 +1837,10 @@ function LotteryK3() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="2" className="px-2 py-2 text-sm text-[#f5f3f0] text-center">
+                      <td
+                        colSpan="2"
+                        className="px-2 py-2 text-sm text-[#f5f3f0] text-center"
+                      >
                         No data available
                       </td>
                     </tr>

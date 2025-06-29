@@ -4,19 +4,40 @@ import InviteHeader from "../../components/InviteHeader";
 import poster from "../../Assets/additionalicons/poster.png"; // Use existing poster image
 // Define icons for the feature boxes
 
-import trucktick from "../../Assets/trucktick.png"
-import bank from "../../Assets/bank.png"
+import trucktick from "../../Assets/trucktick.png";
+import bank from "../../Assets/bank.png";
 import bgposter from "../../Assets/additionalicons/bgposter.png";
+import CommanHeader from "../../components/CommanHeader";
+import apiServices from "../../api/apiServices";
 
 function InvitePage() {
   const [copied, setCopied] = useState(false); // State for tracking copy status
-  const invitationCode = "https://your-invitation-link.com"; // Replace with your actual invitation link
   const scrollRef = useRef(null); // Ref for the scrollable container
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [mouseDown, setMouseDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [userData, setUserData] = useState(null);
+  const [invitationCode, setInvitationCode] = useState(null);
+  const fetchUserProfile = async () => {
+    try {
+      const data = await apiServices.getUserProfile();
+
+      if (!data?.success) {
+        console.error("Error fetching user data");
+        return;
+      }
+      const user = data.user;
+      const baseUrl = window.location.origin;
+      const invitationCode = `${baseUrl}/signup?referralCode=${user?.referring_code}`;
+      setInvitationCode(invitationCode)
+      setUserData(user);
+    } catch (err) {}
+  };
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -49,7 +70,8 @@ function InvitePage() {
     if (isLeftSwipe || isRightSwipe) {
       const scrollContainer = scrollRef.current;
       if (scrollContainer) {
-        const scrollAmount = scrollContainer.offsetWidth * (isLeftSwipe ? 1 : -1);
+        const scrollAmount =
+          scrollContainer.offsetWidth * (isLeftSwipe ? 1 : -1);
         scrollContainer.scrollLeft += scrollAmount;
       }
     }
@@ -100,10 +122,10 @@ function InvitePage() {
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col items-center justify-center">
-      <InviteHeader />
+      <CommanHeader title="Invite" />
       <div className="bg-[#242424] min-h-screen w-full max-w-md flex flex-col items-center justify-center mt-2">
         <div className="text-left w-full max-w-md px-3">
-          <p className="mb-4 text-[#a8a5a1] text-sm font-semibold text-center mt-12">
+          <p className="mb-4 text-[#a8a5a1] text-xs font-semibold  mt-12">
             Please swipe left - right to choose your favorite poster
           </p>
           <div
@@ -137,7 +159,9 @@ function InvitePage() {
                         backgroundPosition: "center",
                       }}
                     >
-                      <p className="text-[rgb(242,69,68)] text-xs font-bold">Fair and justice</p>
+                      <p className="text-[rgb(242,69,68)] text-xs font-bold">
+                        Fair and justice
+                      </p>
                     </div>
                     <div
                       className="px-2 py-1 rounded-md flex-1 text-center"
@@ -147,7 +171,9 @@ function InvitePage() {
                         backgroundPosition: "center",
                       }}
                     >
-                      <p className="text-[rgb(242,69,68)] text-xs font-bold">Open and transparent</p>
+                      <p className="text-[rgb(242,69,68)] text-xs font-bold">
+                        Open and transparent
+                      </p>
                     </div>
                   </div>
 
@@ -160,20 +186,23 @@ function InvitePage() {
 
                   {/* Feature Boxes */}
                   <div className="flex justify-between w-full mt-4 px-2 gap-2">
-  <div className="border border-white rounded-lg p-1 flex-1 flex flex-col items-center">
-    <div className="p-1 rounded-full mb-1">
-      <img src={bank} alt="icon" className="h-7 w-7" />
-    </div>
-    <p className="text-white text-xs whitespace-nowrap">Financial security</p>
-  </div>
-  <div className="border border-white rounded-lg p-1 flex-1 flex flex-col items-center">
-    <div className="p-1 rounded-full mb-1">
-      <img src={trucktick} alt="icon" className="h-7 w-7" />
-    </div>
-    <p className="text-white text-xs whitespace-nowrap">Quick withdrawals</p>
-  </div>
-</div>
-
+                    <div className="border border-white rounded-lg p-1 flex-1 flex flex-col items-center">
+                      <div className="p-1 rounded-full mb-1">
+                        <img src={bank} alt="icon" className="h-7 w-7" />
+                      </div>
+                      <p className="text-white text-xs whitespace-nowrap">
+                        Financial security
+                      </p>
+                    </div>
+                    <div className="border border-white rounded-lg p-1 flex-1 flex flex-col items-center">
+                      <div className="p-1 rounded-full mb-1">
+                        <img src={trucktick} alt="icon" className="h-7 w-7" />
+                      </div>
+                      <p className="text-white text-xs whitespace-nowrap">
+                        Quick withdrawals
+                      </p>
+                    </div>
+                  </div>
 
                   {/* Commission Text */}
                   <div className="mt-4 text-center">
@@ -187,8 +216,8 @@ function InvitePage() {
             ))}
           </div>
           <div className="text-lg justify-center mt-6 flex">
-            <p className="text-white mr-6">Invite friends </p>
-            <p className="text-white">
+            <p className="text-white mr-6 text-xs">Invite friends </p>
+            <p className="text-white text-xs">
               Income <span className="text-[#d23838]"> 10 billion </span>
               Commission
             </p>
@@ -217,9 +246,16 @@ function InvitePage() {
                     viewBox="0 0 48 48"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M10 24l10 10L38 14"></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="4"
+                      d="M10 24l10 10L38 14"
+                    ></path>
                   </svg>
-                  <span className="text-sm font-sans text-center">Copy successful</span>
+                  <span className="text-sm font-sans text-center">
+                    Copy successful
+                  </span>
                 </div>
               </div>
             )}

@@ -313,7 +313,7 @@ function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-[#242424] px-6 sm:px-6 py-4 sm:py-6 w-full flex flex-col justify-center">
+        <div className="bg-[#242424] px-6 sm:px-6 py-1 sm:py-4 w-full flex flex-col justify-center">
           {(loading || uiState.isRetrying) && (
             <div className="text-white text-sm mb-4 text-center">
               {uiState.isRetrying ? `Retrying connection... (Attempt ${uiState.retryCount + 1}/3)` : "Please wait, connecting to server..."}
@@ -342,7 +342,7 @@ function LoginPage() {
               onClick={() => updateUiState({ isPhoneLogin: false })}
             >
               <div className="h-8 flex items-center justify-center">
-                <img src={!uiState.isPhoneLogin ? emailicon : email} alt="Email" className="w-[50px] h-[20px]" />
+                <img src={!uiState.isPhoneLogin ? emailicon : email} alt="Email" className="w-[50px] h-[25px]" />
               </div>
               <span className="text-sm">Email / Account</span>
             </button>
@@ -399,16 +399,16 @@ function LoginPage() {
               </div>
             ) : (
               <div>
-                <label htmlFor="email" className="block mb-2 text-md font-medium text-white flex items-center gap-1">
-                  <img src={newemail} alt="Email" className="w-[30px] h-[20px]" />
-                  Email
+                <label htmlFor="email" className="block mb-2 text-md text-white flex items-center gap-1">
+                  <img src={newemail} alt="Email" className="w-[30px] h-[20px] text-sm" />
+             <span className="text-md ml-1">Email</span>
                 </label>
                 <input
                   type="email"
                   id="email"
                   value={credentials.email}
                   onChange={handleInputChange}
-                  className="bg-[#333332] text-white text-lg rounded-lg border-none block w-full py-3 px-4 outline-none focus:ring-0 focus:border-transparent box-border"
+                  className="bg-[#333332] text-white text-sm rounded-lg border-none block w-full py-2 px-4 outline-none focus:ring-0 focus:border-transparent box-border "
                   placeholder="Please input your email"
                   required
                 />

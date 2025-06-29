@@ -30,6 +30,7 @@ import vip from "../Assets/vip/vip1.png"
 import Avatar from "../components/common/Avatar";
 import apiServices from "../api/apiServices";
 import { avatarMap } from "./Settings";
+import { vipMap } from "./Profile/VIPProfile";
 
 function ProfilePage() {
   const dispatch = useDispatch();
@@ -151,7 +152,7 @@ function ProfilePage() {
                 {/* Name + VIP */}
                 <div className="flex items-center mt-1">
                   <h2 className="text-base font-semibold text-white uppercase">{user?.member_detail}</h2>
-                  <img src={vip} alt="VIP Badge" className="h-5 ml-2 mt-1" />
+                  <img src={vipMap[userData?.vip_level]} alt="VIP Badge" className="h-5 ml-2 mt-1" />
                 </div>
 
                 {/* UID section */}

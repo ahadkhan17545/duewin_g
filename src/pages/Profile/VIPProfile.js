@@ -28,9 +28,65 @@ import lockvip from "../../Assets/finalicons/lockvip.png";
 import { FiClock } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import CommanHeader from "../../components/CommanHeader";
+import { avatarMap } from "../Settings";
+import Avatar from "../../components/common/Avatar";
+import vip1 from "../../Assets/vip1/vip1.png";
+import vip1a from "../../Assets/vip1/vip1a.png";
+import vip2 from "../../Assets/vip1/vip2.png";
+import vip2a from "../../Assets/vip1/vip2a.png";
+import vip3 from "../../Assets/vip1/vip3.png";
+import vip3a from "../../Assets/vip1/vip3a.png";
+
+import vip4 from "../../Assets/vip1/vip4.png";
+
+import vip6 from "../../Assets/vip1/vip6.png";
+import vip6a from "../../Assets/vip1/vip6a.png";
+
+import vip7 from "../../Assets/vip1/vip7.png";
+import vip7a from "../../Assets/vip1/vip7a.png";
+import vip8 from "../../Assets/vip1/vip8.png";
+import vip8a from "../../Assets/vip1/vip8a.png";
+import vip9 from "../../Assets/vip1/vip9.png";
+import vip9a from "../../Assets/vip1/vip9a.png";
+import vip0 from "../../Assets/vip/vip1.png";
+import creach from "../../Assets/vip1/creach.png";
+import reach from "../../Assets/vip1/reach.png";
+import reached from "../../Assets/vip1/reached.png";
+
+export const vipMap = {
+  0: vip0,
+  1: vip1,
+  2: vip2,
+  3: vip3,
+  4: vip4,
+  5: vip6,
+  6: vip6,
+  7: vip7,
+  8: vip8,
+  9: vip9,
+  10: vip9,
+};
+
+export const vipMapLogo = {
+  1: vip1a,
+  2: vip2a,
+  3: vip3a,
+  4: vip8a,
+  5: vip6a,
+  6: vip6a,
+  7: vip7a,
+  8: vip8a,
+  9: vip9a,
+  10: vip9a,
+};
 
 // CardCarousel Component (same as before)
-const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) => {
+const CardCarousel = ({
+  selectedIndex,
+  setSelectedIndex,
+  userExp,
+  vipCards,
+}) => {
   const handleDragEnd = (event, info) => {
     if (info.offset.x < -50) {
       setSelectedIndex((prev) => (prev + 1) % vipCards.length);
@@ -50,10 +106,16 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
       setDragDirection(null);
     }
   };
+  const today = new Date();
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const daysLeft = lastDayOfMonth.getDate() - today.getDate();
 
   const calculateProgress = () => {
     const currentCard = vipCards[selectedIndex];
-    return Math.min(100, Math.round((userExp / currentCard.required_exp) * 100));
+    return Math.min(
+      100,
+      Math.round((userExp / currentCard.required_exp) * 100)
+    );
   };
 
   return (
@@ -87,15 +149,34 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
               <div className="flex items-center">
                 <div className="w-10 h-10 flex items-center justify-center rounded">
                   <div className="w-6 h-6">
-                    <img src={crown} alt="VIP Icon" />
+                    <img
+                      src={
+                        userExp >= vipCards[selectedIndex].required_exp
+                          ? creach
+                          : reach
+                      }
+                      alt="VIP Icon"
+                    />
                   </div>
                 </div>
                 <span className="text-white text-2xl font-bold font-['Roboto',sans-serif]">
                   {vipCards[selectedIndex].label}
                 </span>
-                <div className="flex items-center bg-opacity-50 px-4 py-2 rounded-full">
-                  <img src={lockvip} alt="lock" className="h-5 w-5 mr-2"></img>
-                  <span className="text-white text-xs font-['Roboto',sans-serif]">Not open yet</span>
+                <div className="flex items-center bg-opacity-50 px-2 py-2 rounded-full">
+                  <img
+                    src={
+                      userExp >= vipCards[selectedIndex].required_exp
+                        ? reached
+                        : lockvip
+                    }
+                    alt="lock"
+                    className="h-5 w-5 mr-2"
+                  ></img>
+                  <span className="text-white text-xs font-['Roboto',sans-serif]">
+                    {userExp >= vipCards[selectedIndex].required_exp
+                      ? "Opened"
+                      : "Not open yet"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -115,7 +196,10 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
               </button>
             </div>
 
-            <div className="absolute top-24 text-white text-sm font-serif font-bold" style={{ right: '36px'}}>
+            <div
+              className="absolute top-24 text-white text-sm font-bold"
+              style={{ right: "36px" }}
+            >
               {vipCards[selectedIndex].label}
             </div>
 
@@ -132,7 +216,7 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
                 </div>
               </div>
 
-              <div className="absolute top-4 right-0 text-white font-serif font-medium text-[10px]" >
+              <div className="absolute top-4 right-0 text-white font-serif font-medium text-[10px]">
                 {vipCards[selectedIndex].required_exp} can be leveled up
               </div>
             </div>
@@ -140,7 +224,7 @@ const CardCarousel = ({ selectedIndex, setSelectedIndex, userExp, vipCards }) =>
             <div className="absolute top-1 right-4">
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center">
                 <img
-                  src={vipCards[selectedIndex].icon}
+                  src={vipMapLogo[selectedIndex + 1]}
                   alt="VIP Badge"
                   className="w-full h-full object-cover"
                 />
@@ -169,7 +253,9 @@ const VIPBenefits = ({ selectedCard }) => {
     <div className="bg-[#333332] p-3 rounded-lg font-roboto">
       <div className="mb-3 flex items-center">
         <img src={gifticon} alt="VIP Icon" className="w-6 h-6 mr-2" />
-        <h2 className="text-base font-bold text-white">{selectedCard.label} Benefits Level</h2>
+        <h2 className="text-base font-bold text-white">
+          {selectedCard.label} Benefits Level
+        </h2>
       </div>
 
       <div className="border-t border-gray-700 mb-3"></div>
@@ -179,8 +265,12 @@ const VIPBenefits = ({ selectedCard }) => {
           <div className="flex items-center gap-1">
             <img src={gifticon} alt="Level Up Reward" className="w-8 h-8" />
             <div>
-              <div className="text-white text-sm font-medium">Level Up Rewards</div>
-              <div className="text-xs text-gray-400">Each account can receive once</div>
+              <div className="text-white text-sm font-medium">
+                Level Up Rewards
+              </div>
+              <div className="text-xs text-gray-400">
+                Each account can receive once
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-1 items-end">
@@ -189,8 +279,7 @@ const VIPBenefits = ({ selectedCard }) => {
               {selectedCard?.bonus_amount}
             </div>
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-400 font-medium text-sm">
-              <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />
-              0
+              <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />0
             </div>
           </div>
         </div>
@@ -199,8 +288,12 @@ const VIPBenefits = ({ selectedCard }) => {
           <div className="flex items-center gap-1">
             <img src={coin} alt="Monthly Reward" className="w-8 h-8" />
             <div>
-              <div className="text-white text-sm font-medium">Monthly Reward</div>
-              <div className="text-xs text-gray-400">Each account gets 1 per month</div>
+              <div className="text-white text-sm font-medium">
+                Monthly Reward
+              </div>
+              <div className="text-xs text-gray-400">
+                Each account gets 1 per month
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-1 items-end">
@@ -209,8 +302,7 @@ const VIPBenefits = ({ selectedCard }) => {
               {selectedCard?.monthly_reward}
             </div>
             <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-400 font-medium text-sm">
-              <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />
-              0
+              <img src={cd} alt="Coin Icon" className="w-3 h-3 mr-1" />0
             </div>
           </div>
         </div>
@@ -220,7 +312,9 @@ const VIPBenefits = ({ selectedCard }) => {
             <img src={vault} alt="Monthly Reward" className="w-8 h-8" />
             <div>
               <div className="text-white text-sm font-medium">Safe</div>
-              <div className="text-xs text-gray-400">Increase the extra income of safe</div>
+              <div className="text-xs text-gray-400">
+                Increase the extra income of safe
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-1 items-end">
@@ -236,7 +330,9 @@ const VIPBenefits = ({ selectedCard }) => {
             <img src={rebate} alt="Rebate Rate" className="w-8 h-8" />
             <div>
               <div className="text-white text-sm font-medium">Rebate Rate</div>
-              <div className="text-xs text-gray-400">Increase rebate income</div>
+              <div className="text-xs text-gray-400">
+                Increase rebate income
+              </div>
             </div>
           </div>
           <div className="border border-[#d9ac4f] bg-opacity-25 rounded min-w-[70px] flex items-center justify-center text-yellow-500 font-medium text-sm">
@@ -248,139 +344,148 @@ const VIPBenefits = ({ selectedCard }) => {
     </div>
   );
 };
- // Fallback data in case API fails
-  const defaultVipCards = [
-    {
-      id: 1,
-      image: bgcard,
-      label: "VIP 1",
-      icon: vipi,
-      expRequired: 3000,
-      benefits: {
-        levelUpReward: 60,
-        monthlyReward: 30,
-        rebateRatio: 0.05,
-      },
-      colorGradient: "linear-gradient(332.71deg, rgba(166, 183, 208, 0.8) 21.85%, rgba(136, 158, 190, 0.8) 67.02%)",
+// Fallback data in case API fails
+const defaultVipCards = [
+  {
+    id: 1,
+    image: bgcard,
+    label: "VIP 1",
+    icon: vipi,
+    expRequired: 3000,
+    benefits: {
+      levelUpReward: 60,
+      monthlyReward: 30,
+      rebateRatio: 0.05,
     },
-    {
-      id: 2,
-      image: bg2,
-      label: "VIP 2",
-      icon: vipi,
-      expRequired: 10000,
-      benefits: {
-        levelUpReward: 150,
-        monthlyReward: 100,
-        rebateRatio: 0.1,
-      },
-      colorGradient: "linear-gradient(332.71deg, rgba(248, 189, 131, 0.8) 21.85%, rgba(226, 152, 78, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(332.71deg, rgba(166, 183, 208, 0.8) 21.85%, rgba(136, 158, 190, 0.8) 67.02%)",
+  },
+  {
+    id: 2,
+    image: bg2,
+    label: "VIP 2",
+    icon: vipi,
+    expRequired: 10000,
+    benefits: {
+      levelUpReward: 150,
+      monthlyReward: 100,
+      rebateRatio: 0.1,
     },
-    {
-      id: 3,
-      image: bg3,
-      label: "VIP 3",
-      icon: vipi,
-      expRequired: 40000,
-      benefits: {
-        levelUpReward: 500,
-        monthlyReward: 600,
-        rebateRatio: 0.3,
-      },
-      colorGradient: "linear-gradient(332.71deg, rgba(255, 164, 147, 0.8) 21.85%, rgba(255, 120, 120, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(332.71deg, rgba(248, 189, 131, 0.8) 21.85%, rgba(226, 152, 78, 0.8) 67.02%)",
+  },
+  {
+    id: 3,
+    image: bg3,
+    label: "VIP 3",
+    icon: vipi,
+    expRequired: 40000,
+    benefits: {
+      levelUpReward: 500,
+      monthlyReward: 600,
+      rebateRatio: 0.3,
     },
-    {
-      id: 4,
-      image: bg4,
-      label: "VIP 4",
-      icon: vipi,
-      expRequired: 100000,
-      benefits: {
-        levelUpReward: 1000,
-        monthlyReward: 1500,
-        rebateRatio: 0.5,
-      },
-      colorGradient: "linear-gradient(332.71deg, rgba(120, 219, 235, 0.8) 21.85%, rgba(72, 199, 240, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(332.71deg, rgba(255, 164, 147, 0.8) 21.85%, rgba(255, 120, 120, 0.8) 67.02%)",
+  },
+  {
+    id: 4,
+    image: bg4,
+    label: "VIP 4",
+    icon: vipi,
+    expRequired: 100000,
+    benefits: {
+      levelUpReward: 1000,
+      monthlyReward: 1500,
+      rebateRatio: 0.5,
     },
-    {
-      id: 5,
-      image: bg5,
-      label: "VIP 5",
-      icon: vipi,
-      expRequired: 300000,
-      benefits: {
-        levelUpReward: 2000,
-        monthlyReward: 3000,
-        rebateRatio: 0.8,
-      },
-      colorGradient: "linear-gradient(332.71deg, rgba(223, 145, 251, 0.8) 21.85%, rgba(239, 130, 213, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(332.71deg, rgba(120, 219, 235, 0.8) 21.85%, rgba(72, 199, 240, 0.8) 67.02%)",
+  },
+  {
+    id: 5,
+    image: bg5,
+    label: "VIP 5",
+    icon: vipi,
+    expRequired: 300000,
+    benefits: {
+      levelUpReward: 2000,
+      monthlyReward: 3000,
+      rebateRatio: 0.8,
     },
-    {
-      id: 6,
-      image: bg6,
-      label: "VIP 6",
-      icon: vipi,
-      expRequired: 600000,
-      benefits: {
-        levelUpReward: 3500,
-        monthlyReward: 5000,
-        rebateRatio: 1.0,
-      },
-      colorGradient: "linear-gradient(117.29deg, rgba(255, 160, 122, 0.8) 21.85%, rgba(250, 128, 114, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(332.71deg, rgba(223, 145, 251, 0.8) 21.85%, rgba(239, 130, 213, 0.8) 67.02%)",
+  },
+  {
+    id: 6,
+    image: bg6,
+    label: "VIP 6",
+    icon: vipi,
+    expRequired: 600000,
+    benefits: {
+      levelUpReward: 3500,
+      monthlyReward: 5000,
+      rebateRatio: 1.0,
     },
-    {
-      id: 7,
-      image: bg7,
-      label: "VIP 7",
-      icon: vipi,
-      expRequired: 1000000,
-      benefits: {
-        levelUpReward: 6000,
-        monthlyReward: 8000,
-        rebateRatio: 1.5,
-      },
-      colorGradient: "linear-gradient(117.29deg, rgba(70, 130, 180, 0.8) 21.85%, rgba(30, 144, 255, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(117.29deg, rgba(255, 160, 122, 0.8) 21.85%, rgba(250, 128, 114, 0.8) 67.02%)",
+  },
+  {
+    id: 7,
+    image: bg7,
+    label: "VIP 7",
+    icon: vipi,
+    expRequired: 1000000,
+    benefits: {
+      levelUpReward: 6000,
+      monthlyReward: 8000,
+      rebateRatio: 1.5,
     },
-    {
-      id: 8,
-      image: bg8,
-      label: "VIP 8",
-      icon: vipi,
-      expRequired: 2000000,
-      benefits: {
-        levelUpReward: 10000,
-        monthlyReward: 12000,
-        rebateRatio: 2.0,
-      },
-      colorGradient: "linear-gradient(117.29deg, rgba(255, 228, 181, 0.8) 21.85%, rgba(238, 201, 0, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(117.29deg, rgba(70, 130, 180, 0.8) 21.85%, rgba(30, 144, 255, 0.8) 67.02%)",
+  },
+  {
+    id: 8,
+    image: bg8,
+    label: "VIP 8",
+    icon: vipi,
+    expRequired: 2000000,
+    benefits: {
+      levelUpReward: 10000,
+      monthlyReward: 12000,
+      rebateRatio: 2.0,
     },
-    {
-      id: 9,
-      image: bg9,
-      label: "VIP 9",
-      icon: vipi,
-      expRequired: 4000000,
-      benefits: {
-        levelUpReward: 20000,
-        monthlyReward: 25000,
-        rebateRatio: 3.0,
-      },
-      colorGradient: "linear-gradient(117.29deg, rgba(139, 69, 19, 0.8) 21.85%, rgba(205, 133, 63, 0.8) 67.02%)",
+    colorGradient:
+      "linear-gradient(117.29deg, rgba(255, 228, 181, 0.8) 21.85%, rgba(238, 201, 0, 0.8) 67.02%)",
+  },
+  {
+    id: 9,
+    image: bg9,
+    label: "VIP 9",
+    icon: vipi,
+    expRequired: 4000000,
+    benefits: {
+      levelUpReward: 20000,
+      monthlyReward: 25000,
+      rebateRatio: 3.0,
     },
-    {
-      id: 10,
-      image: bg9,
-      label: "VIP 10",
-      icon: vipi,
-      expRequired: 4000000,
-      benefits: {
-        levelUpReward: 20000,
-        monthlyReward: 25000,
-        rebateRatio: 3.0,
-      },
-      colorGradient: "linear-gradient(117.29deg, #eeaf3a 21.85%, #f98b3b 67.02%)",
+    colorGradient:
+      "linear-gradient(117.29deg, rgba(139, 69, 19, 0.8) 21.85%, rgba(205, 133, 63, 0.8) 67.02%)",
+  },
+  {
+    id: 10,
+    image: bg9,
+    label: "VIP 10",
+    icon: vipi,
+    expRequired: 4000000,
+    benefits: {
+      levelUpReward: 20000,
+      monthlyReward: 25000,
+      rebateRatio: 3.0,
     },
-  ];
+    colorGradient: "linear-gradient(117.29deg, #eeaf3a 21.85%, #f98b3b 67.02%)",
+  },
+];
 
 function VIPProfile() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -389,11 +494,9 @@ function VIPProfile() {
   const [vipCards, setVipCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [historyData, setHistoryData] = useState([])
-  const [levels, setLevels] = useState([])
-  const [ userData,setUserData ] = useState(null)
-
- 
+  const [historyData, setHistoryData] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const fetchVipData = async () => {
@@ -401,7 +504,11 @@ function VIPProfile() {
         const data = await apiServices.getVipInfo();
 
         // Validate response structure
-        if (!data || typeof data.current_exp !== "number" || typeof data.current_level !== "number") {
+        if (
+          !data ||
+          typeof data.current_exp !== "number" ||
+          typeof data.current_level !== "number"
+        ) {
           throw new Error("Invalid API response structure");
         }
 
@@ -423,41 +530,44 @@ function VIPProfile() {
 
     const fetchVipHistoryData = async () => {
       const data = await apiServices.getVipHistoryData();
-      setHistoryData(data?.data.history)
-
-    }
-    fetchVipHistoryData()
+      setHistoryData(data?.data.history);
+    };
+    fetchVipHistoryData();
 
     const fetchVipLevel = async () => {
-      let levelData  = await apiServices.getVipLevelData()
+      let levelData = await apiServices.getVipLevelData();
       const levelMap = new Map();
       levelData.forEach((level) => {
         levelMap.set(level.level, level);
       });
 
       const mergedVipCards = defaultVipCards.map((card, index) => {
-        const matchingLevel = levelMap.get(index + 1); 
-        delete card.benefits
+        const matchingLevel = levelMap.get(index + 1);
+        delete card.benefits;
         return matchingLevel ? { ...card, ...matchingLevel } : card;
       });
       setVipCards(mergedVipCards);
-    }
-    fetchVipLevel()
-        const fetchUserProfile = async () => {
-          try {
-            const data = await apiServices.getUserProfile();
-    
-            if (!data?.success) {
-              console.error("Error fetching user data");
-              return;
-            }
-            const user = data.data;
-            setUserData(user);
-          } catch (err) {
-          }
-        };
-        fetchUserProfile()
+    };
+    fetchVipLevel();
+    const fetchUserProfile = async () => {
+      try {
+        const data = await apiServices.getUserProfile();
+
+        if (!data?.success) {
+          console.error("Error fetching user data");
+          return;
+        }
+        console.log("data", data);
+
+        setUserData(data);
+      } catch (err) {}
+    };
+    fetchUserProfile();
   }, []);
+  const today = new Date();
+const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+const daysLeft = lastDayOfMonth.getDate() - today.getDate();
+
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col font-['Roboto',sans-serif]">
@@ -465,9 +575,7 @@ function VIPProfile() {
       <div className="bg-[#242424] min-h-screen flex flex-col items-start justify-start mt-14">
         <div className="text-left w-full px-4">
           {error && (
-            <div className="text-red-500 text-center mb-4">
-              {error}
-            </div>
+            <div className="text-red-500 text-center mb-4">{error}</div>
           )}
 
           {loading ? (
@@ -476,16 +584,20 @@ function VIPProfile() {
             <>
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80"
-                    alt="Profile"
-                    className="w-full h-full object-cover"
+                  <Avatar
+                    src={avatarMap[Number(userData?.user?.profile_picture_id)]}
                   />
                 </div>
                 <div className="flex flex-col items-center">
-                  <img src={vipbadge} alt="VIP Badge" className="w-14 h-6 mb-1 mr-28" />
+                  <img
+                    src={vipMap[userData?.user?.vip_level]}
+                    alt="VIP Badge"
+                    className="w-14 h-6 mb-1 mr-28"
+                  />
                   <h3 className="text-white font-medium flex items-center space-x-1">
-                    <span className="text-xs">{userData?.member_detail}</span>
+                    <span className="text-xs">
+                      {userData?.data?.member_detail}
+                    </span>
                   </h3>
                 </div>
               </div>
@@ -496,20 +608,27 @@ function VIPProfile() {
                     <span className="text-[#d9ac4f] text-sm mt-1 font-['Roboto',sans-serif] tracking-[0.05em] leading-none [font-feature-settings:'tnum']">
                       {userExp} EXP
                     </span>
-                    <span className="text-gray-400 text-sm font-['Roboto',sans-serif] mt-1">My experience</span>
+                    <span className="text-gray-400 text-sm font-['Roboto',sans-serif] mt-1">
+                      My experience
+                    </span>
                   </div>
                 </div>
                 <div className="w-1/2 py-2 px-4 m-2 bg-[#2c2c2c] rounded-lg">
                   <div className="flex flex-col items-center">
-                    <span className="text-white font-bold text-sm font-['Roboto',sans-serif]">3 Days</span>
-                    <span className="text-gray-400 text-sm font-['Roboto',sans-serif]">Payout time</span>
+                    <span className="text-white font-bold text-sm font-['Roboto',sans-serif]">
+                      {daysLeft} {daysLeft === 1 ? "Day" : "Days"}
+                    </span>
+                    <span className="text-gray-400 text-sm font-['Roboto',sans-serif]">
+                      Payout time
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="px-2 py-2 text-center border border-[#525167] rounded">
                 <p className="text-[#a8a5a1] leading-tight m-0 font-['Roboto',sans-serif] text-[10px]">
-                  VIP level rewards are settled at 2:00 AM on the 1st of every month
+                  VIP level rewards are settled at 2:00 AM on the 1st of every
+                  month
                 </p>
               </div>
 
@@ -527,19 +646,21 @@ function VIPProfile() {
               <div className="bg-[#333332] mt-4 rounded-lg">
                 <div className="flex text-center border-b border-gray-700">
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "history"
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
+                      activeTab === "history"
                         ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
                         : "text-gray-400 hover:bg-[#3a3a3a]"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("history")}
                   >
                     History
                   </div>
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "rules"
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
+                      activeTab === "rules"
                         ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
                         : "text-gray-400 hover:bg-[#3a3a3a]"
-                      }`}
+                    }`}
                     onClick={() => setActiveTab("rules")}
                   >
                     Rules
@@ -554,7 +675,9 @@ function VIPProfile() {
                           <span className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer font-['Roboto',sans-serif]">
                             Experience Bonus
                           </span>
-                          <span className="text-sm text-gray-400 font-['Roboto',sans-serif]">Betting EXP</span>
+                          <span className="text-sm text-gray-400 font-['Roboto',sans-serif]">
+                            Betting EXP
+                          </span>
                           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
                             <span className="flex items-center gap-1 font-['Roboto',sans-serif]">
                               <FiClock className="text-gray-400" />
@@ -582,12 +705,14 @@ function VIPProfile() {
                             Upgrade Standard
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            The VIP member's experience points (valid bet amount) that meet
-                            the requirements of the corresponding rank will be promoted to the
-                            corresponding VIP level. The member's VIP data statistics period
-                            starts from 00:00:00 when the VIP system launches. VIP level
-                            calculation is refreshed every 10 minutes! The corresponding
-                            experience level is calculated according to valid odds 1:1.
+                            The VIP member's experience points (valid bet
+                            amount) that meet the requirements of the
+                            corresponding rank will be promoted to the
+                            corresponding VIP level. The member's VIP data
+                            statistics period starts from 00:00:00 when the VIP
+                            system launches. VIP level calculation is refreshed
+                            every 10 minutes! The corresponding experience level
+                            is calculated according to valid odds 1:1.
                           </p>
                         </div>
 
@@ -596,9 +721,10 @@ function VIPProfile() {
                             Upgrade Order
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            The VIP level that meets the corresponding requirements can be
-                            promoted by one level every day, but the VIP level cannot be
-                            promoted by leapfrogging.
+                            The VIP level that meets the corresponding
+                            requirements can be promoted by one level every day,
+                            but the VIP level cannot be promoted by
+                            leapfrogging.
                           </p>
                         </div>
 
@@ -607,10 +733,12 @@ function VIPProfile() {
                             Level Maintenance
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members need to complete the maintenance requirements of the
-                            corresponding level within 30 days after the "VIP level change."
-                            If the promotion is completed during this period, the maintenance
-                            requirements will be calculated according to the current level.
+                            VIP members need to complete the maintenance
+                            requirements of the corresponding level within 30
+                            days after the "VIP level change." If the promotion
+                            is completed during this period, the maintenance
+                            requirements will be calculated according to the
+                            current level.
                           </p>
                         </div>
 
@@ -619,7 +747,13 @@ function VIPProfile() {
                             Downgrade standard
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            If a VIP member fails to complete the corresponding level maintenance requirements within 30 days, the system will automatically deduct the experience points corresponding to the level. If the experience points are insufficient, the level will be downgraded, and the corresponding discounts will be adjusted to the downgraded level accordingly.
+                            If a VIP member fails to complete the corresponding
+                            level maintenance requirements within 30 days, the
+                            system will automatically deduct the experience
+                            points corresponding to the level. If the experience
+                            points are insufficient, the level will be
+                            downgraded, and the corresponding discounts will be
+                            adjusted to the downgraded level accordingly.
                           </p>
                         </div>
 
@@ -628,7 +762,10 @@ function VIPProfile() {
                             Upgrade Bonus
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            The upgrade benefits can be claimed on the VIP page after the member reaches the VIP membership level, and each VIP member can only get the upgrade reward of each level once.
+                            The upgrade benefits can be claimed on the VIP page
+                            after the member reaches the VIP membership level,
+                            and each VIP member can only get the upgrade reward
+                            of each level once.
                           </p>
                         </div>
 
@@ -637,7 +774,15 @@ function VIPProfile() {
                             Monthly reward
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members can earn the highest level of VIP rewards once a month. Can only be received once a month. Prizes cannot be accumulated. And any unclaimed rewards will be refreshed on the next settlement day. When receiving the highest level of monthly rewards this month Monthly Rewards earned in this month will be deducted e.g. when VIP1 earns 500 and upgrades to VIP2 to receive monthly rewards 500 will be deducted.
+                            VIP members can earn the highest level of VIP
+                            rewards once a month. Can only be received once a
+                            month. Prizes cannot be accumulated. And any
+                            unclaimed rewards will be refreshed on the next
+                            settlement day. When receiving the highest level of
+                            monthly rewards this month Monthly Rewards earned in
+                            this month will be deducted e.g. when VIP1 earns 500
+                            and upgrades to VIP2 to receive monthly rewards 500
+                            will be deducted.
                           </p>
                         </div>
 
@@ -646,7 +791,9 @@ function VIPProfile() {
                             Real-time rebate
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            The higher the VIP level, the higher the return rate, all the games are calculated in real time and can be self-rewarded!
+                            The higher the VIP level, the higher the return
+                            rate, all the games are calculated in real time and
+                            can be self-rewarded!
                           </p>
                         </div>
 
@@ -655,7 +802,9 @@ function VIPProfile() {
                             Safe
                           </h3>
                           <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members who have reached the corresponding level will get additional benefits on safe deposit based on the member's VIP level.
+                            VIP members who have reached the corresponding level
+                            will get additional benefits on safe deposit based
+                            on the member's VIP level.
                           </p>
                         </div>
                       </div>

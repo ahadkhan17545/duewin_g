@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaVolumeUp } from "react-icons/fa";
@@ -63,6 +62,17 @@ import bannerthree from "../Assets/finalicons/Banner3.png";
 import whitetick from "../Assets/whitetick.png";
 import apiServices from "../api/apiServices";
 import { useSelector } from "react-redux";
+import b2dark from "../Assets/home/b2-dark.png";
+import bfdark from "../Assets/home/df-dark.png";
+import EBEST from "../Assets/home/eBET.png";
+import epdark from "../Assets/home/ep-dark.png";
+import esdark from "../Assets/home/es-dark.png";
+import ezdark from "../Assets/home/ez-dark.png";
+import hadark from "../Assets/home/ha-dark.png";
+import jili from "../Assets/home/jili.png";
+import leap from "../Assets/home/leap.png";
+import live from "../Assets/home/live.png";
+import headerLogo from "../Assets/vip1/headerLogo.png";
 
 // Game categories
 const gameCategories = [
@@ -99,18 +109,17 @@ function Home() {
   const navigate = useNavigate();
   const gameSectionRef = React.useRef(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
   // const [games,setGames] = useState([])
-
 
   const fetchAllGame = async () => {
     try {
       const data = await apiServices?.getGames();
-      return data
+      return data;
     } catch (error) {
-      console.error('Error fetching games:', error);
+      console.error("Error fetching games:", error);
     }
-  }
+  };
 
   // State for winners carousel
   const [winners, setWinners] = useState([
@@ -139,12 +148,12 @@ function Home() {
   };
 
   const getUserData = async () => {
-    let data = await apiServices.getUserProfile()
-    setUser(data?.user)
-  }
+    let data = await apiServices.getUserProfile();
+    setUser(data?.user);
+  };
 
   useEffect(() => {
-    getUserData()
+    getUserData();
     // fetchAllGame()
     const interval = setInterval(() => {
       setWinners((prevWinners) => {
@@ -204,7 +213,7 @@ function Home() {
         gameSectionRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
-    console.log(category, category == "Live Casino")
+    console.log(category, category == "Live Casino");
     if (category === "Slots" || category == "Live Casino") {
       if (category == "Live Casino") {
         navigate("/casino-games");
@@ -216,7 +225,7 @@ function Home() {
   };
 
   const fetchGames = async (category) => {
-    let fewNeededGames = ["aviator", "mines", "dice", "plinko", "hilo", "keno"]
+    let fewNeededGames = ["aviator", "mines", "dice", "plinko", "hilo", "keno"];
     setLoading(true);
     setError(null);
     try {
@@ -244,13 +253,15 @@ function Home() {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        let filteredGames = []
-        let dataOfOriginal = await fetchAllGame()
+        let filteredGames = [];
+        let dataOfOriginal = await fetchAllGame();
         if (dataOfOriginal?.success) {
           const seenNames = new Set();
-          const normalizedNeeded = fewNeededGames.map(id => id.replace('-', '').toLowerCase());
-          filteredGames = dataOfOriginal?.games?.filter(game =>
-            normalizedNeeded.includes(game.id.replace('-', '').toLowerCase())
+          const normalizedNeeded = fewNeededGames.map((id) =>
+            id.replace("-", "").toLowerCase()
+          );
+          filteredGames = dataOfOriginal?.games?.filter((game) =>
+            normalizedNeeded.includes(game.id.replace("-", "").toLowerCase())
           );
           const processedGames = filteredGames.reduce((uniqueGames, game) => {
             const gameName = (game.name || "").toLowerCase().trim();
@@ -265,12 +276,12 @@ function Home() {
             }
             return uniqueGames;
           }, []);
-          setOriginalGames(processedGames)
+          setOriginalGames(processedGames);
         }
         const data = await response.json();
         if (data.success) {
           const gamesArray = data.games || [];
-          console.log("Before", filteredGames)
+          console.log("Before", filteredGames);
           const seenNames = new Set();
           const processedGames = gamesArray.reduce((uniqueGames, game) => {
             const gameName = (game.name || "").toLowerCase().trim();
@@ -302,8 +313,12 @@ function Home() {
           throw new Error("API returned unsuccessful response");
         }
       } else if (category === "Original") {
-        let data = await fetchAllGame()
-        const gamesArray = Array.isArray(data.games) ? data.games : Array.isArray(data) ? data : [];
+        let data = await fetchAllGame();
+        const gamesArray = Array.isArray(data.games)
+          ? data.games
+          : Array.isArray(data)
+            ? data
+            : [];
         const seenNames = new Set();
         const processedGames = gamesArray.reduce((uniqueGames, game) => {
           const gameName = (game.name || "").toLowerCase().trim();
@@ -508,7 +523,7 @@ function Home() {
       alt: "Wingo Image",
       title: "Win Go",
       link: "/lotterywingo",
-      value: 0
+      value: 0,
     },
     {
       id: 2,
@@ -516,7 +531,7 @@ function Home() {
       alt: "Wingo 1Min Image",
       title: "Win Go 1Min",
       link: "/lotterywingo",
-      value: 1
+      value: 1,
     },
     {
       id: 3,
@@ -524,7 +539,7 @@ function Home() {
       alt: "Wingo 3Min Image",
       title: "Win Go 3Min",
       link: "/lotterywingo",
-      value: 2
+      value: 2,
     },
     {
       id: 4,
@@ -532,16 +547,23 @@ function Home() {
       alt: "Wingo 5Min Image",
       title: "Win Go 5Min",
       link: "/lotterywingo",
-      value: 3
+      value: 3,
     },
-    { id: 5, imgSrc: K, alt: "K3 Image", title: "K3 1Min", link: "/lotteryK3", value: 0 },
+    {
+      id: 5,
+      imgSrc: K,
+      alt: "K3 Image",
+      title: "K3 1Min",
+      link: "/lotteryK3",
+      value: 0,
+    },
     {
       id: 6,
       imgSrc: K1,
       alt: "K3 3Min Image",
       title: "K3 3Min",
       link: "/lotteryK3",
-      value: 1
+      value: 1,
     },
     {
       id: 7,
@@ -549,7 +571,7 @@ function Home() {
       alt: "K3 5Min Image",
       title: "K3 5 Min",
       link: "/lotteryK3",
-      value: 2
+      value: 2,
     },
     {
       id: 8,
@@ -557,7 +579,7 @@ function Home() {
       alt: "K3 10Min Image",
       title: "K3 10 Min",
       link: "/lotteryK3",
-      value: 3
+      value: 3,
     },
     {
       id: 9,
@@ -565,7 +587,7 @@ function Home() {
       alt: "5D Image",
       title: "5D 1 Min",
       link: "/lottery5d",
-      value: 0
+      value: 0,
     },
     {
       id: 10,
@@ -573,7 +595,7 @@ function Home() {
       alt: "5D 3Min Image",
       title: "5D 3 Min",
       link: "/lottery5d",
-      value: 1
+      value: 1,
     },
     {
       id: 11,
@@ -581,7 +603,7 @@ function Home() {
       alt: "5D 5Min Image",
       title: "5D 5 Min",
       link: "/lottery5d",
-      value: 2
+      value: 2,
     },
     {
       id: 12,
@@ -589,7 +611,7 @@ function Home() {
       alt: "5D 10Min Image",
       title: "5D 10 Min",
       link: "/lottery5d",
-      value: 3
+      value: 3,
     },
     {
       id: "1",
@@ -597,7 +619,7 @@ function Home() {
       alt: "Trx Image",
       title: "Trx 1min",
       link: "/lotterytrxwing",
-      value: 0
+      value: 0,
     },
     {
       id: 14,
@@ -605,7 +627,7 @@ function Home() {
       alt: "Trx 3min Image",
       title: "Trx 3min",
       link: "/lotterytrxwing",
-      value: 1
+      value: 1,
     },
     {
       id: 15,
@@ -613,7 +635,7 @@ function Home() {
       alt: "Trx 5min Image",
       title: "Trx 5 min",
       link: "/lotterytrxwing",
-      value: 2
+      value: 2,
     },
     {
       id: 16,
@@ -621,9 +643,21 @@ function Home() {
       alt: "Trx 10min Image",
       title: "Trx 10 Min",
       link: "/lotterytrxwing",
-      value: 3
+      value: 3,
     },
   ]);
+  const staticUserData = [
+    { img: live, color: "bg-red-500" },
+    { img: leap, color: "bg-blue-500" },
+    { img: jili, color: "bg-green-500" },
+    { img: hadark, color: "bg-yellow-500" },
+    { img: esdark, color: "bg-purple-500" },
+    { img: ezdark, color: "bg-pink-500" },
+    { img: epdark, color: "bg-orange-500" },
+    { img: EBEST, color: "bg-teal-500" },
+    { img: bfdark, color: "bg-indigo-500" },
+    { img: b2dark, color: "bg-emerald-500" },
+  ];
 
   const [showFirstPopup, setShowFirstPopup] = useState(true);
   const [showSecondPopup, setShowSecondPopup] = useState(false);
@@ -733,17 +767,18 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                    ? "opacity-100"
-                    : "opacity-80"
-                    }`}
+                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
+                    activeCategory === category.title
+                      ? "opacity-100"
+                      : "opacity-80"
+                  }`}
                   style={{
-                    background: `linear-gradient(60deg, ${category.title === "Lottery"
-                      ? "#323838, #30413B,#2D4D40"
-                      : "#323838, #3B3541,#542E57"
-                      })`
+                    background: `linear-gradient(60deg, ${
+                      category.title === "Lottery"
+                        ? "#323838, #30413B,#2D4D40"
+                        : "#323838, #3B3541,#542E57"
+                    })`,
                   }}
-
                 >
                   <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
                     <span className="text-white text-sm font-bold self-start">
@@ -752,10 +787,11 @@ function Home() {
                     <img
                       src={category.image}
                       alt={category.title}
-                      className={`w-[220px] object-contain -mt-4 -mr-4 ${category.title === "Hot Games"
-                        ? "h-[300px]"
-                        : "h-[220px] -mt-9"
-                        }`}
+                      className={`w-[220px] object-contain -mt-4 -mr-4 ${
+                        category.title === "Hot Games"
+                          ? "h-[300px]"
+                          : "h-[220px] -mt-9"
+                      }`}
                     />
                   </div>
                 </div>
@@ -766,21 +802,22 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                    ? "opacity-100"
-                    : "opacity-80"
-                    }`}
+                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
+                    activeCategory === category.title
+                      ? "opacity-100"
+                      : "opacity-80"
+                  }`}
                   style={{
-                    background: `linear-gradient(90deg, ${category.title === "Live Casino"
-                      ? "#323838,#433767"
-                      : category.title === "Sports"
-                        ? "#323838, #303D36,#2E4A33"
-                        : category.title === "Slots"
-                          ? "#323838,#4B3F31"
-                          : "#323838,#333937,#404D33"
-                      })`
+                    background: `linear-gradient(90deg, ${
+                      category.title === "Live Casino"
+                        ? "#323838,#433767"
+                        : category.title === "Sports"
+                          ? "#323838, #303D36,#2E4A33"
+                          : category.title === "Slots"
+                            ? "#323838,#4B3F31"
+                            : "#323838,#333937,#404D33"
+                    })`,
                   }}
-
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
                     <img
@@ -878,8 +915,8 @@ function Home() {
                               className="w-full h-auto object-contain rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -913,8 +950,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -927,9 +964,7 @@ function Home() {
                           </p>
                         </div>
                       ))}
-
                     </div>
-
                   ) : (
                     <p className="text-white text-center">No games found.</p>
                   )}
@@ -974,8 +1009,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1032,8 +1067,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1053,7 +1088,6 @@ function Home() {
                 </div>
               </div>
             )}
-
           </div>
           <div className="w-full  bg-[#242424] rounded-lg shadow-lg mb-3">
             <h2 className="text-lg font-bold text-[#C4933F] mb-2 border-l-4 ml-1 border-[#C4933F] pl-2">
@@ -1061,9 +1095,17 @@ function Home() {
             </h2>
             <div
               className="space-y-2 relative"
-              style={{ height: "320px", overflow: "hidden", display: 'flex', justifyContent: 'space-around' }}
+              style={{
+                height: "320px",
+                overflow: "hidden",
+                display: "flex",
+                justifyContent: "space-around",
+              }}
             >
-              <div className="relative w-[320px] h-[320px] overflow-hidden rounded-lg p-2" style={{width:"336px"}}>
+              <div
+                className="relative w-[320px] h-[320px] overflow-hidden rounded-lg p-2"
+                style={{ width: "336px" }}
+              >
                 {winners.map((winner, index) => (
                   <div
                     key={winner.id}
@@ -1073,9 +1115,10 @@ function Home() {
                       opacity: 1 - index * 0.1,
                       // transform: `scale(${1 - index * 0.02})`,
                       zIndex: winners.length - index,
-                      animation: index === 0 ? 'slideDown 0.4s ease-out' : 'none',
-                      maxHeight:'57px',
-                      minWidth:'336px'
+                      animation:
+                        index === 0 ? "slideDown 0.4s ease-out" : "none",
+                      maxHeight: "57px",
+                      minWidth: "336px",
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -1084,10 +1127,16 @@ function Home() {
                         alt="User"
                         className="w-12 h-12 rounded-full object-cover"
                       />
-                      <span className="text-[#a8a5a1] font-medium text-xs">{winner.name}</span>
+                      <span className="text-[#a8a5a1] font-medium text-xs">
+                        {winner.name}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <img src={evo} alt="Icon" className="w-14 h-10 rounded-sm object-cover" />
+                      <img
+                        src={evo}
+                        alt="Icon"
+                        className="w-14 h-10 rounded-sm object-cover"
+                      />
                       <div className="text-right">
                         <p className="text-[#C4933F] font-semibold text-xs">
                           Receive ₹{winner.amount.toFixed(2)}
@@ -1144,15 +1193,14 @@ function Home() {
                 ))}
               </div>
               <div className="space-y-2 pb-10">
-                {earnings.slice(3).map((earner, index) => (
+                {earnings.slice(0, 5).map((earner, index) => (
                   <div
                     key={earner.id}
-                    className="flex items-center justify-between bg-[#333332] p-2 rounded-lg text-xs"
-                    style={{maxHeight:'48px'}}
+                    className="flex items-center justify-between bg-[#333332] p-2 rounded-lg text-xs w-56%"
                   >
                     <div className="flex items-center gap-1">
                       <p className="text-[#a8a5a1] text-base font-semibold">
-                        {index + 4}
+                        {index + 1}
                       </p>
                       <img
                         src={userImages[index % userImages.length]}
@@ -1168,6 +1216,75 @@ function Home() {
                     </p>
                   </div>
                 ))}
+
+                {/* 🔒 Bottom 10 Hardcoded Cards */}
+                <div className="bg-[#1e1d2b] px-2 py-4 rounded-lg text-white space-y-4">
+                  {/* 🔝 Top Logo */}
+                  <div className="flex justify-between align-center">
+                    <img
+                      src={headerLogo}
+                      alt="Logo"
+                      className="h-12 object-contain"
+                    />
+                    <h1
+                      className="text-red-500 text-[25px]"
+                      style={{ fontFamily: "fantasy" }}
+                    >
+                      18+ Only
+                    </h1>
+                  </div>
+
+                  {/* 📦 2-column Grid with 10 Image Cards */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {staticUserData.map((user, index) => (
+                      <div
+                        key={index}
+                        className="relative bg-[#333332] rounded-lg p-2 h-20 flex items-center justify-center overflow-hidden"
+                        style={{ height: "50px" }}
+                      >
+                        <img
+                          src={user.img}
+                          alt={`user-${index}`}
+                          className="w-full h-full object-contain rounded"
+                        />
+                        {/* Optional overlay if color is provided */}
+                        {user.color && (
+                          <div
+                            className={`absolute inset-0 ${user.color} bg-opacity-60`}
+                          ></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 📝 Bottom Paragraphs (Styled Like the Image) */}
+                  <div className="space-y-3 text-sm text-[#d9d7d3]">
+                    <p className="flex gap-2">
+                      <span className="text-blue-500">◆</span>
+                      The platform advocates fairness, justice, and openness. We
+                      mainly operate fair lottery, blockchain games, live
+                      casinos, and slot machine games.
+                    </p>
+                    <p className="flex gap-2">
+                      <span className="text-blue-500">◆</span>
+                      Tiranga works with more than 10,000 online live game
+                      dealers and slot games, all of which are verified fair
+                      games.
+                    </p>
+                    <p className="flex gap-2">
+                      <span className="text-blue-500">◆</span>
+                      Tiranga supports fast deposit and withdrawal, and looks
+                      forward to your visit.
+                    </p>
+                    <p className="text-[#ff4c4c] pt-2">
+                      Gambling can be addictive, please play rationally.
+                    </p>
+                    <p className="text-[#ff4c4c]">
+                      Tiranga only accepts customers above the age of{" "}
+                      <span className="font-bold">18</span>.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 import BackButton from "./BackButton";
+import headerLogo from '../Assets/vip1/headerLogo.png'; // adjust path as needed
+
 
 const Header = () => {
   return (
@@ -11,21 +13,22 @@ const Header = () => {
 
       {/* Center with logo */}
       <div className="flex items-center ml-20">
-        <img
-          src="https://ossimg.diuacting.com/DiuWin/other/h5setting_20240724134839qf9p.png"
-          alt="Logo"
-          className="w-36 h-auto mb-0"
-        />
+   <img
+  src={headerLogo}
+  alt="Logo"
+  className="w-36 h-12 mb-0"
+/>
+
       </div>
 
       {/* Right side with flag and dropdown */}
-      <div className="flex items-center space-x-1 ml-16">
+      <div className="flex items-center space-x-1 ml-14">
         <img
           src="https://flagcdn.com/w320/us.png"
           alt="Country Flag"
-          className="w-6 h-6 rounded-full"
+          className="w-5 h-5 rounded-full"
         />
-        <p className='text-white ml-2'>EN</p>
+        <p className='text-white'>EN</p>
       </div>
     </header>
   );

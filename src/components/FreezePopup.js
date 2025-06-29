@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
   const [count, setCount] = useState(5);
   const [showFreezePopup, setShowFreezePopup] = useState(false);
-
+  console.log("timeRemaining",timeRemaining)
   useEffect(() => {
     if (!timeRemaining) return;
 

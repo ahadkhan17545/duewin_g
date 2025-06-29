@@ -35,18 +35,34 @@ function PromotionPage() {
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [rememberPassword, setRememberPassword] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [referral, setReferal] = useState(null)
-  const [totalReferral, setTotalReferral] = useState(null)
-  const [userData ,setUserData] = useState(null)
-
-  const invitationCode = "185853395581";
+  const [referral, setReferal] = useState(null);
+  const [totalReferral, setTotalReferral] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [teamCount, setTeamCount] = useState(0);
+  const [data, setData] = useState(null);
+  const [directDeposit, setDirectDeposit] = useState(null);
+  const [teamDeposit, setTeamDeposit] = useState(null);
+  const [commission, setCommission] = useState(null);
+  const [commissionYesterday, setCommissionYesterday] = useState(null);
+  const [commissionWeek, setCommissionWeek] = useState(null);
   const fetchReferal = async () => {
-    let data = await apiServices?.getReferral()
+    let data = await apiServices?.getReferral();
     if (data?.success == true) {
-      setReferal(data?.directReferrals)
-      setTotalReferral(data?.total)
+      setReferal(data?.directReferrals);
+      setTotalReferral(data?.total);
     }
-  }
+  };
+
+  const fetchData = async () => {
+    let data = await apiServices.getReferralTeam();
+    setData(data?.teamReferrals);
+    setTeamCount(data?.total);
+    const counts = {};
+
+    // Object.entries(data?.teamReferrals).forEach(([levelKey, users]) => {
+    //   counts[levelKey] = users?.length ?? 0;
+    // });
+  };
   const fetchUserProfile = async () => {
     try {
       const data = await apiServices.getUserProfile();
@@ -57,13 +73,41 @@ function PromotionPage() {
       }
       const user = data.user;
       setUserData(user);
-    } catch (err) {
-    }
+    } catch (err) {}
+  };
+  const fetchdirectDeposit = async () => {
+    let data = await apiServices?.getReferralDirectData();
+    setDirectDeposit(data);
+  };
+  const fetchTeamDeposit = async () => {
+    let data = await apiServices?.getReferralTeamData();
+    setTeamDeposit(data);
+  };
+
+  const fetchCommission = async () => {
+    let data = await apiServices.getCommissionToday();
+    setCommission(data);
+  };
+
+  const fetchCommissionYesterday = async () => {
+    let data = await apiServices.getCommissionYesterday();
+    setCommissionYesterday(data);
+  };
+
+  const fetchCommissionWeek = async () => {
+    let data = await apiServices.getCommissionLast7Days();
+    setCommissionWeek(data);
   };
   useEffect(() => {
-    fetchReferal()
-    fetchUserProfile()
-  }, [])
+    fetchReferal();
+    fetchUserProfile();
+    fetchData();
+    fetchTeamDeposit();
+    fetchdirectDeposit();
+    fetchCommission();
+    fetchCommissionWeek();
+    fetchCommissionYesterday();
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -104,10 +148,6 @@ function PromotionPage() {
     const loginData = isPhoneLogin
       ? { phoneNumber, password }
       : { email, password };
-    console.log("Login data:", loginData);
-    console.log("Remember password:", rememberPassword);
-    console.log("verification code:", verificationCode);
-    console.log("Privacy agreement accepted:", privacyAgreement);
   };
 
   return (
@@ -123,7 +163,9 @@ function PromotionPage() {
               alt="Success"
               className="w-10 h-10 mb-2 object-contain"
             />
-            <span className="text-sm font-sans text-center">Copy successful</span>
+            <span className="text-sm font-sans text-center">
+              Copy successful
+            </span>
           </div>
         </div>
       )}
@@ -137,7 +179,7 @@ function PromotionPage() {
           backgroundPosition: "center",
           paddingBottom: "20rem",
           margin: "0",
-          width: "100%"
+          width: "100%",
         }}
       >
         {/* Promotion background image overlay - Made full width */}
@@ -152,7 +194,9 @@ function PromotionPage() {
 
       {/* Content section that partially overlaps with the background */}
       <div className="relative z-20 w-full px-4 mx-auto mt-[-16rem] max-w-md">
-        <h1 className="text-[#8f5206] text-3xl text-center mb-1 font-sans">0</h1>
+        <h1 className="text-[#8f5206] text-3xl text-center mb-1 font-sans">
+          {commissionYesterday?.totalAmount}
+        </h1>
         <div className="flex justify-center w-full">
           <button
             type="submit"
@@ -172,13 +216,21 @@ function PromotionPage() {
               <tr>
                 <th className="bg-[#3a3947] text-base font-normal text-white p-2 border-r border-[#242424]">
                   <div className="flex items-center justify-center leading-tight">
-                    <img src={subordinate} alt="Direct Icon" className="mr-1 w-6 h-6" />
+                    <img
+                      src={subordinate}
+                      alt="Direct Icon"
+                      className="mr-1 w-6 h-6"
+                    />
                     <span className="text-xs">Direct subordinates</span>
                   </div>
                 </th>
                 <th className="bg-[#3a3947] text-base font-normal text-white p-2">
                   <div className="flex items-center justify-center leading-tight">
-                    <img src={teamsubordinate} alt="Team Icon" className="mr-1 w-6 h-6" />
+                    <img
+                      src={teamsubordinate}
+                      alt="Team Icon"
+                      className="mr-1 w-6 h-6"
+                    />
                     <span className="text-xs">Team subordinates</span>
                   </div>
                 </th>
@@ -186,8 +238,14 @@ function PromotionPage() {
             </thead>
             <tbody className="text-center">
               <tr>
-                <td className="text-white border-r border-[#242424] p-[2px]">{totalReferral}</td>
-                <td className="text-white p-[2px]">0</td>
+                <td className="text-white border-r border-[#242424] p-[2px]">
+                  {totalReferral}
+                </td>
+                <td className="text-white p-[2px]">
+                  {teamCount - totalReferral < 0
+                    ? 0
+                    : teamCount - totalReferral}
+                </td>
               </tr>
               <tr>
                 <td className="text-white text-xs font-medium border-r border-[#242424] p-[2px] leading-tight">
@@ -198,8 +256,13 @@ function PromotionPage() {
                 </td>
               </tr>
               <tr>
-                <td className="text-green-500 border-r border-[#242424] p-[2px] leading-tight">0</td>
-                <td className="text-green-500 p-[2px] leading-tight">0</td>
+                <td className="text-green-500 border-r border-[#242424] p-[2px] leading-tight">
+                  {directDeposit?.totalCount}
+                </td>
+                <td className="text-green-500 p-[2px] leading-tight">
+                  {" "}
+                  {teamDeposit?.totalCount}
+                </td>
               </tr>
               <tr>
                 <td className="text-white text-xs font-medium border-r border-[#242424] p-[2px] leading-tight">
@@ -210,8 +273,12 @@ function PromotionPage() {
                 </td>
               </tr>
               <tr>
-                <td className="text-orange-500 border-r border-[#242424] p-[2px] leading-tight">0</td>
-                <td className="text-orange-500 p-[2px] leading-tight">0</td>
+                <td className="text-orange-500 border-r border-[#242424] p-[2px] leading-tight">
+                  {directDeposit?.totalAmount}
+                </td>
+                <td className="text-orange-500 p-[2px] leading-tight">
+                  {teamDeposit?.totalAmount}
+                </td>
               </tr>
               <tr>
                 <td className="text-white text-xs font-medium border-r border-[#242424] p-[2px] leading-tight">
@@ -222,8 +289,12 @@ function PromotionPage() {
                 </td>
               </tr>
               <tr>
-                <td className="text-white border-r border-[#242424] p-[2px] leading-tight">0</td>
-                <td className="text-white p-[2px] leading-tight">0</td>
+                <td className="text-white border-r border-[#242424] p-[2px] leading-tight">
+                  {directDeposit?.firstDepositCount}
+                </td>
+                <td className="text-white p-[2px] leading-tight">
+                  {teamDeposit?.firstDepositCount}
+                </td>
               </tr>
               <tr>
                 <td className="text-white px-[2px] py-[8px] font-medium text-xs border-r border-[#242424] leading-tight">
@@ -250,17 +321,28 @@ function PromotionPage() {
         </div>
 
         {/* Additional menu items */}
-        <div className="bg-[#333332] bg-opacity-90 p-3 rounded-lg mb-2" style={{height:'55px'}}>
+        <div
+          className="bg-[#333332] bg-opacity-90 p-3 rounded-lg mb-2"
+          style={{ height: "55px" }}
+        >
           <div className="flex justify-between items-center">
             <div
               className="flex text-white items-center cursor-pointer"
               onClick={handleCopy}
             >
-              <img src={CopyLink} alt="Copy Icon" className="mr-2 w- h-8 text-xs" />
-              <p className="text-base font-sans text-sm">Copy invitation code</p>
+              <img
+                src={CopyLink}
+                alt="Copy Icon"
+                className="mr-2 w- h-8 text-xs"
+              />
+              <p className="text-base font-sans text-sm">
+                Copy invitation code
+              </p>
             </div>
             <div className="flex items-center text-gray-400 space-x-2 text-xs">
-              <span className="text-sm truncate max-w-20">{userData?.referring_code}</span>
+              <span className="text-sm truncate max-w-20">
+                {userData?.referring_code}
+              </span>
               <button
                 className="flex items-center text-gray-400"
                 onClick={handleCopy}
@@ -275,11 +357,7 @@ function PromotionPage() {
           <div className="bg-[#333332] bg-opacity-90 p-3  rounded-lg mb-2">
             <div className="flex justify-between items-center">
               <div className="flex text-white items-center">
-                <img
-                  src={Team_port}
-                  alt="Team Icon"
-                  className="w-8 h-8 mr-1"
-                />
+                <img src={Team_port} alt="Team Icon" className="w-8 h-8 mr-1" />
                 <p className="text-base font-sans text-sm">Subordinate data</p>
               </div>
               <span className="text-white">
@@ -326,7 +404,9 @@ function PromotionPage() {
             <div className="flex justify-between items-center">
               <div className="flex text-white items-center">
                 <img src={Server} alt="Server Icon" className="mr-1 w-8 h-8" />
-                <p className="text-base font-sans text-sm">Agent line customer service</p>
+                <p className="text-base font-sans text-sm">
+                  Agent line customer service
+                </p>
               </div>
               <span className="text-gray-400">
                 <img src={Right} alt="Right Icon" className="w-8 h-8" />
@@ -356,34 +436,49 @@ function PromotionPage() {
         <div className="bg-[#333332] bg-opacity-90 p-2 rounded-lg mb-24">
           <div className="flex items-center mb-2">
             <img src={Money} alt="Money Icon" className="mr-2 w-6 h-6" />
-            <h2 className="font-bold text-white text-lg font-sans text-xs">Promotion data</h2>
+            <h2 className="font-bold text-white text-lg font-sans text-xs">
+              Promotion data
+            </h2>
           </div>
 
           <div className="grid grid-cols-2 mb-1">
             <div className="flex flex-col items-center ">
-              <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans text-xs">This week</span>
+              <span className="text-white text-base">
+                {" "}
+                {commissionWeek?.totalAmount}
+              </span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">
+                This week
+              </span>
             </div>
             <div className="flex flex-col border-l border-gray-700 items-center ">
-              <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans text-xs">Total Commission</span>
+              <span className="text-white text-base">
+                {commission?.totalAmount}
+              </span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">
+                Total Commission
+              </span>
             </div>
           </div>
 
           <div className="grid grid-cols-2">
             <div className="flex flex-col items-center ">
-              <span className="text-white text-base">0</span>
-              <span className="text-sm text-[#a8a5a1] font-sans text-xs">direct subordinate</span>
+              <span className="text-white text-base"> {totalReferral}</span>
+              <span className="text-sm text-[#a8a5a1] font-sans text-xs">
+                direct subordinate
+              </span>
             </div>
             <div className="flex flex-col border-l border-gray-700 items-center gap-1 text-center px-1">
-              <span className="text-white text-base">0</span>
+              <span className="text-white text-base">
+                {" "}
+                {teamCount - totalReferral < 0 ? 0 : teamCount - totalReferral}
+              </span>
               <span className="text-xs text-[#a8a5a1] font-sans leading-tight text-xs">
                 Total number of subordinates in the team
               </span>
             </div>
           </div>
         </div>
-
       </div>
       <Footer />
     </div>
