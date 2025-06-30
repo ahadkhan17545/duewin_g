@@ -87,6 +87,7 @@ import { Outlet } from "react-router-dom";
 import { AudioProvider } from "./contexts/AudioContext";
 import AttendanceHistory from "./pages/Activity/AttendanceHistory";
 import SubordinateLevelPage from "./pages/Promotion/SubordinateLevelPage";
+import GlobalLoader from "./components/GlobalLoader";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -124,6 +125,7 @@ function App() {
         <Provider store={store}>
             <BrowserRouter>
                 <ScrollToTop />
+                <GlobalLoader/>
                 <div className="flex flex-col min-h-screen">
                     <main className="flex-grow">
                         <Suspense fallback={<LoadingFallback />}>
@@ -216,6 +218,7 @@ function App() {
 
                                     {/* Default Redirect */}
                                     <Route path="*" element={<Navigate to="/login" replace />} />
+                                    
                                 </Routes>
                             </AudioProvider>
                         </Suspense>

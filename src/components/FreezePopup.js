@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
   const [count, setCount] = useState(5);
   const [showFreezePopup, setShowFreezePopup] = useState(false);
-  console.log("timeRemaining",timeRemaining)
   useEffect(() => {
     if (!timeRemaining) return;
 
@@ -27,14 +26,15 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
   // Optional: Add a timeout to hide the popup after showing "00" for a brief moment
   useEffect(() => {
     const { minutes, seconds } = timeRemaining;
+    console.log(timeRemaining)
     const totalSeconds = minutes * 60 + seconds;
-    if (totalSeconds ==1) {
+    if (totalSeconds < 2) {
         handleRefresh()
     }
     if (count === 0 && showFreezePopup) {
       const timer = setTimeout(() => {
         setShowFreezePopup(false);
-      }, 1000); // Show "00" for 1 second before hiding
+      }, 1000); 
 
       return () => clearTimeout(timer);
     }

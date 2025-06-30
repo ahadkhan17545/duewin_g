@@ -16,6 +16,7 @@ const BankAccountForm = () => {
   const [accountNumber, setAccountNumber] = useState("");
   const [ifscCode, setIfscCode] = useState("");
   const [isPrimaryAccount, setIsPrimaryAccount] = useState(false)
+  const [error ,setError] = useState("")
 
   const banks = [
     "Axis Bank Ltd.",
@@ -136,9 +137,12 @@ const BankAccountForm = () => {
         setAccountNumber("")
         setIfscCode("")
         setIsPrimaryAccount(false)
+        setError("")
+        navigate(-1)
+      }else{
+        setError("Please enter valid inputs.")
       }
 
-      navigate(-1)
     } catch (err) {
       console.log(err)
     }
@@ -271,6 +275,7 @@ const BankAccountForm = () => {
             >
               S a v e
             </button>
+            <p className="text-red-500">{error}</p>
           </div>
         </div>
       </form>

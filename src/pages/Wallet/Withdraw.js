@@ -15,7 +15,7 @@ import emailiconn from "../../Assets/loginicons/emailiconn.png";
 import { CiBank } from "react-icons/ci";
 import { CiWallet } from "react-icons/ci";
 import { FaTrash } from "react-icons/fa";
-import { formatDate } from "../../utils/formatters"
+import { formatDate } from "../../utils/formatters";
 import CommanHeader from "../../components/CommanHeader";
 const BankCard = ({ bank, isSelected, onSelect, onDelete }) => {
   const maskAccountNumber = (accNum) => {
@@ -25,8 +25,9 @@ const BankCard = ({ bank, isSelected, onSelect, onDelete }) => {
 
   return (
     <div
-      className={`bg-[#333332] text-white p-4 rounded-xl flex items-center justify-between mb-2 cursor-pointer ${isSelected ? "ring-2 ring-yellow-500" : ""
-        }`}
+      className={`bg-[#333332] text-white p-4 rounded-xl flex items-center justify-between mb-2 cursor-pointer ${
+        isSelected ? "ring-2 ring-yellow-500" : ""
+      }`}
       onClick={() => onSelect(bank.id)}
     >
       <div className="flex items-center gap-3">
@@ -43,7 +44,8 @@ const BankCard = ({ bank, isSelected, onSelect, onDelete }) => {
             {maskAccountNumber(bank.account_number)}
           </div>
         </div>
-        <FaTrash style={{ position: 'absolute', right: '30px' }}
+        <FaTrash
+          style={{ position: "absolute", right: "30px" }}
           className="text-red-500 text-lg cursor-pointer hover:text-red-400"
           onClick={(e) => {
             e.stopPropagation();
@@ -58,8 +60,9 @@ const BankCard = ({ bank, isSelected, onSelect, onDelete }) => {
 const USDTCard = ({ data, isSelected, onSelect, onDelete }) => {
   return (
     <div
-      className={`bg-[#333332] text-white p-4 rounded-xl flex items-center justify-between mb-2 cursor-pointer ${isSelected ? "ring-2 ring-yellow-500" : ""
-        }`}
+      className={`bg-[#333332] text-white p-4 rounded-xl flex items-center justify-between mb-2 cursor-pointer ${
+        isSelected ? "ring-2 ring-yellow-500" : ""
+      }`}
       onClick={() => onSelect(data.id)}
     >
       <div className="flex items-center gap-3">
@@ -72,11 +75,10 @@ const USDTCard = ({ data, isSelected, onSelect, onDelete }) => {
         <CiWallet className="w-6 h-6 text-yellow-400" />
         <div>
           <div className="text-xs text-gray-400">{data.address}</div>
-          <div className="text-base font-semibold">
-            {data.network}
-          </div>
+          <div className="text-base font-semibold">{data.network}</div>
         </div>
-        <FaTrash style={{ position: 'absolute', right: '30px' }}
+        <FaTrash
+          style={{ position: "absolute", right: "30px" }}
           className="text-red-500 text-lg cursor-pointer hover:text-red-400"
           onClick={(e) => {
             e.stopPropagation();
@@ -87,7 +89,6 @@ const USDTCard = ({ data, isSelected, onSelect, onDelete }) => {
     </div>
   );
 };
-
 
 const getPaymentOptions = ({
   bettingBalance,
@@ -105,178 +106,233 @@ const getPaymentOptions = ({
   withDrawLimit,
   handleInrChange,
   handleUsdtChange,
-  USDT_TO_INR
+  USDT_TO_INR,
 }) => [
-    {
-      name: <span style={{ color: "#8f5206", fontSize: "16px" }}>BANK CARD</span>,
-      img: (isSelected) => (isSelected ? bankcard : redwallet),
-      content: (
-        <div className="bg-[#333332] text-white p-4 rounded-xl">
-          {/* Amount Input */}
-          <div className="bg-neutral-800 rounded-b-lg p-3 flex items-center gap-2 mb-4">
-            <span className="text-amber-500">₹</span>
-            <input
-              type="number"
-              placeholder="Please enter the amount"
-              value={bankAmount}
-              onChange={(e) => setBankAmount(e.target.value)}
-              className="bg-transparent w-full outline-none text-white placeholder-gray-400"
-              min="0"
-            />
-          </div>
-          {(
-            Number(bankAmount) > Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
-            Number(bankAmount) < Number(withDrawLimit?.bank?.min || 0) ||
-            Number(bankAmount) > Number(withDrawLimit?.bank?.max || Infinity)
-          ) && (
-              Number(bankAmount) > Number(balance - (bettingBalance?.remaining_requirement || 0)) ? (
-                <p className="text-red-500 text-xs mb-3">
-                  Amount exceeds your withdrawable balance of ₹
-                  {Number(bankAmount - (balance - (bettingBalance?.remaining_requirement || 0))).toFixed(2)}
-                </p>
-              ) : (
-                <p className="text-red-500 text-xs mb-3">
-                  Min amount should be ₹{Number(withDrawLimit?.bank?.min || 0).toFixed(2)} and max ₹
-                  {Number(withDrawLimit?.bank?.max || 0).toFixed(2)}
-                </p>
-              )
-            )}
-
-
-          {/* Balance Info */}
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-400">Withdrawable balance</span>
-            <div className="flex items-center gap-2">
-              <span className="text-amber-400">₹{Number(balance - bettingBalance?.remaining_requirement).toFixed(2)}</span>
-              <button
-                onClick={() => setBankAmount(balance - bettingBalance?.remaining_requirement)}
-                className="text-amber-500 border border-amber-500 rounded px-2 py-0.5 text-xs hover:bg-amber-500 hover:text-black transition-colors"
-              >
-                All
-              </button>
+  {
+    name: <span style={{ color: "#8f5206", fontSize: "16px" }}>BANK CARD</span>,
+    img: (isSelected) => (isSelected ? bankcard : redwallet),
+    content: (
+      <div className="bg-[#333332] text-white p-4 rounded-xl">
+        {/* Amount Input */}
+        <div className="flex flex-col items-center gap-2 mb-6">
+          <Link to="/BankAccountForm">
+            <div className="p-4 rounded-lg cursor-pointer">
+              <img src={add} alt="add" className="h-12 w-12" />
             </div>
-          </div>
-
-          <div className="flex justify-between text-sm mb-6">
-            <span className="text-gray-400">Withdrawal amount received</span>
-            <span className="text-orange-200">₹{bankAmount ? bankAmount : '0.0'}</span>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            onClick={handleBankWithdraw}
-            className="w-full py-3 rounded-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black text-base font-semibold transition"
-            disabled={Number(bankAmount) > Number(balance - bettingBalance?.remaining_requirement) || !selectedBankId || Number(bankAmount) < Number(withDrawLimit?.bank?.min || 0) ||
-              Number(bankAmount) > Number(withDrawLimit?.bank?.max || Infinity)}
-          >
-            Withdraw
-          </button>
-          {bankAmount > 0 && selectedBankId == null && <p className="text-red-500 text-xs mb-3 mt-2">
-            Please select a bank.
-          </p>}
+          </Link>
+          <p className="text-gray-400 text-sm">Add a bank account number</p>
         </div>
-      )
-    },
-    {
-      name: (
-        <span style={{ color: "#8f5206", fontSize: "16px" }}>
-          USDT
-        </span>
-      ),
-      img: (isSelected) => (isSelected ? tpay : tpay),
-      content: (
-        <div className="bg-[#333332] p-4 rounded-xl">
-          {/* Title */}
-          <div className="flex items-center gap-2 mb-4">
-            <img src={tpay} className="w-6 h-6" alt="USDT" />
-            <span className="text-white font-medium text-base">
-              Select amount of USDT
+        <div className="bg-neutral-800 rounded-b-lg p-3 flex items-center gap-2 mb-4">
+          <span className="text-amber-500">₹</span>
+          <input
+            type="number"
+            placeholder="Please enter the amount"
+            value={bankAmount}
+            onChange={(e) => setBankAmount(e.target.value)}
+            className="bg-transparent w-full outline-none text-white placeholder-gray-400"
+            min="0"
+          />
+        </div>
+        {(Number(bankAmount) >
+          Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
+          Number(bankAmount) < Number(withDrawLimit?.bank?.min || 0) ||
+          Number(bankAmount) > Number(withDrawLimit?.bank?.max || Infinity)) &&
+          (Number(bankAmount) >
+          Number(balance - (bettingBalance?.remaining_requirement || 0)) ? (
+            <p className="text-red-500 text-xs mb-3">
+              Amount exceeds your withdrawable balance of ₹
+              {Number(
+                bankAmount -
+                  (balance - (bettingBalance?.remaining_requirement || 0))
+              ).toFixed(2)}
+            </p>
+          ) : (
+            <p className="text-red-500 text-xs mb-3">
+              Min amount should be ₹
+              {Number(withDrawLimit?.bank?.min || 0).toFixed(2)} and max ₹
+              {Number(withDrawLimit?.bank?.max || 0).toFixed(2)}
+            </p>
+          ))}
+
+        {/* Balance Info */}
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-gray-400">Withdrawable balance</span>
+          <div className="flex items-center gap-2">
+            <span className="text-amber-400">
+              ₹
+              {Number(balance - bettingBalance?.remaining_requirement).toFixed(
+                2
+              )}
             </span>
-          </div>
-
-          {/* INR Amount Input */}
-          <div className="bg-neutral-800 p-3 rounded mb-3">
-            <div className="flex items-center gap-2 text-amber-500 font-medium">
-              <span className="text-lg">₹</span>
-              <span>Please enter withdrawal amc</span>
-            </div>
-            <input
-              type="number"
-              value={usdtInrAmount}
-              onChange={handleInrChange}
-              className="bg-transparent w-full mt-2 outline-none text-white placeholder-gray-400"
-              placeholder="INR amount"
-              min="0"
-            />
-          </div>
-
-          {/* USDT Token Amount Input */}
-          <div className="bg-neutral-800 p-3 rounded mb-4">
-            <div className="flex items-center gap-2 text-amber-500 font-medium">
-              <img src={tpay} className="w-5 h-5" alt="Tether" />
-              <span>Please enter UDST amount</span>
-            </div>
-            <input
-              type="number"
-              value={usdtTokenAmount}
-              onChange={handleUsdtChange}
-              className="bg-transparent w-full mt-2 outline-none text-white placeholder-gray-400"
-              placeholder="USDT amount"
-              min="0"
-            />
-          </div>
-
-          {(
-            Number(usdtInrAmount) > Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
-            Number(usdtInrAmount) < Number(withDrawLimit?.usdt?.min || 0) ||
-            Number(usdtInrAmount) > Number(withDrawLimit?.usdt?.max || Infinity)
-          ) && (
-              Number(usdtInrAmount) > Number(balance - (bettingBalance?.remaining_requirement || 0)) ? (
-                <p className="text-red-500 text-xs mb-3">
-                  Amount exceeds your withdrawable balance of ₹
-                  {Number(usdtInrAmount - (balance - (bettingBalance?.remaining_requirement || 0))).toFixed(2)}
-                </p>
-              ) : (
-                <p className="text-red-500 text-xs mb-3">
-                  Min amount should be ₹{Number(withDrawLimit?.usdt?.min || 0).toFixed(2)} and max ₹
-                  {Number(withDrawLimit?.usdt?.max || 0).toFixed(2)}
-                </p>
-              )
-            )}
-
-          {/* Balance Info */}
-          <div className="flex justify-between text-sm mb-4">
-            <span className="text-gray-400">Withdrawable balance <span className="text-amber-500">₹{Number(balance - bettingBalance?.remaining_requirement).toFixed(2)}</span></span>
             <button
-              onClick={() => {
-                setUsdtInrAmount(balance - (bettingBalance?.remaining_requirement || 0).toFixed(2));
-                setUsdtTokenAmount(((balance - (bettingBalance?.remaining_requirement || 0)) / USDT_TO_INR).toFixed(2));
-              }}
-              className="text-amber-500 border border-amber-500 rounded px-2 py-0.5 text-xs hover:bg-amber-500 hover:text-black transition"
-
+              onClick={() =>
+                setBankAmount(balance - bettingBalance?.remaining_requirement)
+              }
+              className="text-amber-500 border border-amber-500 rounded px-2 py-0.5 text-xs hover:bg-amber-500 hover:text-black transition-colors"
             >
               All
             </button>
           </div>
-
-          {/* Withdraw Button */}
-          <button
-            onClick={handleUsdtWithdraw}
-            className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black py-3 rounded-full text-base font-semibold"
-            disabled={!usdtInrAmount || selectedUSDTid == null || (Number(usdtInrAmount) > Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
-              Number(usdtInrAmount) < Number(withDrawLimit?.usdt?.min || 0) ||
-              Number(usdtInrAmount) > Number(withDrawLimit?.usdt?.max || Infinity))}
-          >
-            Withdraw
-          </button>
-          {usdtInrAmount > 0 && selectedUSDTid == null && <p className="text-red-500 text-xs mb-3 mt-2">
-            Please select a USDT.
-          </p>}
         </div>
-      )
-    }
-  ];
 
+        <div className="flex justify-between text-sm mb-6">
+          <span className="text-gray-400">Withdrawal amount received</span>
+          <span className="text-orange-200">
+            ₹{bankAmount ? bankAmount : "0.0"}
+          </span>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          onClick={handleBankWithdraw}
+          className="w-full py-3 rounded-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black text-base font-semibold transition"
+          disabled={
+            Number(bankAmount) >
+              Number(balance - bettingBalance?.remaining_requirement) ||
+            !selectedBankId ||
+            Number(bankAmount) < Number(withDrawLimit?.bank?.min || 0) ||
+            Number(bankAmount) > Number(withDrawLimit?.bank?.max || Infinity)
+          }
+        >
+          Withdraw
+        </button>
+        {bankAmount > 0 && selectedBankId == null && (
+          <p className="text-red-500 text-xs mb-3 mt-2">
+            Please select a bank.
+          </p>
+        )}
+      </div>
+    ),
+  },
+  {
+    name: <span style={{ color: "#8f5206", fontSize: "16px" }}>USDT</span>,
+    img: (isSelected) => (isSelected ? tpay : tpay),
+    content: (
+      <div className="bg-[#333332] p-4 rounded-xl ">
+        <Link to="/AddUSDT">
+          <div className="border-2 border-dashed border-zinc-700 rounded-lg h-[120px] flex items-center justify-center flex-col w-full cursor-pointer mb-4">
+            <div className="p-4 rounded-lg cursor-pointer text-center">
+              <img src={add} alt="add" className="h-12 w-12" />
+              <p className="text-[#666462] text-xs mt-4 -ml-2">Add Address</p>
+            </div>
+          </div>
+        </Link>
+        {/* Title */}
+        <div className="flex items-center gap-2 mb-4">
+          <img src={tpay} className="w-6 h-6" alt="USDT" />
+          <span className="text-white font-medium text-base">
+            Select amount of USDT
+          </span>
+        </div>
+
+        {/* INR Amount Input */}
+        <div className="bg-neutral-800 p-3 rounded mb-3">
+          <div className="flex items-center gap-2 text-amber-500 font-medium">
+            <span className="text-lg">₹</span>
+            <span>Please enter withdrawal amc</span>
+          </div>
+          <input
+            type="number"
+            value={usdtInrAmount}
+            onChange={handleInrChange}
+            className="bg-transparent w-full mt-2 outline-none text-white placeholder-gray-400"
+            placeholder="INR amount"
+            min="0"
+          />
+        </div>
+
+        {/* USDT Token Amount Input */}
+        <div className="bg-neutral-800 p-3 rounded mb-4">
+          <div className="flex items-center gap-2 text-amber-500 font-medium">
+            <img src={tpay} className="w-5 h-5" alt="Tether" />
+            <span>Please enter UDST amount</span>
+          </div>
+          <input
+            type="number"
+            value={usdtTokenAmount}
+            onChange={handleUsdtChange}
+            className="bg-transparent w-full mt-2 outline-none text-white placeholder-gray-400"
+            placeholder="USDT amount"
+            min="0"
+          />
+        </div>
+
+        {(Number(usdtInrAmount) >
+          Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
+          Number(usdtInrAmount) < Number(withDrawLimit?.usdt?.min || 0) ||
+          Number(usdtInrAmount) >
+            Number(withDrawLimit?.usdt?.max || Infinity)) &&
+          (Number(usdtInrAmount) >
+          Number(balance - (bettingBalance?.remaining_requirement || 0)) ? (
+            <p className="text-red-500 text-xs mb-3">
+              Amount exceeds your withdrawable balance of ₹
+              {Number(
+                usdtInrAmount -
+                  (balance - (bettingBalance?.remaining_requirement || 0))
+              ).toFixed(2)}
+            </p>
+          ) : (
+            <p className="text-red-500 text-xs mb-3">
+              Min amount should be ₹
+              {Number(withDrawLimit?.usdt?.min || 0).toFixed(2)} and max ₹
+              {Number(withDrawLimit?.usdt?.max || 0).toFixed(2)}
+            </p>
+          ))}
+
+        {/* Balance Info */}
+        <div className="flex justify-between text-sm mb-4">
+          <span className="text-gray-400">
+            Withdrawable balance{" "}
+            <span className="text-amber-500">
+              ₹
+              {Number(balance - bettingBalance?.remaining_requirement).toFixed(
+                2
+              )}
+            </span>
+          </span>
+          <button
+            onClick={() => {
+              setUsdtInrAmount(
+                balance -
+                  (bettingBalance?.remaining_requirement || 0).toFixed(2)
+              );
+              setUsdtTokenAmount(
+                (
+                  (balance - (bettingBalance?.remaining_requirement || 0)) /
+                  USDT_TO_INR
+                ).toFixed(2)
+              );
+            }}
+            className="text-amber-500 border border-amber-500 rounded px-2 py-0.5 text-xs hover:bg-amber-500 hover:text-black transition"
+          >
+            All
+          </button>
+        </div>
+
+        {/* Withdraw Button */}
+        <button
+          onClick={handleUsdtWithdraw}
+          className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black py-3 rounded-full text-base font-semibold"
+          disabled={
+            !usdtInrAmount ||
+            selectedUSDTid == null ||
+            Number(usdtInrAmount) >
+              Number(balance - (bettingBalance?.remaining_requirement || 0)) ||
+            Number(usdtInrAmount) < Number(withDrawLimit?.usdt?.min || 0) ||
+            Number(usdtInrAmount) > Number(withDrawLimit?.usdt?.max || Infinity)
+          }
+        >
+          Withdraw
+        </button>
+        {usdtInrAmount > 0 && selectedUSDTid == null && (
+          <p className="text-red-500 text-xs mb-3 mt-2">
+            Please select a USDT.
+          </p>
+        )}
+      </div>
+    ),
+  },
+];
 
 const Withdraw = () => {
   const [selected, setSelected] = useState(0);
@@ -287,25 +343,24 @@ const Withdraw = () => {
   const [balance, setBalance] = useState(0);
   const [withdrawableBalance, setWithdrawableBalance] = useState(566.88);
   const [isLoading, setIsLoading] = useState(false);
-  const [bankAccounts, setBankAccount] = useState([])
+  const [bankAccounts, setBankAccount] = useState([]);
   const [selectedBankId, setSelectedBankId] = useState(null);
   const [selectedUSDTid, setSelectedUSDTid] = useState(null);
-  const [usdtData, setUsdtData] = useState([])
-  const [withdrawHistory, setWithDrawHistory] = useState([])
+  const [usdtData, setUsdtData] = useState([]);
+  const [withdrawHistory, setWithDrawHistory] = useState([]);
   const [page, setPage] = useState(1);
-  const [bettingBalance, setBettingBalance] = useState([])
+  const [bettingBalance, setBettingBalance] = useState([]);
   const [bankAmount, setBankAmount] = useState("");
   const withDrawLimit = {
     bank: {
       min: 110,
-      max: 50000
+      max: 50000,
     },
     usdt: {
       min: 1000,
-      max: 1000000
-    }
-  }
-
+      max: 1000000,
+    },
+  };
 
   const [usdtInrAmount, setUsdtInrAmount] = useState("");
   const [usdtTokenAmount, setUsdtTokenAmount] = useState("");
@@ -335,29 +390,25 @@ const Withdraw = () => {
   };
 
   const handleUsdtWithdraw = () => {
-    handleWithDrawMoneyFromWallet(usdtInrAmount)
+    handleWithDrawMoneyFromWallet(usdtInrAmount);
   };
   const handleBankWithdraw = () => {
-
-    handleWithDrawMoneyFromWallet(bankAmount)
+    handleWithDrawMoneyFromWallet(bankAmount);
   };
 
-
-
-
   const fetchBankAccount = async () => {
-    const data = await apiServices.getBankAccounts()
-    setBankAccount(data?.data)
-  }
+    const data = await apiServices.getBankAccounts();
+    setBankAccount(data?.data);
+  };
   const fetchWalletBalance = async () => {
-    const data = await apiServices.getWalletBalanceForWithDraw()
-    setBalance(data?.wallet?.balance)
-  }
+    const data = await apiServices.getWalletBalanceForWithDraw();
+    setBalance(data?.wallet?.balance);
+  };
 
   const fetchUsdtData = async () => {
-    const data = await apiServices.getUSDTAccounts()
-    setUsdtData(data?.data)
-  }
+    const data = await apiServices.getUSDTAccounts();
+    setUsdtData(data?.data);
+  };
 
   const fetchWithdrawals = async () => {
     try {
@@ -370,21 +421,19 @@ const Withdraw = () => {
 
   const fetchBettingBalance = async () => {
     let data = await apiServices.getBettingBalance();
-    setBettingBalance(data?.data)
-  }
+    setBettingBalance(data?.data);
+  };
 
   function fetchAllData() {
-    fetchBankAccount()
-    fetchWalletBalance()
-    fetchUsdtData()
+    fetchBankAccount();
+    fetchWalletBalance();
+    fetchUsdtData();
     fetchWithdrawals();
-    fetchBettingBalance()
+    fetchBettingBalance();
   }
   useEffect(() => {
-    fetchAllData()
-  }, [])
-
-
+    fetchAllData();
+  }, []);
 
   const handleAmountChange = (e) => {
     setAmount(e.target.value);
@@ -452,42 +501,42 @@ const Withdraw = () => {
   const handleSelect = (index) => {
     if (index == 1) {
       setSelected(1);
-      setSelectedBankId(null)
+      setSelectedBankId(null);
     } else {
       setSelected(0);
-      setSelectedUSDTid(null)
+      setSelectedUSDTid(null);
     }
   };
 
   const handleBankDelete = async (id) => {
-    const data = await apiServices.deleteBankAccount(id)
+    const data = await apiServices.deleteBankAccount(id);
     if (data.success == true) {
-      fetchBankAccount()
+      fetchBankAccount();
     }
-  }
+  };
 
   const handleUSDDelete = async (id) => {
-    const data = await apiServices.deleteUSDTAccounts(id)
+    const data = await apiServices.deleteUSDTAccounts(id);
     if (data.success == true) {
-      fetchUsdtData()
+      fetchUsdtData();
     }
-  }
+  };
 
   const handleWithDrawMoneyFromWallet = async (amount) => {
-    let accountIdType = selected == 0 ? "bank_account_id" : "usdt_account_id"
+    let accountIdType = selected == 0 ? "bank_account_id" : "usdt_account_id";
     let payload = {
       amount: amount,
       withdrawal_type: selected == 0 ? "BANK" : "USDT",
-      [accountIdType]: selected == 0 ? selectedBankId : selectedUSDTid
-    }
+      [accountIdType]: selected == 0 ? selectedBankId : selectedUSDTid,
+    };
 
-    const data = await apiServices.withDrawMoneyFromWallet(payload)
+    const data = await apiServices.withDrawMoneyFromWallet(payload);
     if (data?.success == true) {
-      fetchAllData()
+      fetchAllData();
       setBankAmount("");
-      setSelectedBankId(null)
+      setSelectedBankId(null);
     }
-  }
+  };
   const paymentOptions = getPaymentOptions({
     bettingBalance,
     bankAmount,
@@ -504,12 +553,16 @@ const Withdraw = () => {
     withDrawLimit,
     handleInrChange,
     handleUsdtChange,
-    USDT_TO_INR
+    USDT_TO_INR,
   });
 
   return (
     <div className="bg-[#333332] min-h-screen flex flex-col items-center justify-center w-full mx-auto">
-      <CommanHeader   title = "Withdraw" rightButtonText="Withdraw History" navigateValue="/withdraw-history"/>
+      <CommanHeader
+        title="Withdraw"
+        rightButtonText="Withdraw History"
+        navigateValue="/withdraw-history"
+      />
       <div className="w-full max-w-[400px] min-h-screen mt-8 bg-[#242424] p-3 text-[#8f5206] font-sans">
         {/* Balance Card */}
         <div
@@ -527,7 +580,9 @@ const Withdraw = () => {
           </div>
 
           <div className="flex items-center">
-            <div className="text-3xl font-bold text-white mr-2">₹{Number(balance).toFixed(2)}</div>
+            <div className="text-3xl font-bold text-white mr-2">
+              ₹{Number(balance).toFixed(2)}
+            </div>
             <img
               src={refresh}
               alt="refresh icon"
@@ -563,30 +618,37 @@ const Withdraw = () => {
           ))}
         </div>
 
-        {selected === 0 && bankAccounts?.length > 0 && bankAccounts?.map((bank, index) => {
-          return (
-            <BankCard key={index} bank={bank}
-              isSelected={selectedBankId === bank.id}
-              onSelect={(id) =>
-                setSelectedBankId((prev) => (prev === id ? null : id))
-              }
-              onDelete={handleBankDelete}
-            />
-          )
-        })}
+        {selected === 0 &&
+          bankAccounts?.length > 0 &&
+          bankAccounts?.map((bank, index) => {
+            return (
+              <BankCard
+                key={index}
+                bank={bank}
+                isSelected={selectedBankId === bank.id}
+                onSelect={(id) =>
+                  setSelectedBankId((prev) => (prev === id ? null : id))
+                }
+                onDelete={handleBankDelete}
+              />
+            );
+          })}
 
-        {selected === 1 && usdtData?.length > 0 && usdtData?.map((data, index) => {
-          return (
-            <USDTCard key={index} data={data}
-              isSelected={selectedUSDTid === data.id}
-              onSelect={(id) =>
-                setSelectedUSDTid((prev) => (prev === id ? null : id))
-              }
-              onDelete={handleUSDDelete}
-            />
-          )
-        })}
-
+        {selected === 1 &&
+          usdtData?.length > 0 &&
+          usdtData?.map((data, index) => {
+            return (
+              <USDTCard
+                key={index}
+                data={data}
+                isSelected={selectedUSDTid === data.id}
+                onSelect={(id) =>
+                  setSelectedUSDTid((prev) => (prev === id ? null : id))
+                }
+                onDelete={handleUSDDelete}
+              />
+            );
+          })}
 
         {/* Selected Payment Option Content */}
         <div className="text-white rounded-lg">
@@ -605,7 +667,9 @@ const Withdraw = () => {
               </button>
               <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-600">
                 <img src={realtimecounticon} alt="icon" className="h-6 w-6" />
-                <h2 className="text-white text-lg font-medium">Security verification</h2>
+                <h2 className="text-white text-lg font-medium">
+                  Security verification
+                </h2>
               </div>
               <div className="flex items-center gap-2 mb-4">
                 <img src={emailiconn} alt="icon" className="h-4 w-6" />
@@ -666,7 +730,10 @@ const Withdraw = () => {
                   : withdrawal.withdrawal_type === "USDT"
               )
               .map((withdrawal) => (
-                <div key={withdrawal.id} className="bg-[#333332] rounded-xl p-4 mb-4">
+                <div
+                  key={withdrawal.id}
+                  className="bg-[#333332] rounded-xl p-4 mb-4"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <span className="bg-[#cc2f2f] text-white font-medium text-sm px-2 py-1 rounded">
@@ -675,12 +742,13 @@ const Withdraw = () => {
                     </div>
                     <div className="ml-auto text-right">
                       <span
-                        className={`text-sm font-medium ${withdrawal.status === "success"
-                          ? "text-green-500"
-                          : withdrawal.status === "pending"
-                            ? "text-yellow-500"
-                            : "text-red-500"
-                          }`}
+                        className={`text-sm font-medium ${
+                          withdrawal.status === "success"
+                            ? "text-green-500"
+                            : withdrawal.status === "pending"
+                              ? "text-yellow-500"
+                              : "text-red-500"
+                        }`}
                       >
                         {withdrawal.status === "success"
                           ? "Completed"
@@ -716,7 +784,6 @@ const Withdraw = () => {
           ) : (
             <p className="text-neutral-500 mb-8">No data</p>
           )}
-
 
           <div className="w-full px-4">
             <Link to="/withdraw-history">

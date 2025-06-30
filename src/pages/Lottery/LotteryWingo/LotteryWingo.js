@@ -25,19 +25,21 @@ import detailicon from "./../../../Assets/finalicons/detailicon.png";
 import agree from "./../../../Assets/agree-a.png";
 import notAgree from "./../../../Assets/agree-b.png";
 import win from "./../../../Assets/updatedwin.png";
+import lost from "./../../../Assets/loss.png";
 import whitetick from "./../../../Assets/whitetick.png";
 import cross from "./../../../Assets/safed.png";
 import img0 from "./../../../Assets/WingoNew/n0-30bd92d1.png";
 import img1 from "./../../../Assets/WingoNew/n1-dfccbff5.png";
 import img2 from "./../../../Assets/WingoNew/n2-c2913607.png";
 import img3 from "./../../../Assets/WingoNew/n3-f92c313f.png";
-import img4 from "./../../../Assets/WingoNew/n4-cb84933b.png";
+import img4 from "./../../../Assets/WingoNew/n4-cb84933b.png"
 import img5 from "./../../../Assets/WingoNew/n5-49d0e9c5.png";
 import img6 from "./../../../Assets/WingoNew/n6-a56e0b9a.png";
 import img7 from "./../../../Assets/WingoNew/n7-5961a17f.png";
 import img8 from "./../../../Assets/WingoNew/n8-d4d951a4.png";
 import img9 from "./../../../Assets/WingoNew/n9-a20f6f42.png";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
+import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 const imageMap = {
   0: img0,
   1: img1,
@@ -116,14 +118,16 @@ const buttonData = [
 
 function LotteryWingo() {
   const isMounted = useRef(true);
-  const location = useLocation()
+  const location = useLocation();
   const gameType = "wingo";
   const { playCountdownAudio, playResultAudio } = useAudio();
   const hasPlayedCountdownRef = useRef(false);
   const previousResult = useRef(null);
   // Component state
   const [activeTab, setActiveTab] = useState("gameHistory");
-  const [activeButton, setActiveButton] = useState(location?.state ? location?.state : 0);
+  const [activeButton, setActiveButton] = useState(
+    location?.state ? location?.state : 0
+  );
   const [selectedTitle, setSelectedTitle] = useState(buttonData[0].title);
   const [externalMultiplier, setExternalMultiplier] = useState("X1");
   const [popupMultiplier, setPopupMultiplier] = useState("X1");
@@ -139,7 +143,9 @@ function LotteryWingo() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [showWinPopup, setShowWinPopup] = useState(false);
+  const [showLossPopup, setShowLossPopup] = useState(false);
   const [showWinPopupChecked, setShowWinPopupChecked] = useState(false);
+  const [showLossPopupChecked, setShowLossPopupChecked] = useState(false);
   const [selectedNumberPopup, setSelectedNumberPopup] = useState(null);
   const [isRandomAnimating, setIsRandomAnimating] = useState(false);
   const [gameHistoryData, setGameHistoryData] = useState([]);
@@ -150,7 +156,7 @@ function LotteryWingo() {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [fetchDataFlag, setFetchDataFlag] = useState(false)
+  const [fetchDataFlag, setFetchDataFlag] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState({
     minutes: 0,
     seconds: 0,
@@ -159,7 +165,9 @@ function LotteryWingo() {
     periodId: "",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-  const [refetchData, setRefetchData] = useState(false)
+  const [refetchData, setRefetchData] = useState(false);
+  const [userDidBet, setUserDidBet] = useState(false);
+  const [lastResult, setLastResult] = useState(null);
 
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const API_BASE_URL = "https://api.strikecolor1.com";
@@ -172,9 +180,11 @@ function LotteryWingo() {
     try {
       const duration = buttonData[activeButton].duration;
       // Use the gameApi to fetch user bets
-      const response = await gameApi.getUserBets(gameType, duration,
+      const response = await gameApi.getUserBets(
+        gameType,
+        duration,
         page,
-        limit,
+        limit
       );
 
       if (isMounted.current) {
@@ -192,8 +202,23 @@ function LotteryWingo() {
             console.log("⚠️ Unexpected response structure:", response);
           }
           if (betsData.length > 0) {
+            const latestBet = betsData[0];
+            const updatedAt = new Date(
+              latestBet.updatedAt || latestBet.createdAt
+            );
+            const now = new Date();
+            const timeDiffSeconds = (now - updatedAt) / 1000;
+            console.log("timeDiffSeconds", timeDiffSeconds);
+            if (timeDiffSeconds <= 5) {
+              setLastResult(betsData[0]);
+              setUserDidBet(false);
+              if (betsData[0].status == "won") {
+                setShowWinPopup(true);
+              } else if (betsData[0].status == "lost") {
+                setShowLossPopup(true);
+              }
+            }
             const formattedBets = betsData.map((bet, index) => {
-
               return {
                 betId: bet.betId || bet._id || bet.id || `bet-${index}`,
                 period: bet.periodId || bet.period || "N/A",
@@ -201,13 +226,11 @@ function LotteryWingo() {
                   ? new Date(bet.createdAt).toLocaleString()
                   : bet.orderTime || new Date().toLocaleString(),
                 orderNumber:
-                  bet.betId ||
-                  bet.orderNumber ||
-                  `ORD-${Date.now()}-${index}`,
+                  bet.betId || bet.orderNumber || `ORD-${Date.now()}-${index}`,
                 amount: `₹${bet.betAmount || bet.amount || 0}`,
                 quantity: bet.quantity || 1,
-                afterTax: `₹${(bet.amountAfterTax).toFixed(2)}`,
-                tax: `₹${((bet.taxAmount || 0)).toFixed(2)}`,
+                afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
+                tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
                 result: bet.result
                   ? typeof bet.result === "string"
                     ? bet.result
@@ -264,10 +287,10 @@ function LotteryWingo() {
         setIsLoading(false);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds
+    const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds;
     // Play countdown audio when exactly 4 seconds remain (changed from 5)
     if (totalSeconds === 4 && !hasPlayedCountdownRef.current) {
       playCountdownAudio();
@@ -283,7 +306,7 @@ function LotteryWingo() {
     }
     // Log when timer reaches 0
     if (totalSeconds === 0) {
-      setFetchDataFlag(prev => !prev)
+      setFetchDataFlag((prev) => !prev);
     }
   }, [timeRemaining, playCountdownAudio, playResultAudio]);
   // Update the wallet balance fetching logic
@@ -509,9 +532,9 @@ function LotteryWingo() {
       return { results: [], pagination: { total_pages: 1 } };
     }
   };
-  useEffect(()=>{
-      setRefetchData(prev=>!prev)
-  },[activeButton])
+  useEffect(() => {
+    setRefetchData((prev) => !prev);
+  }, [activeButton]);
 
   // Fetch user bets
 
@@ -554,6 +577,10 @@ function LotteryWingo() {
       fetchUserBets(currentPage).catch(console.error);
     }
   }, [activeTab, currentPage, fetchDataFlag, refetchData]);
+
+  useEffect(() => {
+    fetchUserBets(currentPage).catch(console.error);
+  }, [refetchData]);
 
   // Initial timer setup
   useEffect(() => {
@@ -690,10 +717,10 @@ function LotteryWingo() {
       duration: buttonData[activeButton].duration,
     };
 
-
     const betPlaced = placeBet(betData);
 
     if (betPlaced) {
+      setUserDidBet(true);
       setShowPopup(null);
       setShowBigPopup(null);
       setSelectedNumberPopup(null);
@@ -785,8 +812,9 @@ function LotteryWingo() {
                     {row.number === 0 || row.number === 5 ? (
                       <div className="relative inline-block min-w-[1.5rem] h-10">
                         <span
-                          className={`absolute top-0 left-0 w-full h-full text-4xl  ${row.number === 0 ? "text-red-500" : "text-green-500"
-                            }`}
+                          className={`absolute top-0 left-0 w-full h-full text-4xl  ${
+                            row.number === 0 ? "text-red-500" : "text-green-500"
+                          }`}
                           style={{ clipPath: "inset(0 50% 0 0)" }}
                         >
                           {row.number}
@@ -865,8 +893,11 @@ function LotteryWingo() {
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-4 h-4 absolute right-16 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? "animate-spin opacity-50" : "hover:scale-110"
-                  }`}
+                className={`w-4 h-4 absolute right-16 cursor-pointer transition-transform duration-200 ${
+                  isRefreshingBalance
+                    ? "animate-spin opacity-50"
+                    : "hover:scale-110"
+                }`}
                 onClick={handleRefreshBalance}
                 style={{
                   pointerEvents: isRefreshingBalance ? "none" : "auto",
@@ -876,7 +907,9 @@ function LotteryWingo() {
             </div>
             <div className="flex items-center justify-center text-center ">
               <img src={wallet} alt="Wallet" className="w-5 h-5 ml-1" />
-              <span className="text-[#f5f3f0] text-xs ml-1">Wallet Balance</span>
+              <span className="text-[#f5f3f0] text-xs ml-1">
+                Wallet Balance
+              </span>
             </div>
             <div className="flex justify-center gap-10 mb-2 mt-5">
               <Link to="/withdraw">
@@ -894,13 +927,13 @@ function LotteryWingo() {
         </div>
       </div>
 
-
       <div className="bg-[#242424]  w-full h-full mt-2 flex flex-col justify-center">
         <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
             <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
-              Thanks to all our members — past and present — for being part of our journey.
+              Thanks to all our members — past and present — for being part of
+              our journey.
             </p>
 
             <button
@@ -914,8 +947,6 @@ function LotteryWingo() {
             >
               <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
-
-
           </div>
         </div>
 
@@ -925,10 +956,11 @@ function LotteryWingo() {
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
-                className={`flex flex-col items-center px-1 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${activeButton === button.id
-                  ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#4d4d4c] text-[#a8a5a1]"
-                  }`}
+                className={`flex flex-col items-center px-1 py-2 rounded-lg flex-1 mx-0.5 transition-all duration-300 ${
+                  activeButton === button.id
+                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#4d4d4c] text-[#a8a5a1]"
+                }`}
                 style={{
                   textAlign: "center",
                   flexDirection: "column",
@@ -941,7 +973,9 @@ function LotteryWingo() {
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-xs leading-none whitespace-nowrap">{button.title}</span>
+                <span className="text-xs leading-none whitespace-nowrap">
+                  {button.title}
+                </span>
               </button>
             ))}
           </div>
@@ -962,9 +996,7 @@ function LotteryWingo() {
                 className="border border-black rounded-full px-9 py-1 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0"
               >
                 <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
-                <p className="text-[#8f5206] text-xs ">
-                  How to Play
-                </p>
+                <p className="text-[#8f5206] text-xs ">How to Play</p>
               </button>
               <p className="text-[#8f5206] mb-2 mt-2 text-xs truncate whitespace-nowrap max-w-full">
                 {selectedTitle}
@@ -1109,23 +1141,23 @@ function LotteryWingo() {
                       Lottery results
                     </h2>
                     <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded text-white">
-                      {gameHistoryData[0]?.number || "N/A"}
+                      {lastResult?.result?.number || "N/A"}
                     </p>
                     <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded">
-                      {gameHistoryData[0]?.size || "Big"}
-                    </p>
-                    <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded">
-                      {gameHistoryData[0]?.parity || "Even"}Thanks to all our members — past and present — for being part of our journey
+                      {lastResult?.result?.size || "Big"}
                     </p>
                   </div>
                   <div className="mt-4 text-center">
                     <p className="text-md font-bold text-red-500">Bonus</p>
-                    <p className="text-xl font-bold text-red-500">
-                      ₹{walletBalance}
+                    <p
+                      className="text-xl font-bold "
+                      style={{ color: "black" }}
+                    >
+                      ₹{lastResult?.payout}
                     </p>
-                    <p className="text-xs mt-2 text-gray-400">
-                      Period: {buttonData[activeButton].duration} seconds{" "}
-                      {currentPeriod.periodId}
+                    <p className="text-xs mt-1" style={{ color: "black" }}>
+                      Period: {lastResult?.duration} seconds{" "}
+                      {lastResult?.periodId}
                     </p>
                   </div>
                 </div>
@@ -1158,7 +1190,95 @@ function LotteryWingo() {
                 </label>
               </div>
               <button
-                onClick={() => setShowWinPopup(false)}
+                onClick={() => {
+                  setShowWinPopup(false);
+                  setLastResult(null);
+                }}
+                className="mt-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
+              >
+                <img
+                  src={cross}
+                  alt="Close"
+                  className="w-10 h-10 object-contain"
+                />
+              </button>
+            </div>
+          </div>
+        )}
+        {showLossPopup && (
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-black bg-opacity-70 fixed inset-0"></div>
+            <div className="relative z-10 flex flex-col items-center max-w-[400px] mx-auto">
+              <div className="relative w-[400px] h-[400px] flex items-center justify-center">
+                <img
+                  src={win}
+                  alt="Loss"
+                  className="w-full h-full object-contain"
+                />
+                <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 text-center text-white">
+                  <p className="text-2xl font-bold text-red-500 drop-shadow-lg">
+                    Better Luck Next Time
+                  </p>
+                </div>
+                <div className="absolute top-[62%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+                  <div className="flex items-center justify-center gap-x-2 mt-1">
+                    <h2 className="text-xs whitespace-nowrap text-white font-medium mr-1">
+                      Lottery results
+                    </h2>
+                    <p className="text-xs bg-red-500 px-1 border-2 border-white py-0.5 rounded text-white">
+                      {lastResult?.result?.number || "N/A"}
+                    </p>
+                    <p className="text-xs bg-red-500 px-1 border-2 border-white py-0.5 rounded">
+                      {lastResult?.result?.size || "Big"}
+                    </p>
+                    <p className="text-xs bg-red-500 px-1 border-2 border-white py-0.5 rounded">
+                      {lastResult?.result?.parity || "Even"}
+                    </p>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <p className="text-md font-bold text-red-500">No Bonus</p>
+                    <p className="text-xl font-bold" style={{ color: "black" }}>
+                      ₹0
+                    </p>
+                    <p className="text-xs text-400" style={{ color: "black" }}>
+                      Period: {lastResult?.duration} seconds{" "}
+                      {lastResult?.periodId}
+                    </p>
+                  </div>
+                </div>
+                <label className="absolute bottom-4 left-20 inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showLossPopupChecked}
+                    onChange={() =>
+                      setShowLossPopupChecked(!showLossPopupChecked)
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-6 h-6 relative">
+                    <img
+                      src={agree}
+                      alt="checkbox background"
+                      className="w-full h-full object-contain"
+                    />
+                    {showLossPopupChecked && (
+                      <img
+                        src={whitetick}
+                        alt="tick"
+                        className="absolute inset-0 w-3 h-3 m-auto pointer-events-none"
+                      />
+                    )}
+                  </div>
+                  <span className="ml-1 text-sm text-white drop-shadow">
+                    3 sec auto close
+                  </span>
+                </label>
+              </div>
+              <button
+                onClick={() => {
+                  setShowLossPopup(false);
+                  setLastResult(null);
+                }}
                 className="mt-2 w-8 h-8 rounded-full flex items-center justify-center shadow-md"
               >
                 <img
@@ -1179,11 +1299,15 @@ function LotteryWingo() {
           </div>
         )}
 
-        <FreezePopup timeRemaining={timeRemaining} duration={buttonData[activeButton].duration} handleRefresh={() => setRefetchData(prev => !prev)}>
+        <FreezePopup
+          timeRemaining={timeRemaining}
+          duration={buttonData[activeButton].duration}
+          handleRefresh={() => setRefetchData((prev) => !prev)}
+        >
           <div className="bg-[#333332] rounded-lg shadow-md  p-2 pt-1 space-y-2">
-            {isLoading && (
+            {/* {isLoading && (
               <div className="text-center text-gray-500">Loading...</div>
-            )}
+            )} */}
             <div className="flex justify-between mb-2 space-x-4">
               {["Green", "Violet", "Red"].map((color) => (
                 <button
@@ -1200,8 +1324,9 @@ function LotteryWingo() {
                 {["0", "1", "2", "3", "4"].map((num) => (
                   <span
                     key={num}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${isRandomAnimating ? "squeeze-animate" : ""
-                      }`}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${
+                      isRandomAnimating ? "squeeze-animate" : ""
+                    }`}
                     onClick={() => handleNumberClick(num)}
                   >
                     <img
@@ -1216,8 +1341,9 @@ function LotteryWingo() {
                 {["5", "6", "7", "8", "9"].map((num) => (
                   <span
                     key={num}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${isRandomAnimating ? "squeeze-animate" : ""
-                      }`}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${tailwindColorMap[iconColorMap[num]]} ${
+                      isRandomAnimating ? "squeeze-animate" : ""
+                    }`}
                     onClick={() => handleNumberClick(num)}
                   >
                     <img
@@ -1254,10 +1380,11 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
-                            ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                            }`}
+                          className={`px-2 py-1 rounded text-sm ${
+                            betAmount === parseInt(label)
+                              ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
+                              : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1294,10 +1421,11 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
-                          ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
-                          : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                        className={`px-2 py-1 rounded text-sm transition ${
+                          popupMultiplier === label
+                            ? `${tailwindColorMap[showPopup]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                        }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1344,7 +1472,6 @@ function LotteryWingo() {
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
-
                   </div>
                 </div>
               </div>
@@ -1375,10 +1502,11 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
-                            ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                            }`}
+                          className={`px-2 py-1 rounded text-sm ${
+                            betAmount === parseInt(label)
+                              ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
+                              : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1415,10 +1543,11 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
-                          ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
-                          : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                        className={`px-2 py-1 rounded text-sm transition ${
+                          popupMultiplier === label
+                            ? `${tailwindColorMap[selectedNumberPopup.color]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                        }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1464,8 +1593,6 @@ function LotteryWingo() {
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
-
-
                   </div>
                 </div>
               </div>
@@ -1473,10 +1600,11 @@ function LotteryWingo() {
             <div className="flex justify-center items-center space-x-1">
               <button
                 onClick={handleRandomClick}
-                className={`text-sm px-3 py-2 rounded-lg flex-1 transition-all duration-300 ${isRandomAnimating
-                  ? "bg-gray-500 text-red-600"
-                  : "bg-[#242424] text-red-600 border border-red-700"
-                  }`}
+                className={`text-sm px-3 py-2 rounded-lg flex-1 transition-all duration-300 ${
+                  isRandomAnimating
+                    ? "bg-gray-500 text-red-600"
+                    : "bg-[#242424] text-red-600 border border-red-700"
+                }`}
                 disabled={isRandomAnimating}
               >
                 Random
@@ -1484,10 +1612,11 @@ function LotteryWingo() {
               {multiplierOptions.map((value) => (
                 <button
                   key={value}
-                  className={`text-xs px-2 py-2 rounded-lg flex-1 transition-all duration-200 ${externalMultiplier === value
-                    ? "bg-green-500 text-white transform -translate-y-0.5"
-                    : "bg-[#242424] text-[#a8a5a1]"
-                    }`}
+                  className={`text-xs px-2 py-2 rounded-lg flex-1 transition-all duration-200 ${
+                    externalMultiplier === value
+                      ? "bg-green-500 text-white transform -translate-y-0.5"
+                      : "bg-[#242424] text-[#a8a5a1]"
+                  }`}
                   onClick={() => handleExternalMultiplierClick(value)}
                   disabled={isRandomAnimating}
                 >
@@ -1541,10 +1670,11 @@ function LotteryWingo() {
                       {["1", "10", "100", "1000"].map((label) => (
                         <button
                           key={label}
-                          className={`px-2 py-1 rounded text-sm ${betAmount === parseInt(label)
-                            ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
-                            : "bg-neutral-700 hover:bg-neutral-600"
-                            }`}
+                          className={`px-2 py-1 rounded text-sm ${
+                            betAmount === parseInt(label)
+                              ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
+                              : "bg-neutral-700 hover:bg-neutral-600"
+                          }`}
                           onClick={() => setBetAmount(parseInt(label))}
                         >
                           {label}
@@ -1581,10 +1711,11 @@ function LotteryWingo() {
                     {multiplierOptions.map((label) => (
                       <button
                         key={label}
-                        className={`px-2 py-1 rounded text-sm transition ${popupMultiplier === label
-                          ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
-                          : "bg-neutral-700 hover:bg-neutral-600"
-                          }`}
+                        className={`px-2 py-1 rounded text-sm transition ${
+                          popupMultiplier === label
+                            ? `${tailwindColorMap[selectedBigOption]} ring-2 ring-white`
+                            : "bg-neutral-700 hover:bg-neutral-600"
+                        }`}
                         onClick={() => handlePopupMultiplierClick(label)}
                       >
                         {label}
@@ -1626,8 +1757,6 @@ function LotteryWingo() {
                     >
                       Total amount ₹{calculateTotalAmount()}
                     </button>
-
-
                   </div>
                 </div>
               </div>
@@ -1691,28 +1820,31 @@ function LotteryWingo() {
 
         <div className="flex justify-between space-x-1 mb-3 mt-1">
           <button
-            className={`w-full px-1 py-2 text-xs rounded-lg shadow text-center ${activeTab === "gameHistory"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] "
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full px-1 py-2 text-xs rounded-lg shadow text-center ${
+              activeTab === "gameHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] "
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("gameHistory")}
           >
             Game history
           </button>
           <button
-            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${activeTab === "chart"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${
+              activeTab === "chart"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("chart")}
           >
             Chart
           </button>
           <button
-            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${activeTab === "myHistory"
-              ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-              : "bg-[#333332] text-[#a8a5a1] font-normal"
-              }`}
+            className={`w-full px-4 py-2 text-sm rounded-lg shadow text-center ${
+              activeTab === "myHistory"
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+                : "bg-[#333332] text-[#a8a5a1] font-normal"
+            }`}
             onClick={() => setActiveTab("myHistory")}
           >
             My History
@@ -1735,17 +1867,19 @@ function LotteryWingo() {
 
                   <div className="flex items-center space-x-1">
                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      const pageNum =
+                        currentPage <= 3 ? i + 1 : currentPage - 2 + i;
                       if (pageNum > totalPages) return null;
 
                       return (
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
-                            ? "bg-[#d9ac4f] text-black font-medium"
-                            : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                            }`}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${
+                            currentPage === pageNum
+                              ? "bg-[#d9ac4f] text-black font-medium"
+                              : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                          }`}
                         >
                           {pageNum}
                         </button>
@@ -1763,13 +1897,15 @@ function LotteryWingo() {
                 </div>
               )}
               <div className="text-center mt-3 text-xs text-gray-500">
-                Page {currentPage} of {totalPages} • {gameHistoryData.length} records shown
+                Page {currentPage} of {totalPages} • {gameHistoryData.length}{" "}
+                records shown
               </div>
             </>
           )}
           {activeTab === "chart" && (
             <>
-              <div className="p-2 rounded-t-lg">
+              <div className="p-2 rounded-t-lg relative">
+                <ChartConnectorCanvas chartData={chartData} />
                 <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
                   <thead>
                     <tr className="bg-gray-700 rounded-t-lg">
@@ -1780,34 +1916,74 @@ function LotteryWingo() {
                         Number
                       </th>
                     </tr>
-
                   </thead>
                   <tbody>
                     {chartData.length > 0 ? (
                       chartData.map((row, index) => (
-                        <tr key={index} className="border-b border-gray-700">
-                          <td className="px-2 py-2 text-gray-200 text-xs text-center">
+                        <tr
+                          key={index}
+                          className=" border-gray-700 text-white text-xs text-center"
+                        >
+                          {/* Period ID */}
+                          <td className="px-2 py-4 text-gray-300">
                             {row.periodId}
                           </td>
-                          <td className="px-2 py-2 text-center">
-                            <span
-                              className={`inline-flex items-center justify-center text-sm w-8 h-8 rounded-full text-white ${row.number === 0 || row.number === 5
-                                ? row.number === 0
-                                  ? "bg-gradient-to-r from-red-500 to-violet-500"
-                                  : "bg-gradient-to-r from-green-500 to-violet-500"
-                                : row.number % 2 === 0
-                                  ? "bg-red-500"
-                                  : "bg-green-500"
+
+                          {/* Number Row (0–9) */}
+                          <td className="px-2 py-4">
+                            <div className="flex items-center justify-center space-x-1 relative">
+                              {/* 0–9 number row */}
+                              {Array.from({ length: 10 }, (_, i) => {
+                                const isHighlighted = row.number === i;
+                                const highlightColor =
+                                  i === 0
+                                    ? "bg-gradient-to-r from-red-500 to-violet-500"
+                                    : i === 5
+                                      ? "bg-gradient-to-r from-green-500 to-violet-500"
+                                      : i % 2 === 0
+                                        ? "bg-red-500"
+                                        : "bg-green-500";
+
+                                return (
+                                  <span
+                                    key={i}
+                                    className={`w-[16px] h-[16px] flex items-center justify-center rounded-full text-[12px] ${
+                                      isHighlighted
+                                        ? `${highlightColor} text-white`
+                                        : `bg-gray-600 text-gray-300 border border-${highlightColor}`
+                                    }`}
+                                  >
+                                    {i}
+                                  </span>
+                                );
+                              })}
+
+                              {/* B/S circle */}
+                              <span
+                                className={`w-[16px] h-[16px] ml-4 flex items-center justify-center rounded-full text-xs ${
+                                  row.size === "Big"
+                                    ? "bg-yellow-500 text-white"
+                                    : row.size === "Small"
+                                      ? "bg-blue-400 text-white"
+                                      : "bg-gray-500"
                                 }`}
-                            >
-                              {row.number}
-                            </span>
+                              >
+                                {row.size === "Big"
+                                  ? "B"
+                                  : row.size === "Small"
+                                    ? "S"
+                                    : ""}
+                              </span>
+                            </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="2" className="px-2 py-4 text-center text-gray-200">
+                        <td
+                          colSpan="2"
+                          className="px-2 py-4 text-center text-gray-200"
+                        >
                           No data available
                         </td>
                       </tr>
@@ -1827,17 +2003,19 @@ function LotteryWingo() {
 
                   <div className="flex items-center space-x-1">
                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      const pageNum =
+                        currentPage <= 3 ? i + 1 : currentPage - 2 + i;
                       if (pageNum > totalPages) return null;
 
                       return (
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
-                            ? "bg-[#d9ac4f] text-black font-medium"
-                            : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                            }`}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${
+                            currentPage === pageNum
+                              ? "bg-[#d9ac4f] text-black font-medium"
+                              : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                          }`}
                         >
                           {pageNum}
                         </button>
@@ -1855,7 +2033,8 @@ function LotteryWingo() {
                 </div>
               )}
               <div className="text-center mt-3 text-xs text-gray-500">
-                Page {currentPage} of {totalPages} • {chartData.length} records shown
+                Page {currentPage} of {totalPages} • {chartData.length} records
+                shown
               </div>
             </>
           )}
@@ -1888,21 +2067,40 @@ function LotteryWingo() {
                   {userBets.map((bet, index) => {
                     // Function to determine the color based on bet selection
                     const getColorClass = (selection) => {
-                      if (!selection) return 'bg-gray-500';
+                      if (!selection) return "bg-gray-500";
 
                       const sel = selection.toString().toLowerCase();
-                      if (sel.includes('green') || sel === 'g' || sel === '1' || sel === '3' || sel === '7' || sel === '9') {
-                        return 'bg-green-500';
-                      } else if (sel.includes('red') || sel === 'r' || sel === '2' || sel === '4' || sel === '6' || sel === '8') {
-                        return 'bg-red-500';
-                      } else if (sel.includes('violet') || sel === 'v' || sel === '0' || sel === '5') {
-                        return 'bg-purple-500';
-                      } else if (sel.includes('big') || sel === 'big') {
-                        return 'bg-blue-500';
-                      } else if (sel.includes('small') || sel === 'small') {
-                        return 'bg-yellow-500';
+                      if (
+                        sel.includes("green") ||
+                        sel === "g" ||
+                        sel === "1" ||
+                        sel === "3" ||
+                        sel === "7" ||
+                        sel === "9"
+                      ) {
+                        return "bg-green-500";
+                      } else if (
+                        sel.includes("red") ||
+                        sel === "r" ||
+                        sel === "2" ||
+                        sel === "4" ||
+                        sel === "6" ||
+                        sel === "8"
+                      ) {
+                        return "bg-red-500";
+                      } else if (
+                        sel.includes("violet") ||
+                        sel === "v" ||
+                        sel === "0" ||
+                        sel === "5"
+                      ) {
+                        return "bg-purple-500";
+                      } else if (sel.includes("big") || sel === "big") {
+                        return "bg-blue-500";
+                      } else if (sel.includes("small") || sel === "small") {
+                        return "bg-yellow-500";
                       }
-                      return 'bg-gray-500';
+                      return "bg-gray-500";
                     };
 
                     return (
@@ -1910,40 +2108,52 @@ function LotteryWingo() {
                         key={bet.betId || index}
                         className=" rounded-md cursor-pointer bg-[#2a2a29] "
                         onClick={() =>
-                          setIsDetailsOpen(isDetailsOpen === index ? null : index)
+                          setIsDetailsOpen(
+                            isDetailsOpen === index ? null : index
+                          )
                         }
                       >
                         <div className="flex justify-between items-center p-3">
                           <div className="flex items-center space-x-3">
                             {/* Color Square Box */}
-                            <div className={`w-8 h-8 rounded ${getColorClass(bet.select)}`}></div>
+                            <div
+                              className={`w-8 h-8 rounded ${getColorClass(bet.select)}`}
+                            ></div>
                             <div className="text-left">
-                              <p className="text-gray-200 text-sm font-medium">{bet.period}</p>
-                              <p className="text-gray-500 text-xs">{bet.orderTime}</p>
+                              <p className="text-gray-200 text-sm font-medium">
+                                {bet.period}
+                              </p>
+                              <p className="text-gray-500 text-xs">
+                                {bet.orderTime}
+                              </p>
                             </div>
                           </div>
                           <div className="text-center">
-                            <p className="text-gray-400 text-xs">{bet.result || "Pending"}</p>
+                            <p className="text-gray-400 text-xs">
+                              {bet.result || "Pending"}
+                            </p>
                           </div>
                           <div className="flex flex-col items-end space-y-1">
                             <div
-                              className={`border text-xs rounded-md px-2 py-1 ${bet.status === "won"
-                                ? "border-green-500 text-green-500"
-                                : bet.status === "lost"
-                                  ? "border-red-500 text-red-500"
-                                  : "border-red-500 text-red-500"
-                                }`}
-                                style={{textTransform:'capitalize'}}
+                              className={`border text-xs rounded-md px-2 py-1 ${
+                                bet.status === "won"
+                                  ? "border-green-500 text-green-500"
+                                  : bet.status === "lost"
+                                    ? "border-red-500 text-red-500"
+                                    : "border-red-500 text-red-500"
+                              }`}
+                              style={{ textTransform: "capitalize" }}
                             >
                               {bet.status === "won" ? "Success" : "Failed"}
                             </div>
                             <p
-                              className={`font-medium text-sm ${bet.winLose?.startsWith("+")
-                                ? "text-green-500"
-                                : bet.winLose?.startsWith("-")
-                                  ? "text-red-500"
-                                  : "text-gray-400"
-                                }`}
+                              className={`font-medium text-sm ${
+                                bet.winLose?.startsWith("+")
+                                  ? "text-green-500"
+                                  : bet.winLose?.startsWith("-")
+                                    ? "text-red-500"
+                                    : "text-gray-400"
+                              }`}
                             >
                               {bet.winLose}
                             </p>
@@ -1953,12 +2163,16 @@ function LotteryWingo() {
                         {isDetailsOpen === index && (
                           <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg">
                             <div className="mb-4">
-                              <h3 className="text-white text-lg font-medium mb-1">Details</h3>
+                              <h3 className="text-white text-lg font-medium mb-1">
+                                Details
+                              </h3>
                             </div>
                             <div className="space-y-3 text-sm">
                               {[
-                                { label: "Order number", value: bet.orderNumber 
-                                  ,valueClass:"text-right text-white"
+                                {
+                                  label: "Order number",
+                                  value: bet.orderNumber,
+                                  valueClass: "text-right text-white",
                                 },
                                 { label: "Period", value: bet.period },
                                 { label: "Purchase amount", value: bet.amount },
@@ -1978,11 +2192,19 @@ function LotteryWingo() {
                                   value: bet.result || "Pending",
                                   valueClass: "text-green-400",
                                 },
-                                { label: "Select", value: bet.select, valueClass: "text-[#ff5555]" },
+                                {
+                                  label: "Select",
+                                  value: bet.select,
+                                  valueClass: "text-[#ff5555]",
+                                },
                                 {
                                   label: "Status",
-                                  value: bet.status === "won" ? 'Success' : 'Failed',
-                                  valueClass: bet.status === "won" ? "text-green-400" : "text-[#ff5555]",
+                                  value:
+                                    bet.status === "won" ? "Success" : "Failed",
+                                  valueClass:
+                                    bet.status === "won"
+                                      ? "text-green-400"
+                                      : "text-[#ff5555]",
                                 },
                                 {
                                   label: "Win/lose",
@@ -1994,17 +2216,27 @@ function LotteryWingo() {
                                       : "text-[#ff5555]",
                                 },
                                 { label: "Order time", value: bet.orderTime },
-                              ].map(({ label, value, valueClass = "text-gray-400" }) => (
-                                <div
-                                  key={label}
-                                  className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
-                                >
-                                  <span className="text-gray-300 text-sm">{label}</span>
-                                  <span className={`${valueClass} text-sm font-normal`}>
-                                    {value || "N/A"}
-                                  </span>
-                                </div>
-                              ))}
+                              ].map(
+                                ({
+                                  label,
+                                  value,
+                                  valueClass = "text-gray-400",
+                                }) => (
+                                  <div
+                                    key={label}
+                                    className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                                  >
+                                    <span className="text-gray-300 text-sm">
+                                      {label}
+                                    </span>
+                                    <span
+                                      className={`${valueClass} text-sm font-normal`}
+                                    >
+                                      {value || "N/A"}
+                                    </span>
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         )}
@@ -2024,23 +2256,28 @@ function LotteryWingo() {
                       </button>
 
                       <div className="flex items-center space-x-1">
-                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                          const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                          if (pageNum > totalPages) return null;
+                        {Array.from(
+                          { length: Math.min(5, totalPages) },
+                          (_, i) => {
+                            const pageNum =
+                              currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                            if (pageNum > totalPages) return null;
 
-                          return (
-                            <button
-                              key={pageNum}
-                              onClick={() => handlePageChange(pageNum)}
-                              className={`px-3 py-1 rounded text-sm transition-colors ${currentPage === pageNum
-                                ? "bg-[#d9ac4f] text-black font-medium"
-                                : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => handlePageChange(pageNum)}
+                                className={`px-3 py-1 rounded text-sm transition-colors ${
+                                  currentPage === pageNum
+                                    ? "bg-[#d9ac4f] text-black font-medium"
+                                    : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
                                 }`}
-                            >
-                              {pageNum}
-                            </button>
-                          );
-                        })}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          }
+                        )}
                       </div>
 
                       <button
@@ -2056,7 +2293,6 @@ function LotteryWingo() {
               )}
             </div>
           )}
-
         </div>
 
         <div className="text-center mb-0 w-full mt-2 relative z-0">

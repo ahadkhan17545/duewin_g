@@ -19,6 +19,8 @@ import subordinate from "../Assets/finalicons/subordinate.png";
 import { MdOutlineContentCopy } from "react-icons/md";
 import Footer from "../components/Footer";
 import apiServices from "../api/apiServices";
+import { useDispatch } from "react-redux";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
 
 // Disable browser scroll restoration
 if (typeof window !== "undefined" && window.history.scrollRestoration) {
@@ -45,59 +47,117 @@ function PromotionPage() {
   const [commission, setCommission] = useState(null);
   const [commissionYesterday, setCommissionYesterday] = useState(null);
   const [commissionWeek, setCommissionWeek] = useState(null);
+  const dispatch = useDispatch();
+
   const fetchReferal = async () => {
-    let data = await apiServices?.getReferral();
-    if (data?.success == true) {
-      setReferal(data?.directReferrals);
-      setTotalReferral(data?.total);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices?.getReferral();
+      if (data?.success) {
+        setReferal(data?.directReferrals);
+        setTotalReferral(data?.total);
+      }
+    } catch (err) {
+      console.error("Error in fetchReferal:", err);
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
   const fetchData = async () => {
-    let data = await apiServices.getReferralTeam();
-    setData(data?.teamReferrals);
-    setTeamCount(data?.total);
-    const counts = {};
-
-    // Object.entries(data?.teamReferrals).forEach(([levelKey, users]) => {
-    //   counts[levelKey] = users?.length ?? 0;
-    // });
+    try {
+      dispatch(startLoading());
+      let data = await apiServices.getReferralTeam();
+      setData(data?.teamReferrals);
+      setTeamCount(data?.total);
+      // Optional: Uncomment if you want level-wise count
+      // const counts = {};
+      // Object.entries(data?.teamReferrals).forEach(([levelKey, users]) => {
+      //   counts[levelKey] = users?.length ?? 0;
+      // });
+    } catch (err) {
+      console.error("Error in fetchData:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
+
   const fetchUserProfile = async () => {
     try {
+      dispatch(startLoading());
       const data = await apiServices.getUserProfile();
-
       if (!data?.success) {
         console.error("Error fetching user data");
         return;
       }
-      const user = data.user;
-      setUserData(user);
-    } catch (err) {}
+      setUserData(data.user);
+    } catch (err) {
+      console.error("Error in fetchUserProfile:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
+
   const fetchdirectDeposit = async () => {
-    let data = await apiServices?.getReferralDirectData();
-    setDirectDeposit(data);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices?.getReferralDirectData();
+      setDirectDeposit(data);
+    } catch (err) {
+      console.error("Error in fetchdirectDeposit:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
+
   const fetchTeamDeposit = async () => {
-    let data = await apiServices?.getReferralTeamData();
-    setTeamDeposit(data);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices?.getReferralTeamData();
+      setTeamDeposit(data);
+    } catch (err) {
+      console.error("Error in fetchTeamDeposit:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
 
   const fetchCommission = async () => {
-    let data = await apiServices.getCommissionToday();
-    setCommission(data);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices.getCommissionToday();
+      setCommission(data);
+    } catch (err) {
+      console.error("Error in fetchCommission:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
 
   const fetchCommissionYesterday = async () => {
-    let data = await apiServices.getCommissionYesterday();
-    setCommissionYesterday(data);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices.getCommissionYesterday();
+      setCommissionYesterday(data);
+    } catch (err) {
+      console.error("Error in fetchCommissionYesterday:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
 
   const fetchCommissionWeek = async () => {
-    let data = await apiServices.getCommissionLast7Days();
-    setCommissionWeek(data);
+    try {
+      dispatch(startLoading());
+      let data = await apiServices.getCommissionLast7Days();
+      setCommissionWeek(data);
+    } catch (err) {
+      console.error("Error in fetchCommissionWeek:", err);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
+
   useEffect(() => {
     fetchReferal();
     fetchUserProfile();

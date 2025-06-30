@@ -150,13 +150,6 @@ function Subordinate() {
         <div className="bg-[#242424]  w-full max-w-md mx-auto flex flex-col ">
           {/* Search Input */}
           <div className="relative mb-2">
-            <input
-              type="text"
-              placeholder="Search subordinate UID"
-              value={searchUid}
-              onChange={(e) => setSearchUid(e.target.value)}
-              className="w-full bg-[#333332] text-[#a8a5a1] p-2 rounded-lg pr-10 outline-none focus:ring-2 transition-all text-sm"
-            />
             <button
               onClick={handleSearch}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg"

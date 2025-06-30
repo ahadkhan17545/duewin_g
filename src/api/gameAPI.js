@@ -177,7 +177,7 @@ export const transferFromThirdParty = async () => {
 
 const gameApi = {
   // Enhanced getUserBets function with auth checking
-  getUserBets: async (gameType, duration,  limit = 10  ,page = 1, ) => {
+  getUserBets: async (gameType, duration,  page = 1,limit = 10 ) => {
       let data =  await apiServices.getUserBets(gameType,duration,page,limit)
       return data
   },  
