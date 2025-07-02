@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
+const FreezePopup = ({
+  children,
+  timeRemaining,
+  duration,
+  handleRefresh,
+  gameType,
+}) => {
   const [count, setCount] = useState(5);
   const [showFreezePopup, setShowFreezePopup] = useState(false);
   useEffect(() => {
@@ -18,23 +24,22 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
       setCount(totalSeconds);
     } else {
       setShowFreezePopup(false);
-
     }
-
   }, [timeRemaining]);
 
   // Optional: Add a timeout to hide the popup after showing "00" for a brief moment
   useEffect(() => {
     const { minutes, seconds } = timeRemaining;
-    console.log(timeRemaining)
     const totalSeconds = minutes * 60 + seconds;
-    if (totalSeconds < 2) {
-        handleRefresh()
+    if (totalSeconds == 2) {
+      setTimeout(()=>{
+        handleRefresh();
+      },2000)
     }
     if (count === 0 && showFreezePopup) {
       const timer = setTimeout(() => {
         setShowFreezePopup(false);
-      }, 1000); 
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
@@ -42,7 +47,7 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
 
   // Format count to always show two digits
   const formatCount = (num) => {
-    return num.toString().padStart(2, '0');
+    return num.toString().padStart(2, "0");
   };
 
   // Split the formatted count into individual digits
@@ -52,6 +57,20 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
   };
 
   const [firstDigit, secondDigit] = getDigits(count);
+  const getTopPercentage = (type) => {
+    switch (type) {
+      case "k3":
+        return "90%";
+      case "wingo":
+        return "17%";
+      case "5d":
+        return "-10%";
+      case "twist":
+        return "20%";
+      default:
+        return "17%";
+    }
+  };
 
   return (
     <div className="relative mb-2">
@@ -60,7 +79,13 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
 
       {/* Freeze popup only when last 5 seconds - using your preferred design */}
       {showFreezePopup && (
-        <div className="absolute top-[17%] left-0 right-0 flex items-center justify-center rounded-lg z-10   bg-black bg-opacity-50 p-[10px]">
+        <div
+          className="absolute left-0 right-0 flex items-center justify-center rounded-lg z-10   bg-black bg-opacity-50 p-[10px]"
+          style={{
+            top: getTopPercentage(gameType),
+            height: gameType == 'k3'? "350px":('5d'?"270px":'')
+          }}
+        >
           <div className="flex gap-4">
             <div className="w-[120px] h-[160px] bg-[#4d4d4c] text-[#d9ac4f] text-[120px] font-bold flex items-center justify-center rounded-lg">
               {firstDigit}
@@ -71,7 +96,6 @@ const FreezePopup = ({ children, timeRemaining, duration, handleRefresh }) => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

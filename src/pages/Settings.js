@@ -32,7 +32,6 @@ export const avatarMap = {
   10: user10,
 };
 
-
 const UserProfile = () => {
   const [showAvatarPage, setShowAvatarPage] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(settingicon);
@@ -41,7 +40,7 @@ const UserProfile = () => {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
   // Fetch user profile (unchanged)
@@ -60,7 +59,7 @@ const UserProfile = () => {
 
       setSelectedAvatar(avatarId);
       setUserData(user);
-      setNickname(user?.user_name)
+      setNickname(user?.user_name);
     } catch (err) {
       setError("Error fetching profile: " + err.message);
     } finally {
@@ -68,11 +67,8 @@ const UserProfile = () => {
     }
   };
   useEffect(() => {
-
-
     fetchUserProfile();
   }, []);
-
 
   const handleAvatarChange = async (avatar) => {
     try {
@@ -94,15 +90,14 @@ const UserProfile = () => {
 
       const avatarFileName = avatarMap[avatar] || "default.png";
       let payload = {
-        profile_picture_id: avatarFileName
-      }
-      let data = await apiServices.updateUserProfilePicture(payload)
+        profile_picture_id: avatarFileName,
+      };
+      let data = await apiServices.updateUserProfilePicture(payload);
       if (data?.success == true) {
         setSelectedAvatar(avatar);
         setShowAvatarPage(false);
-        fetchUserProfile()
+        fetchUserProfile();
       }
-
     } catch (err) {
       setError("Error updating avatar: " + err.message);
     } finally {
@@ -111,13 +106,12 @@ const UserProfile = () => {
   };
 
   const handleConfirm = async () => {
-    let payload = userData
-    payload.user_name = nickname
-    let data = await apiServices.updateUserProfile(payload)
+    let payload = userData;
+    payload.user_name = nickname;
+    let data = await apiServices.updateUserProfile(payload);
     if (data?.success == true) {
       setShowNicknamePopup(false);
     }
-
   };
 
   const handleCopy = (text) => {
@@ -201,7 +195,9 @@ const UserProfile = () => {
           >
             <div className="text-gray-300 text-lg">Nickname</div>
             <div className="flex items-center">
-              <span className="mr-2 text-lg font-normal">{userData?.user_name}</span>
+              <span className="mr-2 text-lg font-normal">
+                {userData?.user_name}
+              </span>
               <ChevronRight className="w-5 h-5 text-gray-400" />
             </div>
           </div>
@@ -278,21 +274,25 @@ const UserProfile = () => {
 
       {showNicknamePopup && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-          <div className="bg-[#1d1d1d] rounded-xl w-[90%] max-w-[380px] p-6 shadow-lg relative">
-            <div className="bg-[#2f2f2f] rounded-xl px-6 pt-10 pb-12 min-h-[400px] flex flex-col justify-between">
-              <div className="text-center mb-8 relative">
-                <div className="absolute left-0 top-1/2 h-[1px] w-16 bg-[#777]"></div>
-                <h2 className="text-white text-xl font-semibold">
+          <div className=" w-[90%] max-w-[360px] p-4 pt-5 pb-2 relative">
+            {/* Gray inner container */}
+            <div className="bg-[#2f2f2f] rounded-xl px-5 pt-6 pb-4">
+              {/* Header */}
+              <div className="text-center mb-6 relative">
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 h-[1px] w-14 bg-[#777]" />
+                <h2 className="text-white text-sm font-semibold">
                   Change Nickname
                 </h2>
-                <div className="absolute right-0 top-1/2 h-[1px] w-16 bg-[#777]"></div>
+                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 h-[1px] w-14 bg-[#777]" />
               </div>
-              <div>
-                <div className="flex items-center mb-4">
-                  <div className="w-7 h-7 bg-amber-600 rounded-full flex items-center justify-center mr-2">
+
+              {/* Nickname Field */}
+              <div className="bg-[#3E3E3E] rounded-xl p-4">
+                <div className="flex items-center mb-3">
+                  <div className="w-5 h-5 bg-[#d9ac4f] rounded-full flex items-center justify-center mr-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-white"
+                      className="h-3 w-3 text-white"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -309,19 +309,26 @@ const UserProfile = () => {
                   type="text"
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  className="w-full py-3 px-5 bg-[#1b1b1b] text-white rounded-full mb-8 border border-[#444] focus:outline-none text-base"
+                  className="w-full py-2.5 px-4 bg-[#1b1b1b] text-white rounded-full text-sm placeholder-gray-400 focus:outline-none"
                 />
+                 <div className="mt-20">
+                <button
+                  className="w-full py-2.5 bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] text-sm font-semibold rounded-full hover:opacity-90 transition"
+                  onClick={handleConfirm}
+                >
+                  Confirm
+                </button>
               </div>
-              <button
-                className="w-full py-3 bg-gradient-to-r from-[#e0b548] to-[#f0d68a] text-black font-medium rounded-full hover:opacity-90 transition"
-                onClick={handleConfirm}
-              >
-                Confirm
-              </button>
+              </div>
+
+              {/* Confirm Button (tight spacing) */}
+             
             </div>
-            <div className="absolute -bottom-14 left-1/2 transform -translate-x-1/2">
+
+            {/* Close Button */}
+            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2">
               <button
-                className="w-9 h-9 rounded-full border-2 border-white text-white flex items-center justify-center bg-[#1d1d1d] hover:bg-[#2a2a2a]"
+                className="w-9 h-9 rounded-full border border-white text-white flex items-center justify-center bg-[#1d1d1d] hover:bg-[#2a2a2a]"
                 onClick={() => setShowNicknamePopup(false)}
               >
                 ✕

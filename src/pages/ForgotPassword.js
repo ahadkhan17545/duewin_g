@@ -65,17 +65,17 @@ function ForgotPassword() {
     <div className="flex flex-col items-center min-h-screen bg-[#242424] w-full">
       <div className="w-full max-w-[400px] mx-auto">
         <Header />
-        <div className="bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] w-full px-6 py-4">
-          <h1 className="text-xl font-bold text-white mb-1 text-left">
+        <div className="bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] w-full px-6 py-2">
+          <h1 className="text-lg font-bold text-white mb-1 text-left">
             Forgot Password
           </h1>
-          <p className="text-white text-sm sm:text-base leading-tight text-left">
+          <p className="text-white text-xs sm:text-base leading-tight text-left mb-2">
             Please retrieve/change your password through your mobile phone number or
             email.
           </p>
         </div>
 
-        <div className="bg-[#242424] p-6 w-full max-w-[400px] flex flex-col items-center rounded-lg">
+        <div className="bg-[#242424] p-4 w-full max-w-[400px] flex flex-col items-center rounded-lg">
           <div className="flex justify-center gap-12 mb-4 w-full border-b border-gray-600">
             <button
               className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${
@@ -85,8 +85,8 @@ function ForgotPassword() {
               }`}
               onClick={() => setIsPhoneLogin(true)}
             >
-              <img src={phone} alt="Phone" className="h-8 w-auto" />
-              <span>phone reset</span>
+              <img src={phone} alt="Phone" className="h-8 w-6" />
+              <span className="text-lg">phone reset</span>
             </button>
             <button
               className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${
@@ -96,8 +96,8 @@ function ForgotPassword() {
               }`}
               onClick={() => setIsPhoneLogin(false)}
             >
-              <img src={email} alt="Email" className="h-8 w-auto" />
-              <span>mailbox reset</span>
+              <img src={email} alt="Email" className="h-8 w-14" />
+              <span className="text-lg">mailbox reset</span>
             </button>
           </div>
 
@@ -107,8 +107,8 @@ function ForgotPassword() {
           >
             {isPhoneLogin ? (
               <div>
-                <label className="block mb-2 text-sm font-medium text-white mt-6 flex items-center gap-2">
-                  <img src={phoneicon} alt="Phone" className="h-7 w-7" />
+                <label className="block mb-2 text-sm font-medium text-white mt-3 flex items-center gap-2">
+                  <img src={phoneicon} alt="Phone" className="h-6 w-5" />
                   Phone number
                 </label>
                 <div className="relative flex items-center">
@@ -148,8 +148,8 @@ function ForgotPassword() {
               </div>
             ) : (
               <div>
-                <label className="block mb-2 text-sm mt-6 font-medium text-white flex items-center gap-1">
-                  <img src={emailiconn} alt="Email" className="h-7 w-7" />
+                <label className="block mb-2 text-sm mt-3 font-medium text-white flex items-center gap-1">
+                  <img src={emailiconn} alt="Email" className="h-6 w-5" />
                   Email
                 </label>
                 <input
@@ -165,7 +165,7 @@ function ForgotPassword() {
 
             <div>
               <label className="block mb-2 text-sm mt-6 font-medium text-white flex items-center gap-2">
-                <img src={lockicon} alt="Lock" className="h-7 w-7" />
+                <img src={lockicon} alt="Lock" className="h-6 w-5" />
                 A new password
               </label>
               <input
@@ -180,7 +180,7 @@ function ForgotPassword() {
 
             <div>
               <label className="block mb-2 text-sm mt-6 font-medium text-white flex items-center gap-2">
-                <img src={lockicon} alt="Lock" className="h-7 w-7" />
+                <img src={lockicon} alt="Lock" className="h-6 w-5" />
                 Confirm new password
               </label>
               <input
@@ -195,7 +195,7 @@ function ForgotPassword() {
 
             <div>
               <label className="block mb-2 text-sm font-medium mt-6 text-white flex items-center gap-2">
-                <img src={realtime} alt="Verification" className="h-7 w-7" />
+                <img src={realtime} alt="Verification" className="h-6 w-5" />
                 Verification Code
               </label>
               <div className="relative">
@@ -217,15 +217,15 @@ function ForgotPassword() {
             </div>
 
             <div
-              className="flex items-center cursor-pointer mb-4"
+              className="flex items-center cursor-pointer "
               onClick={handlePrivacyAgreementChange}
             >
               <img
                 src={privacyAgreement ? agree : agreeborder}
                 alt="Privacy Agreement Checkbox"
-                className="w-5 h-5"
+                className="w-5 h-5 mt-3"
               />
-              <label className="ml-2 text-sm text-white">
+              <label className="ml-2 mt-3 text-sm text-white">
                 I have read and agree{" "}
                 <span className="text-red-500">[Privacy Agreement]</span>
               </label>
@@ -234,7 +234,7 @@ function ForgotPassword() {
             <Link to="/login">
               <button
                 type="submit"
-                className="w-full text-lg font-bold mt-4 bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] py-3 rounded-full focus:ring-gray-300"
+                className="w-full text-lg font-bold mt-8 bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] py-3 rounded-full focus:ring-gray-300"
               >
                 Reset
               </button>

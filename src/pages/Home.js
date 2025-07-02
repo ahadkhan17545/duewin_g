@@ -61,7 +61,7 @@ import bannerone from "../Assets/finalicons/Banner1.png";
 import bannerthree from "../Assets/finalicons/Banner3.png";
 import whitetick from "../Assets/whitetick.png";
 import apiServices from "../api/apiServices";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import b2dark from "../Assets/home/b2-dark.png";
 import bfdark from "../Assets/home/df-dark.png";
 import EBEST from "../Assets/home/eBET.png";
@@ -73,6 +73,7 @@ import jili from "../Assets/home/jili.png";
 import leap from "../Assets/home/leap.png";
 import live from "../Assets/home/live.png";
 import headerLogo from "../Assets/vip1/headerLogo.png";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
 
 // Game categories
 const gameCategories = [
@@ -99,6 +100,7 @@ const userImages = [
 ];
 
 function Home() {
+  const dispatch = useDispatch();
   const [activeCategory, setActiveCategory] = useState("Lottery");
   const [hotGames, setHotGames] = useState([]);
   const [originalGames, setOriginalGames] = useState([]);
@@ -110,7 +112,6 @@ function Home() {
   const gameSectionRef = React.useRef(null);
   const [showPopup, setShowPopup] = useState(false);
   const [user, setUser] = useState(null);
-  // const [games,setGames] = useState([])
 
   const fetchAllGame = async () => {
     try {
@@ -1103,8 +1104,8 @@ function Home() {
               }}
             >
               <div
-                className="relative w-[320px] h-[320px] overflow-hidden rounded-lg p-2"
-                style={{ width: "336px" }}
+                className="relative w-[96%] h-[320px] overflow-hidden rounded-lg p-2"
+             
               >
                 {winners.map((winner, index) => (
                   <div
@@ -1154,7 +1155,7 @@ function Home() {
               </h2>
               <div
                 className="relative w-full h-32 bg-cover bg-center mb-6 mt-24 text-xs"
-                style={{ backgroundImage: `url(${rank})` }}
+                // style={{ backgroundImage: `url(${rank})` }}
               >
                 {earnings.slice(0, 3).map((earner, index) => (
                   <div
@@ -1218,7 +1219,7 @@ function Home() {
                 ))}
 
                 {/* 🔒 Bottom 10 Hardcoded Cards */}
-                <div className="bg-[#1e1d2b] px-2 py-4 rounded-lg text-white space-y-4">
+                <div className="bg-[#333332]] px-2 py-4 rounded-lg text-white space-y-4">
                   {/* 🔝 Top Logo */}
                   <div className="flex justify-between align-center">
                     <img
@@ -1260,19 +1261,19 @@ function Home() {
                   {/* 📝 Bottom Paragraphs (Styled Like the Image) */}
                   <div className="space-y-3 text-sm text-[#d9d7d3]">
                     <p className="flex gap-2">
-                      <span className="text-blue-500">◆</span>
+                      <span className="text-[#c38d2f]">◆</span>
                       The platform advocates fairness, justice, and openness. We
                       mainly operate fair lottery, blockchain games, live
                       casinos, and slot machine games.
                     </p>
                     <p className="flex gap-2">
-                      <span className="text-blue-500">◆</span>
+                     <span className="text-[#c38d2f]">◆</span>
                       Tiranga works with more than 10,000 online live game
                       dealers and slot games, all of which are verified fair
                       games.
                     </p>
                     <p className="flex gap-2">
-                      <span className="text-blue-500">◆</span>
+                     <span className="text-[#c38d2f]">◆</span>
                       Tiranga supports fast deposit and withdrawal, and looks
                       forward to your visit.
                     </p>

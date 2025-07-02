@@ -46,7 +46,6 @@ import SettingsProfile from "./pages/Profile/SettingsProfile";
 import TransactionProfile from "./pages/Profile/TransactionProfile";
 import VIPProfile from "./pages/Profile/VIPProfile";
 import WithdrawHistoryProfile from "./pages/Profile/WithdrawHistoryProfile";
-import WithdrawProfile from "./pages/Profile/WithdrawProfile";
 import PrivacyAgreement from "./pages/PrivacyAgreement";
 import DepositWingo from "./pages/Lottery/LotteryWingo/DepositWingo";
 import WithdrawWingo from "./pages/Lottery/LotteryWingo/WithdrawWingo";
@@ -203,7 +202,6 @@ function App() {
                                         <Route path="/transactionprofile" element={<TransactionProfile />} />
                                         <Route path="/vipprofile" element={<VIPProfile />} />
                                         <Route path="/withdrawhistoryprofile" element={<WithdrawHistoryProfile />} />
-                                        <Route path="/withdrawprofile" element={<WithdrawProfile />} />
                                         <Route path="/safe" element={<FinancialCard />} />
                                         <Route path="/about-safe" element={<RulesComponent />} />
                                         <Route path="/viphistory" element={<VIPHistory />} />

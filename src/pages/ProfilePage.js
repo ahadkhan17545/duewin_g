@@ -466,32 +466,32 @@ function ProfilePage() {
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-[#2b2b2b] rounded-lg w-4/5 max-w-sm overflow-hidden">
+          <div className="bg-[#2b2b2b] rounded-2xl w-[315px] max-w-sm overflow-hidden ">
             {/* Alert Icon */}
             <div className="flex justify-center pt-6 pb-2">
-              <div className="w-20 h-20 rounded-full bg-[#ff4d4f] flex items-center justify-center">
-                <span className="text-white text-6xl font-bold">!</span>
+              <div className="w-16 h-16 rounded-full bg-[#ff4d4f] flex items-center justify-center">
+                <span className="text-white text-6xl font-bold pb-">!</span>
               </div>
             </div>
 
             {/* Modal Text */}
-            <div className="text-center text-white text-2xl font-medium py-4">
+            <div className="text-center text-white text-xl font-medium py-4">
               Do you want to log out?
             </div>
 
             {/* Modal Buttons */}
-            <div className="px-10 pb-6 pt-2 mt-4">
+            <div className="px-6 pb-3 pt-2 mt-4">
               <button
                 onClick={handleConfirmLogout}
                 disabled={isLoggingOut}
-                className="w-full mb-3 py-2 bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-full text-[#8f5206] text-lg disabled:opacity-50"
+                className="w-full mb-3 py-1.5 bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-full text-[#8f5206] text-lg disabled:opacity-50"
               >
                 {isLoggingOut ? "Logging Out..." : "Confirm"}
               </button>
               <button
                 onClick={handleCancelLogout}
                 disabled={isLoggingOut}
-                className="w-full py-2 border border-[#d9ac4f] rounded-full text-[#d9ac4f] text-lg disabled:opacity-50"
+                className="w-full py-1.5 border border-[#d9ac4f] rounded-full text-[#d9ac4f] text-lg disabled:opacity-50"
               >
                 Cancel
               </button>

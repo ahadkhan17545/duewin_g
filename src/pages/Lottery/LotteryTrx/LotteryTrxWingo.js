@@ -31,6 +31,7 @@ import img6 from '../../../Assets/WingoNew/n6-a56e0b9a.png';
 import img7 from '../../../Assets/WingoNew/n7-5961a17f.png';
 import img8 from '../../../Assets/WingoNew/n8-d4d951a4.png';
 import img9 from '../../../Assets/WingoNew/n9-a20f6f42.png';
+import CommanHeader from "../../../components/CommanHeader";
 
 const buttonData = [
   {
@@ -407,7 +408,7 @@ function LotteryTrxWingo() {
 
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-3 pl-3   pt-11 pb-24">
-      <LotteryWingoheader />
+      <CommanHeader isGameHeader={true} />
       <div className="text-center w-full max-w-sm mt-8">
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}

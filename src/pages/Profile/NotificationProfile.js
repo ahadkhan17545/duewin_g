@@ -21,11 +21,11 @@ function NotificationProfile() {
         <div className="bg-[#333332] px-4 py-2 mt-14 rounded-lg shadow-md">
           <div className="flex justify-between items-center">
             <img src={Notification} alt="File Icon" className="w-5 h-4 mr-1" />
-            <p className="text-white text-lg mr-24 font-semibold">LOGIN NOTIFICATION</p>
+            <p className="text-white text-[15px] mr-24 font-semibold">LOGIN NOTIFICATION</p>
             <img
               src={Delete}
               alt="Delete Icon"
-              className="w-8 h-8 ml-4 cursor-pointer"
+              className="w-5 h-5 ml-6 cursor-pointer"
               onClick={() => setShowPopup(true)}
             />
           </div>

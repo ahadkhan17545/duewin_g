@@ -1,5 +1,6 @@
 import React from 'react';
 import GameRulesHeader from '../../components/GameRulesHeader';
+import CommanHeader from '../../components/CommanHeader';
 
 const AttendanceBonusCombined = () => {
   // Table data with headers and rows
@@ -25,8 +26,8 @@ const AttendanceBonusCombined = () => {
   ];
 
   return (
-    <div className="bg-[#242424] min-h-screen w-full flex flex-col items-center justify-center p-4 font-serif">
-        <GameRulesHeader/>
+    <div className="bg-[#242424] min-h-screen w-full flex flex-col items-center p-4 font-serif">
+        <CommanHeader title='Game Rules'/>
       <div className="w-full max-w-md mx-auto mt-10">
         
         {/* Attendance Bonus Table Container */}
@@ -53,11 +54,11 @@ const AttendanceBonusCombined = () => {
                   key={rowIndex} 
                   className={rowIndex % 2 === 0 ? "bg-[#333332]" : "bg-[#282730]"}
                 >
-                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-xs sm:text-sm font-sans">{row.day}</td>
-                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-xs sm:text-sm">
+                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-[14px] sm:text-sm font-sans">{row.day}</td>
+                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-[14px] sm:text-sm">
                     <span className="font-sans">₹{row.accumulatedAmount.replace('₹', '')}</span>
                   </td>
-                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-xs sm:text-sm">
+                  <td className="py-3 px-2 text-center text-[#a8a5a1] text-[14px] sm:text-sm">
                     <span className="font-sans">₹{row.attendanceBonus.replace('₹', '')}</span>
                   </td>
                 </tr>
@@ -79,7 +80,7 @@ const AttendanceBonusCombined = () => {
               {rules.map((rule, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-amber-500 mr-2 flex-shrink-0 mt-1">◆</span>
-                  <span className="text-xs sm:text-sm text-[#a8a5a1]">{rule}</span>
+                  <span className="text-sm sm:text-sm text-[#a8a5a1]">{rule}</span>
                 </li>
               ))}
             </ul>

@@ -1,0 +1,31 @@
+.line {
+    border: .01333rem dashed #525167;
+    margin: .48rem auto;
+    position: relative;
+    width: calc(100% - 1.14667rem);
+    padding: 0 .13333rem;
+}
+
+.line::before {
+    left: -31px;
+    content: "";
+    display: block;
+    border-radius: 50%;
+    background-color: #242424;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -10px;
+}
+
+.line::after {
+    content: "";
+    display: block;
+    border-radius: 50%;
+    background-color: #242424;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -10px;
+    right: -31px;
+}

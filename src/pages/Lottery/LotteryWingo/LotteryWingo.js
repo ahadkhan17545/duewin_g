@@ -40,6 +40,7 @@ import img8 from "./../../../Assets/WingoNew/n8-d4d951a4.png";
 import img9 from "./../../../Assets/WingoNew/n9-a20f6f42.png";
 import { useLocation } from "react-router-dom";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
+import CommanHeader from "../../../components/CommanHeader";
 const imageMap = {
   0: img0,
   1: img1,
@@ -873,7 +874,7 @@ function LotteryWingo() {
           }
         `}
       </style>
-      <LotteryWingoheader />
+      <CommanHeader isGameHeader={true} />
 
       <div className="bg-[#242424] text-center w-full ">
         <div className="rounded-3xl shadow-2xl p-2 relative overflow-hidden min-h-[120px]">
@@ -1303,6 +1304,7 @@ function LotteryWingo() {
           timeRemaining={timeRemaining}
           duration={buttonData[activeButton].duration}
           handleRefresh={() => setRefetchData((prev) => !prev)}
+          gameType ="wingo"
         >
           <div className="bg-[#333332] rounded-lg shadow-md  p-2 pt-1 space-y-2">
             {/* {isLoading && (

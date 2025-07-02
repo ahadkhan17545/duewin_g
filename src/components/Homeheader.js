@@ -2,39 +2,48 @@ import React, { useState, useEffect } from "react";
 import download from "../Assets/download.png";
 import IconWallet from "../Assets/homewallet.png";
 import flagIcon from "../Assets/usFlag.png";
-import headerLogo from '../Assets/vip1/headerLogo.png'; 
+import headerLogo from "../Assets/vip1/headerLogo.png";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
+import apiServices from "../api/apiServices";
+import { useDispatch } from "react-redux";
 const Homeheader = () => {
   const [walletBalance, setWalletBalance] = useState("0.00");
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const dispatch = useDispatch()
   const [pwaStatus, setPwaStatus] = useState({
     canInstall: false,
     isInstalled: false,
-    errors: []
+    errors: [],
   });
 
   // Debug PWA installation readiness
   const checkPWAReadiness = () => {
     const errors = [];
-    
+
     // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches || 
-        window.navigator.standalone === true) {
-      setPwaStatus(prev => ({ ...prev, isInstalled: true }));
+    if (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    ) {
+      setPwaStatus((prev) => ({ ...prev, isInstalled: true }));
       return;
     }
 
     // Check HTTPS
-    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-      errors.push('App must be served over HTTPS');
+    if (
+      window.location.protocol !== "https:" &&
+      window.location.hostname !== "localhost"
+    ) {
+      errors.push("App must be served over HTTPS");
     }
 
     // Check for service worker
-    if (!('serviceWorker' in navigator)) {
-      errors.push('Service Worker not supported');
+    if (!("serviceWorker" in navigator)) {
+      errors.push("Service Worker not supported");
     } else {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
         if (registrations.length === 0) {
-          errors.push('No Service Worker registered');
+          errors.push("No Service Worker registered");
         }
       });
     }
@@ -42,64 +51,62 @@ const Homeheader = () => {
     // Check for web app manifest
     const manifestLink = document.querySelector('link[rel="manifest"]');
     if (!manifestLink) {
-      errors.push('Web App Manifest not found');
+      errors.push("Web App Manifest not found");
     } else {
       // Validate manifest content
       fetch(manifestLink.href)
-        .then(response => response.json())
-        .then(manifest => {
-          const requiredFields = ['name', 'short_name', 'start_url', 'display', 'icons'];
-          const missingFields = requiredFields.filter(field => !manifest[field]);
-          
+        .then((response) => response.json())
+        .then((manifest) => {
+          const requiredFields = [
+            "name",
+            "short_name",
+            "start_url",
+            "display",
+            "icons",
+          ];
+          const missingFields = requiredFields.filter(
+            (field) => !manifest[field]
+          );
+
           if (missingFields.length > 0) {
-            errors.push(`Manifest missing: ${missingFields.join(', ')}`);
+            errors.push(`Manifest missing: ${missingFields.join(", ")}`);
           }
 
           if (!manifest.icons || manifest.icons.length === 0) {
-            errors.push('Manifest needs at least one icon');
+            errors.push("Manifest needs at least one icon");
           } else {
-            const hasRequiredIcon = manifest.icons.some(icon => 
-              icon.sizes && (icon.sizes.includes('192x192') || icon.sizes.includes('512x512'))
+            const hasRequiredIcon = manifest.icons.some(
+              (icon) =>
+                icon.sizes &&
+                (icon.sizes.includes("192x192") ||
+                  icon.sizes.includes("512x512"))
             );
             if (!hasRequiredIcon) {
-              errors.push('Manifest needs icons with sizes 192x192 or 512x512');
+              errors.push("Manifest needs icons with sizes 192x192 or 512x512");
             }
           }
         })
         .catch(() => {
-          errors.push('Manifest file could not be loaded');
+          errors.push("Manifest file could not be loaded");
         });
     }
 
-    setPwaStatus(prev => ({ ...prev, errors }));
+    setPwaStatus((prev) => ({ ...prev, errors }));
   };
 
   // Fetch wallet balance
   useEffect(() => {
     const fetchWalletBalance = async () => {
+      dispatch(startLoading());
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          console.error("No authentication token found");
-          return;
-        }
-
-        const response = await fetch("https://api.strikecolor1.com/api/users/balance", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-        setWalletBalance(data.data?.wallet_balance || "0.00");
+        const data = await apiServices.getWalletBalanceForWithDraw();
+        setWalletBalance(data?.wallet?.balance);
       } catch (error) {
-        console.error("Error fetching wallet balance:", error);
-        setWalletBalance("0.00");
+        console.log(error);
+      } finally {
+        dispatch(stopLoading());
       }
     };
-
     fetchWalletBalance();
   }, []);
 
@@ -111,31 +118,31 @@ const Homeheader = () => {
   // Handle beforeinstallprompt event for PWA installation
   useEffect(() => {
     const handler = (e) => {
-      console.log('beforeinstallprompt event fired');
+      console.log("beforeinstallprompt event fired");
       e.preventDefault();
       setDeferredPrompt(e);
-      setPwaStatus(prev => ({ ...prev, canInstall: true }));
+      setPwaStatus((prev) => ({ ...prev, canInstall: true }));
     };
 
     window.addEventListener("beforeinstallprompt", handler);
 
     // Also listen for app installed event
-    window.addEventListener('appinstalled', () => {
-      console.log('PWA was installed');
-      setPwaStatus(prev => ({ ...prev, isInstalled: true }));
+    window.addEventListener("appinstalled", () => {
+      console.log("PWA was installed");
+      setPwaStatus((prev) => ({ ...prev, isInstalled: true }));
       setDeferredPrompt(null);
     });
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
-      window.removeEventListener('appinstalled', () => {});
+      window.removeEventListener("appinstalled", () => {});
     };
   }, []);
 
   // Enhanced install handler with better debugging
   const handleInstallClick = async () => {
     if (pwaStatus.isInstalled) {
-      alert('App is already installed!');
+      alert("App is already installed!");
       return;
     }
 
@@ -144,16 +151,16 @@ const Homeheader = () => {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         console.log(`User response to install prompt: ${outcome}`);
-        
-        if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
+
+        if (outcome === "accepted") {
+          console.log("User accepted the install prompt");
         } else {
-          console.log('User dismissed the install prompt');
+          console.log("User dismissed the install prompt");
         }
-        
+
         setDeferredPrompt(null);
       } catch (error) {
-        console.error('Error during installation:', error);
+        console.error("Error during installation:", error);
       }
     } else {
       // Show debug info
@@ -163,9 +170,9 @@ const Homeheader = () => {
         `- Is Installed: ${pwaStatus.isInstalled}`,
         `- Protocol: ${window.location.protocol}`,
         `- Host: ${window.location.hostname}`,
-        `- Errors: ${pwaStatus.errors.length ? pwaStatus.errors.join(', ') : 'None'}`
-      ].join('\n');
-      
+        `- Errors: ${pwaStatus.errors.length ? pwaStatus.errors.join(", ") : "None"}`,
+      ].join("\n");
+
       console.log(debugInfo);
       alert(`Installation not available.\n\n${debugInfo}`);
     }
@@ -182,12 +189,8 @@ const Homeheader = () => {
         }}
       >
         <div className="flex flex-col justify-center">
-          <img
-         src={headerLogo}
-         alt="Logo"
-         className="w-34 h-12 mb-5"
-       />
-          <div className="flex items-center space-x-1">
+          <img src={headerLogo} alt="Logo" className="w-36 h-10 mb-5" />
+          <div className="flex items-center space-x-10">
             <img
               src={flagIcon}
               alt="US Flag"
@@ -207,8 +210,12 @@ const Homeheader = () => {
               className="w-6 h-6 sm:w-8 sm:h-8 ml-2"
             />
             <div className="flex flex-col items-center leading-tight w-full">
-              <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs">Balance</span>
-              <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs">{walletBalance}</span>
+              <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs">
+                Balance
+              </span>
+              <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs">
+                {walletBalance}
+              </span>
             </div>
           </div>
 
@@ -218,7 +225,9 @@ const Homeheader = () => {
             style={{
               opacity: pwaStatus.isInstalled ? 0.6 : 1, // Only fade if already installed
             }}
-            title={pwaStatus.isInstalled ? 'App already installed' : 'Install app'}
+            title={
+              pwaStatus.isInstalled ? "App already installed" : "Install app"
+            }
           >
             <img
               src={download}
@@ -227,7 +236,7 @@ const Homeheader = () => {
             />
             <div className="flex flex-col items-center leading-tight w-full">
               <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs">
-                {pwaStatus.isInstalled ? 'Installed' : 'Download'}
+                {pwaStatus.isInstalled ? "Installed" : "Download"}
               </span>
               <span className="text-[#292d2e] font-semibold text-[10px] sm:text-xs text-center">
                 App

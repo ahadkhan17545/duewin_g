@@ -24,7 +24,7 @@ import num6 from "../../../Assets/num6.png";
 import walletbggame from "../../../Assets/walletbggame.png";
 import mark from "../../../Assets/finalicons/infoicon.png";
 import close from "../../../Assets/finalicons/close.png";
-import { getWalletBalance } from "../../../api/apiServices";
+import apiServices, { getWalletBalance } from "../../../api/apiServices";
 import useSocket from "../../../hooks/useSocket";
 import FreezePopup from "../../../components/FreezePopup";
 import redball from "../../../Assets/WingoNew/redBall.png";
@@ -35,6 +35,9 @@ import dice3 from "../../../Assets/WingoNew/n3-1432a6bd.png";
 import dice4 from "../../../Assets/WingoNew/n4-9d453819.png";
 import dice5 from "../../../Assets/WingoNew/n5-09b70e91.png";
 import dice6 from "../../../Assets/WingoNew/n6-b68c6bb6.png";
+import gameApi from "../../../api/gameAPI";
+import ResultPopUp from "../../../components/ResultPopUp";
+import CommanHeader from "../../../components/CommanHeader";
 
 const diceImages = {
   1: dice1,
@@ -484,6 +487,7 @@ function LotteryK3() {
   const [walletBalance, setWalletBalance] = useState(0.0);
   const [isRefreshingBalance, setIsRefreshingBalance] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [error, setError] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState({
     minutes: 0,
@@ -493,7 +497,6 @@ function LotteryK3() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-  const [fetchDataFlag, setFetchDataFlag] = useState(false);
   const [refetchData, setRefetchData] = useState(false);
   const {
     isConnected,
@@ -504,46 +507,21 @@ function LotteryK3() {
     gameHistory: socketHistory,
     placeBet,
   } = useSocket(gameType, buttonData[activeButton].duration);
-
+  const [userDidBet, setUserDidBet] = useState(false);
+  const [lastResult, setLastResult] = useState(null);
+  const [showWinPopup, setShowWinPopup] = useState(false);
+  const [showLossPopup, setShowLossPopup] = useState(false);
+  const [lastResultDice, setLastResultDice] = useState(null);
+  const [displayedDice, setDisplayedDice] = useState([1, 1, 1]); // to control what's shown on screen
+  const [isRolling, setIsRolling] = useState(false); // to control animation state
+  const [showWinPopupChecked, setShowWinPopupChecked] = useState(false);
+  const [showLossPopupChecked, setShowLossPopupChecked] = useState(false);
   useEffect(() => {
-    const fetchWalletBalance = async () => {
-      try {
-        const response = await getWalletBalance();
-        if (response?.success && response?.mainWallet) {
-          const balance = Number(response.mainWallet.balance) || 0;
-          setWalletBalance(balance);
-        } else {
-          setWalletBalance(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch wallet balance:", error);
-        setWalletBalance(0);
-      }
-    };
-
     fetchWalletBalance();
     const interval = setInterval(fetchWalletBalance, 30000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleRefreshBalance = async () => {
-    if (isRefreshingBalance) return;
-    setIsRefreshingBalance(true);
-    try {
-      const response = await getWalletBalance();
-      if (response?.success && response?.mainWallet) {
-        const balance = Number(response.mainWallet.balance) || 0;
-        setWalletBalance(balance);
-      } else {
-        setError("Failed to refresh balance");
-      }
-    } catch (error) {
-      setError("Failed to refresh balance. Please try again.");
-    } finally {
-      setIsRefreshingBalance(false);
-    }
-  };
-
+  
   useEffect(() => {
     if (isConnected) {
       const updates = {};
@@ -584,9 +562,6 @@ function LotteryK3() {
   ]);
 
   useEffect(() => {
-    if (timeRemaining.minutes == 0 && timeRemaining.seconds < 2) {
-      setFetchDataFlag((prev) => !prev);
-    }
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
       const currentId = parseInt(currentPeriod.periodId) || 0;
       const nextPeriodId = (currentId + 1).toString();
@@ -623,6 +598,60 @@ function LotteryK3() {
       return () => clearTimeout(timer);
     }
   }, [showSuccessPopup]);
+
+  useEffect(() => {
+    fetchLastResult();
+  }, [refetchData]);
+
+  useEffect(() => {
+    if (activeTab === "gameHistory") {
+      const duration = buttonData[activeButton].duration;
+      const fetchGameHistory = async () => {
+        setIsLoading(true);
+        const response = await fetchGameData(currentPage, duration);
+        if (isMounted.current) {
+          setGameHistoryData(response.results);
+          setTotalPages(response.pagination.total_pages || 1);
+          setIsLoading(false);
+        }
+      };
+      fetchGameHistory().catch(console.error);
+    }
+  }, [activeTab, currentPage, activeButton, refetchData]);
+
+  useEffect(() => {
+    if (activeTab === "chart") {
+      const duration = buttonData[activeButton].duration;
+      const fetchChartData = async () => {
+        setIsLoading(true);
+        const response = await fetchGameData(currentPage, duration);
+        if (isMounted.current) {
+          setChartData(response.results);
+          setTotalPages(response.pagination.total_pages || 1);
+          setIsLoading(false);
+        }
+      };
+      fetchChartData().catch(console.error);
+    }
+  }, [activeTab, currentPage, activeButton, refetchData]);
+  useEffect(() => {
+    fetchUserBets();
+  }, [activeTab, currentPage, activeButton, refetchData]);
+
+  useEffect(() => {
+    const duration = buttonData[activeButton].duration;
+    setTimeRemaining({
+      minutes: Math.floor(duration / 60),
+      seconds: duration % 60,
+    });
+    setCurrentPeriod({ periodId: "Loading..." });
+    setIsPeriodTransitioning(true);
+    setTimeout(() => {
+      if (!isConnected) {
+        setIsPeriodTransitioning(false);
+      }
+    }, 500);
+  }, [activeButton]);
 
   const fetchGameData = async (page, duration) => {
     try {
@@ -691,50 +720,174 @@ function LotteryK3() {
       return { results: [], pagination: { total_pages: 1 } };
     }
   };
-
-  useEffect(() => {
-    if (activeTab === "gameHistory") {
-      const duration = buttonData[activeButton].duration;
-      const fetchGameHistory = async () => {
-        setIsLoading(true);
-        const response = await fetchGameData(currentPage, duration);
-        if (isMounted.current) {
-          setGameHistoryData(response.results);
-          setTotalPages(response.pagination.total_pages || 1);
-          setIsLoading(false);
-        }
-      };
-      fetchGameHistory().catch(console.error);
-    }
-  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
-
-  useEffect(() => {
-    if (activeTab === "chart") {
-      const duration = buttonData[activeButton].duration;
-      const fetchChartData = async () => {
-        setIsLoading(true);
-        const response = await fetchGameData(currentPage, duration);
-        if (isMounted.current) {
-          setChartData(response.results);
-          setTotalPages(response.pagination.total_pages || 1);
-          setIsLoading(false);
-        }
-      };
-      fetchChartData().catch(console.error);
-    }
-  }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
-
-  const fetchUserBets = async () => {
-    if (!isMounted.current) return;
-    setIsLoading(true);
+  const fetchWalletBalance = async () => {
     try {
-      const mockBets = [];
-      if (isMounted.current) {
-        setHistoryData(mockBets);
+      const response = await getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        setWalletBalance(balance);
+      } else {
+        setWalletBalance(0);
       }
     } catch (error) {
+      console.error("Failed to fetch wallet balance:", error);
+      setWalletBalance(0);
+    }
+  };
+
+  const handleRefreshBalance = async () => {
+    if (isRefreshingBalance) return;
+    setIsRefreshingBalance(true);
+    try {
+      const response = await getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        setWalletBalance(balance);
+      } else {
+        setError("Failed to refresh balance");
+      }
+    } catch (error) {
+      setError("Failed to refresh balance. Please try again.");
+    } finally {
+      setIsRefreshingBalance(false);
+    }
+  };
+
+  const fetchLastResult = async () => {
+    try {
+      const duration = buttonData[activeButton].duration;
+      // Start rolling animation
+      setIsRolling(true);
+      // Animate random dice values for 2s
+      let rollingInterval = setInterval(() => {
+        setDisplayedDice([
+          Math.floor(Math.random() * 6) + 1,
+          Math.floor(Math.random() * 6) + 1,
+          Math.floor(Math.random() * 6) + 1,
+        ]);
+      }, 100);
+
+      let data = await apiServices.getLastResult("K3", duration);
+
+      setTimeout(() => {
+        clearInterval(rollingInterval);
+        const final = data?.result?.result;
+        setDisplayedDice([final?.dice_1, final?.dice_2, final?.dice_3]);
+        setLastResultDice(final);
+        setIsRolling(false);
+      }, 2000);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchUserBets = async (page = 1, limit = 10) => {
+    if (!isMounted.current) return;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const duration = buttonData[activeButton].duration;
+      // Use the gameApi to fetch user bets
+      const response = await gameApi.getUserBets(
+        gameType,
+        duration,
+        page,
+        limit
+      );
+
       if (isMounted.current) {
-        setError("Failed to fetch user bets");
+        if (response && response.success) {
+          // Handle different possible response structures
+          let betsData = [];
+
+          if (Array.isArray(response.data)) {
+            betsData = response.data;
+          } else if (response.data && Array.isArray(response.data.results)) {
+            betsData = response.data.results;
+          } else if (response.data && Array.isArray(response.data.bets)) {
+            betsData = response.data.bets;
+          } else {
+            console.log("⚠️ Unexpected response structure:", response);
+          }
+          if (betsData.length > 0) {
+            const latestBet = betsData[0];
+            const updatedAt = new Date(
+              latestBet.updatedAt || latestBet.createdAt
+            );
+            const now = new Date();
+            const timeDiffSeconds = (now - updatedAt) / 1000;
+            console.log("timeDiffSeconds", timeDiffSeconds);
+            if (timeDiffSeconds <= 5) {
+              setLastResult(betsData[0]);
+              setUserDidBet(false);
+              if (betsData[0].status == "won") {
+                setShowWinPopup(true);
+              } else if (betsData[0].status == "lost") {
+                setShowLossPopup(true);
+              }
+            }
+            const formattedBets = betsData.map((bet, index) => {
+              return {
+                betId: bet.betId || bet._id || bet.id || `bet-${index}`,
+                period: bet.periodId || bet.period || "N/A",
+                orderTime: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleString()
+                  : bet.orderTime || new Date().toLocaleString(),
+                orderNumber:
+                  bet.betId || bet.orderNumber || `ORD-${Date.now()}-${index}`,
+                amount: `₹${bet.betAmount || bet.amount || 0}`,
+                quantity: bet.quantity || 1,
+                afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
+                tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
+                result: bet?.result
+                  ? `${bet.result?.dice_1}${bet.result?.dice_2}${bet.result?.dice_3}`
+                  : "-",
+                select:
+                  bet.betType && bet.betValue
+                    ? `${bet.betType}: ${bet.betValue}`
+                    : bet.select || "N/A",
+                status: bet.status,
+                winLose:
+                  bet.profitLoss !== undefined
+                    ? bet.profitLoss >= 0
+                      ? `+₹${bet.profitLoss}`
+                      : `-₹${Math.abs(bet.profitLoss)}`
+                    : bet.winLose || "₹0",
+                // Additional fields for display
+                date: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleDateString()
+                  : new Date().toLocaleDateString(),
+                time: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleTimeString()
+                  : new Date().toLocaleTimeString(),
+              };
+            });
+
+            setHistoryData(formattedBets);
+
+            // Handle pagination
+            const totalPagesCalc =
+              response.pagination?.total_pages ||
+              Math.ceil((response.total || formattedBets.length) / limit) ||
+              1;
+            setTotalPages(totalPagesCalc);
+          } else {
+            setHistoryData([]);
+            setTotalPages(1);
+          }
+        } else {
+          setHistoryData([]);
+          setTotalPages(1);
+          setError("Failed to fetch betting history");
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error in fetchUserBets:", error);
+      if (isMounted.current) {
+        setError("Failed to fetch user bets: " + error.message);
+        setHistoryData([]);
+        setTotalPages(1);
       }
     } finally {
       if (isMounted.current) {
@@ -742,27 +895,6 @@ function LotteryK3() {
       }
     }
   };
-
-  useEffect(() => {
-    if (activeTab === "myHistory") {
-      fetchUserBets();
-    }
-  }, [activeTab, refetchData, fetchDataFlag]);
-
-  useEffect(() => {
-    const duration = buttonData[activeButton].duration;
-    setTimeRemaining({
-      minutes: Math.floor(duration / 60),
-      seconds: duration % 60,
-    });
-    setCurrentPeriod({ periodId: "Loading..." });
-    setIsPeriodTransitioning(true);
-    setTimeout(() => {
-      if (!isConnected) {
-        setIsPeriodTransitioning(false);
-      }
-    }, 500);
-  }, [activeButton]);
 
   const handleButtonClick = (buttonId) => {
     setActiveButton(buttonId);
@@ -972,7 +1104,7 @@ function LotteryK3() {
 
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-20 pb-24">
-      <LotteryWingoheader />
+      <CommanHeader isGameHeader={true} />
       <div className="text-center w-full max-w-sm mx-auto">
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
@@ -1132,10 +1264,44 @@ function LotteryK3() {
               </div>
             </div>
           </div>
+          {showWinPopup && (
+            <ResultPopUp
+              type="win"
+              lastResult={lastResult}
+              showConfetti={true}
+              checked={showWinPopupChecked}
+              onCheckedChange={() =>
+                setShowWinPopupChecked(!showWinPopupChecked)
+              }
+              onClose={() => {
+                setShowWinPopup(false);
+                setLastResult(null);
+              }}
+              gameType="k3"
+            />
+          )}
+
+          {showLossPopup && (
+            <ResultPopUp
+              type="loss"
+              lastResult={lastResult}
+              checked={showLossPopupChecked}
+              onCheckedChange={() =>
+                setShowLossPopupChecked(!showLossPopupChecked)
+              }
+              onClose={() => {
+                setShowLossPopup(false);
+                setLastResult(null);
+              }}
+              gameType="k3"
+            />
+          )}
 
           <FreezePopup
             timeRemaining={timeRemaining}
+            duration={buttonData[activeButton].duration}
             handleRefresh={() => setRefetchData((prev) => !prev)}
+            gameType="k3"
           >
             <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
               <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
@@ -1150,39 +1316,18 @@ function LotteryK3() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-1">
-                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
-                    <img
-                      src={
-                        isConnected && currentResult?.dice_1
-                          ? getDiceImage(currentResult.dice_1)
-                          : num1
-                      }
-                      alt="Dice 1"
-                      className="w-16 h-16"
-                    />
-                  </div>
-                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
-                    <img
-                      src={
-                        isConnected && currentResult?.dice_2
-                          ? getDiceImage(currentResult.dice_2)
-                          : num1
-                      }
-                      alt="Dice 2"
-                      className="w-16 h-16"
-                    />
-                  </div>
-                  <div className="flex bg-zinc-500 p-1 rounded justify-center">
-                    <img
-                      src={
-                        isConnected && currentResult?.dice_3
-                          ? getDiceImage(currentResult.dice_3)
-                          : num1
-                      }
-                      alt="Dice 3"
-                      className="w-16 h-16"
-                    />
-                  </div>
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="flex bg-zinc-500 p-1 rounded justify-center"
+                    >
+                      <img
+                        src={getDiceImage(displayedDice[i])}
+                        alt={`Dice ${i + 1}`}
+                        className="w-16 h-16"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1214,7 +1359,7 @@ function LotteryK3() {
           </FreezePopup>
 
           {activeImgTab === "total" && (
-            <div className="grid grid-cols-4 gap-3 ml-3">
+            <div className="grid grid-cols-4 gap-3 ml-4">
               {imageUrls.map((image, index) => (
                 <div
                   key={index}
@@ -1240,7 +1385,12 @@ function LotteryK3() {
                   </span>
                 </div>
               ))}
-              <div className="col-span-4 flex justify-between text-xs mt-4 -ml-5 gap-1 -mr-2">
+              <div
+                className="gap-3 flex justify-between text-xs mt-4"
+                style={{
+                  marginLeft: "-8px",
+                }}
+              >
                 {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map(
                   (label, idx) => {
                     const commonClasses =
@@ -1693,7 +1843,7 @@ function LotteryK3() {
           </div>
         )}
 
-        <div className="flex justify-between space-x-2 mb-6 ">
+        <div className="flex justify-between space-x-2 mb-1 ">
           <button
             className={`w-full min-w-[120px] px-6 py-2 text-sm rounded-lg shadow whitespace-nowrap text-center flex justify-center ${
               activeTab === "gameHistory"
@@ -1851,37 +2001,118 @@ function LotteryK3() {
           )}
 
           {activeTab === "myHistory" && (
-            <div className="p-4 mb-4 text-right">
+            <div className="p-2 text-right">
               {historyData.length > 0 ? (
                 historyData.map((history, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-start border-b pb-4 mb-4"
-                  >
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 bg-[#00b971] rounded-md mb-2 mr-3"></div>
-                      <div>
-                        <p className="text-gray-700">{history.id}</p>
-                        <p className="text-gray-500 text-sm">
-                          Date: {history.date || "N/A"}
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                          Time: {history.time || "N/A"}
-                        </p>
+                  <>
+                    <div
+                      key={index}
+                      className="flex bg-[#333335] justify-between items-start p-2 mb-2"
+                      onClick={() =>
+                        setIsDetailsOpen(isDetailsOpen === index ? null : index)
+                      }
+                    >
+                      <div className="flex items-center">
+                        <div
+                          className="w-12 h-12 bg-[#d9ac4f] text-[14px] text-center rounded-md mb-2 mr-3"
+                          style={{ color: "white", paddingTop: "10px" }}
+                        >
+                          {history?.result}
+                        </div>
+                        <div>
+                          <p style={{ color: "white" }}>{history.period}</p>
+                          <p className="text-gray-500 text-sm text-left">
+                            {history.date || "N/A"}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <p className="text-[#00b971] mt-2 border text-right rounded text-sm px-2 border-[#00b971]">
-                        {history.detail || "Detail"}
-                      </p>
-                      <p className="text-[#00b971] mt-2 border rounded text-sm px-2 border-[#00b971]">
-                        {history.status || "Succeed"}
-                      </p>
-                      <p className="text-black font-medium">
-                        {history.amount || "$0"}
-                      </p>
-                    </div>
-                  </div>
+                    {isDetailsOpen === index && (
+                      <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
+                        <div className="mb-4">
+                          <h3 className="text-white text-lg font-medium mb-1 text-left">
+                            Details
+                          </h3>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                          {[
+                            {
+                              label: "Order number",
+                              value: history?.orderNumber,
+                              valueClass: "text-right text-white",
+                            },
+                            { label: "Period", value: history?.period },
+                            {
+                              label: "Purchase amount",
+                              value: history?.amount,
+                            },
+                            { label: "Quantity", value: history?.quantity },
+                            {
+                              label: "Amount after tax",
+                              value: history?.afterTax,
+                              valueClass: "text-[#ff5555]",
+                            },
+                            {
+                              label: "Tax",
+                              value: history?.tax,
+                              valueClass: "text-[#ff5555]",
+                            },
+                            {
+                              label: "Result",
+                              value: history?.result || "Pending",
+                              valueClass: "text-green-400",
+                            },
+                            {
+                              label: "Select",
+                              value: history?.select,
+                              valueClass: "text-[#ff5555]",
+                            },
+                            {
+                              label: "Status",
+                              value:
+                                history?.status === "won"
+                                  ? "Success"
+                                  : "Failed",
+                              valueClass:
+                                history?.status === "won"
+                                  ? "text-green-400"
+                                  : "text-[#ff5555]",
+                            },
+                            {
+                              label: "Win/lose",
+                              value: history?.winLose,
+                              valueClass: history?.winLose?.startsWith("+")
+                                ? "text-green-400"
+                                : history?.winLose?.startsWith("-")
+                                  ? "text-[#ff5555]"
+                                  : "text-[#ff5555]",
+                            },
+                            { label: "Order time", value: history?.orderTime },
+                          ].map(
+                            ({
+                              label,
+                              value,
+                              valueClass = "text-gray-400",
+                            }) => (
+                              <div
+                                key={label}
+                                className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                              >
+                                <span className="text-gray-300 text-sm text-left">
+                                  {label}
+                                </span>
+                                <span
+                                  className={`${valueClass} text-sm font-normal`}
+                                >
+                                  {value || "N/A"}
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ))
               ) : (
                 <div className="text-center bg-[#4d4d4c]">

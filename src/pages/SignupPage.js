@@ -148,20 +148,21 @@ function SignupPage() {
   }
 
   return (
-    <div className="bg-[#333332] min-h-screen w-full flex flex-col items-center justify-center">
-      <div className="w-full max-w-[400px] mx-auto">
-        <Header />
-        <div className="text-left mb-0 w-full px-4 sm:px-10 mt-20">
-          <h1 className="text-2xl font-bold text-white mb-1">Register</h1>
+  <div className="bg-[#333332] w-full flex flex-col items-center justify-center min-h-screen" >
+       <Header />
+      <div className="w-full mx-auto p-3 flex-1">
+       
+        <div className="text-left mb-0 w-full px-4 sm:px-10 mt-2">
+          <h1 className="text-sm font-bold text-white mb-1">Register</h1>
           <p className="text-white text-sm sm:text-base">
             Please register by phone number
           </p>
         </div>
 
-        <div className="bg-[#242424] p-4 sm:p-8 shadow-md w-full mt-10 flex flex-col justify-center">
-          <div className="text-center pb-2 w-full mb-8">
+        <div className="bg-[#242424] p-4 sm:p-8 shadow-md w-full min-h-full mt-10 flex flex-col justify-center">
+          <div className="text-center pb-2 w-full mb-3">
             <div className="flex justify-center mb-2">
-              <img src={phoneicon} alt="Phone" className="w-8 h-8" />
+              <img src={phoneicon} alt="Phone" className="w-6 h-6" />
             </div>
             <span className="text-yellow-500 font-medium text-lg">
               Register your phone
@@ -173,13 +174,13 @@ function SignupPage() {
             <p className="text-red-500 mt-4 text-center">{displayError}</p>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6 w-full">
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
             <div>
               <label
                 htmlFor="phone"
-                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+                className="block mb-2 text-md text-white flex items-center gap-2"
               >
-                <img src={phoneicon} alt="Phone" className="w-7 h-7" />
+                <img src={phoneicon} alt="Phone" className="w-5 h-6" />
                 Phone number
               </label>
               <div className="flex items-center relative">
@@ -238,9 +239,9 @@ function SignupPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+                className="block mb-2 text-md text-white flex items-center gap-2"
               >
-                <img src={lockicon} alt="Lock" className="w-7 h-7" />
+                <img src={lockicon} alt="Lock" className="w-5 h-6" />
                 Set password
               </label>
               <div className="relative w-full">
@@ -270,9 +271,9 @@ function SignupPage() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+                className="block mb-2 text-md text-white flex items-center gap-2"
               >
-                <img src={lockicon} alt="Lock" className="w-7 h-7" />
+                <img src={lockicon} alt="Lock" className="w-5 h-6" />
                 Confirm password
               </label>
               <div className="relative w-full">
@@ -302,12 +303,12 @@ function SignupPage() {
             <div>
               <label
                 htmlFor="inviteCode"
-                className="block mb-2 text-md font-medium text-white flex items-center gap-2"
+                className="block mb-2 text-md  text-white flex items-center gap-2"
               >
                 <img
                   src={invitecodeicon}
                   alt="Invite Code"
-                  className="w-7 h-7"
+                  className="w-5 h-6"
                 />
                 Invite code
               </label>
@@ -330,10 +331,10 @@ function SignupPage() {
                   type="checkbox"
                   checked={privacyAgreement}
                   onChange={handleCheckboxChange(setPrivacyAgreement)}
-                  className="appearance-none w-5 h-5 rounded-full bg-[#333332] checked:bg-[#d9ac4f] relative cursor-pointer"
+                  className="appearance-none w-5 h-5 rounded-full bg-[#333332] checked:bg-[#d9ac4f] relative cursor-pointer mt-5"
                   style={{ border: "1px solid #6b7280" }}
                 />
-                <div className="absolute top-1 left-1 pointer-events-none">
+                <div className="absolute top-1 left-1 mt-5  pointer-events-none ">
                   {privacyAgreement && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -352,7 +353,7 @@ function SignupPage() {
               </div>
               <label
                 htmlFor="privacyAgreement"
-                className="ml-2 text-sm text-white"
+                className="ml-2 text-sm text-white mt-5"
               >
                 I have read and agree{" "}
                 <span className="text-custom-pink">[Privacy Agreement]</span>

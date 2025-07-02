@@ -1,6 +1,5 @@
 import activity from '../../Assets/activity.jpg';
 import React from 'react';
-import ActivityDetailHeader from '../../components/ActivityDetailsHeader';
 import activitybanner from '../../Assets/activityBanner.png';
 import CommanHeader from '../../components/CommanHeader';
 

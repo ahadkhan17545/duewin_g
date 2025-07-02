@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import lockicon from '../Assets/loginicons/lockicon.png';
 import PasswordChangeHeader from './PasswordChangeHeader';
+import CommanHeader from '../components/CommanHeader';
 
 const PasswordChangeForm = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -25,11 +26,11 @@ const PasswordChangeForm = () => {
     <div className="flex flex-col min-h-screen w-full bg-[#242424]">
       {/* Header at the very top */}
      
-        <PasswordChangeHeader />
+        <CommanHeader title='Change Login Password' />
       
       
       {/* Form content centered */}
-      <div className="flex justify-center items-center flex-grow -mt-16">
+      <div className="flex justify-center  flex-grow mt-[21%]">
         <div className="w-full max-w-[400px] px-4 py-4 space-y-8">
           <div className="mb-4">
             <label className="flex items-center gap-2 mb-2 font-medium text-white">

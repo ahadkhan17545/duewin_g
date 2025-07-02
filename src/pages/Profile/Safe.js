@@ -130,65 +130,70 @@ const FinancialCard = () => {
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-[#242424] shadow-sm p-4 relative">
       <CommanHeader title='Safe' />
-      <div className="text-center mb-2 mt-10">
-        <p className="text-rose-500 text-sm">Interest rate {vaultStatus?.currentInterestRate}%</p>
-      </div>
+     <div className="text-center mb-2 mt-10 bg-[#333332] rounded-lg w-[40%] mx-auto">
+  <p className="text-rose-500 text-sm">
+    Interest rate {vaultStatus?.currentInterestRate}%
+  </p>
+</div>
 
-      <div className="rounded-lg mb-4 text-white relative">
+
+      <div className="rounded-lg text-white relative">
         <div className="h-40 relative">
-          <img src={wcard} alt="Card background" className="w-full h-full object-cover rounded-lg" />
+          <img src={wcard} alt="Card background" className="w-full h-[82%] object-cover rounded-lg" />
           <div className="absolute top-4 left-4">
             <div className="bg-yellow-400 w-4 h-4 rounded-md flex items-center justify-center">
               <span className="text-yellow-800">₹</span>
             </div>
           </div>
           <div className="absolute top-4 right-4">
-            <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full flex items-center">
+            <div className="bg-white bg-opacity-20 px-3 py-1 border-[#8f5206]  rounded-lg flex items-center">
               <span className="mr-1"></span>
-              <span className="text-xs text-[#8f5206]">Financial security</span>
+              <span className="text-xs text-[#8f5206] ">Financial security</span>
             </div>
           </div>
           <div className="absolute top-10 left-4">
-            <h2 className="text-3xl font-bold text-[#8f5206]">₹{vaultStatus?.vaultBalance}</h2>
+            <h2 className="text-2xl font-bold text-[#8f5206]">₹{vaultStatus?.vaultBalance}</h2>
           </div>
-          <div className="absolute bottom-12 left-4 text-xs text-[#8f5206]">
+          <div className="absolute pb-60 left-4 text-xs text-[#8f5206] mt-[-3.5rem]">
             <span className='text-sm font-normal'>24-hour estimated revenue </span>
             <span className='text-lg font-bold'>₹0.20</span>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#333332] rounded-lg p-5 mb-5 text-white">
-        <div className="flex justify-between mb-6">
+      <div className="bg-[#333332] rounded-lg pt-5 pb-1 pr-3 pl-3 mb-2 text-white -mt-4">
+        <div className="flex justify-between mb-1">
           <div className="text-center flex-1">
-            <p className="text-rose-500 font-medium">₹{vaultStatus?.totalInterestEarned}</p>
-            <p className="text-gray-400 text-xs">Generated revenue</p>
+            <p className="text-rose-500 font-medium text-lg">₹{vaultStatus?.totalInterestEarned}</p>
+            <p className="text-gray-400 text-sm">Generated revenue</p>
           </div>
           <div className="text-center flex-1">
-            <p className="text-white font-medium">₹0.00</p>
-            <p className="text-gray-400 text-xs">Accumulated revenue</p>
+            <p className="text-white font-medium text-lg">₹0.00</p>
+            <p className="text-gray-400 text-sm">Accumulated revenue</p>
           </div>
         </div>
-        <div className="text-center mb-6">
-          <div className="border border-gray-600 rounded-full px-4 py-1 text-xs text-gray-300 inline-block">
+        <div className=" mb-3">
+          <div className="border border-gray-600 rounded-full px-6 py-0.5 text-xs text-gray-300 inline-block">
             My interest rate {vaultStatus?.currentInterestRate}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-2 gap-4">
           <button
-            className="border border-[#8f5206] text-[#8f5206] py-3 rounded-md font-medium bg-transparent"
+            className="border border-[#8f5206] text-[#8f5206] py-1 px-6 rounded-md font-medium bg-transparent h-[71%] w-[100%]"
             onClick={handleTransferOutClick}
           >
             Transfer Out
           </button>
-          <button
-            className="bg-gradient-to-r from-[#FAE59F] to-[#c4933f] text-[#8f5206] py-3 rounded-md font-medium"
-            onClick={handleTransferInClick}
-          >
-            Transfer In
-          </button>
+    <button
+  className="bg-gradient-to-r from-[#FAE59F] to-[#c4933f] text-[#8f5206] px-6 py-3 rounded-md font-medium flex items-center justify-center"
+  onClick={handleTransferInClick}
+>
+  Transfer In
+</button>
+
+
         </div>
-        <div className="flex items-center justify-center text-xs text-gray-400 mb-5">
+        <div className="flex items-center justify-center text-xs text-gray-400 ">
           <span className="text-rose-400 mr-2">ⓘ</span>
           <span>Funds are safe and secure, and can be transferred at any time</span>
         </div>

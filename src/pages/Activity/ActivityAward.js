@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import InvitationBonusHeader from "./InviteBonusHeader";
 import apiServices from "../../api/apiServices";
 import invitation from "../../Assets/invitation_bg.png";
 import inviterule from "../../Assets/inviterule.svg";
@@ -7,6 +6,8 @@ import inviterecord from "../../Assets/inviterecord.svg";
 import succeed from "../../Assets/succeed.png";
 import cross from "../../Assets/cross.svg";
 import CommanHeader from "../../components/CommanHeader";
+import './ActivityAward.css'
+import { Link } from "react-router-dom";
 
 const InviteFriendsComponent = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -136,22 +137,22 @@ const InviteFriendsComponent = () => {
         </div>
 
         {/* Navigation */}
-        <div className="bg-[#4d4d4c] p-2 h-[99px] flex justify-around w-[90%] -bottom-20 mx-auto absolute left-1/2 transform -translate-x-1/2 rounded-2xl shadow-lg">
-          <a
-            href="/invitationrule"
+        <div className="bg-[#4d4d4c] p-2 h-[99px] flex justify-around w-[90%] -bottom-20 mx-auto absolute left-1/2 transform -translate-x-1/2 rounded-2xl shadow-lg ">
+          <Link
+            to="/invitationrule"
             className="flex flex-col items-center w-[48%]"
           >
-            <img src={inviterule} alt="Rules icon" className="w-12 h-12" />
-            <span className="text-gray-400 text-xs mt-1">
+            <img src={inviterule} alt="Rules icon" className="w-14 h-14 mt-2" />
+            <span className="text-gray-400 text-sm mt-1">
               Invitation reward rules
             </span>
-          </a>
+          </Link>
           <a
             href="/invitaionrecord"
             className="flex flex-col items-center w-[48%]"
           >
-            <img src={inviterecord} alt="Record icon" className="w-12 h-12" />
-            <span className="text-gray-400 text-xs mt-1">
+            <img src={inviterecord} alt="Record icon" className="w-14 h-14 mt-2" />
+            <span className="text-gray-400 text-sm mt-1">
               Invitation record
             </span>
           </a>
@@ -220,7 +221,9 @@ const InviteFriendsComponent = () => {
                   </div>
                 </div>
                 {/* Progress */}
-                <div className="border-t border-[#525167] border-dashed pt-2 mt-6">
+
+              <div className="line" style={{marginTop:'10px'}}></div>
+                <div>
                   <div className="flex mt-4">
                     <div className="flex-1 border-r border-[#525167]">
                       <div className="text-[#dd9138] text-center text-xl">
@@ -247,7 +250,7 @@ const InviteFriendsComponent = () => {
               {/* Button */}
               <div className="mt-3">
                 {isClaimed ? (
-                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-sm font-medium">
+                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-[16px] font-medium">
                     Claimed
                   </button>
                 ) : isUnclaimed && inviteesMet && depositMet ? (

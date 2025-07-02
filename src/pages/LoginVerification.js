@@ -4,6 +4,7 @@ import apiServices from '../api/apiServices';
 import emailIcon from '../Assets/settingicon/resetemailicon.png';
 import { useNavigate } from 'react-router-dom';
 import CommanHeader from '../components/CommanHeader';
+import { MdEmail, MdShield } from "react-icons/md";
 const LoginVerificationForm = () => {
   const [email, setEmail] = useState(null);
   const [userData, setUserData] = useState(null)
@@ -47,6 +48,28 @@ const LoginVerificationForm = () => {
             />
           </div>
         </div>
+         <div className="mt-6">
+        <label className="flex items-center gap-2 mb-2 text-sm text-white">
+          <MdShield className="text-yellow-400 text-lg" />
+          Verification Code
+        </label>
+        <div className="relative flex items-center bg-[#333332] rounded-md overflow-hidden">
+          <input
+            type="text"
+            // value={code}
+            // onChange={(e) => setCode(e.target.value)}
+            placeholder="Please enter the confirmation code"
+            className="flex-1 py-3 px-4 bg-[#333332] text-white placeholder-zinc-500 focus:outline-none border-none"
+          />
+          <button
+            // onClick={handleSendCode}
+            className="w-20% py-1 px-4 bg-[linear-gradient(90deg,_#FAE59F_0%,_#C4933F_100%)] text-[#8f5206] font-medium rounded-full transition-colors"
+          >
+            Send
+          </button>
+        </div>
+        </div>
+        
 
         {/* Verification Code */}
         {/* <div className="mb-20">

@@ -371,6 +371,12 @@ export const getUserBets = async (gameType, limit = 10, page = 1) => {
     limit,
   });
 };
+export const getUserBetsPerGame = async (gameType,duration , page = 1,limit = 10) => {
+  return await apiRequest(`/games/${gameType}/${duration}/my-bets`, "GET", null, {
+    page,
+    limit,
+  });
+};
 
 export const getListOfGameAndDuration = () => {
   const duration = [30, 60, 180, 300, 60, 180, 300, 600];
@@ -619,6 +625,12 @@ export const getCommissionWithDateData = async (selectedDate) => {
   );
 };
 
+export const getLastResult = async (gameType,duration,) => {
+  return await apiRequest(`/games/${gameType}/${duration}/last-result`, "GET");
+};
+export const getGameHistory = async (gameType,duration,page,limit) => {
+  return await apiRequest(`/games/${gameType}/${duration}/history?page=${page}&limit=${limit}`, "GET");
+};
 
 export default {
   getWalletBalance,
@@ -682,5 +694,8 @@ export default {
   getReferralTeamYesterday,
   getReferralTeamToday,
   getCommissionWithDate,
-  getCommissionWithDateData
+  getCommissionWithDateData,
+  getUserBetsPerGame,
+  getLastResult,
+  getGameHistory
 };
