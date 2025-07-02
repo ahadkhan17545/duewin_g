@@ -39,13 +39,13 @@ function Wallet() {
   // Function to get the token - same as your gameApi.js
   const getToken = () => {
     try {
-      if (typeof localStorage !== 'undefined') {
-        return localStorage.getItem('token');
+      if (typeof localStorage !== "undefined") {
+        return localStorage.getItem("token");
       }
-      console.warn('localStorage not available, authentication may fail');
+      console.warn("localStorage not available, authentication may fail");
       return null;
     } catch (error) {
-      console.warn('Error accessing localStorage:', error);
+      console.warn("Error accessing localStorage:", error);
       return null;
     }
   };
@@ -55,37 +55,47 @@ function Wallet() {
     try {
       const token = getToken();
       if (!token) {
-        throw new Error('No authentication token available. Please login first.');
+        throw new Error(
+          "No authentication token available. Please login first."
+        );
       }
 
-      console.log('Making transfer request with token:', token.substring(0, 20) + '...');
+      console.log(
+        "Making transfer request with token:",
+        token.substring(0, 20) + "..."
+      );
 
-      const response = await fetch('https://api.strikecolor1.com/api/wallet/transfer-from-third-party', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        // Add any required body parameters here if needed by your API
-        body: JSON.stringify({
-          // Add transfer parameters as needed by your API
-        })
-      });
+      const response = await fetch(
+        "https://api.strikecolor1.com/api/wallet/transfer-from-third-party",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          // Add any required body parameters here if needed by your API
+          body: JSON.stringify({
+            // Add transfer parameters as needed by your API
+          }),
+        }
+      );
 
-      console.log('Transfer response status:', response.status);
+      console.log("Transfer response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Transfer API error response:', errorData);
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Transfer failed'}`);
+        console.error("Transfer API error response:", errorData);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorData.message || "Transfer failed"}`
+        );
       }
 
       const data = await response.json();
-      console.log('Transfer API success:', data);
+      console.log("Transfer API success:", data);
       return data;
     } catch (error) {
-      console.error('Transfer API error:', error);
+      console.error("Transfer API error:", error);
       throw error;
     }
   };
@@ -93,7 +103,7 @@ function Wallet() {
   const handleTransferClick = async () => {
     // Only allow transfer if there's money in third party wallet
     if (thirdPartyWalletBalance <= 0) {
-      setError('No funds available in 3rd party wallet to transfer');
+      setError("No funds available in 3rd party wallet to transfer");
       return;
     }
 
@@ -112,26 +122,25 @@ function Wallet() {
       // Call the transfer API
       const transferResult = await transferFromThirdParty();
 
-      if (transferResult.success || transferResult.status === 'success') {
-        console.log('Transfer successful:', transferResult);
+      if (transferResult.success || transferResult.status === "success") {
+        console.log("Transfer successful:", transferResult);
 
         // Mark transfer as successful but don't update UI yet
         setTransferSuccess(true);
-
       } else {
-        throw new Error(transferResult.message || 'Transfer failed');
+        throw new Error(transferResult.message || "Transfer failed");
       }
     } catch (err) {
-      console.error('Transfer error:', err);
+      console.error("Transfer error:", err);
 
       // Provide more specific error messages
-      let errorMessage = 'Transfer failed. Please try again.';
-      if (err.message.includes('401')) {
-        errorMessage = 'Authentication failed. Please login again.';
-      } else if (err.message.includes('403')) {
-        errorMessage = 'Access denied. Please check your permissions.';
-      } else if (err.message.includes('No authentication token')) {
-        errorMessage = 'Please login to continue.';
+      let errorMessage = "Transfer failed. Please try again.";
+      if (err.message.includes("401")) {
+        errorMessage = "Authentication failed. Please login again.";
+      } else if (err.message.includes("403")) {
+        errorMessage = "Access denied. Please check your permissions.";
+      } else if (err.message.includes("No authentication token")) {
+        errorMessage = "Please login to continue.";
       } else if (err.message) {
         errorMessage = err.message;
       }
@@ -161,7 +170,7 @@ function Wallet() {
       // If transfer was successful, now update the UI
       if (transferSuccess) {
         const transferAmount = thirdPartyWalletBalance;
-        setMainWalletBalance(prevMain => (prevMain || 0) + transferAmount);
+        setMainWalletBalance((prevMain) => (prevMain || 0) + transferAmount);
         setThirdPartyWalletBalance(0);
         setIsThirdPartyActive(false);
         setTransferSuccess(false); // Reset the flag
@@ -228,7 +237,8 @@ function Wallet() {
   };
 
   // Calculate total balance
-  const totalBalance = (mainWalletBalance || 0) + (thirdPartyWalletBalance || 0);
+  const totalBalance =
+    (mainWalletBalance || 0) + (thirdPartyWalletBalance || 0);
 
   // Global font style
   const timesNewRomanStyle = { fontFamily: "'Times New Roman', Times, serif" };
@@ -254,7 +264,6 @@ function Wallet() {
     >
       <WalletHeader />
       <div className="text-center  w-full max-w-xs px-2 flex flex-col items-center">
-
         <h1 className="text-xl font-bold mt-1"></h1>
         <img src={IconWallet} alt="File Icon" className="w-9 h-9" />
 
@@ -274,7 +283,8 @@ function Wallet() {
         ) : (
           <>
             <h1 className="text-xl font-normal text-white font-[Inter]">
-              {getCurrencySymbol(currency)}{totalBalance.toFixed(2)}
+              {getCurrencySymbol(currency)}
+              {totalBalance.toFixed(2)}
             </h1>
             <p className="text-white text-xs font-[Inter] tracking-wider">
               Total balance
@@ -289,7 +299,10 @@ function Wallet() {
             {/* Main Wallet */}
             <div className="text-center">
               <div className="relative w-24 h-24">
-                <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+                <svg
+                  className="w-full h-full absolute inset-0"
+                  viewBox="0 0 36 36"
+                >
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
@@ -300,7 +313,6 @@ function Wallet() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-[#f5f3f0]">
-
                   {!isThirdPartyActive ? "100%" : "0%"}
                 </div>
               </div>
@@ -308,16 +320,24 @@ function Wallet() {
                 <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
               ) : (
                 <p className="mt-2 font-semibold text-[#f5f3f0]  font-sans">
-                  {getCurrencySymbol(currency)}{mainWalletBalance !== null ? mainWalletBalance.toFixed(2) : "0.00"}
+                  {getCurrencySymbol(currency)}
+                  {mainWalletBalance !== null
+                    ? mainWalletBalance.toFixed(2)
+                    : "0.00"}
                 </p>
               )}
-              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">Main wallet</p>
+              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">
+                Main wallet
+              </p>
             </div>
 
             {/* 3rd Party Wallet */}
             <div className="text-center">
               <div className="relative w-24 h-24">
-                <svg className="w-full h-full absolute inset-0" viewBox="0 0 36 36">
+                <svg
+                  className="w-full h-full absolute inset-0"
+                  viewBox="0 0 36 36"
+                >
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
@@ -335,21 +355,29 @@ function Wallet() {
                 <p className="mt-2 font-semibold text-[#f5f3f0]">Loading...</p>
               ) : (
                 <p className="mt-2 font-semibold text-[#f5f3f0]  font-sans">
-                  {getCurrencySymbol(currency)}{thirdPartyWalletBalance !== null ? thirdPartyWalletBalance.toFixed(2) : "0.00"}
+                  {getCurrencySymbol(currency)}
+                  {thirdPartyWalletBalance !== null
+                    ? thirdPartyWalletBalance.toFixed(2)
+                    : "0.00"}
                 </p>
               )}
-              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">3rd party wallet</p>
+              <p className="text-xs text-[#f5f3f0] tracking-wider font-sans">
+                3rd party wallet
+              </p>
             </div>
-
           </div>
 
           {/* Transfer Button */}
           <button
             onClick={handleTransferClick}
-            disabled={countdown !== null || transferLoading || (thirdPartyWalletBalance <= 0)}
+            disabled={
+              countdown !== null ||
+              transferLoading ||
+              thirdPartyWalletBalance <= 0
+            }
             className={`w-full py-1.5 px-3 text-sm font-semibold rounded-full text-white transition-all duration-300 
     ${isGreyedOut ? "bg-[#6f7381]" : "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"} 
-    ${(countdown !== null || transferLoading || (thirdPartyWalletBalance <= 0)) ? "opacity-50 cursor-not-allowed" : ""}`}
+    ${countdown !== null || transferLoading || thirdPartyWalletBalance <= 0 ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {transferLoading ? (
               <span>Processing Transfer...</span>
@@ -362,46 +390,68 @@ function Wallet() {
             )}
           </button>
 
-
           {/* Error Message Display */}
-          {error && (mainWalletBalance !== null || thirdPartyWalletBalance !== null) && (
-            <div className="mt-2 p-2 bg-red-900/20 border border-red-500/30 rounded">
-              <p className="text-red-400 text-xs text-center">{error}</p>
-            </div>
-          )}
+          {error &&
+            (mainWalletBalance !== null ||
+              thirdPartyWalletBalance !== null) && (
+              <div className="mt-2 p-2 bg-red-900/20 border border-red-500/30 rounded">
+                <p className="text-red-400 text-xs text-center">{error}</p>
+              </div>
+            )}
 
           {/* Icon Grid */}
-    {/* Icon Grid */}
-<div className="grid grid-cols-4 gap-4 mt-2 text-center">
-  <Link to="/deposit" className="flex flex-col items-center">
-    <div>
-      <img src={DepositIcon} alt="File Icon" className="w-[50px] h-[50px]" />
-    </div>
-    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Deposit</span>
-  </Link>
+          {/* Icon Grid */}
+          <div className="grid grid-cols-4 gap-4 mt-6 text-center">
+            <Link to="/deposit" className="flex flex-col items-center">
+              <img
+                src={DepositIcon}
+                alt="File Icon"
+                className="w-[70px] h-[70px]"
+              />
+              <span className="text-[#a8a5a1] text-[12px] font-sans mt-1">
+                Deposit
+              </span>
+            </Link>
 
-  <Link to="/withdraw" className="flex flex-col items-center">
-    <div>
-      <img src={Withdraw} alt="File Icon" className="w-[50px] h-[50px]" />
-    </div>
-    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Withdraw</span>
-  </Link>
+            <Link to="/withdraw" className="flex flex-col items-center">
+              <div>
+                <img
+                  src={Withdraw}
+                  alt="File Icon"
+                  className="w-[70px] h-[70px]"
+                />
+              </div>
+              <span className="text-[#a8a5a1] text-[12px] font-sans mt-1">
+                Withdraw
+              </span>
+            </Link>
 
-  <Link to="/deposit-history" className="flex flex-col items-center">
-    <div>
-      <img src={DepositHistory} alt="File Icon" className="w-[50px] h-[50px]" />
-    </div>
-    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Deposit history</span>
-  </Link>
+            <Link to="/deposit-history" className="flex flex-col items-center">
+              <div>
+                <img
+                  src={DepositHistory}
+                  alt="File Icon"
+                  className="w-[70px] h-[70px]"
+                />
+              </div>
+              <span className="text-[#a8a5a1] text-[12px] font-sans mt-1">
+                Deposit history
+              </span>
+            </Link>
 
-  <Link to="/withdraw-history" className="flex flex-col items-center">
-    <div>
-      <img src={WithdrawHistory} alt="File Icon" className="w-[50px] h-[50px]" />
-    </div>
-    <span className="text-[#a8a5a1] text-[11px] font-sans mt-1">Withdrawal history</span>
-  </Link>
-</div>
-
+            <Link to="/withdraw-history" className="flex flex-col items-center">
+              <div>
+                <img
+                  src={WithdrawHistory}
+                  alt="File Icon"
+                  className="w-[70px] h-[70px]"
+                />
+              </div>
+              <span className="text-[#a8a5a1] text-[12px] font-sans mt-1">
+                Withdrawal history
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
 

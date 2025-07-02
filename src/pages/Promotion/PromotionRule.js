@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PromotionRuleheader from "../../components/PromotionRuleHeader";
 import Crown from "../../Assets/crown.png";
+import CommanHeader from "../../components/CommanHeader";
 
 
 
@@ -24,8 +25,8 @@ function PromotionRule() {
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
-      <PromotionRuleheader className="z-100" />
-      <div className="bg-[#242424] min-h-screen flex flex-col items-center justify-center">
+      <CommanHeader title="Rules" />
+      <div className="bg-[#242424] min-h-screen flex flex-col items-center justify-center mt-[34px]">
         <div className="w-full bg-[#242424] p-4 font-sans text-sm">
           <div className="flex flex-col items-center text-center">
             <header className="flex items-center text-lg font-bold justify-center">

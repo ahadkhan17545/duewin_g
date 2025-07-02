@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
@@ -21,16 +20,16 @@ import gameApi from "../../../api/gameAPI";
 import { getWalletBalance } from "../../../api/apiServices";
 import useSocket from "../../../hooks/useSocket";
 
-import img0 from '../../../Assets/WingoNew/n0-30bd92d1.png';
-import img1 from '../../../Assets/WingoNew/n1-dfccbff5.png';
-import img2 from '../../../Assets/WingoNew/n2-c2913607.png';
-import img3 from '../../../Assets/WingoNew/n3-f92c313f.png';
-import img4 from '../../../Assets/WingoNew/n4-cb84933b.png';
-import img5 from '../../../Assets/WingoNew/n5-49d0e9c5.png';
-import img6 from '../../../Assets/WingoNew/n6-a56e0b9a.png';
-import img7 from '../../../Assets/WingoNew/n7-5961a17f.png';
-import img8 from '../../../Assets/WingoNew/n8-d4d951a4.png';
-import img9 from '../../../Assets/WingoNew/n9-a20f6f42.png';
+import img0 from "../../../Assets/WingoNew/n0-30bd92d1.png";
+import img1 from "../../../Assets/WingoNew/n1-dfccbff5.png";
+import img2 from "../../../Assets/WingoNew/n2-c2913607.png";
+import img3 from "../../../Assets/WingoNew/n3-f92c313f.png";
+import img4 from "../../../Assets/WingoNew/n4-cb84933b.png";
+import img5 from "../../../Assets/WingoNew/n5-49d0e9c5.png";
+import img6 from "../../../Assets/WingoNew/n6-a56e0b9a.png";
+import img7 from "../../../Assets/WingoNew/n7-5961a17f.png";
+import img8 from "../../../Assets/WingoNew/n8-d4d951a4.png";
+import img9 from "../../../Assets/WingoNew/n9-a20f6f42.png";
 import CommanHeader from "../../../components/CommanHeader";
 
 const buttonData = [
@@ -42,33 +41,52 @@ const buttonData = [
       </>
     ),
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
-    activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
+    activeIcon: (
+      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
+    ),
     duration: 30,
   },
   {
     id: 1,
     title: "Trx Wingo 3Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
-    activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
+    activeIcon: (
+      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
+    ),
     duration: 60,
   },
   {
     id: 2,
     title: "Trx Wingo 5Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
-    activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
+    activeIcon: (
+      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
+    ),
     duration: 180,
   },
   {
     id: 3,
     title: "Trx Wingo 10Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
-    activeIcon: <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />,
+    activeIcon: (
+      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
+    ),
     duration: 300,
   },
 ];
 
-const numberImages = [img0, img1, img2, img3, img4, img5, img6, img7, img8, img9];
+const numberImages = [
+  img0,
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
+  img6,
+  img7,
+  img8,
+  img9,
+];
 
 const tailwindColorMap = {
   Green: "bg-green-600 hover:bg-green-500",
@@ -81,10 +99,12 @@ const tailwindColorMap = {
 
 function LotteryTrxWingo() {
   const isMounted = useRef(true);
-  const location = useLocation()
+  const location = useLocation();
   const gameType = "trx_wix"; // Updated to match Postman response
   const [activeTab, setActiveTab] = useState("gameHistory");
-  const [activeButton, setActiveButton] = useState(location?.state? location?.state :buttonData[0].id);
+  const [activeButton, setActiveButton] = useState(
+    location?.state ? location?.state : buttonData[0].id
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMultiplier, setSelectedMultiplier] = useState("X1");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -100,14 +120,19 @@ function LotteryTrxWingo() {
   const [historyData, setHistoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [timeRemaining, setTimeRemaining] = useState({ minutes: 0, seconds: 0 });
-  const [currentPeriod, setCurrentPeriod] = useState({ periodId: "Loading..." });
+  const [timeRemaining, setTimeRemaining] = useState({
+    minutes: 0,
+    seconds: 0,
+  });
+  const [currentPeriod, setCurrentPeriod] = useState({
+    periodId: "Loading...",
+  });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
   const [checked, setChecked] = useState(false);
   const [userBets, setUserBets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
-    const [fetchDataFlag,setFetchDataFlag] = useState(false)
+  const [fetchDataFlag, setFetchDataFlag] = useState(false);
   const API_BASE_URL = "https://api.strikecolor1.com";
 
   // WebSocket hook (used only for period and time, not game history)
@@ -120,54 +145,71 @@ function LotteryTrxWingo() {
   } = useSocket(gameType, buttonData[activeButton].duration);
 
   // Fetch user bets
-  const fetchUserBets = useCallback(async (page = 1, limit = 10) => {
-    if (!isMounted.current) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      console.log("🔄 Fetching user bets...");
-      const duration = buttonData[activeButton].duration;
-      const response = await gameApi.getUserBets(gameType, duration, { page, limit });
-      if (isMounted.current) {
-        if (response.success && Array.isArray(response.data)) {
-          const bets = response.data.map((bet) => ({
-            betId: bet.betId,
-            period: bet.periodId,
-            orderTime: new Date(bet.createdAt).toLocaleString(),
-            orderNumber: bet.betId,
-            amount: `₹${bet.betAmount}`,
-            quantity: bet.quantity || 1,
-            afterTax: `₹${(bet.betAmount * 0.98).toFixed(2)}`,
-            tax: `₹${(bet.betAmount * 0.02).toFixed(2)}`,
-            result: bet.result ? `${bet.result.number} (${bet.result.size}, ${bet.result.color})` : "Pending",
-            select: `${bet.betType}: ${bet.betValue}`,
-            status: bet.status || "Pending",
-            winLose: bet.profitLoss >= 0 ? `+₹${bet.profitLoss}` : `-₹${Math.abs(bet.profitLoss)}`,
-            date: new Date(bet.createdAt).toLocaleDateString(),
-            time: new Date(bet.createdAt).toLocaleTimeString(),
-          }));
-          setUserBets(bets);
-          setTotalPages(response.pagination?.total_pages || Math.ceil(response.total / limit) || 1);
-          console.log("✅ User bets fetched successfully", { count: bets.length });
-        } else {
+  const fetchUserBets = useCallback(
+    async (page = 1, limit = 10) => {
+      if (!isMounted.current) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        console.log("🔄 Fetching user bets...");
+        const duration = buttonData[activeButton].duration;
+        const response = await gameApi.getUserBets(gameType, duration, {
+          page,
+          limit,
+        });
+        if (isMounted.current) {
+          if (response.success && Array.isArray(response.data)) {
+            const bets = response.data.map((bet) => ({
+              betId: bet.betId,
+              period: bet.periodId,
+              orderTime: new Date(bet.createdAt).toLocaleString(),
+              orderNumber: bet.betId,
+              amount: `₹${bet.betAmount}`,
+              quantity: bet.quantity || 1,
+              afterTax: `₹${(bet.betAmount * 0.98).toFixed(2)}`,
+              tax: `₹${(bet.betAmount * 0.02).toFixed(2)}`,
+              result: bet.result
+                ? `${bet.result.number} (${bet.result.size}, ${bet.result.color})`
+                : "Pending",
+              select: `${bet.betType}: ${bet.betValue}`,
+              status: bet.status || "Pending",
+              winLose:
+                bet.profitLoss >= 0
+                  ? `+₹${bet.profitLoss}`
+                  : `-₹${Math.abs(bet.profitLoss)}`,
+              date: new Date(bet.createdAt).toLocaleDateString(),
+              time: new Date(bet.createdAt).toLocaleTimeString(),
+            }));
+            setUserBets(bets);
+            setTotalPages(
+              response.pagination?.total_pages ||
+                Math.ceil(response.total / limit) ||
+                1
+            );
+            console.log("✅ User bets fetched successfully", {
+              count: bets.length,
+            });
+          } else {
+            setUserBets([]);
+            setTotalPages(1);
+            console.log("✅ No user bets found");
+          }
+        }
+      } catch (error) {
+        if (isMounted.current) {
+          setError("Failed to fetch user bets: " + error.message);
+          console.log("❌ Error fetching user bets:", error.message);
           setUserBets([]);
           setTotalPages(1);
-          console.log("✅ No user bets found");
+        }
+      } finally {
+        if (isMounted.current) {
+          setIsLoading(false);
         }
       }
-    } catch (error) {
-      if (isMounted.current) {
-        setError("Failed to fetch user bets: " + error.message);
-        console.log("❌ Error fetching user bets:", error.message);
-        setUserBets([]);
-        setTotalPages(1);
-      }
-    } finally {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-    }
-  }, [activeButton, gameType]);
+    },
+    [activeButton, gameType]
+  );
 
   // Fetch wallet balance
   useEffect(() => {
@@ -215,15 +257,20 @@ function LotteryTrxWingo() {
     setError(null);
     try {
       const duration = buttonData[activeButton].duration;
-      const response = await gameApi.getGameHistory(gameType, duration, currentPage, 10);
+      const response = await gameApi.getGameHistory(
+        gameType,
+        duration,
+        currentPage,
+        10
+      );
       if (response.success && response.data?.results) {
-        const mappedHistory = response.data.results.map(item => ({
+        const mappedHistory = response.data.results.map((item) => ({
           periodId: item.periodId,
           blockHeight: item.verification?.blockHeight || "N/A",
           blockTime: item.verification?.blockTime || "N/A",
           hashValue: item.verification?.hash || "N/A",
           result: item.result?.number || "N/A",
-          resultType: item.result?.color || item.result?.size || "N/A"
+          resultType: item.result?.color || item.result?.size || "N/A",
         }));
         setHistoryData(mappedHistory);
         setTotalPages(response.data.pagination?.total_pages || 5);
@@ -392,7 +439,10 @@ function LotteryTrxWingo() {
   const formatTime = (num) => num.toString().padStart(2, "0");
 
   const getDisplayPeriodId = () => {
-    if (isPeriodTransitioning || (timeRemaining.minutes === 0 && timeRemaining.seconds === 0)) {
+    if (
+      isPeriodTransitioning ||
+      (timeRemaining.minutes === 0 && timeRemaining.seconds === 0)
+    ) {
       return "Loading...";
     }
     return currentPeriod.periodId || "Loading...";
@@ -409,7 +459,7 @@ function LotteryTrxWingo() {
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-3 pl-3   pt-11 pb-24">
       <CommanHeader isGameHeader={true} />
-      <div className="text-center w-full max-w-sm mt-8">
+      <div className="text-center w-full max-w-sm mt-8" style={{zIndex:1}}>
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0 z-0">
@@ -427,15 +477,20 @@ function LotteryTrxWingo() {
           <div className="relative z-20 p-2">
             {/* Balance + Refresh */}
             <div className="relative flex items-center justify-center ml-2">
-              <div className="text-lg font-bold text-white">₹{walletBalance.toFixed(2)}</div>
+              <div className="text-lg font-bold text-white">
+                ₹{walletBalance.toFixed(2)}
+              </div>
               <img
                 src={refresh}
                 alt="Refresh balance"
-                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${isRefreshingBalance ? 'animate-spin opacity-50' : 'hover:scale-110'
-                  }`}
+                className={`w-5 h-5 absolute right-4  top-1/2 -translate-y-1/2 cursor-pointer transition-transform duration-200 ${
+                  isRefreshingBalance
+                    ? "animate-spin opacity-50"
+                    : "hover:scale-110"
+                }`}
                 onClick={handleRefreshBalance}
                 style={{
-                  pointerEvents: isRefreshingBalance ? 'none' : 'auto',
+                  pointerEvents: isRefreshingBalance ? "none" : "auto",
                 }}
               />
             </div>
@@ -443,7 +498,9 @@ function LotteryTrxWingo() {
             {/* Wallet label */}
             <div className="flex items-center justify-center mb-4 mt-[-2]">
               <img src={wallet} alt="icon" className="w-5 h-5" />
-              <span className="ml-2 text-[#f5f3f0] text-xs ">Wallet Balance</span>
+              <span className="ml-2 text-[#f5f3f0] text-xs ">
+                Wallet Balance
+              </span>
             </div>
 
             {/* Buttons */}
@@ -459,20 +516,26 @@ function LotteryTrxWingo() {
                 </button>
               </Link>
             </div>
-
-
           </div>
         </div>
       </div>
-
 
       <div className="bg-[#242424] shadow-md w-full h-full mt-1 flex flex-col justify-center">
         <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
-              Thanks to all our members — past and present — for being part of our journey.
-            </p>
+            <div
+              className="h-6 relative"
+              style={{
+                width: "100%",
+                zIndex: 0,
+              }}
+            >
+              <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
+                Thanks to all our members — past and present — for being part of
+                our journey.
+              </div>
+            </div>
 
             <button
               className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
@@ -485,20 +548,20 @@ function LotteryTrxWingo() {
             >
               <img src={fire} alt="icon" className="w-3 h-3" /> Detail
             </button>
-
-
           </div>
         </div>
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md">
+        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md" style={{zIndex:1}}>
           <div className="button-container flex justify-between ">
             {buttonData.map((button) => (
               <button
                 key={button.id}
                 onClick={() => handleButtonClick(button.id)}
                 className={`flex flex-col items-center px-1 py-1 rounded-lg flex-1 transition-all duration-300 
-          ${activeButton === button.id
-                    ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#4d4d4c] text-[#a8a5a1]"}`}
+          ${
+            activeButton === button.id
+              ? "bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+              : "bg-[#4d4d4c] text-[#a8a5a1]"
+          }`}
                 style={{
                   textAlign: "center",
                   flexDirection: "column",
@@ -509,22 +572,15 @@ function LotteryTrxWingo() {
                   className="icon"
                   style={{
                     fontSize: "12px", // Smaller icon
-
                   }}
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
                 </div>
-                <span className="text-xs">
-                  {button.title}
-                </span>
-
+                <span className="text-xs">{button.title}</span>
               </button>
             ))}
           </div>
         </div>
-
-
-
 
         <div
           className="rounded-lg mt-4 shadow-md mb-4 p-4"
@@ -537,7 +593,9 @@ function LotteryTrxWingo() {
           <div className="flex mb-10">
             <div className="flex flex-col min-w-0">
               <div className="flex gap-1 items-center">
-                <p className="text-[#8f5206] border border-[#8f5206] px-2 rounded-lg text-xs">Period</p>
+                <p className="text-[#8f5206] border border-[#8f5206] px-2 rounded-lg text-xs">
+                  Period
+                </p>
                 <button
                   onClick={() => setShowHowToPlay(true)}
                   className="border bg-[#333332] border-[#d9ac4f] rounded-full px-2 py-1 flex items-center justify-center gap-1 text-[#8f5206] shrink-0"
@@ -546,15 +604,21 @@ function LotteryTrxWingo() {
                   <p className="text-[#d9ac4f] text-xs">How to Play</p>
                 </button>
               </div>
-              <p className="text-sm mt-2  text-[#8f5206] truncate">{getDisplayPeriodId()}</p>
+              <p className="text-sm mt-2  text-[#8f5206] truncate">
+                {getDisplayPeriodId()}
+              </p>
             </div>
             <div className="flex flex-col items-end min-w-0">
               <div className="bg-[#333332] rounded-full py-1 px-2 inline-flex items-center space-x-1 shrink-0">
                 <img src={searchicon} alt="icon" className="h-2 w-2" />
-                <span className="text-[#d9ac4f] text-xs ">Public Chain Query</span>
+                <span className="text-[#d9ac4f] text-xs ">
+                  Public Chain Query
+                </span>
               </div>
               <div className="flex items-center justify-end gap-1 mt-2">
-                <span className="text-[#8f5206] text-xs ml-3 shrink-0">Draw Time</span>
+                <span className="text-[#8f5206] text-xs ml-3 shrink-0">
+                  Draw Time
+                </span>
                 <div className="flex space-x-0.5 items-center">
                   <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.minutes)[0]}
@@ -562,7 +626,9 @@ function LotteryTrxWingo() {
                   <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.minutes)[1]}
                   </span>
-                  <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">:</span>
+                  <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">
+                    :
+                  </span>
                   <span className=" border border-[#8f5206] text-[#8f5206]  text-sm rounded px-1 py-0.4 w-4 text-center">
                     {formatTime(timeRemaining.seconds)[0]}
                   </span>
@@ -574,19 +640,31 @@ function LotteryTrxWingo() {
             </div>
           </div>
           <div className="flex justify-between space-x-2">
-            {historyData[0]?.result ? (
-              [0, 1, 2, 3, 4].map((idx) => (
-                <span key={idx} className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-                  <img src={numberImages[historyData[0].result % 10]} alt={`Icon ${idx}`} className="w-full h-full" />
-                </span>
-              ))
-            ) : (
-              [img0, img1, img2, img3, img4].map((img, idx) => (
-                <span key={idx} className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0">
-                  <img src={img} alt={`Icon ${idx}`} className="w-full h-full" />
-                </span>
-              ))
-            )}
+            {historyData[0]?.result
+              ? [0, 1, 2, 3, 4].map((idx) => (
+                  <span
+                    key={idx}
+                    className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  >
+                    <img
+                      src={numberImages[historyData[0].result % 10]}
+                      alt={`Icon ${idx}`}
+                      className="w-full h-full"
+                    />
+                  </span>
+                ))
+              : [img0, img1, img2, img3, img4].map((img, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  >
+                    <img
+                      src={img}
+                      alt={`Icon ${idx}`}
+                      className="w-full h-full"
+                    />
+                  </span>
+                ))}
           </div>
         </div>
 
@@ -619,7 +697,11 @@ function LotteryTrxWingo() {
                   className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
                   onClick={() => handleOptionClick(num.toString(), "number")}
                 >
-                  <img src={numberImages[num]} alt={`Icon ${num}`} className="w-full h-full" />
+                  <img
+                    src={numberImages[num]}
+                    alt={`Icon ${num}`}
+                    className="w-full h-full"
+                  />
                 </span>
               ))}
             </div>
@@ -630,28 +712,35 @@ function LotteryTrxWingo() {
                   className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
                   onClick={() => handleOptionClick(num.toString(), "number")}
                 >
-                  <img src={numberImages[num]} alt={`Icon ${num}`} className="w-full h-full" />
+                  <img
+                    src={numberImages[num]}
+                    alt={`Icon ${num}`}
+                    className="w-full h-full"
+                  />
                 </span>
               ))}
             </div>
           </div>
           <div className="flex justify-center items-center space-x-1">
-            <span className="border border-red-700 text-red-500 text-sm px-4 py-2 rounded-lg">Random</span>
-       {multiplierOptions.map((value) => (
-  <button
-    key={value}
-    className={`
+            <span className="border border-red-700 text-red-500 text-sm px-4 py-2 rounded-lg">
+              Random
+            </span>
+            {multiplierOptions.map((value) => (
+              <button
+                key={value}
+                className={`
       text-[10px] px-2 py-2 rounded-lg flex-1 border 
-      ${selectedMultiplier === value 
-        ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} border-[#e4c26c]` 
-        : "bg-[#242424] text-[#a8a5a1] border-[#3a3a3a]"}
+      ${
+        selectedMultiplier === value
+          ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} border-[#e4c26c]`
+          : "bg-[#242424] text-[#a8a5a1] border-[#3a3a3a]"
+      }
     `}
-    onClick={() => handleMultiplierClick(value)}
-  >
-    {value}
-  </button>
-))}
-
+                onClick={() => handleMultiplierClick(value)}
+              >
+                {value}
+              </button>
+            ))}
           </div>
           <div className="flex justify-center mt-4">
             <button className="bg-blue-500 text-white rounded-full flex overflow-hidden w-full max-w-xs">
@@ -671,39 +760,41 @@ function LotteryTrxWingo() {
           </div>
         </div>
 
-    <div className="flex justify-between space-x-1 mb-4 mt-2">
-  <button
-    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
-      ${activeTab === "gameHistory"
-        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-        : "bg-[#333332] text-[#a8a5a1] font-normal"
+        <div className="flex justify-between space-x-1 mb-4 mt-2">
+          <button
+            className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${
+        activeTab === "gameHistory"
+          ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+          : "bg-[#333332] text-[#a8a5a1] font-normal"
       }`}
-    onClick={() => setActiveTab("gameHistory")}
-  >
-    Game History
-  </button>
-  <button
-    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
-      ${activeTab === "chart"
-        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-        : "bg-[#333332] text-[#a8a5a1] font-normal"
+            onClick={() => setActiveTab("gameHistory")}
+          >
+            Game History
+          </button>
+          <button
+            className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${
+        activeTab === "chart"
+          ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+          : "bg-[#333332] text-[#a8a5a1] font-normal"
       }`}
-    onClick={() => setActiveTab("chart")}
-  >
-    Chart
-  </button>
-  <button
-    className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
-      ${activeTab === "myHistory"
-        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
-        : "bg-[#333332] text-[#a8a5a1] font-normal"
+            onClick={() => setActiveTab("chart")}
+          >
+            Chart
+          </button>
+          <button
+            className={`w-full px-2 py-[8px] text-xs rounded-md shadow text-center whitespace-nowrap overflow-hidden text-ellipsis
+      ${
+        activeTab === "myHistory"
+          ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
+          : "bg-[#333332] text-[#a8a5a1] font-normal"
       }`}
-    onClick={() => setActiveTab("myHistory")}
-  >
-    My History
-  </button>
-</div>
-
+            onClick={() => setActiveTab("myHistory")}
+          >
+            My History
+          </button>
+        </div>
 
         <div className="mb-2 rounded-lg shadow">
           {activeTab === "gameHistory" && (
@@ -714,7 +805,9 @@ function LotteryTrxWingo() {
                 </div>
               )}
               {loading ? (
-                <p className="text-white text-center py-4">Loading game history...</p>
+                <p className="text-white text-center py-4">
+                  Loading game history...
+                </p>
               ) : historyData.length > 0 ? (
                 <table className="bg-[#333332] table-auto w-full rounded">
                   <thead>
@@ -731,10 +824,18 @@ function LotteryTrxWingo() {
                       const maskedPeriod = `${record.periodId?.toString().substring(0, 3)}**${record.periodId?.toString().substring(11)}`;
                       return (
                         <tr key={rowIndex} className="text-[#f5f3f0]">
-                          <td className="text-sm px-2 text-center py-3">{maskedPeriod || "N/A"}</td>
-                          <td className="text-sm text-center py-2">{record.blockHeight || "N/A"}</td>
-                          <td className="text-sm text-center py-2">{record.blockTime || "N/A"}</td>
-                          <td className="text-sm text-center py-2">{record.hashValue || "N/A"}</td>
+                          <td className="text-sm px-2 text-center py-3">
+                            {maskedPeriod || "N/A"}
+                          </td>
+                          <td className="text-sm text-center py-2">
+                            {record.blockHeight || "N/A"}
+                          </td>
+                          <td className="text-sm text-center py-2">
+                            {record.blockTime || "N/A"}
+                          </td>
+                          <td className="text-sm text-center py-2">
+                            {record.hashValue || "N/A"}
+                          </td>
                           <td className="text-center">
                             <span className="inline-block text-white mr-2 text-xs px-1 py-1 border bg-[#ff4081] rounded-full py-1">
                               {record.result}
@@ -749,8 +850,14 @@ function LotteryTrxWingo() {
               ) : (
                 <div className="text-center bg-[#4d4d4c] py-4">
                   <div className="flex flex-col items-center justify-center">
-                    <img src={empty} alt="No Data" className="w-28 h-40 object-contain" />
-                    <p className="text-[#a8a5a1] text-sm mt-2">No game history available</p>
+                    <img
+                      src={empty}
+                      alt="No Data"
+                      className="w-28 h-40 object-contain"
+                    />
+                    <p className="text-[#a8a5a1] text-sm mt-2">
+                      No game history available
+                    </p>
                   </div>
                 </div>
               )}
@@ -772,38 +879,52 @@ function LotteryTrxWingo() {
                 <tbody>
                   {historyData.length > 0 ? (
                     historyData.map((row, index) => (
-                      <tr key={index} className="relative border-b border-gray-700">
-                        <td className="px-2 text-gray-200 text-sm py-2">{row.periodId}</td>
+                      <tr
+                        key={index}
+                        className="relative border-b border-gray-700"
+                      >
+                        <td className="px-2 text-gray-200 text-sm py-2">
+                          {row.periodId}
+                        </td>
                         <td className="px-2 py-4 text-xs relative">
                           <div className="flex items-center justify-start space-x-1">
                             {[...Array(10)].map((_, numIndex) => {
-                              let baseClass = "inline-flex items-center justify-center text-xs w-6 h-6 rounded-full text-white";
+                              let baseClass =
+                                "inline-flex items-center justify-center text-xs w-6 h-6 rounded-full text-white";
                               let style = {};
                               if (numIndex === parseInt(row.result)) {
                                 if (numIndex === 0) {
-                                  style.background = "linear-gradient(to-right, #ef4444 50%, #8b5cf6 50%)";
+                                  style.background =
+                                    "linear-gradient(to-right, #ef4444 50%, #8b5cf6 50%)";
                                 } else if (numIndex === 5) {
-                                  style.background = "linear-gradient(to-right, #22c55e 50%, #8b5cf6 50%)";
+                                  style.background =
+                                    "linear-gradient(to-right, #22c55e 50%, #8b5cf6 50%)";
                                 } else {
-                                  style.backgroundColor = numIndex % 2 === 0 ? "#ef4444" : "#22c55e";
+                                  style.backgroundColor =
+                                    numIndex % 2 === 0 ? "#ef4444" : "#22c55e";
                                 }
                               } else {
                                 style.backgroundColor = "#444343";
                                 style.color = "#aaa";
                               }
                               return (
-                                <span key={numIndex} className={baseClass} style={style}>
+                                <span
+                                  key={numIndex}
+                                  className={baseClass}
+                                  style={style}
+                                >
                                   {numIndex}
                                 </span>
                               );
                             })}
                             <span
-                              className={`inline-flex items-center rounded-full justify-center w-10 h-6 ml-1 border text-center ${row.resultType === "B"
-                                ? "bg-yellow-600 text-white border-yellow-600"
-                                : row.resultType === "S"
-                                  ? "bg-[#5088d3] text-white border-[#5088d3]"
-                                  : "border-gray-500 text-gray-500"
-                                }`}
+                              className={`inline-flex items-center rounded-full justify-center w-10 h-6 ml-1 border text-center ${
+                                row.resultType === "B"
+                                  ? "bg-yellow-600 text-white border-yellow-600"
+                                  : row.resultType === "S"
+                                    ? "bg-[#5088d3] text-white border-[#5088d3]"
+                                    : "border-gray-500 text-gray-500"
+                              }`}
                             >
                               {row.resultType}
                             </span>
@@ -813,7 +934,10 @@ function LotteryTrxWingo() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="2" className="px-2 py-4 text-center text-gray-200">
+                      <td
+                        colSpan="2"
+                        className="px-2 py-4 text-center text-gray-200"
+                      >
                         No data available
                       </td>
                     </tr>
@@ -827,7 +951,9 @@ function LotteryTrxWingo() {
               {isLoading && (
                 <div className="text-center py-8">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#00b971]"></div>
-                  <p className="mt-2 text-gray-600">Loading your bet history...</p>
+                  <p className="mt-2 text-gray-600">
+                    Loading your bet history...
+                  </p>
                 </div>
               )}
               {error && !isLoading && (
@@ -857,35 +983,51 @@ function LotteryTrxWingo() {
                               </span>
                             </div>
                             <div>
-                              <p className="text-gray-700 font-medium">Period: {bet.period}</p>
-                              <p className="text-gray-500 text-sm">Date: {bet.date}</p>
-                              <p className="text-gray-500 text-sm">Time: {bet.time}</p>
-                              <p className="text-gray-600 text-sm">Bet: {bet.select}</p>
+                              <p className="text-gray-700 font-medium">
+                                Period: {bet.period}
+                              </p>
+                              <p className="text-gray-500 text-sm">
+                                Date: {bet.date}
+                              </p>
+                              <p className="text-gray-500 text-sm">
+                                Time: {bet.time}
+                              </p>
+                              <p className="text-gray-600 text-sm">
+                                Bet: {bet.select}
+                              </p>
                             </div>
                           </div>
                           <div className="text-right">
                             <p
-                              className={`mt-1 border text-right rounded text-sm px-2 py-1 ${bet.status === 'won' ? 'text-green-600 border-green-600' :
-                                bet.status === 'lost' ? 'text-red-600 border-red-600' :
-                                  'text-[#00b971] border-[#00b971]'
-                                }`}
+                              className={`mt-1 border text-right rounded text-sm px-2 py-1 ${
+                                bet.status === "won"
+                                  ? "text-green-600 border-green-600"
+                                  : bet.status === "lost"
+                                    ? "text-red-600 border-red-600"
+                                    : "text-[#00b971] border-[#00b971]"
+                              }`}
                             >
-                              {bet.status === 'won' ? 'Won' :
-                                bet.status === 'lost' ? 'Lost' :
-                                  'Pending'}
+                              {bet.status === "won"
+                                ? "Won"
+                                : bet.status === "lost"
+                                  ? "Lost"
+                                  : "Pending"}
                             </p>
                             <p className="text-black font-medium mt-1">
                               Amount: {bet.amount}
                             </p>
-                            {bet.winLose !== '₹0' && (
+                            {bet.winLose !== "₹0" && (
                               <p
-                                className={`font-medium text-sm mt-1 ${bet.winLose.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                                  }`}
+                                className={`font-medium text-sm mt-1 ${
+                                  bet.winLose.startsWith("+")
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
                               >
                                 {bet.winLose}
                               </p>
                             )}
-                            {bet.result !== 'Pending' && (
+                            {bet.result !== "Pending" && (
                               <p className="text-gray-600 text-xs mt-1">
                                 Result: {bet.result}
                               </p>
@@ -896,7 +1038,9 @@ function LotteryTrxWingo() {
                       {totalPages > 1 && (
                         <div className="flex justify-center items-center mt-6 space-x-2">
                           <button
-                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(1, prev - 1))
+                            }
                             disabled={currentPage === 1}
                             className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -906,7 +1050,11 @@ function LotteryTrxWingo() {
                             Page {currentPage} of {totalPages}
                           </span>
                           <button
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                Math.min(totalPages, prev + 1)
+                              )
+                            }
                             disabled={currentPage === totalPages}
                             className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -923,7 +1071,9 @@ function LotteryTrxWingo() {
                           alt="No Data"
                           className="w-64 h-60 object-contain"
                         />
-                        <p className="text-white mt-4">No betting history found</p>
+                        <p className="text-white mt-4">
+                          No betting history found
+                        </p>
                       </div>
                     </div>
                   )}
@@ -960,7 +1110,9 @@ function LotteryTrxWingo() {
           <div
             className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} rounded-t-lg flex flex-col items-center text-center`}
           >
-            <h2 className="text-lg font-bold mt-2">{buttonData[activeButton].title}</h2>
+            <h2 className="text-lg font-bold mt-2">
+              {buttonData[activeButton].title}
+            </h2>
             <div className="flex w-full max-w-xs items-center bg-white text-black gap-2 justify-center mt-2 p-2 rounded-lg">
               <span>Select</span>
               <span className="font-bold">{selectedOption}</span>
@@ -1017,10 +1169,11 @@ function LotteryTrxWingo() {
               {multiplierOptions.map((label) => (
                 <button
                   key={label}
-                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${selectedMultiplier === label
-                    ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} ring-2 ring-white`
-                    : `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")} transition`
-                    }`}
+                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${
+                    selectedMultiplier === label
+                      ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} ring-2 ring-white`
+                      : `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")} transition`
+                  }`}
                   onClick={() => handleMultiplierClick(label)}
                 >
                   {label}
@@ -1037,7 +1190,9 @@ function LotteryTrxWingo() {
                 )}
               </div>
               <span className="text-sm">I agree</span>
-              <button className="text-red-500 hover:underline text-sm">Pre-sale rules</button>
+              <button className="text-red-500 hover:underline text-sm">
+                Pre-sale rules
+              </button>
             </div>
 
             <div className="flex w-[calc(100%+16px)] -mx-2">
@@ -1062,7 +1217,9 @@ function LotteryTrxWingo() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
           <div className="bg-[#201d2b] rounded-2xl shadow-lg w-[90%] max-w-[300px] p-6 text-center">
             <div className="text-white text-lg font-bold mb-4">Success</div>
-            <p className="text-white text-sm mb-6">Your bet has been placed successfully!</p>
+            <p className="text-white text-sm mb-6">
+              Your bet has been placed successfully!
+            </p>
             <button
               onClick={() => setShowSuccessPopup(false)}
               className="bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206] px-6 py-2 rounded-full font-medium"
@@ -1080,14 +1237,39 @@ function LotteryTrxWingo() {
               How to Play
             </div>
             <div className="bg-[#201d2b] p-4 text-white text-sm max-h-[50vh] overflow-y-auto rounded-b-lg">
-              <p>1 minute 1 issue, 45 seconds to order, 15 seconds waiting for the draw. It opens all day. The total number of trades is 1440 issues.</p>
-              <p className="mt-2">If you spend 100 to trade, after deducting a 2% service fee, your contract amount is 98:</p>
-              <p className="mt-2">1. Select Green: If the result shows Green (1,3,5,7,9), you will get (98*2) 196.00.</p>
-              <p className="mt-2">2. Select Red: If the result shows Red (0,2,4,6,8), you will get (98*2) 196.00.</p>
-              <p className="mt-2">3. Select Violet: If the result shows Violet (0,5), you will get (98*4.5) 441.00.</p>
-              <p className="mt-2">4. Select Number: If the result matches the number you selected (0-9), you will get (98*9) 882.00.</p>
-              <p className="mt-2">5. Select Big: If the result shows 5,6,7,8,9, you will get (98*2) 196.00.</p>
-              <p className="mt-2">6. Select Small: If the result shows 0,1,2,3,4, you will get (98*2) 196.00.</p>
+              <p>
+                1 minute 1 issue, 45 seconds to order, 15 seconds waiting for
+                the draw. It opens all day. The total number of trades is 1440
+                issues.
+              </p>
+              <p className="mt-2">
+                If you spend 100 to trade, after deducting a 2% service fee,
+                your contract amount is 98:
+              </p>
+              <p className="mt-2">
+                1. Select Green: If the result shows Green (1,3,5,7,9), you will
+                get (98*2) 196.00.
+              </p>
+              <p className="mt-2">
+                2. Select Red: If the result shows Red (0,2,4,6,8), you will get
+                (98*2) 196.00.
+              </p>
+              <p className="mt-2">
+                3. Select Violet: If the result shows Violet (0,5), you will get
+                (98*4.5) 441.00.
+              </p>
+              <p className="mt-2">
+                4. Select Number: If the result matches the number you selected
+                (0-9), you will get (98*9) 882.00.
+              </p>
+              <p className="mt-2">
+                5. Select Big: If the result shows 5,6,7,8,9, you will get
+                (98*2) 196.00.
+              </p>
+              <p className="mt-2">
+                6. Select Small: If the result shows 0,1,2,3,4, you will get
+                (98*2) 196.00.
+              </p>
             </div>
             <div className="flex justify-center py-4 bg-[#242424]">
               <button

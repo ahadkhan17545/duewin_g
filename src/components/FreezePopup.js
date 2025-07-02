@@ -60,9 +60,9 @@ const FreezePopup = ({
   const getTopPercentage = (type) => {
     switch (type) {
       case "k3":
-        return "90%";
+        return "70%";
       case "wingo":
-        return "17%";
+        return "0%";
       case "5d":
         return "-10%";
       case "twist":
@@ -83,7 +83,7 @@ const FreezePopup = ({
           className="absolute left-0 right-0 flex items-center justify-center rounded-lg z-10   bg-black bg-opacity-50 p-[10px]"
           style={{
             top: getTopPercentage(gameType),
-            height: gameType == 'k3'? "350px":('5d'?"270px":'')
+            height: gameType == 'k3'? "415px":('5d'?"275px":'')
           }}
         >
           <div className="flex gap-4">

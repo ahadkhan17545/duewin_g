@@ -25,7 +25,12 @@ function WithdrawHistory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 10, pages: 1 });
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 1,
+  });
 
   // Dragging state
   const [startX, setStartX] = useState(0);
@@ -42,13 +47,15 @@ function WithdrawHistory() {
   const activeImages = [activeImg6, activeImg7, img8];
   const descriptions = ["All", "Bank", "USDT"];
 
-
   // Fetch withdrawal history from API
   useEffect(() => {
     const fetchWithdrawals = async () => {
       try {
         setLoading(true);
-        const data = await apiServices.getWithdrawalHistory(page, pagination.limit);
+        const data = await apiServices.getWithdrawalHistory(
+          page,
+          pagination.limit
+        );
         setWithdrawals(data.withdrawals || []);
         setPagination(data.pagination);
       } catch (err) {
@@ -119,15 +126,37 @@ function WithdrawHistory() {
 
   // Handle date selection and scrolling
   const handleDateSelect = (type, value) => {
-    const year = type === "year" ? value : selectedDate ? selectedDate.getFullYear() : new Date().getFullYear();
-    const month = type === "month" ? value - 1 : selectedDate ? selectedDate.getMonth() : new Date().getMonth();
-    const day = type === "day" ? value : selectedDate ? selectedDate.getDate() : new Date().getDate();
+    const year =
+      type === "year"
+        ? value
+        : selectedDate
+          ? selectedDate.getFullYear()
+          : new Date().getFullYear();
+    const month =
+      type === "month"
+        ? value - 1
+        : selectedDate
+          ? selectedDate.getMonth()
+          : new Date().getMonth();
+    const day =
+      type === "day"
+        ? value
+        : selectedDate
+          ? selectedDate.getDate()
+          : new Date().getDate();
     const newDate = new Date(year, month, day);
     setSelectedDate(newDate);
 
-    const containerRef = type === "year" ? yearRef.current : type === "month" ? monthRef.current : dayRef.current;
+    const containerRef =
+      type === "year"
+        ? yearRef.current
+        : type === "month"
+          ? monthRef.current
+          : dayRef.current;
     const items = type === "year" ? years : type === "month" ? months : days;
-    const selectedIndex = items.findIndex((item) => item.toString() === value.toString().padStart(2, "0"));
+    const selectedIndex = items.findIndex(
+      (item) => item.toString() === value.toString().padStart(2, "0")
+    );
 
     if (containerRef && selectedIndex !== -1) {
       const rowHeight = 40;
@@ -140,8 +169,12 @@ function WithdrawHistory() {
   };
 
   const years = Array.from({ length: 5 }, (_, i) => 2022 + i);
-  const months = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, "0"));
+  const months = Array.from({ length: 12 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
+  const days = Array.from({ length: 31 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
@@ -155,8 +188,10 @@ function WithdrawHistory() {
   const filteredWithdrawals = withdrawals.filter((withdrawal) => {
     const matchesTab =
       descriptions[selectedIndex] === "All" ||
-      (descriptions[selectedIndex] === "Bank" && withdrawal.withdrawal_type === "BANK") ||
-      (descriptions[selectedIndex] === "USDT" && withdrawal.withdrawal_type === "USDT");
+      (descriptions[selectedIndex] === "Bank" &&
+        withdrawal.withdrawal_type === "BANK") ||
+      (descriptions[selectedIndex] === "USDT" &&
+        withdrawal.withdrawal_type === "USDT");
 
     const matchesStatus =
       selectedStatus === "All" ||
@@ -166,8 +201,8 @@ function WithdrawHistory() {
     const withdrawalDate = new Date(withdrawal.created_at);
     const matchesDate = selectedDate
       ? withdrawalDate.getFullYear() === selectedDate.getFullYear() &&
-      withdrawalDate.getMonth() === selectedDate.getMonth() &&
-      withdrawalDate.getDate() === selectedDate.getDate()
+        withdrawalDate.getMonth() === selectedDate.getMonth() &&
+        withdrawalDate.getDate() === selectedDate.getDate()
       : true;
 
     return matchesTab && matchesStatus && matchesDate;
@@ -180,9 +215,9 @@ function WithdrawHistory() {
       .getDate()
       .toString()
       .padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   return (
@@ -213,9 +248,10 @@ function WithdrawHistory() {
               <div
                 key={index}
                 className={`px-2 py-2 w-28 rounded-lg shadow-md mb-1 mt-2 flex-shrink-0 transition-all duration-300 
-                  ${selectedIndex === index
-                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                    : "bg-[#333332]"
+                  ${
+                    selectedIndex === index
+                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                      : "bg-[#333332]"
                   }
                   ${isDragging ? "cursor-grabbing" : "cursor-pointer"}`}
                 onClick={() => {
@@ -224,15 +260,22 @@ function WithdrawHistory() {
                   }
                 }}
               >
-                <div className="flex flex-row items-center gap-2 whitespace-nowrap">
+                <div className="flex flex-row items-center gap-2 whitespace-nowrap justify-center">
                   <img
-                    src={selectedIndex === index ? activeImages[index] : images[index]}
+                    src={
+                      selectedIndex === index
+                        ? activeImages[index]
+                        : images[index]
+                    }
                     alt={`Box ${index}`}
                     className="w-8 h-6 object-contain"
                   />
                   <p
-                    className={`text-sm font-semibold ${selectedIndex === index ? "text-[#8f5206]" : "text-[#a8a5a1]"
-                      }`}
+                    className={`text-sm font-semibold ${
+                      selectedIndex === index
+                        ? "text-[#8f5206]"
+                        : "text-[#a8a5a1]"
+                    }`}
                   >
                     {desc}
                   </p>
@@ -244,12 +287,12 @@ function WithdrawHistory() {
           <div className="mt-2 text-sm font-medium rounded-xl">
             <div className="flex gap-4 mb-4">
               {/* Status Dropdown */}
-              <div className="relative w-24">
+              <div className="relative">
                 <button
                   onClick={() => setIsStatusModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
                 >
-                  <span className="text-white">{selectedStatus}</span>
+                  <span className="text-zinc-400">{selectedStatus}</span>
                   <MdExpandMore className="text-lg text-white" />
                 </button>
 
@@ -278,10 +321,11 @@ function WithdrawHistory() {
                         {["All", "Complete", "Failed"].map((status) => (
                           <div
                             key={status}
-                            className={`p-2 rounded-lg cursor-pointer text-center ${selectedStatus === status
+                            className={`p-2 rounded-lg cursor-pointer text-center ${
+                              selectedStatus === status
                                 ? "bg-[#4a4a4a] text-white"
                                 : "text-gray-400 hover:bg-[#4a4a4a] hover:text-white"
-                              }`}
+                            }`}
                             onClick={() => handleStatusSelect(status)}
                           >
                             {status}
@@ -297,10 +341,14 @@ function WithdrawHistory() {
               <div className="relative flex-1">
                 <button
                   onClick={() => setIsDateModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
                 >
-                  <span className={selectedDate ? "text-white" : "text-zinc-400"}>
-                    {selectedDate ? selectedDate.toLocaleDateString() : "Choose a date"}
+                  <span
+                    className={selectedDate ? "text-white" : "text-zinc-400"}
+                  >
+                    {selectedDate
+                      ? selectedDate.toLocaleDateString()
+                      : "Choose a date"}
                   </span>
                   <MdExpandMore className="text-lg text-white" />
                 </button>
@@ -321,7 +369,9 @@ function WithdrawHistory() {
                         >
                           Cancel
                         </button>
-                        <h2 className="text-white font-medium">Choose a date</h2>
+                        <h2 className="text-white font-medium">
+                          Choose a date
+                        </h2>
                         <button
                           className="text-amber-500 hover:text-amber-400 font-medium transition-colors"
                           onClick={handleDateConfirm}
@@ -332,18 +382,25 @@ function WithdrawHistory() {
 
                       <div className="flex w-full">
                         <div className="flex-1">
-                          <div className="w-full text-center text-gray-500 py-2">Year</div>
-                          <div className="h-[160px] relative overflow-hidden" ref={yearRef}>
+                          <div className="w-full text-center text-gray-500 py-2">
+                            Year
+                          </div>
+                          <div
+                            className="h-[160px] relative overflow-hidden"
+                            ref={yearRef}
+                          >
                             <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                             <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                               <div className="h-[60px]"></div>
                               {years.map((year) => (
                                 <div
                                   key={year}
-                                  className={`h-[40px] flex items-center justify-center text-center ${selectedDate && selectedDate.getFullYear() === year
+                                  className={`h-[40px] flex items-center justify-center text-center ${
+                                    selectedDate &&
+                                    selectedDate.getFullYear() === year
                                       ? "text-white font-medium"
                                       : "text-gray-500"
-                                    } cursor-pointer`}
+                                  } cursor-pointer`}
                                   onClick={() => handleDateSelect("year", year)}
                                 >
                                   {year}
@@ -355,20 +412,32 @@ function WithdrawHistory() {
                         </div>
 
                         <div className="flex-1">
-                          <div className="w-full text-center text-gray-500 py-2">Month</div>
-                          <div className="h-[160px] relative overflow-hidden" ref={monthRef}>
+                          <div className="w-full text-center text-gray-500 py-2">
+                            Month
+                          </div>
+                          <div
+                            className="h-[160px] relative overflow-hidden"
+                            ref={monthRef}
+                          >
                             <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                             <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                               <div className="h-[60px]"></div>
                               {months.map((month) => {
                                 const monthNum = parseInt(month) - 1;
-                                const isSelected = selectedDate && selectedDate.getMonth() === monthNum;
+                                const isSelected =
+                                  selectedDate &&
+                                  selectedDate.getMonth() === monthNum;
                                 return (
                                   <div
                                     key={month}
-                                    className={`h-[40px] flex items-center justify-center text-center ${isSelected ? "text-white font-medium" : "text-gray-500"
-                                      } cursor-pointer`}
-                                    onClick={() => handleDateSelect("month", month)}
+                                    className={`h-[40px] flex items-center justify-center text-center ${
+                                      isSelected
+                                        ? "text-white font-medium"
+                                        : "text-gray-500"
+                                    } cursor-pointer`}
+                                    onClick={() =>
+                                      handleDateSelect("month", month)
+                                    }
                                   >
                                     {month}
                                   </div>
@@ -380,8 +449,13 @@ function WithdrawHistory() {
                         </div>
 
                         <div className="flex-1">
-                          <div className="w-full text-center text-gray-500 py-2">Day</div>
-                          <div className="h-[160px] relative overflow-hidden" ref={dayRef}>
+                          <div className="w-full text-center text-gray-500 py-2">
+                            Day
+                          </div>
+                          <div
+                            className="h-[160px] relative overflow-hidden"
+                            ref={dayRef}
+                          >
                             <div className="absolute w-full h-[40px] top-[60px] bg-[#2C2C2C] z-0"></div>
                             <div className="absolute inset-0 overflow-y-auto hide-scrollbar">
                               <div className="h-[60px]"></div>
@@ -389,15 +463,21 @@ function WithdrawHistory() {
                                 const year = selectedDate
                                   ? selectedDate.getFullYear()
                                   : new Date().getFullYear();
-                                const month = (selectedDate
-                                  ? selectedDate.getMonth()
-                                  : new Date().getMonth()) + 1;
-                                const isSelected = selectedDate && selectedDate.getDate() === day;
+                                const month =
+                                  (selectedDate
+                                    ? selectedDate.getMonth()
+                                    : new Date().getMonth()) + 1;
+                                const isSelected =
+                                  selectedDate &&
+                                  selectedDate.getDate() === day;
                                 return (
                                   <div
                                     key={day}
-                                    className={`h-[40px] flex items-center justify-center text-center ${isSelected ? "text-white font-medium" : "text-gray-500"
-                                      } cursor-pointer`}
+                                    className={`h-[40px] flex items-center justify-center text-center ${
+                                      isSelected
+                                        ? "text-white font-medium"
+                                        : "text-gray-500"
+                                    } cursor-pointer`}
                                     onClick={() => handleDateSelect("day", day)}
                                   >
                                     {day}
@@ -419,7 +499,10 @@ function WithdrawHistory() {
           </div>
 
           {/* Content Section */}
-          <div className="rounded-lg shadow-md mt-4 max-h-screen overflow-y-auto" style={{ maxHeight: '500px' }}>
+          <div
+            className="rounded-lg  mt-4 max-h-screen overflow-y-auto"
+            style={{ maxHeight: "600px" }}
+          >
             {loading ? (
               <div className="text-white text-center p-4">Loading...</div>
             ) : error ? (
@@ -431,16 +514,24 @@ function WithdrawHistory() {
                     <MdCheck className="absolute inset-0 w-full h-full text-neutral-700" />
                     <AiOutlinePlus className="absolute -right-2 -bottom-2 w-6 h-6 text-neutral-700" />
                   </div>
-                  <p className="text-neutral-500 text-lg font-medium">No data</p>
+                  <p className="text-neutral-500 text-lg font-medium">
+                    No data
+                  </p>
                 </div>
               </div>
             ) : (
               filteredWithdrawals.map((withdrawal) => (
-                <div key={withdrawal.id} className="bg-[#333332] rounded-xl p-4 mb-4">
-                  <div style={{
-                    borderBottom: '.01333rem solid #525167'
-                    , paddingBottom: '8px'
-                  }} className="flex items-center justify-between mb-2">
+                <div
+                  key={withdrawal.id}
+                  className="bg-[#333332] rounded-xl p-4 mb-4"
+                >
+                  <div
+                    style={{
+                      borderBottom: ".01333rem solid #525167",
+                      paddingBottom: "8px",
+                    }}
+                    className="flex items-center justify-between mb-2"
+                  >
                     <div>
                       <span className="bg-[#cc2f2f] text-white font-medium text-sm px-2 py-1 rounded">
                         Withdraw
@@ -448,8 +539,13 @@ function WithdrawHistory() {
                     </div>
                     <div className="ml-auto text-right">
                       <span
-                        className={`text-sm font-medium ${withdrawal.status === "completed" ? "text-green-500" : (withdrawal.status === "pending" ? "text-yellow-500" : "text-red-500")
-                          }`}
+                        className={`text-sm font-medium ${
+                          withdrawal.status === "completed"
+                            ? "text-green-500"
+                            : withdrawal.status === "pending"
+                              ? "text-yellow-500"
+                              : "text-red-500"
+                        }`}
                       >
                         {withdrawal.status}
                       </span>
@@ -458,19 +554,33 @@ function WithdrawHistory() {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Balance</span>
-                      <span className="text-amber-400 font-medium">₹{Number(withdrawal.amount).toFixed(2)}</span>
+                      <span className="text-amber-400 font-medium">
+                        ₹{Number(withdrawal.amount).toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Type</span>
-                      <span className="text-[#a8a5a1] font-medium">{withdrawal.withdrawal_type}</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal.withdrawal_type}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Time</span>
-                      <span className="text-[#a8a5a1] font-medium">{formatDate(withdrawal.created_at)}</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {formatDate(withdrawal.created_at)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#a8a5a1]">Order Number</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal?.transaction_id}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#a8a5a1]">Method</span>
-                      <span className="text-[#a8a5a1] font-medium">{withdrawal.payment_gateway}</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal.payment_gateway}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -484,8 +594,9 @@ function WithdrawHistory() {
               <button
                 onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                 disabled={page === 1}
-                className={`px-4 py-2 rounded-lg ${page === 1 ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
-                  }`}
+                className={`px-4 py-2 rounded-lg ${
+                  page === 1 ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
+                }`}
               >
                 Previous
               </button>
@@ -493,10 +604,15 @@ function WithdrawHistory() {
                 Page {pagination.page} of {pagination.pages}
               </span>
               <button
-                onClick={() => setPage((prev) => Math.min(prev + 1, pagination.pages))}
+                onClick={() =>
+                  setPage((prev) => Math.min(prev + 1, pagination.pages))
+                }
                 disabled={page === pagination.pages}
-                className={`px-4 py-2 rounded-lg ${page === pagination.pages ? "bg-gray-500" : "bg-[#fae59f] text-[#8f5206]"
-                  }`}
+                className={`px-4 py-2 rounded-lg ${
+                  page === pagination.pages
+                    ? "bg-gray-500"
+                    : "bg-[#fae59f] text-[#8f5206]"
+                }`}
               >
                 Next
               </button>

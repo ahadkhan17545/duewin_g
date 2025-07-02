@@ -271,7 +271,7 @@ function GameHistoryProfile() {
 
         <div className="bg-[#242424] flex flex-col items-center justify-start w-full max-w-[400px] mx-auto">
           {/* Filter Options */}
-          <div className="flex w-full p-3 gap-3 mb-4 text-[#f5f3f0]">
+          <div className="flex w-[90%] pt-2 gap-3 text-[#f5f3f0]">
             <details ref={detailsRef} className="relative w-1/2">
               <summary className="bg-[#333332] p-3 rounded-lg cursor-pointer transition-colors flex justify-between items-center list-none appearance-none">
                 {selectedOption ||
@@ -307,13 +307,13 @@ function GameHistoryProfile() {
             betHistory?.map((bet, index) => {
               return (
                 <>
-                  <div className="bg-[#333332] w-full rounded-md p-3 shadow-lg border border-gray-700 mt-4">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-[#333332] w-full rounded-md p-2 shadow-lg border border-gray-700 mt-3" style={{width:'90%'}}>
+                    <div className="flex justify-between items-center">
                       <h2
                         className="text-white font-semibold text-lg"
                         style={{ textTransform: "capitalize" }}
                       >
-                        {selectedOption}
+                        {selectedOption == 'wingo'? "Win Go" : selectedOption}
                       </h2>
                       <span
                         className={`font-medium text-lg ${
@@ -342,12 +342,12 @@ function GameHistoryProfile() {
                         <img
                           src={bets}
                           alt="Bets Line"
-                          className="h-32 object-contain"
+                          className="h-28 object-contain"
                         />
                       </div>
 
                       {/* Info Items */}
-                      <div className="space-y-2 text-sm flex-1">
+                      <div className="space-y-1 text-sm flex-1">
                         <div className="flex justify-between">
                           <span className="text-white">Type</span>
                           <span className="text-white">
@@ -375,7 +375,7 @@ function GameHistoryProfile() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full max-w-[400px]">
+                  <div className="w-[90%]">
                     <img
                       src={line}
                       alt="Line Separator"
@@ -384,7 +384,7 @@ function GameHistoryProfile() {
                   </div>
 
                   {/* Lottery Results Section */}
-                  <div className="bg-[#333332] w-full rounded-md p-4 shadow-lg border border-gray-700">
+                  <div className="bg-[#333332] w-full rounded-md p-2 shadow-lg border border-gray-700" style={{width:'90%'}}>
                     <h2 className="text-white font-semibold text-sm mb-3">
                       Lottery Results
                     </h2>
@@ -421,7 +421,15 @@ function GameHistoryProfile() {
                         <p className="text-[#a8a5a1] text-xs">Handling fee</p>
                       </div>
                       <div className="bg-[#4d4d4c] p-3 rounded-md text-center">
-                        <p className="text-[#a8a5a1] font-semibold">
+                        <p className={`font-semibold ${
+                          bet?.status === "won"
+                            ? "text-green-500"
+                            : bet?.status === "lost"
+                              ? "text-red-500"
+                              : "text-yellow-500"
+                        }`}
+                        
+                        >
                           ₹{bet?.profitLoss}
                         </p>
                         <p className="text-[#a8a5a1] text-xs">Profit/loss</p>

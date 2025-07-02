@@ -167,7 +167,7 @@ function ProfilePage() {
 
 
                 {/* Login Time */}
-                {/* <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p> */}
+                <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p>
               </div>
             </div>
           </div>
@@ -190,28 +190,28 @@ function ProfilePage() {
               <div className="grid grid-cols-4 gap-2 mt-4">
                 <Link to="/wallet" className="flex flex-col items-center">
                   <div className="w-10 h-10 flex items-center justify-center">
-                    <img src={wallet} alt="AR Wallet" className="w-6 h-6" />
+                    <img src={wallet} alt="AR Wallet" className="w-7 h-7" />
                   </div>
                   <p className="text-white text-sm font-medium mt-1">ARWallet</p>
                 </Link>
 
                 <Link to="/deposit" className="flex flex-col items-center">
                   <div className="w-10 h-10 flex items-center justify-center">
-                    <img src={rechargeIcon} alt="Deposit" className="w-6 h-6" />
+                    <img src={rechargeIcon} alt="Deposit" className="w-7 h-7" />
                   </div>
                   <p className="text-white text-sm font-medium mt-1">Deposit</p>
                 </Link>
 
                 <Link to="/withdraw" className="flex flex-col items-center">
                   <div className="w-10 h-10 flex items-center justify-center">
-                    <img src={widthdraw} alt="Withdraw" className="w-6 h-6" />
+                    <img src={widthdraw} alt="Withdraw" className="w-7 h-7" />
                   </div>
                   <p className="text-white text-sm font-medium mt-1">Withdraw</p>
                 </Link>
 
                 <Link to="/vipprofile" className="flex flex-col items-center">
                   <div className="w-10 h-10 flex items-center justify-center">
-                    <img src={vipiconup} alt="VIP" className="w-6 h-6" />
+                    <img src={vipiconup} alt="VIP" className="w-7 h-7" />
                   </div>
                   <p className="text-white text-sm font-medium mt-1">VIP</p>
                 </Link>
@@ -253,7 +253,7 @@ function ProfilePage() {
                 to="/gamehistoryProfile"
                 className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={bet} alt="Game History Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <img src={bet} alt="Game History Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
                   <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
                     Game History
@@ -269,7 +269,7 @@ function ProfilePage() {
                 to="/transactionProfile"
                 className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={transaction} alt="Transaction Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <img src={transaction} alt="Transaction Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
                   <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
                     Transaction
@@ -286,7 +286,7 @@ function ProfilePage() {
                 to="/deposit-history"
                 className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={DepositHistory} alt="Deposit Icon" className="w-9 h-9 mr-3 flex-shrink-0" />
+                <img src={DepositHistory} alt="Deposit Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
                   <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
                     Deposit
@@ -302,7 +302,7 @@ function ProfilePage() {
                 to="/withdraw-history"
                 className="bg-[#333332] p-3 rounded-lg shadow-md flex items-center min-h-[64px] cursor-pointer hover:bg-[#3c3c3b] transition-colors"
               >
-                <img src={withdrawHistory} alt="Withdraw Icon" className="w-7 h-7 mr-3 flex-shrink-0" />
+                <img src={withdrawHistory} alt="Withdraw Icon" className="w-10 h-10 mr-3 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
                   <p className="text-[#f5f3f0] text-xs sm:text-sm font-semibold truncate">
                     Withdraw
@@ -331,7 +331,7 @@ function ProfilePage() {
                       <img
                         src={NotifyIcon}
                         alt="Notification Icon"
-                        className="w-6 h-6 flex-shrink-0"
+                        className="w-8 h-8 flex-shrink-0"
                       />
                       Notification
                     </div>
@@ -347,7 +347,7 @@ function ProfilePage() {
                     className="w-full text-base font-normal text-white flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <img src={gift} alt="Gift Icon" className="w-6 h-6 flex-shrink-0" />
+                      <img src={gift} alt="Gift Icon" className="w-8 h-8 flex-shrink-0" />
                       Gifts
                     </div>
                     <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
@@ -365,7 +365,7 @@ function ProfilePage() {
                       <img
                         src={gameStatistics}
                         alt="Game Statistics Icon"
-                        className="w-6 h-6 flex-shrink-0"
+                        className="w-8 h-8 flex-shrink-0"
                       />
                       Game Statistics
                     </div>
@@ -384,7 +384,7 @@ function ProfilePage() {
                       <img
                         src={languageIcon}
                         alt="Language Icon"
-                        className="w-6 h-6 flex-shrink-0"
+                        className="w-8 h-8 flex-shrink-0"
                       />
                       <span>Language</span>
                     </div>
@@ -410,37 +410,37 @@ function ProfilePage() {
               <div className="grid grid-cols-3 gap-y-4 gap-x-2 mt-2">
                 {/* Settings */}
                 <Link to="/settingsprofile" className="flex flex-col items-center">
-                  <img src={SettingCenter} alt="Settings" className="w-6 h-6 mb-1" />
+                  <img src={SettingCenter} alt="Settings" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Settings</p>
                 </Link>
 
                 {/* Feedback */}
                 <Link to="/feedbackProfile" className="flex flex-col items-center">
-                  <img src={service_feedback} alt="Feedback" className="w-6 h-6 mb-1" />
+                  <img src={service_feedback} alt="Feedback" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Feedback</p>
                 </Link>
 
                 {/* Announcement */}
                 <Link to="/notificationsService" className="flex flex-col items-center">
-                  <img src={service_notification} alt="Announcement" className="w-6 h-6 mb-1" />
+                  <img src={service_notification} alt="Announcement" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Announcement</p>
                 </Link>
 
                 {/* Customer Service */}
                 <Link to="/agentcustomer" className="flex flex-col items-center">
-                  <img src={CustomerService} alt="Customer Service" className="w-6 h-6 mb-1" />
+                  <img src={CustomerService} alt="Customer Service" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Customer Service</p>
                 </Link>
 
                 {/* Beginner's Guide */}
                 <Link to="/beginnerguide" className="flex flex-col items-center">
-                  <img src={service_guide} alt="Beginner's Guide" className="w-6 h-6 mb-1" />
+                  <img src={service_guide} alt="Beginner's Guide" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Beginner's Guide</p>
                 </Link>
 
                 {/* About Us */}
                 <Link to="/aboutusprofile" className="flex flex-col items-center">
-                  <img src={about} alt="About Us" className="w-6 h-6 mb-1" />
+                  <img src={about} alt="About Us" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">About us</p>
                 </Link>
               </div>

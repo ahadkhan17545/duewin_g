@@ -19,6 +19,7 @@ import user9 from "../Assets/Userimg/user9.png";
 import user10 from "../Assets/Userimg/user10.png";
 import { Link } from "react-router-dom";
 import apiServices from "../api/apiServices";
+import CommanHeader from "../components/CommanHeader";
 export const avatarMap = {
   1: user1,
   2: user2,
@@ -164,7 +165,7 @@ const UserProfile = () => {
 
   return (
     <div className="bg-[#242424] text-white min-h-screen mt-10 w-full mx-auto relative">
-      <SettingHeader />
+      <CommanHeader title="Settings Center" />
       {loading && <p className="text-center">Loading...</p>}
       {error && <p className="text-red-500 text-center">{error}</p>}
 

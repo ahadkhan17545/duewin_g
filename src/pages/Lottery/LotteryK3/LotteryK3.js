@@ -1105,7 +1105,7 @@ function LotteryK3() {
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-20 pb-24">
       <CommanHeader isGameHeader={true} />
-      <div className="text-center w-full max-w-sm mx-auto">
+      <div className="text-center w-full max-w-sm mx-auto" style={{zIndex:1}}>
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0 z-0">
@@ -1170,10 +1170,18 @@ function LotteryK3() {
         <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
-              Thanks to all our members — past and present — for being part of
-              our journey.
-            </p>
+            <div
+              className="h-6 relative"
+              style={{
+                width: "100%",
+                zIndex: 0,
+              }}
+            >
+              <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
+                Thanks to all our members — past and present — for being part of
+                our journey.
+              </div>
+            </div>
 
             <button
               className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
@@ -1189,7 +1197,7 @@ function LotteryK3() {
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md">
+        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md" style={{zIndex:1}}>
           <div className="button-container justify-between flex">
             {buttonData.map((button) => (
               <button

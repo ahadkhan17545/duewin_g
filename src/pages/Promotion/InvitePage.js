@@ -125,7 +125,7 @@ function InvitePage() {
       <CommanHeader title="Invite" />
       <div className="bg-[#242424] min-h-screen w-full max-w-md flex flex-col items-center justify-center mt-2">
         <div className="text-left w-full max-w-md px-3">
-          <p className="mb-4 text-[#a8a5a1] text-xs font-semibold  mt-12">
+          <p className="mb-4 text-[#a8a5a1] text-xs font-semibold">
             Please swipe left - right to choose your favorite poster
           </p>
           <div

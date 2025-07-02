@@ -421,7 +421,16 @@ function PromotionPage() {
                 <p className="text-base font-sans text-sm">Subordinate data</p>
               </div>
               <span className="text-white">
-                <img src={Right} alt="Right Icon" className="w-8 h-8" />
+                {/* <img src={Right} alt="Right Icon" className="w-8 h-8" /> */}
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 18L15 12L9 6"
+                      stroke="#cccccc"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
               </span>
             </div>
           </div>
@@ -439,7 +448,15 @@ function PromotionPage() {
                 <p className="text-base font-sans text-sm">Commission detail</p>
               </div>
               <span className="text-white">
-                <img src={Right} alt="Right Icon" className="w-8 h-8" />
+                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 18L15 12L9 6"
+                      stroke="#cccccc"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
               </span>
             </div>
           </div>
@@ -453,7 +470,15 @@ function PromotionPage() {
                 <p className="text-base font-sans text-sm">Invitation rules</p>
               </div>
               <span className="text-gray-400">
-                <img src={Right} alt="Right Icon" className="w-8 h-8" />
+                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 18L15 12L9 6"
+                      stroke="#cccccc"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
               </span>
             </div>
           </div>
@@ -468,8 +493,15 @@ function PromotionPage() {
                   Agent line customer service
                 </p>
               </div>
-              <span className="text-gray-400">
-                <img src={Right} alt="Right Icon" className="w-8 h-8" />
+              <span className="text-gray-400">  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 18L15 12L9 6"
+                      stroke="#cccccc"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>  
               </span>
             </div>
           </div>
@@ -487,7 +519,15 @@ function PromotionPage() {
                 <p className="text-base font-sans text-sm">Rebate ratio</p>
               </div>
               <span className="text-gray-400">
-                <img src={Right} alt="Right Icon" className="w-8 h-8" />
+                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 18L15 12L9 6"
+                      stroke="#cccccc"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
               </span>
             </div>
           </div>

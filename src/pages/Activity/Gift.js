@@ -146,7 +146,7 @@ const Gift = () => {
                     >
                       <p className="text-sm">{item.code}</p>
                       <p className="text-xs text-gray-400">
-                        {new Date(item.created_at).toLocaleString()}
+                        {new Date(item?.gift_code_details?.created_at).toLocaleString()}
                       </p>
                     </li>
                   ))}

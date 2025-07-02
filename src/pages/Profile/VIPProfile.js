@@ -252,7 +252,7 @@ const VIPBenefits = ({ selectedCard }) => {
   return (
     <div className="bg-[#333332] p-3 rounded-lg font-roboto">
       <div className="mb-3 flex items-center">
-        <img src={gifticon} alt="VIP Icon" className="w-6 h-6 mr-2" />
+        <img src={gifticon} alt="VIP Icon" className="w-12 h-12 mr-2" />
         <h2 className="text-base font-bold text-white">
           {selectedCard.label} Benefits Level
         </h2>
@@ -263,7 +263,7 @@ const VIPBenefits = ({ selectedCard }) => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <img src={gifticon} alt="Level Up Reward" className="w-8 h-8" />
+            <img src={gifticon} alt="Level Up Reward" className="w-12 h-12" />
             <div>
               <div className="text-white text-sm font-medium">
                 Level Up Rewards
@@ -286,7 +286,7 @@ const VIPBenefits = ({ selectedCard }) => {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <img src={coin} alt="Monthly Reward" className="w-8 h-8" />
+            <img src={coin} alt="Monthly Reward" className="w-12 h-12" />
             <div>
               <div className="text-white text-sm font-medium">
                 Monthly Reward
@@ -309,7 +309,7 @@ const VIPBenefits = ({ selectedCard }) => {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <img src={vault} alt="Monthly Reward" className="w-8 h-8" />
+            <img src={vault} alt="Monthly Reward" className="w-12 h-12" />
             <div>
               <div className="text-white text-sm font-medium">Safe</div>
               <div className="text-xs text-gray-400">
@@ -327,7 +327,7 @@ const VIPBenefits = ({ selectedCard }) => {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <img src={rebate} alt="Rebate Rate" className="w-8 h-8" />
+            <img src={rebate} alt="Rebate Rate" className="w-12 h-12" />
             <div>
               <div className="text-white text-sm font-medium">Rebate Rate</div>
               <div className="text-xs text-gray-400">
@@ -565,9 +565,8 @@ function VIPProfile() {
     fetchUserProfile();
   }, []);
   const today = new Date();
-const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-const daysLeft = lastDayOfMonth.getDate() - today.getDate();
-
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const daysLeft = lastDayOfMonth.getDate() - today.getDate();
 
   return (
     <div className="bg-[#242424] w-full min-h-screen flex flex-col font-['Roboto',sans-serif]">
@@ -626,7 +625,7 @@ const daysLeft = lastDayOfMonth.getDate() - today.getDate();
               </div>
 
               <div className="px-2 py-2 text-center border border-[#525167] rounded">
-                <p className="text-[#a8a5a1] leading-tight m-0 font-['Roboto',sans-serif] text-[10px]">
+                <p className="text-[#a8a5a1] leading-tight m-0 font-['Roboto',sans-serif] text-[11.5px]">
                   VIP level rewards are settled at 2:00 AM on the 1st of every
                   month
                 </p>
@@ -669,9 +668,18 @@ const daysLeft = lastDayOfMonth.getDate() - today.getDate();
 
                 <div className="bg-[#242424] rounded-md text-gray-200 shadow-lg">
                   {activeTab === "history" ? (
-                    <div className="space-y-4 p-4">
+                    <div className="p-4">
                       {historyData?.slice(0, 10)?.map((item, index) => (
-                        <div key={index} className="flex flex-col">
+                        <div
+                          key={index}
+                          className="flex flex-col pb-2 pt-2"
+                          style={{
+                            borderBottom:
+                              index !== historyData.length - 1
+                                ? "1px solid gray"
+                                : "none",
+                          }}
+                        >
                           <span className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer font-['Roboto',sans-serif]">
                             Experience Bonus
                           </span>
@@ -691,20 +699,45 @@ const daysLeft = lastDayOfMonth.getDate() - today.getDate();
                       ))}
                     </div>
                   ) : (
-                    <div className="space-y-4 p-4">
-                      <h2 className="text-amber-500 font-bold text-xl text-center mb-1 font-['Roboto',sans-serif]">
+                    <div>
+                      <h2 className="text-amber-500 font-bold pt-4 text-xl text-center mb-1 font-['Roboto',sans-serif]">
                         VIP Privileges
                       </h2>
                       <p className="text-gray-400 text-sm text-center mb-4 font-['Roboto',sans-serif]">
                         VIP rule description
                       </p>
 
-                      <div className="space-y-4">
-                        <div className="bg-[#242424] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
+                      <div
+                        className="space-y-4"
+                        style={{ fontFamily: "roboto" }}
+                      >
+                        <div className="relative bg-[#242424] bg-opacity-60  rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                          {/* Top Purple Banner with curve */}
+                          <div
+                            className="absolute  left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                            style={{
+                              width: "60%",
+                              height: "30px",
+                              textAlign: "center",
+                              fontSize: "13px",
+                              paddingTop: "4px",
+                              lineHeight: "24px",
+                            }}
+                          >
                             Upgrade Standard
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
+                          </div>
+
+                          {/* Description */}
+                          <p
+                            className="bg-[#333332]"
+                            style={{
+                              color: "#A8A5A1",
+                              fontSize: "13px",
+                              fontFamily: "roboto",
+                              padding: "36px 10px 10px 10px",
+                              borderRadius: "10px",
+                            }}
+                          >
                             The VIP member's experience points (valid bet
                             amount) that meet the requirements of the
                             corresponding rank will be promoted to the
@@ -716,96 +749,261 @@ const daysLeft = lastDayOfMonth.getDate() - today.getDate();
                           </p>
                         </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Upgrade Order
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            The VIP level that meets the corresponding
-                            requirements can be promoted by one level every day,
-                            but the VIP level cannot be promoted by
-                            leapfrogging.
-                          </p>
-                        </div>
+                        <div className="space-y-6">
+                          {/* Upgrade Order */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Upgrade Order
+                            </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Level Maintenance
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members need to complete the maintenance
-                            requirements of the corresponding level within 30
-                            days after the "VIP level change." If the promotion
-                            is completed during this period, the maintenance
-                            requirements will be calculated according to the
-                            current level.
-                          </p>
-                        </div>
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              The VIP level that meets the corresponding
+                              requirements can be promoted by one level every
+                              day, but the VIP level cannot be promoted by
+                              leapfrogging.
+                            </p>
+                          </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Downgrade standard
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            If a VIP member fails to complete the corresponding
-                            level maintenance requirements within 30 days, the
-                            system will automatically deduct the experience
-                            points corresponding to the level. If the experience
-                            points are insufficient, the level will be
-                            downgraded, and the corresponding discounts will be
-                            adjusted to the downgraded level accordingly.
-                          </p>
-                        </div>
+                          {/* Level Maintenance */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Level Maintenance
+                            </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Upgrade Bonus
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            The upgrade benefits can be claimed on the VIP page
-                            after the member reaches the VIP membership level,
-                            and each VIP member can only get the upgrade reward
-                            of each level once.
-                          </p>
-                        </div>
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              VIP members need to complete the maintenance
+                              requirements of the corresponding level within 30
+                              days after the "VIP level change." If the
+                              promotion is completed during this period, the
+                              maintenance requirements will be calculated
+                              according to the current level.
+                            </p>
+                          </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Monthly reward
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members can earn the highest level of VIP
-                            rewards once a month. Can only be received once a
-                            month. Prizes cannot be accumulated. And any
-                            unclaimed rewards will be refreshed on the next
-                            settlement day. When receiving the highest level of
-                            monthly rewards this month Monthly Rewards earned in
-                            this month will be deducted e.g. when VIP1 earns 500
-                            and upgrades to VIP2 to receive monthly rewards 500
-                            will be deducted.
-                          </p>
-                        </div>
+                          {/* Downgrade Standard */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Downgrade standard
+                            </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Real-time rebate
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            The higher the VIP level, the higher the return
-                            rate, all the games are calculated in real time and
-                            can be self-rewarded!
-                          </p>
-                        </div>
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              If a VIP member fails to complete the
+                              corresponding level maintenance requirements
+                              within 30 days, the system will automatically
+                              deduct the experience points corresponding to the
+                              level. If the experience points are insufficient,
+                              the level will be downgraded, and the
+                              corresponding discounts will be adjusted to the
+                              downgraded level accordingly.
+                            </p>
+                          </div>
 
-                        <div className="bg-[#333332] bg-opacity-60 p-4 rounded-md hover:bg-opacity-70 transition-colors duration-300">
-                          <h3 className="text-white text-center mb-2 font-medium font-['Roboto',sans-serif]">
-                            Safe
-                          </h3>
-                          <p className="text-sm font-['Roboto',sans-serif]">
-                            VIP members who have reached the corresponding level
-                            will get additional benefits on safe deposit based
-                            on the member's VIP level.
-                          </p>
+                          {/* Upgrade Bonus */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Upgrade Bonus
+                            </div>
+
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              The upgrade benefits can be claimed on the VIP
+                              page after the member reaches the VIP membership
+                              level, and each VIP member can only get the
+                              upgrade reward of each level once.
+                            </p>
+                          </div>
+
+                          {/* Monthly Reward */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Monthly reward
+                            </div>
+
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              VIP members can earn the highest level of VIP
+                              rewards once a month. Can only be received once a
+                              month. Prizes cannot be accumulated. And any
+                              unclaimed rewards will be refreshed on the next
+                              settlement day. When receiving the highest level
+                              of monthly rewards this month Monthly Rewards
+                              earned in this month will be deducted e.g. when
+                              VIP1 earns 500 and upgrades to VIP2 to receive
+                              monthly rewards 500 will be deducted.
+                            </p>
+                          </div>
+
+                          {/* Real-time Rebate */}
+                          <div className="relative bg-[#242424] bg-opacity-60 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Real-time rebate
+                            </div>
+
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              The higher the VIP level, the higher the return
+                              rate, all the games are calculated in real time
+                              and can be self-rewarded!
+                            </p>
+                          </div>
+
+                          {/* Safe */}
+                          <div className="relative bg-[#242424] bg-opacity-60 mb-6 rounded-md hover:bg-opacity-70 transition-colors duration-300 w-full max-w-md mx-auto text-white">
+                            {/* Top Purple Banner with curve */}
+                            <div
+                              className="absolute left-1/2 transform -translate-x-1/2 bg-[#3a3947] rounded-b-full"
+                              style={{
+                                width: "60%",
+                                height: "30px",
+                                textAlign: "center",
+                                fontSize: "13px",
+                                paddingTop: "4px",
+                                lineHeight: "24px",
+                              }}
+                            >
+                              Safe
+                            </div>
+
+                            {/* Description */}
+                            <p
+                              className="bg-[#333332]"
+                              style={{
+                                color: "#A8A5A1",
+                                fontSize: "13px",
+                                fontFamily: "roboto",
+                                padding: "36px 10px 10px 10px",
+                                borderRadius: "10px",
+                                marginBottom:"10px"
+                              }}
+                            >
+                              VIP members who have reached the corresponding
+                              level will get additional benefits on safe deposit
+                              based on the member's VIP level.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>

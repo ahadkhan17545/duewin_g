@@ -32,7 +32,7 @@ import img0 from "./../../../Assets/WingoNew/n0-30bd92d1.png";
 import img1 from "./../../../Assets/WingoNew/n1-dfccbff5.png";
 import img2 from "./../../../Assets/WingoNew/n2-c2913607.png";
 import img3 from "./../../../Assets/WingoNew/n3-f92c313f.png";
-import img4 from "./../../../Assets/WingoNew/n4-cb84933b.png"
+import img4 from "./../../../Assets/WingoNew/n4-cb84933b.png";
 import img5 from "./../../../Assets/WingoNew/n5-49d0e9c5.png";
 import img6 from "./../../../Assets/WingoNew/n6-a56e0b9a.png";
 import img7 from "./../../../Assets/WingoNew/n7-5961a17f.png";
@@ -876,7 +876,7 @@ function LotteryWingo() {
       </style>
       <CommanHeader isGameHeader={true} />
 
-      <div className="bg-[#242424] text-center w-full ">
+      <div className="bg-[#242424] text-center w-full " style={{ zIndex: 10 }}>
         <div className="rounded-3xl shadow-2xl p-2 relative overflow-hidden min-h-[120px]">
           <div className="absolute inset-0 z-0">
             <img
@@ -932,10 +932,18 @@ function LotteryWingo() {
         <div className="  mt-0">
           <div className="flex justify-between items-center w-full">
             <img src={speaker} alt="icon" className="w-6 h-6 ml-1" />
-            <p className="text-xs text-white ml-2 flex-1 opacity-80 transition-opacity duration-1000">
-              Thanks to all our members — past and present — for being part of
-              our journey.
-            </p>
+            <div
+              className="h-6 relative"
+              style={{
+                width: "100%",
+                zIndex: 0,
+              }}
+            >
+              <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
+                Thanks to all our members — past and present — for being part of
+                our journey.
+              </div>
+            </div>
 
             <button
               className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
@@ -951,7 +959,7 @@ function LotteryWingo() {
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md pr-3">
+        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md pr-3" style={{zIndex:1}}>
           <div className="button-container justify-between flex">
             {buttonData.map((button) => (
               <button
@@ -1019,7 +1027,7 @@ function LotteryWingo() {
               </div>
             </div>
             <div className="text-center min-w-0 mt-2 sm:mt-0">
-              <p className="text-[#8f5206] text-xs -mr-6 font-bold">
+              <p className="text-[#8f5206] text-xs font-bold">
                 Time Remaining
               </p>
               <div className="flex space-x-0.5 text-[#8f5206] justify-end items-center mt-1">
@@ -1304,7 +1312,7 @@ function LotteryWingo() {
           timeRemaining={timeRemaining}
           duration={buttonData[activeButton].duration}
           handleRefresh={() => setRefetchData((prev) => !prev)}
-          gameType ="wingo"
+          gameType="wingo"
         >
           <div className="bg-[#333332] rounded-lg shadow-md  p-2 pt-1 space-y-2">
             {/* {isLoading && (

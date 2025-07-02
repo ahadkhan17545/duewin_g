@@ -307,12 +307,12 @@ function DepositHistory() {
 
           <div className="mt-2 text-sm font-medium rounded-xl w-full max-w-[440px]">
             <div className="flex gap-4 mb-4">
-              <div className="relative w-32">
+              <div className="relative ">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
                 >
-                  <span className="text-white">{selectedStatus}</span>
+                  <span className="text-zinc-400">{selectedStatus}</span>
                   <MdExpandMore className="text-lg text-white" />
                 </button>
 
@@ -363,7 +363,7 @@ function DepositHistory() {
               <div className="relative w-64">
                 <button
                   onClick={() => setIsDateModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
                 >
                   <span className="text-zinc-400">{renderDateLabel()}</span>
                   <MdExpandMore className="text-lg text-white" />
@@ -525,12 +525,12 @@ function DepositHistory() {
                               deposit.status === "completed"
                                 ? "text-emerald-500"
                                 : deposit.status === "pending"
-                                ? "text-yellow-500"
+                                ? "text-[#5080D3]"
                                 : "text-red-500"
                             }`}
                             style={{textTransform:'capitalize'}}
                           >
-                            {deposit.status}
+                            {deposit.status === "pending"  ? "To be paid": deposit.status }
                           </span>
                         </div>
                         <div className="space-y-2 text-zinc-400 mt-4">
