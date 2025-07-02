@@ -168,14 +168,14 @@ const Rebate = () => {
               </div>
               <div className="text-gray-400 text-sm">{mission.status}</div>
             </div> */}
-            <div className="flex justify-between items-center pb-2 border-b border-gray-700 mt-6">
-              <div className="absolute top-0 left-0 flex items-center justify-between" style={{width:'100%'}}>
-                <div className="flex items-center bg-[#17b15e] text-white px-6 py-2 rounded-br-3xl h-12" style={{borderStartStartRadius: '7px'}}>
-                  <span className="font-medium font-semibold text-[16px]">{mission?.type}</span>
+            <div className="flex justify-between items-center pb-2 mt-6">
+              <div className="absolute top-[-2px] left-0 flex items-center justify-between h-[40px]" style={{width:'100%'}}>
+                <div className="flex items-center bg-[#17b15e] text-white px-6 py-2 rounded-br-3xl h-[40px]" style={{borderStartStartRadius: '7px'}}>
+                  <span className="font-medium font-semibold text-[16px]" >{mission?.type}</span>
                 </div>
-                <span className='text-gray-400 text-sm mr-1'>  {mission.status}</span>
+                <span className='text-gray-400 text-sm mr-1 pr-[12px]'>  {mission.status}</span>
               </div>
-
+              <div className='border-b border-gray-700 w-full'></div>
             </div>
 
             <div className="flex items-center gap-2 mb-2">
@@ -193,8 +193,8 @@ const Rebate = () => {
 
             {/* <div className="text-gray-400 text-sm ml-9 mb-3">{mission.description}</div> */}
 
-            <div className="flex justify-between items-center mb-3">
-              <div className="text-gray-300 pl-4">Award amount</div>
+            <div className="flex justify-between items-center mb-3 pb-2" style={{borderBottom:'1px solid gray'}}>
+              <div className="text-gray-300 pl-1">Award amount</div>
               <div className="flex items-center">
                 <div className="mr-1">
                   <img src={wallet} alt="Wallet" className="w-4 h-4" />

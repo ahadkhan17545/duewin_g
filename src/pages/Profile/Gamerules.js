@@ -1,5 +1,3 @@
-import React from 'react';
-import GameRulesHeader from '../../components/GameRulesHeader';
 import CommanHeader from '../../components/CommanHeader';
 
 const AttendanceBonusCombined = () => {
@@ -70,12 +68,28 @@ const AttendanceBonusCombined = () => {
         {/* Rules Section - Separated */}
         <div className="bg-gray-800 rounded-lg overflow-hidden w-full">
           {/* Rules Header */}
-          <div className="bg-[#3a3947] text-white py-3 px-4 text-center border-b border-black">
+          {/* <div className="bg-[#3a3947] text-white py-3 px-4 text-center border-b border-black">
             <h2 className="text-lg font-medium">Rules</h2>
-          </div>
+          </div> */}
           
           {/* Rules list */}
-          <div className="bg-[#333332] p-4">
+          <div className="bg-[#333332]">
+                        <div
+              className="bg-[#3a3947] text-white py-4 px-4 text-center relative mb-2"
+              style={{
+                borderRadius: "0px 0px 50% 50% / 8px 8px 10px 10px",
+                width: "240px",
+                margin: "auto",
+                height: "30px",
+              }}
+            >
+              <h2
+                className="text-lg font-medium"
+                style={{ marginTop: "-13px" }}
+              >
+                Rules
+              </h2>
+            </div>
             <ul className="space-y-3">
               {rules.map((rule, index) => (
                 <li key={index} className="flex items-start">

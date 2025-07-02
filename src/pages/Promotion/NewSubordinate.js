@@ -50,7 +50,7 @@ function NewSubordinate() {
       <CommanHeader title="New Subordindate" />
       <div className="w-full min-h-screen  px-2 mt-[49px]">
         {/* Buttons */}
-        <div className="flex mb-2 mt-4 w-full">
+        <div className="flex mb-2 mt-4 w-full justify-center">
           <button
             className={`text-sm rounded-lg ${
               activeTab === "today"

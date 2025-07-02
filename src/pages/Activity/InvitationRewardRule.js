@@ -1,5 +1,6 @@
 import React from "react";
 import GameRulesHeader from "../../components/GameRulesHeader";
+import CommanHeader from "../../components/CommanHeader";
 
 const InviteBonusTable = () => {
   // Table data with headers and rows
@@ -30,7 +31,7 @@ const InviteBonusTable = () => {
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col items-center justify-center p-4 font-serif">
-      <GameRulesHeader />
+      <CommanHeader title="Invitation reward rules" />
       <div className="w-full max-w-md mx-auto mt-10">
         {/* Info section */}
         <div className="w-full mb-4">
@@ -93,15 +94,20 @@ const InviteBonusTable = () => {
             <div
               className="bg-[#3a3947] text-white py-4 px-4 text-center relative"
               style={{
-                borderRadius: "7px 8px 50% 50% / 8px 8px 20px 20px",
-                width: '240px',
-    margin: 'auto';
-    height: 30px;
+                borderRadius: "0px 0px 50% 50% / 8px 8px 10px 10px",
+                width: "240px",
+                margin: "auto",
+                height: "30px",
               }}
             >
-              <h2 className="text-lg font-medium">Rules</h2>
+              <h2
+                className="text-lg font-medium"
+                style={{ marginTop: "-13px" }}
+              >
+                Rules
+              </h2>
             </div>
-            <ul className="space-y-3">
+            <ul className="space-y-3 py-2">
               {rules.map((rule, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-amber-500 mr-2 flex-shrink-0 mt-1">

@@ -260,12 +260,12 @@ function PromotionPage() {
         <div className="flex justify-center w-full">
           <button
             type="submit"
-            className="px-4 py-0.5 text-center text-[12px] bg-[#333332] text-[#d9ac4f] rounded-full font-sans"
+            className="px-4 py-0.5 text-center text-[14px] bg-[#333332] text-[#d9ac4f] rounded-full font-sans"
           >
             Yesterday's total commission
           </button>
         </div>
-        <p className="text-[#8f5206] text-[11px] text-center mt-1 mb-2 font-sans">
+        <p className="text-[#8f5206] text-[12px] text-center mt-1 mb-2 font-sans">
           Upgrade the level to increase commission income
         </p>
 

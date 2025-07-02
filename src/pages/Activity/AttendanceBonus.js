@@ -97,7 +97,7 @@ const Attandancebonus = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-[#242424]">
+    <div className="flex flex-col  w-full min-h-screen bg-[#242424]">
       <AttendanceHeader />
       {/* Header Section with Red Background */}
       <div className="bg-red-500 text-white p-3 relative h-64 w-full">
@@ -140,12 +140,12 @@ const Attandancebonus = () => {
       {/* Reward Tiers Grid */}
       <div className="bg-[#242424] grid grid-cols-3 gap-2 p-2 w-full">
         {rewardTiers.slice(0, 6).map((tier, index) => (
-          <div key={index} className="bg-[#333332] p-4 flex flex-col items-center rounded-lg">
+          <div key={index} className="bg-[#333332] p-1 flex flex-col items-center rounded-lg h-[114px]">
             <p className="text-white font-bold mb-2">₹{tier.amount}.00</p>
-            <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mb-2">
-              <img src={coin} alt="coin" className="w-10 h-10" />
-            </div>
-            <p className="text-white text-sm">{tier.days}</p>
+            {/* <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mb-2"> */}
+              <img src={coin} alt="coin" width={41} height={41} />
+            {/* </div> */}
+            <p className="text-white text-[14px]">{index+1 } Day </p>
           </div>
         ))}
       </div>
@@ -165,7 +165,7 @@ const Attandancebonus = () => {
           <div className="flex flex-col items-center">
             <div className="flex items-center">
               <span className="text-gray-400 mx-2">—</span>
-              <p className="text-white text-xl font-bold">₹6,400.00</p>
+              <p className="text-white text-xl font-bold">₹7,500.00</p>
               <span className="text-gray-400 mx-2">—</span>
             </div>
             <p className="text-white text-lg mt-2">7 Day</p>
@@ -174,14 +174,14 @@ const Attandancebonus = () => {
       </div>
 
       {/* Attendance Button */}
-      <div className="bg-[#242424] px-4 pb-4 pt-2 flex justify-center mb-20 w-full">
+      <div className="bg-[#242424] px-4 pb-4 pt-2 flex justify-center w-full">
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
         <button
           onClick={handleAttendanceClick}
           disabled={isLoading || unclaimedBonuses.length === 0}
           className={`w-full py-3 rounded-full text-amber-900 text-lg font-normal ${isLoading || unclaimedBonuses.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
-          style={{ background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)" }}
+          style={{ background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",width: '80%' }}
         >
           {isLoading ? "Processing..." : "Attendance"}
         </button>

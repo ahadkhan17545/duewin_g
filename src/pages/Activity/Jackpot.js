@@ -167,7 +167,7 @@ const Jackpot = () => {
             </div>
           </div>
 
-          <div className="flex items-center mb-5">
+          <div className="flex items-center mb-2">
             <img src={rebateicon} alt='rebate' className='w-7 h-7 mt-1 mr-2'></img>
             <span className="text-xl font-semibold text-white">{rebateStats?.totalRebateAmount}</span>
           </div>
@@ -187,7 +187,7 @@ const Jackpot = () => {
             </div>
           </div>
 
-          <div className="text-[#a8a5a1] text-xs mb-5">
+          <div className="text-[#a8a5a1] text-xs mb-2">
             Automatic code washing at 01:00:00 every morning
           </div>
 
@@ -210,7 +210,7 @@ const Jackpot = () => {
               return (
                 <div key={index} className="bg-[#333332] rounded-lg p-2 mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-[15px] font-bold">Lottery ({rebate?.gameType})</span>
+                    <span className="text-[15px] font-bold">Lottery ({rebate?.gameType == "wingo" ? "Win Go" : rebate?.gameType })</span>
                     <span className="text-green-500 text-[15px]">Completed</span>
                   </div>
                   <div className="text-gray-400 text-xs mb-1">{moment(rebate?.createdAt).format("DD-MM-YYYY hh:mm A")}</div>
