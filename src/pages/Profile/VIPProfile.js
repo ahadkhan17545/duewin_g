@@ -174,7 +174,7 @@ const CardCarousel = ({
                   ></img>
                   <span className="text-white text-xs font-['Roboto',sans-serif]">
                     {userExp >= vipCards[selectedIndex].required_exp
-                      ? "Opened"
+                      ? "Achieved"
                       : "Not open yet"}
                   </span>
                 </div>
@@ -349,7 +349,7 @@ const defaultVipCards = [
   {
     id: 1,
     image: bgcard,
-    label: "VIP 1",
+    label: "VIP1",
     icon: vipi,
     expRequired: 3000,
     benefits: {
@@ -363,7 +363,7 @@ const defaultVipCards = [
   {
     id: 2,
     image: bg2,
-    label: "VIP 2",
+    label: "VIP2",
     icon: vipi,
     expRequired: 10000,
     benefits: {
@@ -377,7 +377,7 @@ const defaultVipCards = [
   {
     id: 3,
     image: bg3,
-    label: "VIP 3",
+    label: "VIP3",
     icon: vipi,
     expRequired: 40000,
     benefits: {
@@ -391,7 +391,7 @@ const defaultVipCards = [
   {
     id: 4,
     image: bg4,
-    label: "VIP 4",
+    label: "VIP4",
     icon: vipi,
     expRequired: 100000,
     benefits: {
@@ -405,7 +405,7 @@ const defaultVipCards = [
   {
     id: 5,
     image: bg5,
-    label: "VIP 5",
+    label: "VIP5",
     icon: vipi,
     expRequired: 300000,
     benefits: {
@@ -419,7 +419,7 @@ const defaultVipCards = [
   {
     id: 6,
     image: bg6,
-    label: "VIP 6",
+    label: "VIP6",
     icon: vipi,
     expRequired: 600000,
     benefits: {
@@ -433,7 +433,7 @@ const defaultVipCards = [
   {
     id: 7,
     image: bg7,
-    label: "VIP 7",
+    label: "VIP7",
     icon: vipi,
     expRequired: 1000000,
     benefits: {
@@ -447,7 +447,7 @@ const defaultVipCards = [
   {
     id: 8,
     image: bg8,
-    label: "VIP 8",
+    label: "VIP8",
     icon: vipi,
     expRequired: 2000000,
     benefits: {
@@ -461,7 +461,7 @@ const defaultVipCards = [
   {
     id: 9,
     image: bg9,
-    label: "VIP 9",
+    label: "VIP9",
     icon: vipi,
     expRequired: 4000000,
     benefits: {
@@ -475,7 +475,7 @@ const defaultVipCards = [
   {
     id: 10,
     image: bg9,
-    label: "VIP 10",
+    label: "VIP10",
     icon: vipi,
     expRequired: 4000000,
     benefits: {

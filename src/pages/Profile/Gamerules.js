@@ -4,13 +4,13 @@ const AttendanceBonusCombined = () => {
   // Table data with headers and rows
   const headers = ["Continuous attendance", "Accumulated amount", "Attendance bonus"];
   const rows = [
-    { day: 1, accumulatedAmount: "₹300.00", attendanceBonus: "₹7.00" },
-    { day: 2, accumulatedAmount: "₹1,000.00", attendanceBonus: "₹20.00" },
-    { day: 3, accumulatedAmount: "₹3,000.00", attendanceBonus: "₹100.00" },
-    { day: 4, accumulatedAmount: "₹8,000.00", attendanceBonus: "₹200.00" },
-    { day: 5, accumulatedAmount: "₹20,000.00", attendanceBonus: "₹450.00" },
-    { day: 6, accumulatedAmount: "₹80,000.00", attendanceBonus: "₹2,400.00" },
-    { day: 7, accumulatedAmount: "₹200,000.00", attendanceBonus: "₹6,400.00" }
+    { day: 1, accumulatedAmount: "₹300.00", attendanceBonus: "₹10.00" },
+    { day: 2, accumulatedAmount: "₹1,000.00", attendanceBonus: "₹30.00" },
+    { day: 3, accumulatedAmount: "₹3,000.00", attendanceBonus: "₹130.00" },
+    { day: 4, accumulatedAmount: "₹8,000.00", attendanceBonus: "₹300.00" },
+    { day: 5, accumulatedAmount: "₹20,000.00", attendanceBonus: "₹650.00" },
+    { day: 6, accumulatedAmount: "₹80,000.00", attendanceBonus: "₹3,150.00" },
+    { day: 7, accumulatedAmount: "₹200,000.00", attendanceBonus: "₹7,500.00" }
   ];
 
   // Rules data

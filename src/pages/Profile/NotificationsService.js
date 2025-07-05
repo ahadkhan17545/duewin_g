@@ -55,9 +55,9 @@ function NotificationsService() {
             <summary className="flex bg-[#333332] items-start gap-2  p-3 rounded-lg transition-all">
               <img src={speakernew} alt="icon" className="w-6 h-6 mt-1" />
               <div className="flex-1">
-                <h3 className="font-medium">About Recharge - BDGGame Notify</h3>
+                <h3 className="font-medium">About Recharge - Strike Notify</h3>
                 <p className="text-xs text-[#a8a5a1] mt-3">
-                  For quicker deposits, use your last payment card. If funds went to an old one, recharge again. Visit BDGGame for a new UP account and follow the steps.
+                  For quicker deposits, use your last payment card. If funds went to an old one, recharge again. Visit Strike game for a new UP account and follow the steps.
                 </p>
 
 

@@ -306,9 +306,9 @@ function LoginPage() {
           }}
         >
           <h1 className="text-[15px] font-bold text-white mb-2">Log in</h1>
-          <p className="text-white text-[10px] mb-8 font-sans">
+          <p className="text-white text-[11px] mb-4 font-sans">
             Please log in with your phone number or email
-            <br />
+            <br/>
             If you forget your password, please contact customer service
           </p>
         </div>

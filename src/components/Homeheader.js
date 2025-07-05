@@ -196,8 +196,8 @@ const Homeheader = () => {
               alt="US Flag"
               className="w-4 h-4 sm:w-5 sm:h-5 relative -top-4 md:-top-5"
             />
-            <span className="text-[#d9ac4f] text-xs sm:text-sm md:text-base font-medium relative -top-4 md:-top-5 left-4">
-              Welcome to BDG Game
+            <span className="text-[#d9ac4f] text-xs sm:text-sm md:text-base font-medium relative -top-4 md:-top-4 left-0">
+              Welcome to Strike Game
             </span>
           </div>
         </div>

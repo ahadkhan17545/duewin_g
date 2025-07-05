@@ -377,7 +377,7 @@ function ProfilePage() {
                 {/* Language */}
                 <div>
                   <Link
-                    to="/language"
+                
                     className="w-full text-base font-normal text-white flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">

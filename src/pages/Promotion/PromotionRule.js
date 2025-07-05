@@ -132,7 +132,7 @@ function PromotionRule() {
               },
               {
                 number: "08",
-                text: "The final interpretation of this activity belongs to Welcome to BDG Game",
+                text: "The final interpretation of this activity belongs to Welcome to Strike game",
               },
             ].map((item, index) => (
               <div key={index} className="bg-[#333332] rounded-xl px-4 pb-4">

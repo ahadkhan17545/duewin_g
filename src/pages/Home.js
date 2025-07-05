@@ -1268,20 +1268,20 @@ function Home() {
                     </p>
                     <p className="flex gap-2">
                      <span className="text-[#c38d2f]">◆</span>
-                      Tiranga works with more than 10,000 online live game
+                      strike works with more than 10,000 online live game
                       dealers and slot games, all of which are verified fair
                       games.
                     </p>
                     <p className="flex gap-2">
                      <span className="text-[#c38d2f]">◆</span>
-                      Tiranga supports fast deposit and withdrawal, and looks
+                      Strike supports fast deposit and withdrawal, and looks
                       forward to your visit.
                     </p>
                     <p className="text-[#ff4c4c] pt-2">
                       Gambling can be addictive, please play rationally.
                     </p>
                     <p className="text-[#ff4c4c]">
-                      Tiranga only accepts customers above the age of{" "}
+                      Strike only accepts customers above the age of{" "}
                       <span className="font-bold">18</span>.
                     </p>
                   </div>
@@ -1313,7 +1313,7 @@ function Home() {
                   className="text-black text-xs font-semibold text-center mt-4 w-fit px-2 font-[Arial] py-1"
                   style={{ backgroundColor: "rgb(255, 255, 0)" }}
                 >
-                  ⭐ BDGGAME.COM ⭐
+                  ⭐ Strike Game ⭐
                 </div>
                 <p className="text-base font-medium text-white tracking-wide mt-3">
                   Please Remember To Use
@@ -1351,7 +1351,7 @@ function Home() {
                   ))}
                 </div>
                 <div className="mt-3 text-sm font-medium">
-                  <p>⭐ BDGGame Operating 5 Years+</p>
+                  <p>⭐ Strike Game Operating 5 Years+</p>
                   <p>⭐ The Most Professional Game</p>
                   <p>⭐ High Quality Agent Benefits</p>
                   <p>⭐ No.1 Casino Game Platform</p>

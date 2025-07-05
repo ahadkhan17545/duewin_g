@@ -93,7 +93,7 @@ const Attandancebonus = () => {
     { days: 8000, amount: 300 },
     { days: 20000, amount: 650 },
     { days: 80000, amount: 3150 },
-    { days: 200000, amount: 6400, isSpecial: true },
+    { days: 200000, amount: 7500, isSpecial: true },
   ];
 
   return (
