@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import RebateRatioHeader from "../../components/RebateRatioHeader";
 import iconround from "./../../Assets/iconround.png";
 import { PiLineVerticalDuotone } from "react-icons/pi";
@@ -21,6 +21,32 @@ import activeImg6 from "../../Assets/finalicons/allicon2.png";
 
 function RebateRatio() {
   const [selectedIndex, setSelectedIndex] = useState(0); // Default to All (index 0)
+  const scrollContainerRef = useRef(null);
+
+  // Function to scroll selected item to center
+  const scrollToCenter = (index) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const item = container.children[index];
+
+      if (item) {
+        const containerWidth = container.offsetWidth;
+        const itemWidth = item.offsetWidth;
+        const itemLeft = item.offsetLeft;
+
+        // Calculate scroll position to center the item
+        const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
+
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    scrollToCenter(selectedIndex);
+  }, [selectedIndex]);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -66,7 +92,7 @@ function RebateRatio() {
       L10: [1.4, 0.98, 0.686, 0.4802, 0.33614, 0.235298],
     },
     Others: {
-      L0: [0.3, 0.09, 0.027, 0.0081, 0.00243, 0.000729],
+      L0: [0.003, 0.0009, 0.00027, 0.000081, 0.0000243, 0.00000729],
       L1: [0.35, 0.1225, 0.042875, 0.015006, 0.005252, 0.001838],
       L2: [0.35, 0.1225, 0.042875, 0.015006, 0.005252, 0.001838],
       L3: [0.4, 0.16, 0.064, 0.0256, 0.01024, 0.004096],
@@ -83,7 +109,7 @@ function RebateRatio() {
   // Determine which rebate percentages to use based on selectedIndex
   const getRebatePercentages = () => {
     if (selectedIndex === 0) return rebateLevels.All;
-    if (selectedIndex === 1) return rebateLevels.Lottery;
+    // if (selectedIndex === 1) return rebateLevels.Lottery;
     return rebateLevels.Others; // Casino, Sports, Rummy, Slots
   };
 
@@ -108,7 +134,10 @@ function RebateRatio() {
         {/* Main content wrapper with max width and proper alignment */}
         <div className="w-full mx-auto sm:px-4 md:px-4  flex flex-col items-center">
           {/* Selection Items - Reduced width with horizontal scroll */}
-          <div className="flex w-full mb-2 overflow-x-auto flex-nowrap scrollbar-hidden">
+          <div
+            ref={scrollContainerRef}
+            className="flex w-full mb-2 overflow-x-auto flex-nowrap scrollbar-hidden"
+          >
             {descriptions.map((desc, index) => (
               <div
                 key={index}

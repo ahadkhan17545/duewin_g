@@ -1,0 +1,21 @@
+.buttonWrapper {
+  justify-content: space-between !important;
+}
+
+.buttonWrapperBtn {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+@media screen and (max-width: 360px) {
+  .buttonWrapper {
+    gap: 5px;
+    justify-content: space-around !important;
+    display: flex;
+  }
+
+  .buttonWrapperBtn {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

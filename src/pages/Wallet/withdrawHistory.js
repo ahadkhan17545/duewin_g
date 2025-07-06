@@ -500,7 +500,7 @@ function WithdrawHistory() {
 
           {/* Content Section */}
           <div
-            className="rounded-lg  mt-4 max-h-screen overflow-y-auto"
+            className="rounded-lg  mt-4 max-h-screen overflow-y-auto scrollbar-hide"
             style={{ maxHeight: "600px" }}
           >
             {loading ? (

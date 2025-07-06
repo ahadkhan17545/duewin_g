@@ -442,16 +442,17 @@ function Home() {
         launchResponse?.redirect_url;
 
       if (gameUrl) {
-        console.log("Game URL received:", gameUrl);
-        const gameWindow = window.open(
-          gameUrl,
-          "_blank",
-          "width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no"
-        );
+        // console.log("Game URL received:", gameUrl);
+        // const gameWindow = window.open(
+        //   gameUrl,
+        //   "_blank",
+        //   "width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no"
+        // );
 
-        if (!gameWindow) {
-          window.location.href = gameUrl;
-        }
+        // if (!gameWindow) {
+        //   window.location.href = gameUrl;
+        // }
+        window.location.href = gameUrl;
       } else {
         console.error(
           "No game URL received from API. Response:",
@@ -729,19 +730,32 @@ function Home() {
                   <img
                     src={img}
                     alt={`Slide ${index + 1}`}
-                    className="w-full h-44 object-cover rounded-lg shadow-lg"
+                    className="w-full h-44 object-contain rounded-lg"
                   />
                 </div>
               ))}
             </Slider>
           </div>
-          <div className="w-full py-2 -mt-4">
+          <div className="w-full -mt-4">
             <div className="p-2 rounded-xl shadow-md">
               <div className="flex justify-between items-center w-full">
                 <img src={speakar} alt="Speaker Icon" className="w-6 h-6" />
+                <div
+                  className="h-6 relative"
+                  style={{
+                    width: "100%",
+                    zIndex: 0,
+                  }}
+                >
+                  <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
+                    Thanks to all our members—past and present—for being part of
+                    our journey.
+                  </div>
+                </div>
                 <Link to="/notificationsService">
                   <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
                     <img src={hot} alt="Hot Icon" className="w-3 h-3" />
+
                     <span className="ml-1 text-xs font-semibold">Detail</span>
                   </button>
                 </Link>
@@ -1103,10 +1117,7 @@ function Home() {
                 justifyContent: "space-around",
               }}
             >
-              <div
-                className="relative w-[96%] h-[320px] overflow-hidden rounded-lg p-2"
-             
-              >
+              <div className="relative w-[96%] h-[320px] overflow-hidden rounded-lg p-2">
                 {winners.map((winner, index) => (
                   <div
                     key={winner.id}
@@ -1267,13 +1278,13 @@ function Home() {
                       casinos, and slot machine games.
                     </p>
                     <p className="flex gap-2">
-                     <span className="text-[#c38d2f]">◆</span>
+                      <span className="text-[#c38d2f]">◆</span>
                       strike works with more than 10,000 online live game
                       dealers and slot games, all of which are verified fair
                       games.
                     </p>
                     <p className="flex gap-2">
-                     <span className="text-[#c38d2f]">◆</span>
+                      <span className="text-[#c38d2f]">◆</span>
                       Strike supports fast deposit and withdrawal, and looks
                       forward to your visit.
                     </p>

@@ -38,6 +38,7 @@ import dice6 from "../../../Assets/WingoNew/n6-b68c6bb6.png";
 import gameApi from "../../../api/gameAPI";
 import ResultPopUp from "../../../components/ResultPopUp";
 import CommanHeader from "../../../components/CommanHeader";
+import "../lottery.css"
 
 const diceImages = {
   1: dice1,
@@ -521,7 +522,7 @@ function LotteryK3() {
     const interval = setInterval(fetchWalletBalance, 30000);
     return () => clearInterval(interval);
   }, []);
-  
+
   useEffect(() => {
     if (isConnected) {
       const updates = {};
@@ -1105,7 +1106,10 @@ function LotteryK3() {
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-20 pb-24">
       <CommanHeader isGameHeader={true} />
-      <div className="text-center w-full max-w-sm mx-auto" style={{zIndex:1}}>
+      <div
+        className="text-center w-full max-w-sm mx-auto"
+        style={{ zIndex: 1 }}
+      >
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0 z-0">
@@ -1197,7 +1201,10 @@ function LotteryK3() {
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md" style={{zIndex:1}}>
+        <div
+          className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md"
+          style={{ zIndex: 1 }}
+        >
           <div className="button-container justify-between flex">
             {buttonData.map((button) => (
               <button
@@ -1367,42 +1374,44 @@ function LotteryK3() {
           </FreezePopup>
 
           {activeImgTab === "total" && (
-            <div className="grid grid-cols-4 gap-3 ml-4">
-              {imageUrls.map((image, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center mt-4 relative w-12 h-12"
-                >
-                  <img
-                    src={image.url}
-                    alt={`Ball ${image.number}`}
-                    className="w-14 h-14 cursor-pointer"
-                    onClick={() => handleOptionClick(image.number)}
-                  />
-                  <span
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
-                    style={{ color: image.textColor }}
+            <>
+              <div className="grid grid-cols-4 gap-3 ml-4">
+                {imageUrls.map((image, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center mt-4 relative w-12 h-12"
                   >
-                    {image.number}
-                  </span>
-                  <span
-                    className="text-xs text-white mt-1"
-                    style={{ color: "#a8a5a1" }}
-                  >
-                    {image.description}
-                  </span>
-                </div>
-              ))}
+                    <img
+                      src={image.url}
+                      alt={`Ball ${image.number}`}
+                      className="w-14 h-14 cursor-pointer"
+                      onClick={() => handleOptionClick(image.number)}
+                    />
+                    <span
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
+                      style={{ color: image.textColor }}
+                    >
+                      {image.number}
+                    </span>
+                    <span
+                      className="text-xs text-white mt-1"
+                      style={{ color: "#a8a5a1" }}
+                    >
+                      {image.description}
+                    </span>
+                  </div>
+                ))}
+              </div>
               <div
-                className="gap-3 flex justify-between text-xs mt-4"
+                className="flex justify-center text-xs buttonWrapper"
                 style={{
-                  marginLeft: "-8px",
+                  marginTop: "30px",
                 }}
               >
                 {["Big 1.98", "Small 1.98", "Odd 1.98", "Even 1.98"].map(
                   (label, idx) => {
                     const commonClasses =
-                      "text-white px-6 py-1 rounded-md hover:opacity-90 text-center cursor-pointer";
+                      "text-white px-4 py-1 rounded-md hover:opacity-90 text-center cursor-pointer buttonWrapperBtn";
                     const gradientStyle =
                       idx === 0
                         ? {
@@ -1433,7 +1442,7 @@ function LotteryK3() {
                   }
                 )}
               </div>
-            </div>
+            </>
           )}
 
           {activeImgTab === "2same" && (

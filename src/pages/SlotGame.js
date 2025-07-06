@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SlotHeader from "../components/SlotHeader";
 import gameApi from "../api/gameAPI";
@@ -57,6 +57,41 @@ function SlotGame() {
   const [error, setError] = useState(null);
   const [launchingGame, setLaunchingGame] = useState(null);
   const navigate = useNavigate();
+    const scrollContainerRef = useRef(null);
+  
+    // Function to scroll selected tab to center
+    const scrollToCenter = (tabKey) => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        const buttons = container.querySelectorAll("button");
+  
+        // Find the index of the active tab
+        const activeIndex = providers.findIndex(
+          (provider) => provider.key === tabKey
+        );
+        const activeButton = buttons[activeIndex];
+  
+        if (activeButton) {
+          const containerWidth = container.offsetWidth;
+          const buttonWidth = activeButton.offsetWidth;
+          const buttonLeft = activeButton.offsetLeft;
+  
+          // Calculate scroll position to center the button
+          const scrollPosition =
+            buttonLeft - containerWidth / 2 + buttonWidth / 2;
+  
+          container.scrollTo({
+            left: scrollPosition,
+            behavior: "smooth",
+          });
+        }
+      }
+    };
+  
+    // Auto-scroll when activeTab changes
+    useEffect(() => {
+      scrollToCenter(activeProvider);
+    }, [activeProvider]);
 
   const fetchGamesForProvider = async (provider) => {
     setLoading(true);
@@ -138,19 +173,20 @@ function SlotGame() {
         launchResponse?.redirect_url;
 
       if (gameUrl) {
-        console.log('Game URL received:', gameUrl);
+        // console.log('Game URL received:', gameUrl);
 
-        // Open game in new window/tab
-        const gameWindow = window.open(
-          gameUrl,
-          '_blank',
-          'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
-        );
+        // // Open game in new window/tab
+        // const gameWindow = window.open(
+        //   gameUrl,
+        //   '_blank',
+        //   'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no'
+        // );
 
-        if (!gameWindow) {
-          // If popup was blocked, try redirecting in same tab
-          window.location.href = gameUrl;
-        }
+        // if (!gameWindow) {
+        //   // If popup was blocked, try redirecting in same tab
+        //   window.location.href = gameUrl;
+        // }
+        window.location.href = gameUrl; 
       } else {
         console.error('No game URL received from API. Response:', launchResponse);
         setError("Unable to launch game. No URL received from server.");
@@ -189,7 +225,7 @@ function SlotGame() {
 
       <div className="bg-[#242424] p-3 w-full max-w-md mx-auto flex flex-col mt-12">
         {/* Horizontal scrollable buttons */}
-        <div className="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-hide">
+        <div   ref={scrollContainerRef} className="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-hide">
           {providers.map((provider) => (
             <button
               key={provider.key}

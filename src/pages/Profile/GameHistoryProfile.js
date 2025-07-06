@@ -31,6 +31,32 @@ function GameHistoryProfile() {
   });
   const [selectedOption, setSelectedOption] = useState("");
   const [betHistory, setBetHistory] = useState([]);
+    const scrollContainerRef = useRef(null);
+
+  // Function to scroll selected item to center
+  const scrollToCenter = (index) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const item = container.children[index];
+
+      if (item) {
+        const containerWidth = container.offsetWidth;
+        const itemWidth = item.offsetWidth;
+        const itemLeft = item.offsetLeft;
+
+        // Calculate scroll position to center the item
+        const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
+
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    scrollToCenter(selectedIndex);
+  }, [selectedIndex]);
 
   const tabsContainerRef = useRef(null);
   const yearRef = useRef(null);
@@ -222,15 +248,15 @@ function GameHistoryProfile() {
       <div className="bg-[#242424] flex flex-col w-full max-w-[400px] mx-auto items-center mt-12">
         <div className="w-full px-3">
           <div
-            ref={tabsContainerRef}
+            ref={scrollContainerRef}
             className="flex space-x-4 overflow-hidden cursor-grab"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            // onMouseDown={handleMouseDown}
+            // onMouseMove={handleMouseMove}
+            // onMouseUp={handleMouseUp}
+            // onMouseLeave={handleMouseUp}
+            // onTouchStart={handleTouchStart}
+            // onTouchMove={handleTouchMove}
+            // onTouchEnd={handleTouchEnd}
             style={{
               userSelect: "none",
               scrollBehavior: "smooth",

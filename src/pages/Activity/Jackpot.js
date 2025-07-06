@@ -35,6 +35,33 @@ const Jackpot = () => {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [rebateStats, setRebateStats] = useState(null)
+  const scrollContainerRef = useRef(null);
+
+  // Function to scroll selected item to center
+  const scrollToCenter = (index) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const item = container.children[index];
+
+      if (item) {
+        const containerWidth = container.offsetWidth;
+        const itemWidth = item.offsetWidth;
+        const itemLeft = item.offsetLeft;
+
+        // Calculate scroll position to center the item
+        const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
+
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+  useEffect(() => {
+    scrollToCenter(selectedTab);
+  }, [selectedTab]);
+
   const fetchRebate = async (page = 1) => {
     setIsLoading(true);
     try {
@@ -124,7 +151,7 @@ const Jackpot = () => {
 
         {/* Tab Images with Selection */}
         <div
-          ref={scrollRef}
+          ref={scrollContainerRef}
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}

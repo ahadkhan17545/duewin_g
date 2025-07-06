@@ -4,21 +4,25 @@ import aboutBg from "../../Assets/aboutBg.png";
 import iconrisk from "../../Assets/iconrisk.png";
 import iconcon from "../../Assets/iconcon.png"; // Fixed variable name
 import CommanHeader from "../../components/CommanHeader";
+import { useNavigate } from "react-router-dom";
 
 const agreements = [
   {
     id: 1,
     title: "Confidentiality Agreement",
     icon: iconcon,
+    link:'/aboutDetail'
   },
   {
     id: 2,
     title: "Risk Disclosure Agreement",
     icon: iconrisk,
+    link:'/riskDetails'
   },
 ];
 
 function AboutusProfile() {
+  const navigate = useNavigate()
   return (
     <div className="w-full h-screen flex justify-center items-center bg-[#242424] text-white">
       <CommanHeader title="About Us" />
@@ -34,6 +38,7 @@ function AboutusProfile() {
             <div
               key={item.id}
               className="flex items-center justify-between py-6 border-b border-gray-600 cursor-pointer"
+              onClick={()=>navigate(item?.link)}
             >
               {/* Icon & Text */}
               <div className="flex items-center gap-4">

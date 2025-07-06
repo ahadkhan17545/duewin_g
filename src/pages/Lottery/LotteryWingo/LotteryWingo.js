@@ -996,10 +996,11 @@ function LotteryWingo() {
             backgroundImage: `url(${back})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            height:'115px'
           }}
         >
           <div className="flex justify-between items-center flex-wrap">
-            <div className="-mt-2">
+            <div>
               <button
                 onClick={() => setShowHowToPlay(true)}
                 className="border border-black rounded-full px-9 py-1 flex items-center justify-center gap-1 text-[#8f5206] text-center shrink-0"
@@ -1007,7 +1008,7 @@ function LotteryWingo() {
                 <img src={HowToPlay} alt="How to Play" className="w-4 h-4" />
                 <p className="text-[#8f5206] text-xs ">How to Play</p>
               </button>
-              <p className="text-[#8f5206] mb-2 mt-2 text-xs truncate whitespace-nowrap max-w-full">
+              <p className="text-[#8f5206] mb-2 mt-2 text-xs truncate whitespace-nowrap max-w-full px-2">
                 {selectedTitle}
               </p>
 
@@ -1027,7 +1028,7 @@ function LotteryWingo() {
               </div>
             </div>
             <div className="text-center min-w-0 mt-2 sm:mt-0">
-              <p className="text-[#8f5206] text-xs font-bold">
+              <p className="text-[#8f5206] text-xs font-bold " style={{paddingBottom:'10px'}}>
                 Time Remaining
               </p>
               <div className="flex space-x-0.5 text-[#8f5206] justify-end items-center mt-1">
@@ -1250,7 +1251,7 @@ function LotteryWingo() {
                       ₹0
                     </p>
                     <p className="text-xs text-400" style={{ color: "black" }}>
-                      Period: {lastResult?.duration} seconds{" "}
+                      Period: {lastResult?.gameType} {lastResult?.duration} seconds{" "}
                       {lastResult?.periodId}
                     </p>
                   </div>

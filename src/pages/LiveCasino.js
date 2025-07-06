@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import gameApi from "../api/gameAPI";
 import { isAuthenticated } from "../api/auth";
@@ -12,7 +12,6 @@ const providers = [
   { key: "ez", name: "Ezugi" },
   { key: "cl", name: "Betconstruct Live Games" },
 ];
-
 
 const CasinoGames = () => {
   const [activeTab, setActiveTab] = useState(providers[0].key);
@@ -85,7 +84,14 @@ const CasinoGames = () => {
     setError(null);
 
     try {
-      console.log("Launching game:", game.name, "ID:", game.id, "Provider:", game.provider);
+      console.log(
+        "Launching game:",
+        game.name,
+        "ID:",
+        game.id,
+        "Provider:",
+        game.provider
+      );
 
       const launchResponse = await gameApi.launchGame(game.id);
 
@@ -97,18 +103,12 @@ const CasinoGames = () => {
         launchResponse?.redirect_url;
 
       if (gameUrl) {
-        console.log("Game URL received:", gameUrl);
-        const gameWindow = window.open(
-          gameUrl,
-          "_blank",
-          "width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no"
-        );
-
-        if (!gameWindow) {
-          window.location.href = gameUrl;
-        }
+        window.location.href = gameUrl;
       } else {
-        console.error("No game URL received from API. Response:", launchResponse);
+        console.error(
+          "No game URL received from API. Response:",
+          launchResponse
+        );
         setError("Unable to launch game. No URL received from server.");
       }
     } catch (error) {
@@ -138,24 +138,63 @@ const CasinoGames = () => {
     fetchGamesForProvider(activeTab);
   }, [activeTab, navigate]);
   const handleImageError = (gameId) => {
-    setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+    setGames((prevGames) => prevGames.filter((game) => game.id !== gameId));
   };
 
+  const scrollContainerRef = useRef(null);
+
+  // Function to scroll selected tab to center
+  const scrollToCenter = (tabKey) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const buttons = container.querySelectorAll("button");
+
+      // Find the index of the active tab
+      const activeIndex = providers.findIndex(
+        (provider) => provider.key === tabKey
+      );
+      const activeButton = buttons[activeIndex];
+
+      if (activeButton) {
+        const containerWidth = container.offsetWidth;
+        const buttonWidth = activeButton.offsetWidth;
+        const buttonLeft = activeButton.offsetLeft;
+
+        // Calculate scroll position to center the button
+        const scrollPosition =
+          buttonLeft - containerWidth / 2 + buttonWidth / 2;
+
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
+  // Auto-scroll when activeTab changes
+  useEffect(() => {
+    scrollToCenter(activeTab);
+  }, [activeTab]);
 
   return (
     <div className="bg-[#242424] min-h-screen w-full flex flex-col">
       <CommanHeader title="Live Casino" />
       <div className="bg-[#242424] p-3 w-full max-w-md mx-auto flex flex-col mt-12">
         {/* Horizontal scrollable tabs */}
-        <div className="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-hide">
+        <div
+          ref={scrollContainerRef}
+          className="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-hide"
+        >
           {providers.map((provider) => (
             <button
               key={provider.key}
               onClick={() => setActiveTab(provider.key)}
-              className={`flex-shrink-0 px-4 py-2 rounded-md text-white whitespace-nowrap ${activeTab === provider.key
+              className={`flex-shrink-0 px-4 py-2 rounded-md text-white whitespace-nowrap ${
+                activeTab === provider.key
                   ? "bg-[#ff4d4d]"
                   : "bg-[#3a3a3a] hover:bg-[#4a4a4a]"
-                }`}
+              }`}
             >
               {provider.name}
             </button>

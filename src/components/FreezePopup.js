@@ -83,7 +83,7 @@ const FreezePopup = ({
           className="absolute left-0 right-0 flex items-center justify-center rounded-lg z-10   bg-black bg-opacity-50 p-[10px]"
           style={{
             top: getTopPercentage(gameType),
-            height: gameType == 'k3'? "415px":('5d'?"275px":'')
+            height: gameType == 'k3'? "420px":('5d'?"275px":'')
           }}
         >
           <div className="flex gap-4">

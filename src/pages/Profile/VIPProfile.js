@@ -119,10 +119,10 @@ const CardCarousel = ({
   };
 
   return (
-    <div className="relative flex items-center justify-center overflow-hidden my-4 mx-auto w-full">
+    <div className="relative flex items-center justify-center overflow-x-visible my-4 mx-auto w-full">
       <motion.div
         key={selectedIndex}
-        className="p-1 rounded-lg shadow-lg w-full flex justify-center"
+        className="p-1 rounded-lg w-full flex justify-center transition-transform duration-300"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         onDrag={handleDrag}
@@ -996,7 +996,7 @@ function VIPProfile() {
                                 fontFamily: "roboto",
                                 padding: "36px 10px 10px 10px",
                                 borderRadius: "10px",
-                                marginBottom:"10px"
+                                marginBottom: "10px",
                               }}
                             >
                               VIP members who have reached the corresponding

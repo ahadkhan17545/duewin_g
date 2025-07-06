@@ -87,6 +87,8 @@ import { AudioProvider } from "./contexts/AudioContext";
 import AttendanceHistory from "./pages/Activity/AttendanceHistory";
 import SubordinateLevelPage from "./pages/Promotion/SubordinateLevelPage";
 import GlobalLoader from "./components/GlobalLoader";
+import AboutDetails from "./pages/Profile/AboutDetails";
+import RiskDetails from "./pages/Profile/RiskDetails";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -186,6 +188,8 @@ function App() {
                                         <Route path="/passwordchangeform" element={<PasswordChangeForm />} />
                                         <Route path="/resetemail" element={<LoginVerificationForm />} />
                                         <Route path="/aboutusprofile" element={<AboutusProfile />} />
+                                        <Route path="/aboutDetail" element={<AboutDetails />} />
+                                        <Route path="/riskDetails" element={<RiskDetails />} />
                                         <Route path="/arwallet" element={<ARWallet />} />
                                         <Route path="/beginnerguide" element={<BeginnerGuide />} />
                                         <Route path="/customerserviceprofile" element={<CustomerServiceProfile />} />
