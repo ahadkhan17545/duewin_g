@@ -172,7 +172,7 @@ function LotteryWingo() {
 
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const API_BASE_URL = "https://api.strikecolor1.com";
-
+  const containerRef = useRef(null);
   const fetchUserBets = async (page = 1, limit = 10) => {
     if (!isMounted.current) return;
     setIsLoading(true);
@@ -961,7 +961,10 @@ function LotteryWingo() {
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md pr-3" style={{zIndex:1}}>
+        <div
+          className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md pr-3"
+          style={{ zIndex: 1 }}
+        >
           <div className="button-container justify-between flex">
             {buttonData.map((button) => (
               <button
@@ -998,7 +1001,7 @@ function LotteryWingo() {
             backgroundImage: `url(${back})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            height:'115px'
+            height: "115px",
           }}
         >
           <div className="flex justify-between items-center flex-wrap">
@@ -1030,7 +1033,10 @@ function LotteryWingo() {
               </div>
             </div>
             <div className="text-center min-w-0 mt-2 sm:mt-0">
-              <p className="text-[#8f5206] text-xs font-bold " style={{paddingBottom:'10px'}}>
+              <p
+                className="text-[#8f5206] text-xs font-bold "
+                style={{ paddingBottom: "10px" }}
+              >
                 Time Remaining
               </p>
               <div className="flex space-x-0.5 text-[#8f5206] justify-end items-center mt-1">
@@ -1253,8 +1259,8 @@ function LotteryWingo() {
                       ₹0
                     </p>
                     <p className="text-xs text-400" style={{ color: "black" }}>
-                      Period: {lastResult?.gameType} {lastResult?.duration} seconds{" "}
-                      {lastResult?.periodId}
+                      Period: {lastResult?.gameType} {lastResult?.duration}{" "}
+                      seconds {lastResult?.periodId}
                     </p>
                   </div>
                 </div>
@@ -1917,8 +1923,11 @@ function LotteryWingo() {
           )}
           {activeTab === "chart" && (
             <>
-              <div className="p-2 rounded-t-lg relative">
-                <ChartConnectorCanvas chartData={chartData} />
+              <div className="p-2 rounded-t-lg relative" ref={containerRef}>
+                <ChartConnectorCanvas
+                  chartData={chartData}
+                  containerRef={containerRef}
+                />
                 <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
                   <thead>
                     <tr className="bg-gray-700 rounded-t-lg">
@@ -1962,8 +1971,8 @@ function LotteryWingo() {
                                     key={i}
                                     className={`w-[16px] h-[16px] flex items-center justify-center rounded-full text-[12px] ${
                                       isHighlighted
-                                        ? `${highlightColor} text-white`
-                                        : `bg-gray-600 text-gray-300 border border-${highlightColor}`
+                                        ? `highlight ${highlightColor} text-white`
+                                        : `bg-gray-600 text-gray-300`
                                     }`}
                                   >
                                     {i}

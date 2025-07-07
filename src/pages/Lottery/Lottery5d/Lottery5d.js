@@ -137,6 +137,7 @@ function Lottery5d() {
   const [isLoading, setIsLoading] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const containerRef = useRef(null);
   // WebSocket hook
   const {
     isConnected,
@@ -1031,10 +1032,10 @@ function Lottery5d() {
             </div>
           )}
           {activeTab === "chart" && (
-            <div className="p-2 rounded-t-lg relative">
-              <ChartConnectorCanvas5D
+            <div className="p-2 rounded-t-lg relative" ref={containerRef}>
+              <ChartConnectorCanvas
                 chartData={chartData}
-                activeImgTab={activeImgTab}
+                containerRef={containerRef}
               />
               <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
                 <thead>
@@ -1064,7 +1065,7 @@ function Lottery5d() {
                           <div className="flex items-center justify-center space-x-1 relative">
                             {/* 0–9 number row */}
                             {Array.from({ length: 10 }, (_, i) => {
-                              const currentValue = row.result[activeImgTab];
+                              const currentValue = row.result["A"];
                               const isHighlighted = currentValue === i;
                               const highlightColor =
                                 i === 0
@@ -1080,7 +1081,7 @@ function Lottery5d() {
                                   key={i}
                                   className={`w-[16px] h-[16px] flex items-center justify-center rounded-full text-[12px] ${
                                     isHighlighted
-                                      ? `${highlightColor} text-white`
+                                      ? `highlight ${highlightColor} text-white`
                                       : "bg-gray-600 text-gray-300 border border-gray-500"
                                   }`}
                                 >

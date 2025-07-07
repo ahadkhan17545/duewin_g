@@ -1,50 +1,62 @@
 import React, { useEffect, useRef } from "react";
 
-const ChartConnectorCanvas = ({ chartData }) => {
+const ChartConnectorCanvas = ({ chartData, containerRef }) => {
   const canvasRef = useRef(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !chartData.length) return;
+  const drawCanvas = () => {
+
+    const canvas = canvasRef?.current;
+    if (!canvas || !chartData.length || !containerRef?.current) return;
 
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Adjusted positioning to match your table layout
-    const rowHeight = 48; // Height of each table row
-    const cellWidth = 16.4; // Width of each number circle (16px + spacing)
-    const offsetLeft = 178; // Left offset to align with the number section
-    const centerY = 24; // Center Y position within each row
-    const centerX = 8; // Center X offset for each circle
+    const containerRect = containerRef.current.getBoundingClientRect();
 
-    ctx.strokeStyle = "#ef4444"; // Red color for the connecting lines
+    const highlightedPoints = Array.from(
+      containerRef?.current.querySelectorAll(".highlight")
+    ).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+      };
+    });
+
+    ctx.strokeStyle = "#ef4444";
     ctx.lineWidth = 2;
 
-    for (let i = 0; i < chartData.length - 1; i++) {
-      const current = chartData[i]?.number;
-      const next = chartData[i + 1]?.number;
+    for (let i = 0; i < highlightedPoints.length - 1; i++) {
+      const p1 = highlightedPoints[i];
+      const p2 = highlightedPoints[i + 1];
+      if (!p1 || !p2) continue;
 
-      if (current == null || next == null) continue;
-
-      // Calculate positions for current and next points
-      const x1 = offsetLeft + current * cellWidth + centerX;
-      const y1 = i * rowHeight + centerY + 40; // +40 to account for header height and padding
-      const x2 = offsetLeft + next * cellWidth + centerX;
-      const y2 = (i + 1) * rowHeight + centerY + 40;
-
-      // Draw the connecting line
       ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
       ctx.stroke();
     }
-  }, [chartData]);
+  };
+
+    useEffect(() => {
+    if (!containerRef?.current) return;
+  }, [chartData, containerRef]);
+  useEffect(() => {
+    drawCanvas();
+
+    const handleResize = () => {
+      drawCanvas(); // Redraw on screen resize
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [chartData, containerRef]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={400} // Reduced width to match table
-      height={chartData.length * 48 + 64} // Account for header and row heights
+      width={containerRef?.current?.offsetWidth || 400}
+      height={chartData.length * 48 + 64}
       className="absolute top-0 left-0 pointer-events-none z-10"
       style={{ opacity: 0.8 }}
     />
