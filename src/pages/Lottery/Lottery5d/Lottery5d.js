@@ -556,7 +556,7 @@ function Lottery5d() {
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-2 pl-2   pt-11 pb-24">
       <CommanHeader isGameHeader={true} />
 
-      <div className="text-center w-full max-w-sm mt-8" style={{zIndex:1}}>
+      <div className="text-center w-full max-w-sm mt-8" style={{ zIndex: 1 }}>
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0 z-0">
@@ -628,9 +628,11 @@ function Lottery5d() {
                 zIndex: 0,
               }}
             >
-              <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
-                Thanks to all our members — past and present — for being part of
-                our journey.
+              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
+                <div className="absolute w-full animate-scrollUp">
+                  Thanks to all our members — past and present — for being part
+                  of our journey.
+                </div>
               </div>
             </div>
 
@@ -648,7 +650,10 @@ function Lottery5d() {
           </div>
         </div>
 
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md" style={{zIndex:1}}>
+        <div
+          className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md"
+          style={{ zIndex: 1 }}
+        >
           <div className="button-container flex justify-between space-x-1">
             {buttonData.map((button) => (
               <button

@@ -16,14 +16,16 @@ module.exports = {
         "custom-light-gray": "#333332",
         "custom-dark-gray": "#242424",
       },
-      animation: {
-        marqueeUp: "marqueeUp 3s linear infinite",
-      },
+      // animation: {
+      // },
       keyframes: {
-        marqueeUp: {
-          "0%": { transform: "translateY(100%)" }, // start below
-          "100%": { transform: "translateY(-100%)" }, // move above
+        scrollUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(-100%)" },
         },
+      },
+      animation: {
+        scrollUp: "scrollUp 4s linear infinite",
       },
     },
   },

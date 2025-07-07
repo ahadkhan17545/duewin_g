@@ -38,7 +38,7 @@ import dice6 from "../../../Assets/WingoNew/n6-b68c6bb6.png";
 import gameApi from "../../../api/gameAPI";
 import ResultPopUp from "../../../components/ResultPopUp";
 import CommanHeader from "../../../components/CommanHeader";
-import "../lottery.css"
+import "../lottery.css";
 
 const diceImages = {
   1: dice1,
@@ -654,6 +654,23 @@ function LotteryK3() {
     }, 500);
   }, [activeButton]);
 
+  const containerRef = useRef(null);
+  const containerRef1 = useRef(null);
+  const [kdPopHeight,setKdPopHeigth] = useState(0)
+
+  useEffect(() => {
+    let heightA = null;
+    let heightB = null;
+    if (containerRef.current) {
+      heightA = containerRef.current.getBoundingClientRect().height;
+    }
+    if (containerRef1.current) {
+      heightB = containerRef1.current.getBoundingClientRect().height;
+    }
+    let newHeight = heightA + heightB + 15;
+    setKdPopHeigth(newHeight)
+  }, [activeImgTab]);
+
   const fetchGameData = async (page, duration) => {
     try {
       const accessToken = localStorage.getItem("token");
@@ -1181,9 +1198,11 @@ function LotteryK3() {
                 zIndex: 0,
               }}
             >
-              <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
-                Thanks to all our members — past and present — for being part of
-                our journey.
+              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
+                <div className="absolute w-full animate-scrollUp">
+                  Thanks to all our members — past and present — for being part
+                  of our journey.
+                </div>
               </div>
             </div>
 
@@ -1317,6 +1336,7 @@ function LotteryK3() {
             duration={buttonData[activeButton].duration}
             handleRefresh={() => setRefetchData((prev) => !prev)}
             gameType="k3"
+            height = {kdPopHeight}
           >
             <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
               <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
@@ -1347,7 +1367,10 @@ function LotteryK3() {
               </div>
             </div>
 
-            <div className="flex gap-1 justify-between mt-2 mb-2">
+            <div
+              ref={containerRef}
+              className="flex gap-1 justify-between mt-2 mb-2"
+            >
               {[
                 { label: "Total", value: "total" },
                 { label: "2 same", value: "2same" },
@@ -1374,7 +1397,7 @@ function LotteryK3() {
           </FreezePopup>
 
           {activeImgTab === "total" && (
-            <>
+            <div ref={containerRef1}>
               <div className="grid grid-cols-4 gap-3 ml-4">
                 {imageUrls.map((image, index) => (
                   <div
@@ -1442,11 +1465,11 @@ function LotteryK3() {
                   }
                 )}
               </div>
-            </>
+            </div>
           )}
 
           {activeImgTab === "2same" && (
-            <div className="space-y-4">
+            <div ref={containerRef1} className="space-y-4">
               <div className="flex items-center space-x-2 text-sm font-medium text-white">
                 <span>2 matching numbers: odds (13.83)</span>
                 <img
@@ -1525,7 +1548,7 @@ function LotteryK3() {
           )}
 
           {activeImgTab === "3same" && (
-            <div className="space-y-4">
+            <div ref={containerRef1} className="space-y-4">
               <div className="flex items-center space-x-2 text-sm font-medium text-white">
                 <span>3 of the same number: odds (207.36)</span>
                 <img
@@ -1583,7 +1606,7 @@ function LotteryK3() {
           )}
 
           {activeImgTab === "different" && (
-            <div className="space-y-4">
+            <div ref={containerRef1} className="space-y-4">
               <div className="flex items-center space-x-2 text-sm font-medium text-white">
                 <span>3 different numbers: odds (34.56)</span>
                 <img

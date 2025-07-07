@@ -747,10 +747,12 @@ function Home() {
                     zIndex: 0,
                   }}
                 >
-                  <div className="absolute w-full animate-marqueeUp text-xs text-white ml-2">
-                    Thanks to all our members—past and present—for being part of
-                    our journey.
-                  </div>
+              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
+                <div className="absolute w-full animate-scrollUp">
+                  Thanks to all our members — past and present — for being part
+                  of our journey.
+                </div>
+              </div>
                 </div>
                 <Link to="/notificationsService">
                   <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
