@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import RebateRatioHeader from "../../components/RebateRatioHeader";
 import { Link } from "react-router-dom";
 import { calcGeneratorDuration, motion } from "framer-motion";
@@ -80,35 +80,30 @@ export const vipMapLogo = {
   10: vip9a,
 };
 
-// CardCarousel Component (same as before)
 const CardCarousel = ({
   selectedIndex,
   setSelectedIndex,
   userExp,
   vipCards,
 }) => {
+  const containerRef = useRef(null);
+  const [cardWidth, setCardWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    if (containerRef.current?.firstChild) {
+      const card = containerRef.current.firstChild;
+      const gap = 16; // Tailwind gap-4 = 16px
+      setCardWidth(card.offsetWidth + gap);
+    }
+  }, [vipCards.length]);
+
   const handleDragEnd = (event, info) => {
-    if (info.offset.x < -50) {
-      setSelectedIndex((prev) => (prev + 1) % vipCards.length);
-    } else if (info.offset.x > 50) {
-      setSelectedIndex((prev) => (prev === 0 ? vipCards.length - 1 : prev - 1));
+    if (info.offset.x < -50 && selectedIndex < vipCards.length - 1) {
+      setSelectedIndex((prev) => prev + 1);
+    } else if (info.offset.x > 50 && selectedIndex > 0) {
+      setSelectedIndex((prev) => prev - 1);
     }
   };
-
-  const [dragDirection, setDragDirection] = useState(null);
-
-  const handleDrag = (event, info) => {
-    if (info.offset.x < -20) {
-      setDragDirection("right");
-    } else if (info.offset.x > 20) {
-      setDragDirection("left");
-    } else {
-      setDragDirection(null);
-    }
-  };
-  const today = new Date();
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const daysLeft = lastDayOfMonth.getDate() - today.getDate();
 
   const calculateProgress = () => {
     const currentCard = vipCards[selectedIndex];
@@ -119,134 +114,117 @@ const CardCarousel = ({
   };
 
   return (
-    <div className="relative flex items-center justify-center overflow-x-visible my-4 mx-auto w-full">
+    <div className="relative overflow-hidden w-full px-4 mt-6">
       <motion.div
-        key={selectedIndex}
-        className="p-1 rounded-lg w-full flex justify-center transition-transform duration-300"
+        ref={containerRef}
+        className="flex gap-4"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        onDrag={handleDrag}
         onDragEnd={handleDragEnd}
-        whileTap={{ cursor: "grabbing" }}
+        animate={{ x: `calc(50% - ${(selectedIndex + 0.5) * cardWidth}px)` }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div
-          className="relative w-full h-55 rounded-lg overflow-hidden p-2 text-white"
-          style={{
-            backgroundImage: `url(${vipCards[selectedIndex].image})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        {vipCards.map((card, index) => (
           <div
-            className="absolute inset-0"
+            key={index}
+            className="relative shrink-0 w-[80%] rounded-lg overflow-hidden px-2 py-2 text-white"
             style={{
-              background: vipCards[selectedIndex].colorGradient,
+              backgroundImage: `url(${card.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
-          ></div>
-
-          <div className="relative z-10">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <div className="w-10 h-10 flex items-center justify-center rounded">
-                  <div className="w-6 h-6">
-                    <img
-                      src={
-                        userExp >= vipCards[selectedIndex].required_exp
-                          ? creach
-                          : reach
-                      }
-                      alt="VIP Icon"
-                    />
-                  </div>
-                </div>
-                <span className="text-white text-2xl font-bold font-['Roboto',sans-serif]">
-                  {vipCards[selectedIndex].label}
-                </span>
-                <div className="flex items-center bg-opacity-50 px-2 py-2 rounded-full">
+          >
+            <div
+              className="absolute inset-0"
+              style={{ background: card.colorGradient }}
+            />
+            <div className="relative z-10">
+              {/* Top Row */}
+              <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2">
                   <img
-                    src={
-                      userExp >= vipCards[selectedIndex].required_exp
-                        ? reached
-                        : lockvip
-                    }
+                    src={userExp >= card.required_exp ? creach : reach}
+                    alt="VIP Icon"
+                    className="w-6 h-6"
+                  />
+                  <span className="text-xl font-bold">{card.label}</span>
+                </div>
+
+                <div className="flex items-center bg-black bg-opacity-50 px-2 py-1 rounded-full">
+                  <img
+                    src={userExp >= card.required_exp ? reached : lockvip}
                     alt="lock"
-                    className="h-5 w-5 mr-2"
-                  ></img>
-                  <span className="text-white text-xs font-['Roboto',sans-serif]">
-                    {userExp >= vipCards[selectedIndex].required_exp
-                      ? "Achieved"
-                      : "Not open yet"}
+                    className="h-4 w-4 mr-1"
+                  />
+                  <span className="text-xs">
+                    {userExp >= card.required_exp ? "Achieved" : "Not open yet"}
                   </span>
                 </div>
               </div>
-            </div>
 
-            <div className="mb-4">
-              <p className="text-white text-sm ml-2 font-serif">
-                Upgrading {vipCards[selectedIndex].label} requires
-              </p>
-              <span className="flex items-center text-white text-sm ml-2 leading-none">
-                <span>{vipCards[selectedIndex].expRequired} EXP</span>
-              </span>
-            </div>
+              {/* Requirement */}
+              <div className="mb-4">
+                <p className="text-sm font-light">
+                  Upgrading {card.label} requires
+                </p>
+                <span className="text-sm font-medium">
+                  {card.expRequired} EXP
+                </span>
+              </div>
 
-            <div className="mb-4">
-              <button className="border border-white text-xs font-serif text-white px-1 rounded-sm ml-2">
-                Bet ₹1=1EXP
-              </button>
-            </div>
+              {/* Button */}
+              <div className="mb-4">
+                <button className="border border-white text-xs px-3 py-1 rounded-sm">
+                  Bet ₹1 = 1 EXP
+                </button>
+              </div>
 
-            <div
-              className="absolute top-24 text-white text-sm font-bold"
-              style={{ right: "36px" }}
-            >
-              {vipCards[selectedIndex].label}
-            </div>
-
-            <div className="mb-8 mx-2 relative">
-              <div className="h-2 bg-[#748AAA] bg-opacity-50 rounded-full relative">
-                <div
-                  className="absolute left-0 top-0 h-full bg-yellow-200 rounded-l-full"
-                  style={{ width: `${calculateProgress()}%` }}
-                >
-                  <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
+              {/* Progress Bar */}
+              <div className="relative mb-6">
+                <div className="h-2 bg-[#748AAA]/50 rounded-full">
+                  <div
+                    className="h-full bg-yellow-200 rounded-l-full relative"
+                    style={{ width: `${calculateProgress()}%` }}
+                  >
+                    <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
+                  </div>
                 </div>
-                <div className="absolute left-1 top-3 px-1 mt-1 rounded-full bg-gradient-to-r from-[#899fbf] to-[#6f85a5] text-white text-xs">
-                  {userExp}/{vipCards[selectedIndex].required_exp}
+                <div style={{
+                    fontSize:selectedIndex > 5 ? "9px":""
+                }} className="absolute top-3 left-2 text-xs bg-[#899fbf] bg-opacity-70 px-2 py-0.5 rounded-full">
+                  {userExp}/{card.required_exp}
+                </div>
+                <div className="text-[9px] text-white absolute right-0 top-5 whitespace-nowrap px-1">
+                  {card.required_exp} can be leveled up
                 </div>
               </div>
 
-              <div className="absolute top-4 right-0 text-white font-serif font-medium text-[10px]">
-                {vipCards[selectedIndex].required_exp} can be leveled up
-              </div>
-            </div>
-
-            <div className="absolute top-1 right-4">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center">
+              {/* VIP Badge */}
+              <div className="absolute top-0 right-[-7px] w-16 h-16">
                 <img
-                  src={vipMapLogo[selectedIndex + 1]}
+                  src={vipMapLogo[index + 1]}
                   alt="VIP Badge"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </motion.div>
 
-      <div className="absolute -bottom-4 flex space-x-1">
-        {vipCards.map((card, index) => (
+      {/* Pagination dots */}
+      {/* <div className="absolute -bottom-4 flex justify-center w-full gap-1">
+        {vipCards.map((_, index) => (
           <div
             key={index}
             className={`w-2 h-2 rounded-full ${selectedIndex === index ? "bg-yellow-400" : "bg-gray-600"}`}
             onClick={() => setSelectedIndex(index)}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
-
 // VIPBenefits Component (same as before)
 const VIPBenefits = ({ selectedCard }) => {
   return (
