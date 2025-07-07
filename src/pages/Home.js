@@ -661,7 +661,7 @@ function Home() {
     { img: b2dark, color: "bg-emerald-500" },
   ];
 
-  const [showFirstPopup, setShowFirstPopup] = useState(true);
+  const [showFirstPopup, setShowFirstPopup] = useState(false);
   const [showSecondPopup, setShowSecondPopup] = useState(false);
 
   const [currentWinnerIndex, setCurrentWinnerIndex] = useState(0);
