@@ -145,9 +145,9 @@ const CardCarousel = ({
                   <img
                     src={userExp >= card.required_exp ? creach : reach}
                     alt="VIP Icon"
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                   />
-                  <span className="text-xl font-bold">{card.label}</span>
+                  <span className="text-sm font-bold">{card.label}</span>
                 </div>
 
                 <div className="flex items-center bg-black bg-opacity-50 px-2 py-1 rounded-full">
@@ -189,18 +189,26 @@ const CardCarousel = ({
                     <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
                   </div>
                 </div>
-                <div style={{
-                    fontSize:selectedIndex > 5 ? "9px":""
-                }} className="absolute top-3 left-2 text-xs bg-[#899fbf] bg-opacity-70 px-2 py-0.5 rounded-full">
+                <div
+                  style={{
+                    fontSize:
+                      selectedIndex > 7
+                        ? "8px"
+                        : selectedIndex > 2
+                          ? "9px"
+                          : undefined, 
+                  }}
+                  className="absolute top-3 left-2 text-xs bg-[#899fbf] bg-opacity-70 px-2 py-0.5 rounded-full"
+                >
                   {userExp}/{card.required_exp}
                 </div>
-                <div className="text-[9px] text-white absolute right-0 top-5 whitespace-nowrap px-1">
+                <div className="text-[8px] text-white absolute right-0 top-5 whitespace-nowrap px-1">
                   {card.required_exp} can be leveled up
                 </div>
               </div>
 
               {/* VIP Badge */}
-              <div className="absolute top-0 right-[-7px] w-16 h-16">
+              <div className="absolute top-0 right-[-5px] w-12 h-12">
                 <img
                   src={vipMapLogo[index + 1]}
                   alt="VIP Badge"
