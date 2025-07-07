@@ -164,16 +164,16 @@ const CardCarousel = ({
 
               {/* Requirement */}
               <div className="mb-4">
-                <p className="text-sm font-light">
+                <p className="text-xs font-light">
                   Upgrading {card.label} requires
                 </p>
-                <span className="text-sm font-medium">
+                <span className="text-xs font-medium">
                   {card.expRequired} EXP
                 </span>
               </div>
 
               {/* Button */}
-              <div className="mb-4">
+              <div className="mb-1">
                 <button className="border border-white text-xs px-3 py-1 rounded-sm">
                   Bet ₹1 = 1 EXP
                 </button>
