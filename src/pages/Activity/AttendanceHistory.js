@@ -22,7 +22,7 @@ function AttendanceHistory() {
             return (
               <div
                 key={index}
-                className="flex flex-col bg-[#1a1a1a] rounded-md p-4 mb-4"
+                className="flex flex-col bg-[#1a1a1a] p-4" style={{borderBottom:'1px solid gray'}}
               >
                 <div className="flex justify-between align-center gap-1">
                   <span  className="text-blue-400 hover:text-blue-300 transition-colors cursor-pointer font-roboto text-[15px] w-[80%]">

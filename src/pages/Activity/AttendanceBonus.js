@@ -7,15 +7,12 @@ import attendance from "../../Assets/attendance.png";
 import coin from "../../Assets/coin.png";
 import giftattd from "../../Assets/giftattd.png";
 
-
 const Attandancebonus = () => {
   const [unclaimedBonuses, setUnclaimedBonuses] = useState([]);
   const [consecutiveDays, setConsecutiveDays] = useState(0);
-  const [accumulatedAmount, setAccumulatedAmount] = useState(0.00);
+  const [accumulatedAmount, setAccumulatedAmount] = useState(0.0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-
 
   // Fetch unclaimed bonuses on component mount
 
@@ -44,9 +41,7 @@ const Attandancebonus = () => {
     //     setIsLoading(false);
     //   }
     // };
-
     // fetchUnclaimedBonuses();
-
   }, []);
 
   // Handle attendance bonus claim
@@ -70,9 +65,7 @@ const Attandancebonus = () => {
         // Update unclaimed bonuses by removing the claimed one
         setUnclaimedBonuses(unclaimedBonuses.slice(1));
         // Update accumulated amount
-        setAccumulatedAmount(
-          (prev) => prev - latestBonus.totalBonus
-        );
+        setAccumulatedAmount((prev) => prev - latestBonus.totalBonus);
         // Update consecutive days if needed
         setConsecutiveDays(latestBonus.streak);
       } else {
@@ -84,7 +77,6 @@ const Attandancebonus = () => {
       setIsLoading(false);
     }
   };
-
 
   const rewardTiers = [
     { days: 300, amount: 10 },
@@ -102,14 +94,18 @@ const Attandancebonus = () => {
       {/* Header Section with Red Background */}
       <div className="bg-red-500 text-white p-3 relative h-64 w-full">
         <h2 className="text-xl font-bold pl-1">Attendance bonus</h2>
-        <p className="text-sm mb-1 pl-1">Get rewards based on consecutive login days</p>
+        <p className="text-sm mb-1 pl-1">
+          Get rewards based on consecutive login days
+        </p>
 
         <div className="flex justify-between pl-1">
           <div>
             {/* White Badge with text */}
             <div className="bg-white text-red-500 rounded-md py-1 px-3 inline-block shadow-sm mb-2">
               <p>Attended consecutively</p>
-              <p className="font-bold">{consecutiveDays} Day{consecutiveDays !== 1 ? "s" : ""}</p>
+              <p className="font-bold">
+                {consecutiveDays} Day{consecutiveDays !== 1 ? "s" : ""}
+              </p>
             </div>
 
             {/* Accumulated Amount */}
@@ -117,21 +113,33 @@ const Attandancebonus = () => {
               <img src={coin} alt="coin" className="w-6 h-6 mr-2" />
               <div>
                 <p className="text-sm">Accumulated</p>
-                <p className="text-xl font-bold">₹{accumulatedAmount.toFixed(2)}</p>
+                <p className="text-xl font-bold">
+                  ₹{accumulatedAmount.toFixed(2)}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Attendance Image */}
-        <img src={attendance} alt="attendance" className="w-72 h-72 absolute bottom-0 right-0" />
+        <img
+          src={attendance}
+          alt="attendance"
+          className="w-72 h-72 absolute bottom-0 right-0"
+        />
 
         {/* Buttons with Link components */}
         <div className="flex justify-between mt-3 relative z-10 pl-1">
-          <Link to="/game-rules" className="bg-gradient-to-b from-[#FFBD40] to-[#FF7F3D] text-sm text-white py-1 px-4 rounded-full font-normal no-underline inline-block">
+          <Link
+            to="/game-rules"
+            className="bg-gradient-to-b from-[#FFBD40] to-[#FF7F3D] text-sm text-white py-1 px-4 rounded-full font-normal no-underline inline-block"
+          >
             Game Rules
           </Link>
-          <Link to="/attendance-history" className="bg-gradient-to-b from-[#FFBD40] to-[#FF7F3D] text-sm text-white py-1 px-4 rounded-full font-normal no-underline inline-block">
+          <Link
+            to="/attendance-history"
+            className="bg-gradient-to-b from-[#FFBD40] to-[#FF7F3D] text-sm text-white py-1 px-4 rounded-full font-normal no-underline inline-block"
+          >
             Attendance history
           </Link>
         </div>
@@ -140,12 +148,15 @@ const Attandancebonus = () => {
       {/* Reward Tiers Grid */}
       <div className="bg-[#242424] grid grid-cols-3 gap-2 p-2 w-full">
         {rewardTiers.slice(0, 6).map((tier, index) => (
-          <div key={index} className="bg-[#333332] p-1 flex flex-col items-center rounded-lg h-[114px]">
+          <div
+            key={index}
+            className="bg-[#333332] p-1 flex flex-col items-center rounded-lg h-[114px]"
+          >
             <p className="text-white font-bold mb-2">₹{tier.amount}.00</p>
             {/* <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mb-2"> */}
-              <img src={coin} alt="coin" width={41} height={41} />
+            <img src={coin} alt="coin" width={41} height={41} />
             {/* </div> */}
-            <p className="text-white text-[14px]">{index+1 } Day </p>
+            <p className="text-white text-[14px]">{index + 1} Day </p>
           </div>
         ))}
       </div>
@@ -176,7 +187,7 @@ const Attandancebonus = () => {
       {/* Attendance Button */}
       <div className="bg-[#242424] px-4 pb-4 pt-2 flex justify-center w-full">
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-        <button
+        {/* <button
           onClick={handleAttendanceClick}
           disabled={isLoading || unclaimedBonuses.length === 0}
           className={`w-full py-3 rounded-full text-amber-900 text-lg font-normal ${isLoading || unclaimedBonuses.length === 0 ? "opacity-50 cursor-not-allowed" : ""
@@ -184,7 +195,14 @@ const Attandancebonus = () => {
           style={{ background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",width: '80%' }}
         >
           {isLoading ? "Processing..." : "Attendance"}
-        </button>
+        </button> */}
+        <p
+          className="text-yellow-400 text-sm md:text-base font-semibold text-center mt-2"
+          style={{ fontFamily: "'Poppins', sans-serif" }}
+        >
+          Attendance rewards will be credited daily at 12:30 A.M, following a
+          successful recharge.
+        </p>
       </div>
 
       <Footer />
