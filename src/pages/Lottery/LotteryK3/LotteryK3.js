@@ -656,7 +656,7 @@ function LotteryK3() {
 
   const containerRef = useRef(null);
   const containerRef1 = useRef(null);
-  const [kdPopHeight,setKdPopHeigth] = useState(0)
+  const [kdPopHeight, setKdPopHeigth] = useState(0);
 
   useEffect(() => {
     let heightA = null;
@@ -668,7 +668,7 @@ function LotteryK3() {
       heightB = containerRef1.current.getBoundingClientRect().height;
     }
     let newHeight = heightA + heightB + 15;
-    setKdPopHeigth(newHeight)
+    setKdPopHeigth(newHeight);
   }, [activeImgTab]);
 
   const fetchGameData = async (page, duration) => {
@@ -1336,7 +1336,7 @@ function LotteryK3() {
             duration={buttonData[activeButton].duration}
             handleRefresh={() => setRefetchData((prev) => !prev)}
             gameType="k3"
-            height = {kdPopHeight}
+            height={kdPopHeight}
           >
             <div className="relative bg-[#00b971] p-2 rounded-lg w-full">
               <div className="relative bg-green-950 p-2 rounded-lg w-full overflow-hidden">
@@ -1402,13 +1402,13 @@ function LotteryK3() {
                 {imageUrls.map((image, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center mt-4 relative w-12 h-12"
+                    className="flex flex-col items-center mt-4 relative w-12 h-12 cursor-pointer"
+                    onClick={() => handleOptionClick(image.number)}
                   >
                     <img
                       src={image.url}
                       alt={`Ball ${image.number}`}
                       className="w-14 h-14 cursor-pointer"
-                      onClick={() => handleOptionClick(image.number)}
                     />
                     <span
                       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold"
