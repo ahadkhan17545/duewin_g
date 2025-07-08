@@ -44,7 +44,7 @@ function LoginPage() {
     formError: null,
     retryCount: 0,
     isRetrying: false,
-    hasNavigated: false // Prevent multiple navigations
+    hasNavigated: false, // Prevent multiple navigations
   });
 
   const [credentials, setCredentials] = useState({
@@ -53,9 +53,9 @@ function LoginPage() {
     password: "",
     countryCode: "+91",
   });
-  if(loading){
+  if (loading) {
     dispatch(startLoading());
-  }else {
+  } else {
     dispatch(stopLoading());
   }
 
@@ -65,7 +65,11 @@ function LoginPage() {
       const fullPhoneNumber = `${credentials.countryCode}${credentials.phoneNumber}`;
       const digitsOnly = fullPhoneNumber.replace(/\D/g, "");
       const isValidPhone = /^\d{10,15}$/.test(digitsOnly);
-      return isValidPhone && credentials.password.length >= 6 && credentials.phoneNumber !== "";
+      return (
+        isValidPhone &&
+        credentials.password.length >= 6 &&
+        credentials.phoneNumber !== ""
+      );
     } else {
       const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email);
       return isValidEmail && credentials.password.length >= 6;
@@ -74,7 +78,8 @@ function LoginPage() {
 
   // Memoized button class to prevent recalculation
   const buttonClass = useMemo(() => {
-    const baseClass = "w-full text-xl font-medium py-2 rounded-full hover:opacity-90 focus:ring-2 focus:ring-indigo-300 tracking-wide transition-opacity";
+    const baseClass =
+      "w-full text-xl font-medium py-2 rounded-full hover:opacity-90 focus:ring-2 focus:ring-indigo-300 tracking-wide transition-opacity";
 
     if (loading || uiState.isRetrying || !isButtonActive) {
       if (uiState.isPhoneLogin && credentials.phoneNumber === "") {
@@ -83,11 +88,17 @@ function LoginPage() {
       return `${baseClass} bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] opacity-50 cursor-not-allowed`;
     }
     return `${baseClass} bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206]`;
-  }, [loading, uiState.isRetrying, uiState.isPhoneLogin, isButtonActive, credentials.phoneNumber]);
+  }, [
+    loading,
+    uiState.isRetrying,
+    uiState.isPhoneLogin,
+    isButtonActive,
+    credentials.phoneNumber,
+  ]);
 
   // Consolidated state update function
   const updateUiState = useCallback((updates) => {
-    setUiState(prev => ({ ...prev, ...updates }));
+    setUiState((prev) => ({ ...prev, ...updates }));
   }, []);
 
   // Handle navigation with check to prevent multiple navigations
@@ -103,7 +114,7 @@ function LoginPage() {
     dispatch(resetError());
     updateUiState({
       formError: null,
-      retryCount: 0
+      retryCount: 0,
     });
   }, [dispatch, uiState.isPhoneLogin, updateUiState]);
 
@@ -144,18 +155,21 @@ function LoginPage() {
   }, []);
 
   // Optimized input change handler
-  const handleInputChange = useCallback((event) => {
-    const { id, value } = event.target;
+  const handleInputChange = useCallback(
+    (event) => {
+      const { id, value } = event.target;
 
-    if (id === "phoneNumber") {
-      const sanitizedValue = value.replace(/\D/g, "").slice(0, 15);
-      setCredentials(prev => ({ ...prev, [id]: sanitizedValue }));
-    } else {
-      setCredentials(prev => ({ ...prev, [id]: value }));
-    }
+      if (id === "phoneNumber") {
+        const sanitizedValue = value.replace(/\D/g, "").slice(0, 15);
+        setCredentials((prev) => ({ ...prev, [id]: sanitizedValue }));
+      } else {
+        setCredentials((prev) => ({ ...prev, [id]: value }));
+      }
 
-    updateUiState({ formError: null });
-  }, [updateUiState]);
+      updateUiState({ formError: null });
+    },
+    [updateUiState]
+  );
 
   // API connectivity test
   const testApiConnectivity = async () => {
@@ -178,7 +192,9 @@ function LoginPage() {
     try {
       const isConnected = await testApiConnectivity();
       if (!isConnected) {
-        throw new Error("Unable to connect to server. Please check your internet connection.");
+        throw new Error(
+          "Unable to connect to server. Please check your internet connection."
+        );
       }
 
       await dispatch(loginUser(loginData)).unwrap();
@@ -206,7 +222,10 @@ function LoginPage() {
         return;
       }
       if (!/^\d{10,15}$/.test(digitsOnly)) {
-        updateUiState({ formError: "Phone number must be 10 to 15 digits (including country code)" });
+        updateUiState({
+          formError:
+            "Phone number must be 10 to 15 digits (including country code)",
+        });
         return;
       }
 
@@ -236,7 +255,9 @@ function LoginPage() {
       return;
     }
     if (credentials.password.length < 6) {
-      updateUiState({ formError: "Password must be at least 6 characters long" });
+      updateUiState({
+        formError: "Password must be at least 6 characters long",
+      });
       return;
     }
 
@@ -251,23 +272,33 @@ function LoginPage() {
 
       if (err && err.includes && err.includes("timeout")) {
         if (uiState.retryCount < 2) {
-          updateUiState({ formError: `Connection timeout. Retrying... (Attempt ${uiState.retryCount + 2}/3)` });
+          updateUiState({
+            formError: `Connection timeout. Retrying... (Attempt ${uiState.retryCount + 2}/3)`,
+          });
           try {
             await retryLogin(loginData);
             localStorage.setItem("authToken", token);
           } catch (retryErr) {
             updateUiState({
-              formError: `Login failed after ${uiState.retryCount + 2} attempts. Please check your internet connection and try again. If the problem persists, the server might be temporarily unavailable.`
+              formError: `Login failed after ${uiState.retryCount + 2} attempts. Please check your internet connection and try again. If the problem persists, the server might be temporarily unavailable.`,
             });
           }
         } else {
           updateUiState({
-            formError: "Connection timeout after multiple attempts. Please check your internet connection or try again later."
+            formError:
+              "Connection timeout after multiple attempts. Please check your internet connection or try again later.",
           });
         }
       } else if (err && err.includes && err.includes("Network Error")) {
-        updateUiState({ formError: "Network error. Please check your internet connection and try again." });
-      } else if (err && err.includes && (err.includes("401") || err.includes("Invalid"))) {
+        updateUiState({
+          formError:
+            "Network error. Please check your internet connection and try again.",
+        });
+      } else if (
+        err &&
+        err.includes &&
+        (err.includes("401") || err.includes("Invalid"))
+      ) {
         if (uiState.isPhoneLogin && !loginData.phone_no.startsWith("+")) {
           const fullPhoneNumber = `${credentials.countryCode}${credentials.phoneNumber}`;
           const digitsOnly = fullPhoneNumber.replace(/\D/g, "");
@@ -290,13 +321,15 @@ function LoginPage() {
         }
 
         updateUiState({
-          formError: "Invalid credentials. Please check your phone number/email and password, or register if you haven't already."
+          formError:
+            "Invalid credentials. Please check your phone number/email and password, or register if you haven't already.",
         });
       } else {
         updateUiState({
-          formError: typeof err === "string"
-            ? `${err}. Please try again or contact support if the problem persists.`
-            : "Login failed. Please try again or contact support if the problem persists."
+          formError:
+            typeof err === "string"
+              ? `${err}. Please try again or contact support if the problem persists.`
+              : "Login failed. Please try again or contact support if the problem persists.",
         });
       }
     }
@@ -306,15 +339,17 @@ function LoginPage() {
     <div className="bg-[#242424] flex flex-col items-center w-full min-h-screen">
       <div className="w-full md:max-w-[400px] mx-auto login-container min-h-screen">
         <Header />
-        <div className="bg-[#333332] text-left mb-2 h-auto w-full px-4 sm:px-4"
+        <div
+          className="bg-[#333332] text-left mb-2 h-auto w-full px-4 sm:px-4"
           style={{
-            minHeight: '2.66667rem', padding: '8px'
+            minHeight: "2.66667rem",
+            padding: "8px",
           }}
         >
           <h1 className="text-[15px] font-bold text-white mb-2">Log in</h1>
           <p className="text-white text-[11px] mb-4 font-sans">
             Please log in with your phone number or email
-            <br/>
+            <br />
             If you forget your password, please contact customer service
           </p>
         </div>
@@ -327,28 +362,45 @@ function LoginPage() {
           )} */}
           {(error || uiState.formError) && (
             <div className="text-red-500 text-sm mb-4 text-center">
-              {uiState.formError || (typeof error === "string" ? error : "Login failed. Please try again.")}
+              {uiState.formError ||
+                (typeof error === "string"
+                  ? error
+                  : "Login failed. Please try again.")}
             </div>
           )}
 
           <div className="flex justify-center mb-4 -mt-4">
             <button
-              className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${uiState.isPhoneLogin ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]" : "text-gray-400"
-                }`}
+              className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${
+                uiState.isPhoneLogin
+                  ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]"
+                  : "text-gray-400"
+              }`}
               onClick={() => updateUiState({ isPhoneLogin: true })}
             >
               <div className="h-8 flex items-center justify-center">
-                <img src={uiState.isPhoneLogin ? phoneicon : phone} alt="Phone" className="w-4 h-[20px] sm:w-[22px] sm:h-[29px]" />
+                <img
+                  src={uiState.isPhoneLogin ? phoneicon : phone}
+                  alt="Phone"
+                  className="w-4 h-[20px] sm:w-[22px] sm:h-[29px]"
+                />
               </div>
               <span className="text-sm">phone number</span>
             </button>
             <button
-              className={`flex flex-col items-center w-1/2 py-1.5 font-medium text-xl ${!uiState.isPhoneLogin ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]" : "text-gray-400"
-                }`}
+              className={`flex flex-col items-center w-1/2 py-1.5 font-medium text-xl ${
+                !uiState.isPhoneLogin
+                  ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]"
+                  : "text-gray-400"
+              }`}
               onClick={() => updateUiState({ isPhoneLogin: false })}
             >
               <div className="h-8 flex items-center justify-center">
-                <img src={!uiState.isPhoneLogin ? emailicon : email} alt="Email" className="w-[50px] h-[25px]" />
+                <img
+                  src={!uiState.isPhoneLogin ? emailicon : email}
+                  alt="Email"
+                  className="w-[50px] h-[25px]"
+                />
               </div>
               <span className="text-sm">Email / Account</span>
             </button>
@@ -357,14 +409,30 @@ function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4 mt-2 mb-4 w-full">
             {uiState.isPhoneLogin ? (
               <div>
-                <label htmlFor="phoneNumber" className="block mb-2 text-lg font-sans text-white flex items-center gap-1">
-                  <img src={phoneicon} alt="Phone" className="w-5 h-6 mr-2 text-xs" />
+                <label
+                  htmlFor="phoneNumber"
+                  className="block mb-2 text-lg font-sans text-white flex items-center gap-1"
+                >
+                  <img
+                    src={phoneicon}
+                    alt="Phone"
+                    className="w-5 h-6 mr-2 text-xs"
+                  />
                   <span className="text-sm"> Phone number</span>
                 </label>
                 <div className="flex items-center gap-2 mt-3 relative w-full">
-                  <div className="relative country-dropdown-container" style={{ minWidth: "60px", maxWidth: "120px", width: "20%" }}>
+                  <div
+                    className="relative country-dropdown-container"
+                    style={{
+                      minWidth: "60px",
+                      maxWidth: "120px",
+                      width: "20%",
+                    }}
+                  >
                     <div
-                      onClick={() => updateUiState({ showDropdown: !uiState.showDropdown })}
+                      onClick={() =>
+                        updateUiState({ showDropdown: !uiState.showDropdown })
+                      }
                       className="bg-[#333332] text-gray-300 py-2.5 px-3 rounded-lg text-sm cursor-pointer flex items-center justify-between"
                     >
                       {credentials.countryCode}
@@ -373,14 +441,22 @@ function LoginPage() {
                     {uiState.showDropdown && (
                       <div
                         className="absolute left-0 top-full mt-1 bg-[#333332] rounded-md shadow-lg z-50 hide-scrollbar"
-                        style={{ width: "220px", maxHeight: "200px", overflow: "auto", ...scrollbarHideStyle }}
+                        style={{
+                          width: "220px",
+                          maxHeight: "200px",
+                          overflow: "auto",
+                          ...scrollbarHideStyle,
+                        }}
                       >
                         {countryCodes.map(({ code, country }) => (
                           <div
                             key={code}
                             className="px-3 py-3 text-[#a8a5a1] cursor-pointer hover:bg-[#424242] flex items-center"
                             onClick={() => {
-                              setCredentials(prev => ({ ...prev, countryCode: code }));
+                              setCredentials((prev) => ({
+                                ...prev,
+                                countryCode: code,
+                              }));
                               updateUiState({ showDropdown: false });
                             }}
                           >
@@ -405,9 +481,16 @@ function LoginPage() {
               </div>
             ) : (
               <div>
-                <label htmlFor="email" className="block mb-2 text-md text-white flex items-center gap-1">
-                  <img src={newemail} alt="Email" className="w-[30px] h-[20px] text-sm" />
-             <span className="text-md ml-1">Email</span>
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-md text-white flex items-center gap-1"
+                >
+                  <img
+                    src={newemail}
+                    alt="Email"
+                    className="w-[30px] h-[20px] text-sm"
+                  />
+                  <span className="text-md ml-1">Email</span>
                 </label>
                 <input
                   type="email"
@@ -422,7 +505,10 @@ function LoginPage() {
             )}
 
             <div className="relative mb-4 mt-14">
-              <label htmlFor="password" className="block mb-2 text-lg text-white flex items-center gap-1">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-lg text-white flex items-center gap-1"
+              >
                 <img src={lockicon} alt="Lock" className="h-5 w-5" />
                 <span className="text-sm ml-2">Password</span>
               </label>
@@ -438,7 +524,9 @@ function LoginPage() {
                 />
                 <div
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => updateUiState({ showPassword: !uiState.showPassword })}
+                  onClick={() =>
+                    updateUiState({ showPassword: !uiState.showPassword })
+                  }
                 >
                   {uiState.showPassword ? (
                     <FaEyeSlash className="text-gray-500 w-6 h-6" />
@@ -450,8 +538,17 @@ function LoginPage() {
             </div>
 
             <div className="flex items-center mb-4">
-              <div className="cursor-pointer mr-2" onClick={() => updateUiState({ rememberMe: !uiState.rememberMe })}>
-                <img src={uiState.rememberMe ? agree : agreeborder} alt="Agree Checkbox" className="w-6 h-6" />
+              <div
+                className="cursor-pointer mr-2"
+                onClick={() =>
+                  updateUiState({ rememberMe: !uiState.rememberMe })
+                }
+              >
+                <img
+                  src={uiState.rememberMe ? agree : agreeborder}
+                  alt="Agree Checkbox"
+                  className="w-6 h-6"
+                />
               </div>
               <span className="text-gray-400 text-sm">Remember Password</span>
             </div>
@@ -462,7 +559,11 @@ function LoginPage() {
                 disabled={loading || uiState.isRetrying || !isButtonActive}
                 className={buttonClass}
               >
-                {loading || uiState.isRetrying ? (uiState.isRetrying ? "Retrying..." : "Logging in...") : "Log in"}
+                {loading || uiState.isRetrying
+                  ? uiState.isRetrying
+                    ? "Retrying..."
+                    : "Logging in..."
+                  : "Log in"}
               </button>
               <Link to="/signup" className="w-full flex justify-center">
                 <button
@@ -476,22 +577,38 @@ function LoginPage() {
           </form>
 
           <div className="flex justify-center mb-2 space-x-16">
-            <Link to="/forgotpassword" className="flex flex-col items-center cursor-pointer">
+            <Link
+              to="/forgotpassword"
+              className="flex flex-col items-center cursor-pointer"
+            >
               <div className="p-2 rounded-full ">
-                <img src={forgoticon} alt="Forgot Password" className="w-8 h-8" />
+                <img
+                  src={forgoticon}
+                  alt="Forgot Password"
+                  className="w-8 h-8"
+                />
               </div>
-              <span className="text-white text-xs font-medium">Forgot password</span>
+              <span className="text-white text-xs font-medium">
+                Forgot password
+              </span>
             </Link>
-            <Link to="/customerservice" className="flex flex-col items-center cursor-pointer">
+            <a
+              href="https://t.me/killer_mao" // replace with your real link
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center cursor-pointer"
+            >
               <div className="p-2 rounded-full ">
                 <img src={service} alt="Customer Service" className="w-8 h-8" />
               </div>
-              <span className="text-white text-xs font-medium">Customer Service</span>
-            </Link>
+              <span className="text-white text-xs font-medium">
+                Customer Service
+              </span>
+            </a>
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

@@ -1204,7 +1204,7 @@ function Home() {
               </h2>
               <div
                 className="relative w-full h-32 bg-cover bg-center mb-6 mt-24 text-xs"
-                // style={{ backgroundImage: `url(${rank})` }}
+                style={{ backgroundImage: `url(${rank})` }}
               >
                 {earnings.slice(0, 3).map((earner, index) => (
                   <div
@@ -1274,10 +1274,10 @@ function Home() {
                     <img
                       src={headerLogo}
                       alt="Logo"
-                      className="w-20 h-12 object-contain"
+                      className="w-20 h-13 object-contain"
                     />
                     <h1
-                      className="text-red-500 text-[25px]"
+                      className="text-red-500 text-[25px] pt-[17px]"
                       style={{ fontFamily: "fantasy" }}
                     >
                       18+ Only
