@@ -22,6 +22,7 @@ import FreezePopup from "../../../components/FreezePopup";
 import ResultPopUp from "../../../components/ResultPopUp";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 import ChartConnectorCanvas5D from "../../../utils/chartCanvas5d";
+import Notification from "../../Notification";
 
 const buttonData = [
   {
@@ -206,7 +207,8 @@ function Lottery5d() {
 
   const fetchUserBets = useCallback(
     async (page = 1, limit = 10) => {
-      if (!isMounted.current) return;
+      console.log("------------------>");
+      // if (!isMounted.current) return;
       setIsLoading(true);
       setError(null);
 
@@ -220,93 +222,90 @@ function Lottery5d() {
           limit
         );
 
-        if (isMounted.current) {
-          if (response && response.success) {
-            // Handle different possible response structures
-            let betsData = [];
+        console.log("response", response);
+        if (response && response.success) {
+          // Handle different possible response structures
+          let betsData = [];
 
-            if (Array.isArray(response.data)) {
-              betsData = response.data;
-            } else if (response.data && Array.isArray(response.data.results)) {
-              betsData = response.data.results;
-            } else if (response.data && Array.isArray(response.data.bets)) {
-              betsData = response.data.bets;
-            } else {
-              console.log("⚠️ Unexpected response structure:", response);
-            }
+          if (Array.isArray(response.data)) {
+            betsData = response.data;
+          } else if (response.data && Array.isArray(response.data.results)) {
+            betsData = response.data.results;
+          } else if (response.data && Array.isArray(response.data.bets)) {
+            betsData = response.data.bets;
+          } else {
+            console.log("⚠️ Unexpected response structure:", response);
+          }
 
-            if (betsData.length > 0) {
-              const latestBet = betsData[0];
-              const updatedAt = new Date(
-                latestBet.updatedAt || latestBet.createdAt
-              );
-              const now = new Date();
-              const timeDiffSeconds = (now - updatedAt) / 1000;
-              console.log("timeDiffSeconds", timeDiffSeconds);
-              if (timeDiffSeconds <= 5) {
-                setLastResult(betsData[0]);
-                setUserDidBet(false);
-                if (betsData[0].status == "won") {
-                  setShowWinPopup(true);
-                } else if (betsData[0].status == "lost") {
-                  setShowLossPopup(true);
-                }
+          if (betsData.length > 0) {
+            const latestBet = betsData[0];
+            const updatedAt = new Date(
+              latestBet.updatedAt || latestBet.createdAt
+            );
+            const now = new Date();
+            const timeDiffSeconds = (now - updatedAt) / 1000;
+            console.log("timeDiffSeconds", timeDiffSeconds);
+            if (timeDiffSeconds <= 5) {
+              setLastResult(betsData[0]);
+              setUserDidBet(false);
+              if (betsData[0].status == "won") {
+                setShowWinPopup(true);
+              } else if (betsData[0].status == "lost") {
+                setShowLossPopup(true);
               }
-              const formattedBets = betsData.map((bet, index) => {
-                return {
-                  betId: bet.betId || bet._id || bet.id || `bet-${index}`,
-                  period: bet.periodId || "N/A",
-                  orderTime: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleString()
-                    : bet.orderTime || new Date().toLocaleString(),
-                  orderNumber:
-                    bet.betId ||
-                    bet.orderNumber ||
-                    `ORD-${Date.now()}-${index}`,
-                  amount: `₹${bet?.betAmount || bet?.amount || 0}`,
-                  quantity: bet?.betValue || 1,
-                  afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
-                  tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
-                  result: bet?.result,
-                  select:
-                    bet?.betType && bet.betValue
-                      ? `${bet.betType}: ${bet.betValue}`
-                      : bet.select || "N/A",
-                  status: bet?.status,
-                  winLose:
-                    bet.profitLoss !== undefined
-                      ? bet.profitLoss >= 0
-                        ? `+₹${bet.profitLoss}`
-                        : `-₹${Math.abs(bet.profitLoss)}`
-                      : bet.winLose || "₹0",
-                  // Additional fields for display
-                  date: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleDateString()
-                    : new Date().toLocaleDateString(),
-                  time: bet.createdAt
-                    ? new Date(bet.createdAt).toLocaleTimeString()
-                    : new Date().toLocaleTimeString(),
-                  sum: bet?.result.sum,
-                };
-              });
-
-              setHistoryData(formattedBets);
-
-              // Handle pagination
-              const totalPagesCalc =
-                response.pagination?.total_pages ||
-                Math.ceil((response.total || formattedBets.length) / limit) ||
-                1;
-              setTotalPages(totalPagesCalc);
-            } else {
-              setHistoryData([]);
-              setTotalPages(1);
             }
+            const formattedBets = betsData.map((bet, index) => {
+              return {
+                betId: bet.betId || bet._id || bet.id || `bet-${index}`,
+                period: bet.periodId || "N/A",
+                orderTime: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleString()
+                  : bet.orderTime || new Date().toLocaleString(),
+                orderNumber:
+                  bet.betId || bet.orderNumber || `ORD-${Date.now()}-${index}`,
+                amount: `₹${bet?.betAmount || bet?.amount || 0}`,
+                quantity: bet?.betValue || 1,
+                afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
+                tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
+                result: bet?.result,
+                select:
+                  bet?.betType && bet.betValue
+                    ? `${bet.betType}: ${bet.betValue}`
+                    : bet.select || "N/A",
+                status: bet?.status,
+                winLose:
+                  bet.profitLoss !== undefined
+                    ? bet.profitLoss >= 0
+                      ? `+₹${bet.profitLoss}`
+                      : `-₹${Math.abs(bet.profitLoss)}`
+                    : bet.winLose || "₹0",
+                // Additional fields for display
+                date: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleDateString()
+                  : new Date().toLocaleDateString(),
+                time: bet.createdAt
+                  ? new Date(bet.createdAt).toLocaleTimeString()
+                  : new Date().toLocaleTimeString(),
+                sum: bet?.result.sum,
+              };
+            });
+
+            setHistoryData(formattedBets);
+
+            // Handle pagination
+            const totalPagesCalc =
+              response.pagination?.total_pages ||
+              Math.ceil((response.total || formattedBets.length) / limit) ||
+              1;
+            setTotalPages(totalPagesCalc);
           } else {
             setHistoryData([]);
             setTotalPages(1);
-            setError("Failed to fetch betting history");
           }
+        } else {
+          setHistoryData([]);
+          setTotalPages(1);
+          setError("Failed to fetch betting history");
         }
       } catch (error) {
         console.error("❌ Error in fetchUserBets:", error);
@@ -654,12 +653,7 @@ function Lottery5d() {
                 zIndex: 0,
               }}
             >
-              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
-                <div className="absolute w-full animate-scrollUp">
-                  Thanks to all our members — past and present — for being part
-                  of our journey.
-                </div>
-              </div>
+              <Notification/>
             </div>
 
             <button
@@ -958,7 +952,10 @@ function Lottery5d() {
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
-            onClick={() => setActiveTab("gameHistory")}
+            onClick={() => {
+              setActiveTab("gameHistory")
+              setCurrentPage(1)
+            }}
           >
             Game history
           </button>
@@ -968,7 +965,9 @@ function Lottery5d() {
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
-            onClick={() => setActiveTab("chart")}
+            onClick={() =>{ setActiveTab("chart")
+              setCurrentPage(1)
+            }}
           >
             Chart
           </button>
@@ -978,7 +977,10 @@ function Lottery5d() {
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
-            onClick={() => setActiveTab("myHistory")}
+            onClick={() =>{
+               setActiveTab("myHistory")
+               setCurrentPage(1)
+              }}
           >
             My History
           </button>
@@ -1169,6 +1171,41 @@ function Lottery5d() {
                           <p className="text-gray-500 text-sm text-left">
                             {history.date || "N/A"}
                           </p>
+                        </div>
+                        <div
+                          className="text-right"
+                          style={{
+                            position: "absolute",
+                            right: "6%",
+                          }}
+                        >
+                          <p
+                            className={`mt-1 border text-right rounded px-1 text-sm  ${
+                              history.status === "won"
+                                ? "text-green-600 border-green-600"
+                                : history.status === "lost"
+                                  ? "text-red-600 border-red-600"
+                                  : "text-[#00b971] border-[#00b971]"
+                            }`}
+                          >
+                            {history.status === "won"
+                              ? "Won"
+                              : history.status === "lost"
+                                ? "Failed"
+                                : "Pending"}
+                          </p>
+
+                          {history.winLose !== "₹0" && (
+                            <p
+                              className={`font-medium text-sm  ${
+                                history.winLose.startsWith("+")
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {history.winLose}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>

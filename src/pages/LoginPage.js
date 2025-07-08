@@ -15,6 +15,7 @@ import lockicon from "../Assets/loginicons/lockicon.png";
 import { FaEye, FaEyeSlash, FaChevronDown } from "react-icons/fa";
 import agree from "../Assets/finalicons/agree.png";
 import agreeborder from "../Assets/finalicons/agreeborder.png";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -52,6 +53,11 @@ function LoginPage() {
     password: "",
     countryCode: "+91",
   });
+  if(loading){
+    dispatch(startLoading());
+  }else {
+    dispatch(stopLoading());
+  }
 
   // Memoized validation to prevent unnecessary recalculations
   const isButtonActive = useMemo(() => {
@@ -314,11 +320,11 @@ function LoginPage() {
         </div>
 
         <div className="bg-[#242424] px-6 sm:px-6 py-1 sm:py-4 w-full flex flex-col justify-center">
-          {(loading || uiState.isRetrying) && (
+          {/* {(loading || uiState.isRetrying) && (
             <div className="text-white text-sm mb-4 text-center">
               {uiState.isRetrying ? `Retrying connection... (Attempt ${uiState.retryCount + 1}/3)` : "Please wait, connecting to server..."}
             </div>
-          )}
+          )} */}
           {(error || uiState.formError) && (
             <div className="text-red-500 text-sm mb-4 text-center">
               {uiState.formError || (typeof error === "string" ? error : "Login failed. Please try again.")}

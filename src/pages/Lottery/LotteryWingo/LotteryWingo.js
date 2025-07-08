@@ -41,6 +41,7 @@ import img9 from "./../../../Assets/WingoNew/n9-a20f6f42.png";
 import { useLocation } from "react-router-dom";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 import CommanHeader from "../../../components/CommanHeader";
+import Notification from "../../Notification";
 const imageMap = {
   0: img0,
   1: img1,
@@ -939,12 +940,7 @@ function LotteryWingo() {
                 zIndex: 0,
               }}
             >
-              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
-                <div className="absolute w-full animate-scrollUp">
-                  Thanks to all our members — past and present — for being part
-                  of our journey.
-                </div>
-              </div>
+             <Notification/>
             </div>
 
             <button
@@ -1309,13 +1305,22 @@ function LotteryWingo() {
           </div>
         )}
 
-        {showSuccessPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]">
-            <div className="bg-black bg-opacity-80 rounded-2xl shadow-lg w-[10%] w-[300px] p-2 text-center">
-              <div className="text-white text-lg font-bold">Success</div>
-            </div>
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
+          <div className="bg-[#201d2b] rounded-2xl shadow-lg w-[90%] max-w-[300px] p-6 text-center">
+            <div className="text-white text-lg font-bold mb-4">Success</div>
+            <p className="text-white text-sm mb-6">
+              Your bet has been placed successfully!
+            </p>
+            <button
+              onClick={() => setShowSuccessPopup(false)}
+              className="bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206] px-6 py-2 rounded-full font-medium"
+            >
+              Close
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
         <FreezePopup
           timeRemaining={timeRemaining}

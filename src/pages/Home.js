@@ -72,8 +72,9 @@ import hadark from "../Assets/home/ha-dark.png";
 import jili from "../Assets/home/jili.png";
 import leap from "../Assets/home/leap.png";
 import live from "../Assets/home/live.png";
-import headerLogo from "../Assets/vip1/headerLogo.png";
+import headerLogo from "../Assets/newLogo/newLogo.png";
 import { startLoading, stopLoading } from "../redux/Slice/Loader";
+import Notification from "./Notification";
 
 // Game categories
 const gameCategories = [
@@ -255,30 +256,30 @@ function Home() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         let filteredGames = [];
-        let dataOfOriginal = await fetchAllGame();
-        if (dataOfOriginal?.success) {
-          const seenNames = new Set();
-          const normalizedNeeded = fewNeededGames.map((id) =>
-            id.replace("-", "").toLowerCase()
-          );
-          filteredGames = dataOfOriginal?.games?.filter((game) =>
-            normalizedNeeded.includes(game.id.replace("-", "").toLowerCase())
-          );
-          const processedGames = filteredGames.reduce((uniqueGames, game) => {
-            const gameName = (game.name || "").toLowerCase().trim();
-            if (!seenNames.has(gameName) && gameName && game.isActive) {
-              seenNames.add(gameName);
-              uniqueGames.push({
-                id: game.id,
-                name: game.name || "Unnamed Game",
-                thumbnailUrl: game.thumbnailUrl || null,
-                provider: game.provider || "spribe_crypto",
-              });
-            }
-            return uniqueGames;
-          }, []);
-          setOriginalGames(processedGames);
-        }
+        // let dataOfOriginal = await fetchAllGame();
+        // if (dataOfOriginal?.success) {
+        //   const seenNames = new Set();
+        //   const normalizedNeeded = fewNeededGames.map((id) =>
+        //     id.replace("-", "").toLowerCase()
+        //   );
+        //   filteredGames = dataOfOriginal?.games?.filter((game) =>
+        //     normalizedNeeded.includes(game.id.replace("-", "").toLowerCase())
+        //   );
+        //   const processedGames = filteredGames.reduce((uniqueGames, game) => {
+        //     const gameName = (game.name || "").toLowerCase().trim();
+        //     if (!seenNames.has(gameName) && gameName && game.isActive) {
+        //       seenNames.add(gameName);
+        //       uniqueGames.push({
+        //         id: game.id,
+        //         name: game.name || "Unnamed Game",
+        //         thumbnailUrl: game.thumbnailUrl || null,
+        //         provider: game.provider || "spribe_crypto",
+        //       });
+        //     }
+        //     return uniqueGames;
+        //   }, []);
+        //   setOriginalGames(processedGames);
+        // }
         const data = await response.json();
         if (data.success) {
           const gamesArray = data.games || [];
@@ -661,11 +662,38 @@ function Home() {
     { img: b2dark, color: "bg-emerald-500" },
   ];
 
-  const [showFirstPopup, setShowFirstPopup] = useState(false);
-  const [showSecondPopup, setShowSecondPopup] = useState(false);
+  const [showFirstPopup, setShowFirstPopup] = useState(true);
+  const [showSecondPopup, setShowSecondPopup] = useState(true);
 
   const [currentWinnerIndex, setCurrentWinnerIndex] = useState(0);
   const [displayedWinners, setDisplayedWinners] = useState([]);
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const data = await apiServices.getUserProfile();
+
+        if (!data?.success) {
+          console.error("Error fetching user data");
+          return;
+        }
+        const user = data.user;
+        setUserData(user);
+      } catch (err) {}
+    };
+
+    fetchUserProfile();
+  }, []);
+  useEffect(() => {
+    const storedTime = localStorage.getItem("noReminderUntil");
+
+    if (storedTime && parseInt(storedTime) > Date.now()) {
+      setShowSecondPopup(false);
+    } else {
+      setShowSecondPopup(true);
+      localStorage.removeItem("noReminderUntil"); // Cleanup if expired
+    }
+  }, []);
 
   // Create rotated winners array for carousel effect
   useEffect(() => {
@@ -699,6 +727,19 @@ function Home() {
     Trx: lotterycardData
       .filter((game) => game.title.startsWith("Trx"))
       .slice(0, 4),
+  };
+
+  const handleCheckboxChange = () => {
+    const newChecked = !checked;
+    setChecked(newChecked);
+
+    if (newChecked) {
+      // Store current timestamp
+      const now = new Date().getTime();
+      localStorage.setItem("noReminderUntil", now + 24 * 60 * 60 * 1000); // 24 hours ahead
+    } else {
+      localStorage.removeItem("noReminderUntil");
+    }
   };
 
   return (
@@ -747,12 +788,7 @@ function Home() {
                     zIndex: 0,
                   }}
                 >
-              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
-                <div className="absolute w-full animate-scrollUp">
-                  Thanks to all our members — past and present — for being part
-                  of our journey.
-                </div>
-              </div>
+                <Notification/>
                 </div>
                 <Link to="/notificationsService">
                   <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
@@ -1238,7 +1274,7 @@ function Home() {
                     <img
                       src={headerLogo}
                       alt="Logo"
-                      className="h-12 object-contain"
+                      className="w-20 h-12 object-contain"
                     />
                     <h1
                       className="text-red-500 text-[25px]"
@@ -1307,6 +1343,95 @@ function Home() {
       </div>
       {(showFirstPopup || showSecondPopup) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-start justify-center pt-[10vh] px-2">
+          {!userData?.has_received_first_bonus &&
+            showSecondPopup &&
+            !showFirstPopup && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
+                <div className="relative flex flex-col items-center mb-12">
+                  <div className="w-[90vw] max-w-[350px] max-h-[90vh] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
+                    <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
+                      <h2 className="text-base font-bold">
+                        Extra First Deposit Bonus
+                      </h2>
+                      <p className="text-xs text-gray-300 mt-1">
+                        Each account can only receive rewards once
+                      </p>
+                    </div>
+                    <div
+                      className="overflow-y-auto px-2 pb-4"
+                      style={{ maxHeight: "60vh", paddingTop: "20px" }}
+                    >
+                      {[
+                        { deposit: 200000, bonus: 10000 },
+                        { deposit: 100000, bonus: 5000 },
+                        { deposit: 30000, bonus: 2000 },
+                      ].map((item, index) => (
+                        <div
+                          key={index}
+                          className="bg-[#4d4d4c] p-2 rounded-lg mb-2"
+                        >
+                          <p className="text-sm flex justify-between">
+                            <span>
+                              First Deposit{" "}
+                              <span className="text-[#dd9138]">
+                                {item.deposit}
+                              </span>
+                            </span>
+                            <span className="text-[#dd9138]">
+                              + ₹{item.bonus}
+                            </span>
+                          </p>
+                          <p className="text-xs text-[#a8a5a1]">
+                            Deposit {item.deposit} for the first time and
+                            receive ₹{item.bonus} bonus.
+                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="relative w-[70%] h-4 bg-[#242424] rounded-full">
+                              <div className="absolute top-0 left-0 h-full w-0 bg-yellow-400 rounded-full"></div>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <p className="text-sm z-10">0/{item.deposit}</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => navigate("/deposit")}
+                              className="ml-2 px-2 py-1 text-[#ed9138] border-2 text-xs rounded-md"
+                            >
+                              Deposit
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between items-center bg-[#4d4d4c] text-[#a8a5a1] py-4 px-4 rounded-b-lg">
+                      <label
+                        className="flex items-center text-xs cursor-pointer"
+                        onClick={handleCheckboxChange}
+                      >
+                        <img
+                          src={checked ? agree : agreeborder}
+                          alt="agree"
+                          className="w-6 h-6"
+                        />
+                        <span className="ml-1">No more reminders today</span>
+                      </label>
+
+                      <button
+                        onClick={() => navigate("/activityPage")}
+                        className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-[#8f5206] px-8 py-2 rounded-full font-bold text-xs"
+                      >
+                        Activity
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    className="mt-3 bg-opacity-20 hover:bg-opacity-30 rounded-full p-1 transition-all duration-200"
+                    onClick={() => setShowSecondPopup(false)}
+                  >
+                    <img src={close} alt="close" className="w-7 h-7" />
+                  </button>
+                </div>
+              </div>
+            )}
           {showFirstPopup && (
             <div className="w-full max-w-[350px] h-auto max-h-[90vh] bg-[#333] rounded-lg shadow-lg text-white p-0 relative overflow-hidden flex flex-col items-center">
               <h2
@@ -1389,96 +1514,9 @@ function Home() {
                   }}
                   onClick={() => {
                     setShowFirstPopup(false);
-                    setShowSecondPopup(true);
                   }}
                 >
                   Confirm
-                </button>
-              </div>
-            </div>
-          )}
-          {showSecondPopup && (
-            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
-              <div className="relative flex flex-col items-center mb-12">
-                <div className="w-[90vw] max-w-[350px] max-h-[90vh] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
-                  <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
-                    <h2 className="text-base font-bold">
-                      Extra First Deposit Bonus
-                    </h2>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Each account can only receive rewards once
-                    </p>
-                  </div>
-                  <div
-                    className="overflow-y-auto px-2 pb-4"
-                    style={{ maxHeight: "60vh", paddingTop: "20px" }}
-                  >
-                    {[
-                      { deposit: 200000, bonus: 10000 },
-                      { deposit: 100000, bonus: 5000 },
-                      { deposit: 30000, bonus: 2000 },
-                    ].map((item, index) => (
-                      <div
-                        key={index}
-                        className="bg-[#4d4d4c] p-2 rounded-lg mb-2"
-                      >
-                        <p className="text-sm flex justify-between">
-                          <span>
-                            First Deposit{" "}
-                            <span className="text-[#dd9138]">
-                              {item.deposit}
-                            </span>
-                          </span>
-                          <span className="text-[#dd9138]">
-                            + ₹{item.bonus}
-                          </span>
-                        </p>
-                        <p className="text-xs text-[#a8a5a1]">
-                          Deposit {item.deposit} for the first time and receive
-                          ₹{item.bonus} bonus.
-                        </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="relative w-[70%] h-4 bg-[#242424] rounded-full">
-                            <div className="absolute top-0 left-0 h-full w-0 bg-yellow-400 rounded-full"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <p className="text-sm z-10">0/{item.deposit}</p>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => navigate("/deposit")}
-                            className="ml-2 px-2 py-1 text-[#ed9138] border-2 text-xs rounded-md"
-                          >
-                            Deposit
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-between items-center bg-[#4d4d4c] text-[#a8a5a1] py-4 px-4 rounded-b-lg">
-                    <label
-                      className="flex items-center text-xs cursor-pointer"
-                      onClick={() => setChecked(!checked)}
-                    >
-                      <img
-                        src={checked ? agree : agreeborder}
-                        alt="agree"
-                        className="w-6 h-6"
-                      />
-                      <span className="ml-1">No more reminders today</span>
-                    </label>
-                    <button
-                      onClick={() => navigate("/activityPage")}
-                      className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-[#8f5206] px-8 py-2 rounded-full font-bold text-xs"
-                    >
-                      Activity
-                    </button>
-                  </div>
-                </div>
-                <button
-                  className="mt-3 bg-opacity-20 hover:bg-opacity-30 rounded-full p-1 transition-all duration-200"
-                  onClick={() => setShowSecondPopup(false)}
-                >
-                  <img src={close} alt="close" className="w-7 h-7" />
                 </button>
               </div>
             </div>

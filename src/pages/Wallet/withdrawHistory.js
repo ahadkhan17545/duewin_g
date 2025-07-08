@@ -287,7 +287,7 @@ function WithdrawHistory() {
           <div className="mt-2 text-sm font-medium rounded-xl">
             <div className="flex gap-4 mb-4">
               {/* Status Dropdown */}
-              <div className="relative">
+              <div className="relative flex-1">
                 <button
                   onClick={() => setIsStatusModalOpen(true)}
                   className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
@@ -574,6 +574,12 @@ function WithdrawHistory() {
                       <span className="text-[#a8a5a1]">Order Number</span>
                       <span className="text-[#a8a5a1] font-medium">
                         {withdrawal?.transaction_id}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#a8a5a1]">Remark</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal?.rejection_reason || "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between">

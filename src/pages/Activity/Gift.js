@@ -5,7 +5,7 @@ import iconhistory from "../../Assets/iconhistory.png";
 import empty from "../../Assets/empty.png";
 import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
-
+import gift from "../../Assets/gift.png";
 const Gift = () => {
   const [giftCode, setGiftCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -134,20 +134,41 @@ const Gift = () => {
                   alt="No Data"
                   className="w-48 h-52 object-contain"
                 />
-                <p className="text-gray-500" style={{marginTop:'-50px'}}> No Data</p>
+                <p className="text-gray-500" style={{ marginTop: "-50px" }}>
+                  {" "}
+                  No Data
+                </p>
               </div>
             ) : (
-              <ul className="space-y-3 mt-4">
+              <ul className="space-y-4 mt-4">
                 {giftHistory &&
-                  giftHistory?.map((item) => (
+                  giftHistory.map((item) => (
                     <li
                       key={item.id}
-                      className="border-b border-[#555] pb-2 text-white"
+                      className="flex justify-between items-start p-3 rounded-md border border-gray-600"
                     >
-                      <p className="text-sm">{item.code}</p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(item?.gift_code_details?.created_at).toLocaleString()}
-                      </p>
+                      {/* Left Content */}
+                      <div>
+                        {/* Status */}
+                        <p className="text-green-500 text-sm font-medium mb-1">
+                          Successfully received
+                        </p>
+
+                        {/* Timestamp */}
+                        <p className="text-xs text-gray-400">
+                          {new Date(
+                            item?.gift_code_details?.created_at
+                          ).toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Right Side: Coin Icon + Value */}
+                      <div className="flex items-center border border-yellow-400 rounded-full px-2 py-1 space-x-1">
+                         <img src={gift} alt="Gift Icon" className="w-3 h-3 flex-shrink-0" />
+                        <span className="text-yellow-500 font-semibold text-sm">
+                          {item?.amount || "0"}
+                        </span>
+                      </div>
                     </li>
                   ))}
               </ul>

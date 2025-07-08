@@ -197,7 +197,7 @@ function Subordinate() {
             }}
           >
             <summary className="bg-[#333332] p-2.5 rounded-lg cursor-pointer transition-colors flex justify-between items-center list-none appearance-none text-sm relative">
-              <span className="ml-1">{`${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`}</span>
+              <span className="ml-1">{selectedDate?.year ? `${selectedDate.year}-${selectedDate.month}-${selectedDate.day}`:'Choose a date'}</span>
               <MdExpandMore className="text-gray-400 absolute right-2" />
             </summary>
           </details>

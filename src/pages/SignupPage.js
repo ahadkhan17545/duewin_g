@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import lockicon from "../Assets/loginicons/lockicon.png";
 import phoneicon from "../Assets/loginicons/phoneicon.png";
 import invitecodeicon from "../Assets/loginicons/invitecodeicon.png";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -33,6 +34,11 @@ function SignupPage() {
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+ if(loading){
+    dispatch(startLoading());
+  }else {
+    dispatch(stopLoading());
+  }
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const toggleConfirmPasswordVisibility = () =>

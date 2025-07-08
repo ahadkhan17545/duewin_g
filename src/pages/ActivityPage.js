@@ -11,10 +11,10 @@ import {
 import Footer from "../components/Footer";
 import invitationBonus from "./../Assets/invitationBonus.png";
 import ActivityHeader from "../components/ActivityHeader";
-import signInBanner from '../Assets/signInBanner.png'
-import giftRedeem from '../Assets/giftRedeem.png'
-import BettingRebate from '../Assets/BettingRebate.png'
-import superJackpot from '../Assets/superJackpot.png'
+import signInBanner from "../Assets/signInBanner.png";
+import giftRedeem from "../Assets/giftRedeem.png";
+import BettingRebate from "../Assets/BettingRebate.png";
+import superJackpot from "../Assets/superJackpot.png";
 
 function ActivityPage() {
   const [isPhoneLogin, setIsPhoneLogin] = useState(true);
@@ -69,7 +69,6 @@ function ActivityPage() {
           We will launch user feedback activities from time to time
         </p>
       </div>
-      
 
       <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between">
         <div className="grid grid-cols-3 text-[#a8a5a1] items-center mb-2">
@@ -87,11 +86,7 @@ function ActivityPage() {
           </div>
           <div className="text-center">
             <Link to="/rebate">
-              <img
-                src={superJackpot}
-                alt="Idea"
-                className="w-9 h-9 mx-auto"
-              />
+              <img src={superJackpot} alt="Idea" className="w-9 h-9 mx-auto" />
               <div className="text-xs mt-2">
                 Activity
                 <br />
@@ -101,11 +96,7 @@ function ActivityPage() {
           </div>
           <div className="text-center">
             <Link to="/jackpot">
-              <img
-                src={BettingRebate}
-                alt="Idea"
-                className="w-9 h-9 mx-auto"
-              />
+              <img src={BettingRebate} alt="Idea" className="w-9 h-9 mx-auto" />
               <div className="text-xs mt-2">
                 Betting
                 <br />
@@ -115,53 +106,56 @@ function ActivityPage() {
           </div>
         </div>
 
-<div className="w-full ">
-  <div className="grid grid-cols-2 gap-1 w-full">
-    {/* Gift Box */}
-    <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
-      <Link to="/Gift">
-        <div className="w-full aspect-[5/3]"> {/* Height thoda kam */}
-          <img
-            src={signInBanner}
-            alt="description"
-            className="w-full h-full object-cover rounded-t-lg"
-          />
+        <div className="w-full ">
+          <div className="grid grid-cols-2 gap-1 w-full">
+            {/* Gift Box */}
+            <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
+              <Link to="/Gift">
+                <div className="w-full aspect-[5/3]">
+                  {" "}
+                  {/* Height thoda kam */}
+                  <img
+                    src={signInBanner}
+                    alt="description"
+                    className="w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center p-2">
+                  {" "}
+                  {/* tighter padding */}
+                  <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">
+                    Gifts
+                  </h2>
+                  <p className="text-[#a8a5a1] text-xs tracking-tight leading-snug font-sans">
+                    Enter the redemption code to receive gift rewards
+                  </p>
+                </div>
+              </Link>
+            </div>
+
+            {/* Attendance Bonus Box */}
+            <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
+              <Link to="/AttendanceBonus">
+                <div className="w-full aspect-[5/3]">
+                  <img
+                    src={giftRedeem}
+                    alt="description"
+                    className="w-full h-full object-cover rounded-t-lg"
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center p-2">
+                  <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">
+                    Attendance Bonus
+                  </h2>
+                  <p className="text-[#a8a5a1] text-xs tracking-tight leading-tight font-sans">
+                    The more consecutive days you sign in, the higher the reward
+                    will be.
+                  </p>
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col items-start justify-center p-2"> {/* tighter padding */}
-          <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">Gifts</h2>
-          <p className="text-[#a8a5a1] text-xs tracking-tight leading-snug font-sans">
-            Enter the redemption code to receive gift rewards
-          </p>
-        </div>
-      </Link>
-    </div>
-
-    {/* Attendance Bonus Box */}
-    <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col overflow-hidden max-w-[98%]">
-      <Link to="/AttendanceBonus">
-        <div className="w-full aspect-[5/3]">
-          <img
-            src={giftRedeem}
-            alt="description"
-            className="w-full h-full object-cover rounded-t-lg"
-          />
-        </div>
-        <div className="flex flex-col items-start justify-center p-2">
-          <h2 className="text-base text-[#f5f3f0] font-semibold mb-1 font-sans">
-            Attendance Bonus
-          </h2>
-          <p className="text-[#a8a5a1] text-xs tracking-tight leading-tight font-sans">
-           The more consecutive days you sign in, the higher the reward will be.
-          </p>
-        </div>
-      </Link>
-    </div>
-  </div>
-</div>
-
-
-
-
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4 mt-6">
           <Link to="/activitygamesrules">
@@ -172,7 +166,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">First Deposit Bonus</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              First Deposit Bonus
+            </h2>
           </div>
         </div>
 
@@ -185,7 +181,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">Daily Bonus</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              Daily Bonus
+            </h2>
           </div>
         </div>
 
@@ -198,7 +196,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">Aviator Challenger</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              Aviator Challenger
+            </h2>
           </div>
         </div>
 
@@ -211,7 +211,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">Lucky 10 Days</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              Lucky 10 Days
+            </h2>
           </div>
         </div>
 
@@ -224,7 +226,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">Wingo Win Streak Bonus</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              Wingo Win Streak Bonus
+            </h2>
           </div>
         </div>
 
@@ -237,7 +241,9 @@ function ActivityPage() {
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
-            <h2 className="text-lg text-[#f5f3f0] font-semibold">Diuwin Content Creators</h2>
+            <h2 className="text-lg text-[#f5f3f0] font-semibold">
+              Diuwin Content Creators
+            </h2>
           </div>
         </div>
 

@@ -33,6 +33,7 @@ import img9 from "../../../Assets/WingoNew/n9-a20f6f42.png";
 import CommanHeader from "../../../components/CommanHeader";
 import FreezePopup from "../../../components/FreezePopup";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
+import Notification from "../../Notification";
 
 const buttonData = [
   {
@@ -143,6 +144,8 @@ function LotteryTrxWingo() {
   const [chartData, setChartData] = useState([]);
   const containerRef3 = useRef(null);
   const [openIndex, setOpenIndex] = useState(null);
+  const [showWinPopup, setShowWinPopup] = useState(false);
+  const [showLossPopup, setShowLossPopup] = useState(false);
 
   const toggleDetails = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -247,6 +250,23 @@ function LotteryTrxWingo() {
       );
       if (isMounted.current) {
         if (response.success && Array.isArray(response.data?.bets)) {
+          const latestBet =response.data?.bets[0];
+          console.log("latestBet",latestBet)
+          const updatedAt = new Date(
+            latestBet.updatedAt || latestBet.createdAt
+          );
+          const now = new Date();
+          const timeDiffSeconds = (now - updatedAt) / 1000;
+          console.log("timeDiffSeconds", timeDiffSeconds);
+          if (timeDiffSeconds <= 5) {
+            setLastResult(latestBet);
+            setUserDidBet(false);
+            if (latestBet.status == "won") {
+              setShowWinPopup(true);
+            } else if (latestBet.status == "lost") {
+              setShowLossPopup(true);
+            }
+          }
           const bets = response?.data?.bets.map((bet) => ({
             betId: bet.betId,
             period: bet.periodId,
@@ -575,12 +595,7 @@ function LotteryTrxWingo() {
                 zIndex: 0,
               }}
             >
-              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
-                <div className="absolute w-full animate-scrollUp">
-                  Thanks to all our members — past and present — for being part
-                  of our journey.
-                </div>
-              </div>
+            <Notification/>
             </div>
 
             <button

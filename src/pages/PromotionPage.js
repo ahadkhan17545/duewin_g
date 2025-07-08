@@ -255,7 +255,7 @@ function PromotionPage() {
       {/* Content section that partially overlaps with the background */}
       <div className="relative z-20 w-full px-4 mx-auto mt-[-16rem] max-w-md">
         <h1 className="text-[#8f5206] text-3xl text-center mb-1 font-sans">
-          {commissionYesterday?.totalAmount}
+          {commissionYesterday?.totalAmount || 0}
         </h1>
         <div className="flex justify-center w-full">
           <button
@@ -299,7 +299,7 @@ function PromotionPage() {
             <tbody className="text-center">
               <tr>
                 <td className="text-white border-r border-[#242424] p-[2px]">
-                  {totalReferral}
+                  {totalReferral || 0}
                 </td>
                 <td className="text-white p-[2px]">
                   {teamCount - totalReferral < 0
@@ -317,11 +317,11 @@ function PromotionPage() {
               </tr>
               <tr>
                 <td className="text-green-500 border-r border-[#242424] p-[2px] leading-tight">
-                  {directDeposit?.totalCount}
+                  {directDeposit?.totalCount || 0}
                 </td>
                 <td className="text-green-500 p-[2px] leading-tight">
                   {" "}
-                  {teamDeposit?.totalCount}
+                  {teamDeposit?.totalCount || 0}
                 </td>
               </tr>
               <tr>
@@ -334,10 +334,10 @@ function PromotionPage() {
               </tr>
               <tr>
                 <td className="text-orange-500 border-r border-[#242424] p-[2px] leading-tight">
-                  {directDeposit?.totalAmount}
+                  {directDeposit?.totalAmount || 0}
                 </td>
                 <td className="text-orange-500 p-[2px] leading-tight">
-                  {teamDeposit?.totalAmount}
+                  {teamDeposit?.totalAmount || 0}
                 </td>
               </tr>
               <tr>
@@ -350,10 +350,10 @@ function PromotionPage() {
               </tr>
               <tr>
                 <td className="text-white border-r border-[#242424] p-[2px] leading-tight">
-                  {directDeposit?.firstDepositCount}
+                  {directDeposit?.firstDepositCount || 0}
                 </td>
                 <td className="text-white p-[2px] leading-tight">
-                  {teamDeposit?.firstDepositCount}
+                  {teamDeposit?.firstDepositCount || 0}
                 </td>
               </tr>
               <tr>

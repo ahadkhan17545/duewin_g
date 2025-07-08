@@ -35,7 +35,7 @@ const FreezePopup = ({
     if (totalSeconds == 2) {
       setTimeout(() => {
         handleRefresh();
-      }, 2000);
+      }, 2200);
     }
     if (count === 0 && showFreezePopup) {
       const timer = setTimeout(() => {

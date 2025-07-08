@@ -31,16 +31,19 @@ import Avatar from "../components/common/Avatar";
 import apiServices from "../api/apiServices";
 import { avatarMap } from "./Settings";
 import { vipMap } from "./Profile/VIPProfile";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
 
 function ProfilePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null)
+  const [member,setMember] = useState(null)
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0)
   const { user } = useSelector((store) => store.login)
   const fetchWalletBalance = async () => {
+     dispatch(startLoading());
     try {
       const response = await apiServices?.getWalletBalance();
       if (response?.success && response?.mainWallet) {
@@ -53,6 +56,9 @@ function ProfilePage() {
     } catch (error) {
       console.error("Failed to fetch wallet balance:", error);
       setWalletBalance(0);
+    }finally{
+      dispatch(stopLoading());
+
     }
   };
   useEffect(() => {
@@ -65,6 +71,7 @@ function ProfilePage() {
           return;
         }
         const user = data.user;
+        setMember(data?.data)
         setUserData(user);
       } catch (err) {
       }
@@ -145,21 +152,21 @@ function ProfilePage() {
             <div className="flex items-center">
               {/* Profile Image */}
 
-              <Avatar src={avatarMap[Number(userData?.profile_picture_id)]} />
+              <Avatar src={avatarMap[Number(userData?.profile_picture_id)] || avatarMap[0]} />
 
               {/* Profile Details */}
               <div className="ml-2 mt-1">
                 {/* Name + VIP */}
                 <div className="flex items-center mt-1">
-                  <h2 className="text-base font-semibold text-white uppercase">{user?.member_detail}</h2>
-                  <img src={vipMap[userData?.vip_level]} alt="VIP Badge" className="h-5 ml-2 mt-1" />
+                  <h2 className="text-base font-semibold text-white uppercase">{member?.member_detail || "Member Detail"}</h2>
+                  <img src={vipMap[userData?.vip_level] || vipMap[0]} alt="VIP Badge" className="h-5 ml-2 mt-1" />
                 </div>
 
                 {/* UID section */}
                 <div className="flex items-center bg-[#dd9138] rounded-full text-white mt-1 px-3 py-[2px] text-xs w-fit space-x-1.5">
                   <span className="font-medium">UID</span>
                   <span className="opacity-70">|</span>
-                  <span className="font-medium">{userData?.user_id}</span>
+                  <span className="font-medium">{userData?.user_id || 0}</span>
                   <button onClick={handleCopy} className="pl-1">
                     <FaCopy className="text-white text-[11px]" />
                   </button>
@@ -167,7 +174,7 @@ function ProfilePage() {
 
 
                 {/* Login Time */}
-                <p className="text-white text-xs mt-1">Last login: 2025-06-14 15:37:49</p>
+                <p className="text-white text-xs mt-1">Last login:  {new Date(userData?.last_login_at || Date.now()).toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -322,7 +329,7 @@ function ProfilePage() {
             <div className="bg-[#333332] p-4 rounded-lg shadow-md mt-4">
               <div className="space-y-6">
                 {/* Notification */}
-                <div>
+                {/* <div>
                   <Link
                     to="/notificationProfile"
                     className="w-full text-base font-normal text-white flex items-center justify-between"
@@ -338,7 +345,7 @@ function ProfilePage() {
                     <AiOutlineRight className="text-[#666666] text-lg flex-shrink-0" />
                   </Link>
                   <hr className="my-4 border-[#525167]" />
-                </div>
+                </div> */}
 
                 {/* Gifts */}
                 <div>

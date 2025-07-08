@@ -15,6 +15,8 @@ import {
 import Footer from "../components/Footer";
 import WalletHeader from "../components/WalletHeader";
 import { getWalletBalance } from "../api/apiServices";
+import { startLoading, stopLoading } from "../redux/Slice/Loader";
+import { useDispatch } from "react-redux";
 
 function Wallet() {
   const [countdown, setCountdown] = useState(null);
@@ -155,6 +157,7 @@ function Wallet() {
       setTransferLoading(false);
     }
   };
+  const dispatch = useDispatch()
 
   // Updated useEffect to handle the UI update after countdown
   useEffect(() => {
@@ -185,6 +188,8 @@ function Wallet() {
 
   // Fetch balance from API using the centralized API service
   const fetchBalance = async () => {
+    dispatch(startLoading());
+
     setLoading(true);
     setError(null);
 
@@ -213,6 +218,7 @@ function Wallet() {
       setError(err.message || "Failed to fetch wallet balance");
     } finally {
       setLoading(false);
+      dispatch(stopLoading());
     }
   };
 

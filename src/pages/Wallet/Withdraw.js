@@ -229,7 +229,7 @@ const getPaymentOptions = ({
         <div className="bg-neutral-800 p-3 rounded mb-3">
           <div className="flex items-center gap-2 text-amber-500 font-medium">
             <span className="text-lg">₹</span>
-            <span>Please enter withdrawal amc</span>
+            <span>Please enter withdrawal amc (INR)</span>
           </div>
           <input
             type="number"

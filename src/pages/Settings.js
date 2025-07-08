@@ -17,10 +17,12 @@ import user7 from "../Assets/Userimg/user7.png";
 import user8 from "../Assets/Userimg/user8.png";
 import user9 from "../Assets/Userimg/user9.png";
 import user10 from "../Assets/Userimg/user10.png";
+import defaultUser from "../Assets/gamesimage/default.webp";
 import { Link } from "react-router-dom";
 import apiServices from "../api/apiServices";
 import CommanHeader from "../components/CommanHeader";
 export const avatarMap = {
+  0:defaultUser,
   1: user1,
   2: user2,
   3: user3,

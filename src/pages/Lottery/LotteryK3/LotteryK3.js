@@ -39,6 +39,7 @@ import gameApi from "../../../api/gameAPI";
 import ResultPopUp from "../../../components/ResultPopUp";
 import CommanHeader from "../../../components/CommanHeader";
 import "../lottery.css";
+import Notification from "../../Notification";
 
 const diceImages = {
   1: dice1,
@@ -1198,12 +1199,7 @@ function LotteryK3() {
                 zIndex: 0,
               }}
             >
-              <div className="relative h-[20px] overflow-hidden w-full text-xs text-white ml-2">
-                <div className="absolute w-full animate-scrollUp">
-                  Thanks to all our members — past and present — for being part
-                  of our journey.
-                </div>
-              </div>
+             <Notification/>
             </div>
 
             <button
@@ -1995,36 +1991,57 @@ function LotteryK3() {
                   <tr className="bg-[#3a3947] text-white rounded-lg">
                     <th className="px-2 py-2 text-center">Period</th>
                     <th className="px-2 py-2 text-center">Result</th>
+                    <th className="px-2 py-2 text-center">Number</th>
                   </tr>
                 </thead>
                 <tbody>
                   {chartData.length > 0 ? (
-                    chartData.map((entry, index) => (
-                      <tr key={index} className="bg-[#3f3f3e]">
-                        <td className="px-2 text-[#f5f3f0] text-sm py-2 text-center">
-                          {entry.periodId}
-                        </td>
-                        <td className="px-2 py-2 text-sm text-center">
-                          <div className="flex items-center justify-center space-x-2">
-                            <img
-                              src={diceImages[entry.dice1] || diceImages[1]}
-                              alt={`Dice ${entry.dice1}`}
-                              className="w-6 h-6"
-                            />
-                            <img
-                              src={diceImages[entry.dice2] || diceImages[1]}
-                              alt={`Dice ${entry.dice2}`}
-                              className="w-6 h-6"
-                            />
-                            <img
-                              src={diceImages[entry.dice3] || diceImages[1]}
-                              alt={`Dice ${entry.dice3}`}
-                              className="w-6 h-6"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                    chartData.map((entry, index) => {
+                      const { dice1, dice2, dice3 } = entry;
+                      let numberDisplay;
+                      if (dice1 === dice2 && dice2 === dice3) {
+                        numberDisplay = `3 same number`; // All same
+                      } else if (
+                        dice1 === dice2 ||
+                        dice1 === dice3 ||
+                        dice2 === dice3
+                      ) {
+                        if (dice1 === dice2 || dice1 === dice3)
+                          numberDisplay = `2 same number`;
+                        else numberDisplay = `2 same number`;
+                      } else {
+                        numberDisplay = `3 different number`; // All different
+                      }
+                      return (
+                        <tr key={index} className="bg-[#3f3f3e]">
+                          <td className="px-2 text-[#f5f3f0] text-sm py-2 text-center">
+                            {entry.periodId}
+                          </td>
+                          <td className="px-2 py-2 text-sm text-center">
+                            <div className="flex items-center justify-center space-x-2">
+                              <img
+                                src={diceImages[entry.dice1] || diceImages[1]}
+                                alt={`Dice ${entry.dice1}`}
+                                className="w-6 h-6"
+                              />
+                              <img
+                                src={diceImages[entry.dice2] || diceImages[1]}
+                                alt={`Dice ${entry.dice2}`}
+                                className="w-6 h-6"
+                              />
+                              <img
+                                src={diceImages[entry.dice3] || diceImages[1]}
+                                alt={`Dice ${entry.dice3}`}
+                                className="w-6 h-6"
+                              />
+                            </div>
+                          </td>
+                          <td className="px-2 py-2 text-sm text-center text-[#f5f3f0]">
+                            {numberDisplay}
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td
@@ -2064,6 +2081,41 @@ function LotteryK3() {
                           <p className="text-gray-500 text-sm text-left">
                             {history.date || "N/A"}
                           </p>
+                        </div>
+                        <div
+                          className="text-right"
+                          style={{
+                            position: "absolute",
+                            right: "6%",
+                          }}
+                        >
+                          <p
+                            className={`mt-1 border text-right rounded px-1 text-sm  ${
+                              history.status === "won"
+                                ? "text-green-600 border-green-600"
+                                : history.status === "lost"
+                                  ? "text-red-600 border-red-600"
+                                  : "text-[#00b971] border-[#00b971]"
+                            }`}
+                          >
+                            {history.status === "won"
+                              ? "Won"
+                              : history.status === "lost"
+                                ? "Failed"
+                                : "Pending"}
+                          </p>
+
+                          {history.winLose !== "₹0" && (
+                            <p
+                              className={`font-medium text-sm  ${
+                                history.winLose.startsWith("+")
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`}
+                            >
+                              {history.winLose}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>

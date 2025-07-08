@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import download from "../Assets/download.png";
 import IconWallet from "../Assets/homewallet.png";
 import flagIcon from "../Assets/usFlag.png";
-import headerLogo from "../Assets/vip1/headerLogo.png";
+import headerLogo from "../Assets/newLogo/newLogo.png";
 import { startLoading, stopLoading } from "../redux/Slice/Loader";
 import apiServices from "../api/apiServices";
 import { useDispatch } from "react-redux";
 const Homeheader = () => {
   const [walletBalance, setWalletBalance] = useState("0.00");
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [pwaStatus, setPwaStatus] = useState({
     canInstall: false,
     isInstalled: false,
@@ -186,17 +186,32 @@ const Homeheader = () => {
           height: "100px",
           maxWidth: "400px",
           width: "100%",
+          position:'relative'
         }}
       >
-        <div className="flex flex-col justify-center">
-          <img src={headerLogo} alt="Logo" className="w-36 h-10 mb-5" />
-          <div className="flex items-center space-x-10">
+        <div className="flex flex-col items-center justify-center">
+          {/* Logo */}
+          <img
+            src={headerLogo}
+            alt="Logo"
+            className="w-24 h-15 mb-2 sm: md:object-contain"
+          />
+
+          {/* Flag + Welcome text */}
+          <div
+            className="flex items-center space-x-2"
+            style={{
+              position: "absolute",
+              top: "4.5rem",
+              left: "1rem",
+            }}
+          >
             <img
               src={flagIcon}
               alt="US Flag"
-              className="w-4 h-4 sm:w-5 sm:h-5 relative -top-4 md:-top-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             />
-            <span className="text-[#d9ac4f] text-xs sm:text-sm md:text-base font-medium relative -top-4 md:-top-4 left-0">
+            <span className="text-[#d9ac4f] text-xs sm:text-sm md:text-base font-medium">
               Welcome to Strike Game
             </span>
           </div>

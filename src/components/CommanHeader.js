@@ -5,7 +5,7 @@ import { useAudio } from "../contexts/AudioContext";
 import GirlMusic from "./../Assets/girl_music.png";
 import Voice from "./../Assets/voice.png";
 import mute from "../Assets/finalicons/mute.png";
-import headerLogo from "../Assets/vip1/headerLogo.png";
+import headerLogo from "../Assets/newLogo/newLogo.png";
 const CommanHeader = ({
   title = "Header",
   rightButtonText,
@@ -39,7 +39,7 @@ const CommanHeader = ({
               right: "10px",
             }}
           >
-            <img src={headerLogo} alt="Logo" className="w-36 h-auto" />
+            <img src={headerLogo} alt="Logo" className="w-32 h-21 mt-3" />
             <div className="flex gap-3">
               <img
                 src={GirlMusic}

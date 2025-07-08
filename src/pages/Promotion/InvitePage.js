@@ -9,6 +9,7 @@ import bank from "../../Assets/bank.png";
 import bgposter from "../../Assets/additionalicons/bgposter.png";
 import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
+import { QRCodeCanvas } from 'qrcode.react';
 
 function InvitePage() {
   const [copied, setCopied] = useState(false); // State for tracking copy status
@@ -211,6 +212,18 @@ function InvitePage() {
                     </p>
                     <p className="text-yellow-400 text-xl font-bold">85%</p>
                   </div>
+                       <div className="mt-auto pt-4 flex justify-center">
+        {invitationCode && (
+          <QRCodeCanvas
+            value={invitationCode}
+            size={80}
+            bgColor="#ffffff"
+            fgColor="#000000"
+            level="H"
+            includeMargin={false}
+          />
+        )}
+      </div>
                 </div>
               </div>
             ))}

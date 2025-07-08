@@ -307,10 +307,10 @@ function DepositHistory() {
 
           <div className="mt-2 text-sm font-medium rounded-xl w-full max-w-[440px]">
             <div className="flex gap-4 mb-4">
-              <div className="relative ">
+              <div className="relative flex-1">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[100%] h-[42px]"
                 >
                   <span className="text-zinc-400">{selectedStatus}</span>
                   <MdExpandMore className="text-lg text-white" />
@@ -360,10 +360,10 @@ function DepositHistory() {
                 )}
               </div>
 
-              <div className="relative w-64">
+              <div className="relative flex-1">
                 <button
                   onClick={() => setIsDateModalOpen(true)}
-                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[175px] h-[42px]"
+                  className="flex items-center justify-between w-full bg-[#333332] px-3 py-2 rounded-lg cursor-pointer w-[100%] h-[42px]"
                 >
                   <span className="text-zinc-400">{renderDateLabel()}</span>
                   <MdExpandMore className="text-lg text-white" />
