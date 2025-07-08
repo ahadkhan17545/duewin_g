@@ -1,11 +1,12 @@
 import React from 'react';
 import SafeHeader from '../../components/SafeHeader';
+import CommanHeader from '../../components/CommanHeader';
 
 const RulesComponent = () => {
   return (
     <div className="w-full max-w-md mx-auto bg-[#242424] shadow-md rounded-lg p-4 text-gray-200">
       {/* Header Note */}
-      <SafeHeader/>
+      <CommanHeader title='Learn about safe'/>
       <div className="text-center text-red-400 text-xs mb-4">
         MINIMUM, DAILY INTEREST 0.1%
       </div>

@@ -198,9 +198,9 @@ const FinancialCard = () => {
           <span>Funds are safe and secure, and can be transferred at any time</span>
         </div>
         <div className="text-center">
-          <a href="/about-safe" className="text-gray-400 text-sm">
+          <Link to="/about-safe" className="text-gray-400 text-sm">
             Learn about safes »
-          </a>
+          </Link>
         </div>
 
       </div>
