@@ -141,7 +141,7 @@ function LotteryTrxWingo() {
   const [lastResult, setLastResult] = useState(null);
   const [gameHistoryData, setGameHistoryData] = useState([]);
   const [chartData, setChartData] = useState([]);
-  const containerRef3 = useRef(null)
+  const containerRef3 = useRef(null);
   // WebSocket hook (used only for period and time, not game history)
   const {
     isConnected,
@@ -234,13 +234,15 @@ function LotteryTrxWingo() {
     try {
       console.log("🔄 Fetching user bets...");
       const duration = buttonData[activeButton].duration;
-      const response = await gameApi.getUserBets(gameType, duration, {
+      const response = await gameApi.getUserBets(
+        gameType,
+        duration,
         page,
-        limit,
-      });
+        limit
+      );
       if (isMounted.current) {
-        if (response.success && Array.isArray(response.data)) {
-          const bets = response.data.map((bet) => ({
+        if (response.success && Array.isArray(response.data?.bets)) {
+          const bets = response?.data?.bets.map((bet) => ({
             betId: bet.betId,
             period: bet.periodId,
             orderTime: new Date(bet.createdAt).toLocaleString(),
@@ -252,7 +254,7 @@ function LotteryTrxWingo() {
             result: bet.result
               ? `${bet.result.number} (${bet.result.size}, ${bet.result.color})`
               : "Pending",
-            select: `${bet.betType}: ${bet.betValue}`,
+            select: `${bet.betValue}`,
             status: bet.status || "Pending",
             winLose:
               bet.profitLoss >= 0
@@ -373,7 +375,7 @@ function LotteryTrxWingo() {
     }
   }, [activeTab, currentPage, activeButton, refetchData]);
   useEffect(() => {
-    // fetchUserBets();
+    fetchUserBets();
   }, [activeTab, currentPage, activeButton, refetchData]);
 
   // Auto-close success popup
@@ -896,7 +898,14 @@ function LotteryTrxWingo() {
                             <span className="inline-block text-white mr-2 text-xs px-1 py-1 border bg-[#ff4081] rounded-full py-1">
                               {record.result ? record?.result : "0"}
                             </span>
-                            <span style={{color:record.resultType == 'Big'?'#DD9138':'#5088D3'}}>
+                            <span
+                              style={{
+                                color:
+                                  record.resultType == "Big"
+                                    ? "#DD9138"
+                                    : "#5088D3",
+                              }}
+                            >
                               {" "}
                               {record.resultType == "Big" ? "B" : "S"}
                             </span>
@@ -984,11 +993,12 @@ function LotteryTrxWingo() {
                             {/* Big/Small indicator */}
                             <span
                               className={`w-[16px] h-[16px] ml-4 flex items-center justify-center rounded-full text-xs ${
-                                row?.result?.size =='Big'? "bg-yellow-500 text-white"
+                                row?.result?.size == "Big"
+                                  ? "bg-yellow-500 text-white"
                                   : "bg-blue-400 text-white"
                               }`}
                             >
-                              {row?.result?.size =='Big' ? "B" : "S"}
+                              {row?.result?.size == "Big" ? "B" : "S"}
                             </span>
                           </div>
                         </td>
@@ -1036,32 +1046,27 @@ function LotteryTrxWingo() {
                       {userBets.map((bet, index) => (
                         <div
                           key={bet.betId || index}
-                          className="flex justify-between items-start border-b pb-4 mb-4 last:border-b-0"
+                          className="flex justify-between items-start border-b last:border-b-0"
                         >
                           <div className="flex items-center">
-                            <div className="w-12 h-12 bg-[#00b971] rounded-md mb-2 mr-3 flex items-center justify-center">
+                            <div className="w-10 h-10 bg-[#00b971] rounded-md mr-3 flex items-center justify-center">
                               <span className="text-white font-bold text-sm">
-                                {bet.period?.toString().slice(-2) || "??"}
+                                {bet.select}
                               </span>
                             </div>
                             <div>
-                              <p className="text-gray-700 font-medium">
-                                Period: {bet.period}
+                              <p className="text-[14px]" style={{color:'white'}}>
+                                {bet.period}
                               </p>
-                              <p className="text-gray-500 text-sm">
-                                Date: {bet.date}
-                              </p>
-                              <p className="text-gray-500 text-sm">
-                                Time: {bet.time}
-                              </p>
-                              <p className="text-gray-600 text-sm">
-                                Bet: {bet.select}
+                              <p className="text-gray-500 text-xs">
+                                {bet.date}
+                                {bet.time}
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
                             <p
-                              className={`mt-1 border text-right rounded text-sm px-2 py-1 ${
+                              className={`mt-1 border text-right rounded px-1 text-sm  ${
                                 bet.status === "won"
                                   ? "text-green-600 border-green-600"
                                   : bet.status === "lost"
@@ -1072,15 +1077,13 @@ function LotteryTrxWingo() {
                               {bet.status === "won"
                                 ? "Won"
                                 : bet.status === "lost"
-                                  ? "Lost"
+                                  ? "Failed"
                                   : "Pending"}
                             </p>
-                            <p className="text-black font-medium mt-1">
-                              Amount: {bet.amount}
-                            </p>
+                   
                             {bet.winLose !== "₹0" && (
                               <p
-                                className={`font-medium text-sm mt-1 ${
+                                className={`font-medium text-sm  ${
                                   bet.winLose.startsWith("+")
                                     ? "text-green-600"
                                     : "text-red-600"
@@ -1089,11 +1092,7 @@ function LotteryTrxWingo() {
                                 {bet.winLose}
                               </p>
                             )}
-                            {bet.result !== "Pending" && (
-                              <p className="text-gray-600 text-xs mt-1">
-                                Result: {bet.result}
-                              </p>
-                            )}
+                        
                           </div>
                         </div>
                       ))}
