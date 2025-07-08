@@ -475,7 +475,7 @@ function LotteryK3() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [betAmount, setBetAmount] = useState(1);
   const [showDifferentPopup, setShowDifferentPopup] = useState(false);

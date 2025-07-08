@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-const ChartConnectorCanvas = ({ chartData, containerRef }) => {
+const ChartConnectorCanvas = ({ chartData, containerRef,activeImage = null }) => {
   const canvasRef = useRef(null);
 
   const drawCanvas = () => {
@@ -50,7 +50,7 @@ const ChartConnectorCanvas = ({ chartData, containerRef }) => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [chartData, containerRef]);
+  }, [chartData, containerRef,activeImage]);
 
   return (
     <canvas

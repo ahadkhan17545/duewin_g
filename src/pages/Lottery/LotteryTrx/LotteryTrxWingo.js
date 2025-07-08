@@ -130,7 +130,7 @@ function LotteryTrxWingo() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [userBets, setUserBets] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];

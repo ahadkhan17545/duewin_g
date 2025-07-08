@@ -123,7 +123,7 @@ function Lottery5d() {
     periodId: "Loading...",
   });
   const [isPeriodTransitioning, setIsPeriodTransitioning] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const [fetchDataFlag, setFetchDataFlag] = useState(false);
   const [userDidBet, setUserDidBet] = useState(false);
@@ -138,6 +138,7 @@ function Lottery5d() {
   const [chartData, setChartData] = useState([]);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const containerRef = useRef(null);
+
   // WebSocket hook
   const {
     isConnected,
@@ -148,52 +149,244 @@ function Lottery5d() {
     gameHistory: socketHistory,
     placeBet,
   } = useSocket("fiveD", buttonData[activeButton].duration);
+
+  // Memoized functions to prevent infinite re-renders
+  const fetchWalletBalance = useCallback(async () => {
+    try {
+      const response = await getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        setWalletBalance(balance);
+      } else {
+        setWalletBalance(0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch wallet balance:", error);
+      setWalletBalance(0);
+    }
+  }, []);
+
+  const handleRefreshBalance = useCallback(async () => {
+    if (isRefreshingBalance) return;
+    setIsRefreshingBalance(true);
+    try {
+      const response = await getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        setWalletBalance(balance);
+      } else {
+        setError("Failed to refresh balance");
+      }
+    } catch (error) {
+      setError("Failed to refresh balance. Please try again.");
+    } finally {
+      setIsRefreshingBalance(false);
+    }
+  }, [isRefreshingBalance]);
+
+  const fetchGameChat = useCallback(async (page, duration) => {
+    try {
+      let data = await apiServices.getGameHistory("5d", duration, page, 10);
+      if (data.success) {
+        setChartData(data?.data?.results);
+        setTotalPages(data?.data?.pagination.total || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching game data:", error);
+      setGameHistoryData([]);
+    }
+  }, []);
+
+  const fetchChartData = useCallback(async () => {
+    const duration = buttonData[activeButton].duration;
+    setIsLoading(true);
+    await fetchGameChat(currentPage, duration);
+    setIsLoading(false);
+  }, [activeButton, currentPage, fetchGameChat]);
+
+  const fetchUserBets = useCallback(
+    async (page = 1, limit = 10) => {
+      if (!isMounted.current) return;
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const duration = buttonData[activeButton].duration;
+        // Use the gameApi to fetch user bets
+        const response = await gameApi.getUserBets(
+          gameType,
+          duration,
+          page,
+          limit
+        );
+
+        if (isMounted.current) {
+          if (response && response.success) {
+            // Handle different possible response structures
+            let betsData = [];
+
+            if (Array.isArray(response.data)) {
+              betsData = response.data;
+            } else if (response.data && Array.isArray(response.data.results)) {
+              betsData = response.data.results;
+            } else if (response.data && Array.isArray(response.data.bets)) {
+              betsData = response.data.bets;
+            } else {
+              console.log("⚠️ Unexpected response structure:", response);
+            }
+
+            if (betsData.length > 0) {
+              const latestBet = betsData[0];
+              const updatedAt = new Date(
+                latestBet.updatedAt || latestBet.createdAt
+              );
+              const now = new Date();
+              const timeDiffSeconds = (now - updatedAt) / 1000;
+              console.log("timeDiffSeconds", timeDiffSeconds);
+              if (timeDiffSeconds <= 5) {
+                setLastResult(betsData[0]);
+                setUserDidBet(false);
+                if (betsData[0].status == "won") {
+                  setShowWinPopup(true);
+                } else if (betsData[0].status == "lost") {
+                  setShowLossPopup(true);
+                }
+              }
+              const formattedBets = betsData.map((bet, index) => {
+                return {
+                  betId: bet.betId || bet._id || bet.id || `bet-${index}`,
+                  period: bet.periodId || "N/A",
+                  orderTime: bet.createdAt
+                    ? new Date(bet.createdAt).toLocaleString()
+                    : bet.orderTime || new Date().toLocaleString(),
+                  orderNumber:
+                    bet.betId ||
+                    bet.orderNumber ||
+                    `ORD-${Date.now()}-${index}`,
+                  amount: `₹${bet?.betAmount || bet?.amount || 0}`,
+                  quantity: bet?.betValue || 1,
+                  afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
+                  tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
+                  result: bet?.result,
+                  select:
+                    bet?.betType && bet.betValue
+                      ? `${bet.betType}: ${bet.betValue}`
+                      : bet.select || "N/A",
+                  status: bet?.status,
+                  winLose:
+                    bet.profitLoss !== undefined
+                      ? bet.profitLoss >= 0
+                        ? `+₹${bet.profitLoss}`
+                        : `-₹${Math.abs(bet.profitLoss)}`
+                      : bet.winLose || "₹0",
+                  // Additional fields for display
+                  date: bet.createdAt
+                    ? new Date(bet.createdAt).toLocaleDateString()
+                    : new Date().toLocaleDateString(),
+                  time: bet.createdAt
+                    ? new Date(bet.createdAt).toLocaleTimeString()
+                    : new Date().toLocaleTimeString(),
+                  sum: bet?.result.sum,
+                };
+              });
+
+              setHistoryData(formattedBets);
+
+              // Handle pagination
+              const totalPagesCalc =
+                response.pagination?.total_pages ||
+                Math.ceil((response.total || formattedBets.length) / limit) ||
+                1;
+              setTotalPages(totalPagesCalc);
+            } else {
+              setHistoryData([]);
+              setTotalPages(1);
+            }
+          } else {
+            setHistoryData([]);
+            setTotalPages(1);
+            setError("Failed to fetch betting history");
+          }
+        }
+      } catch (error) {
+        console.error("❌ Error in fetchUserBets:", error);
+        if (isMounted.current) {
+          setError("Failed to fetch user bets: " + error.message);
+          setHistoryData([]);
+          setTotalPages(1);
+        }
+      } finally {
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [activeButton, gameType]
+  );
+
+  // Fetch game history
+  const fetchGameHistory = useCallback(async (page, duration) => {
+    try {
+      let data = await apiServices.getGameHistory("5d", duration, page, 10);
+      if (data.success) {
+        setGameHistoryData(data?.data?.results);
+        setTotalPages(data.data?.pagination.total || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching game data:", error);
+      setGameHistoryData([]);
+    }
+  }, []);
+
+  const fetchLastResult = useCallback(async () => {
+    try {
+      const duration = buttonData[activeButton].duration;
+      let data = await apiServices.getLastResult("5d", duration);
+      if (data?.success) {
+        const final = data?.result;
+        setLastResult5D(final);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, [activeButton]);
+
   // Wallet balance fetching
   useEffect(() => {
     fetchWalletBalance();
     const interval = setInterval(fetchWalletBalance, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchWalletBalance]);
 
+  // Socket connection effect - Fixed to prevent infinite loops
   useEffect(() => {
-    if (isConnected) {
-      const updates = {};
-      let hasUpdates = false;
+    if (!isConnected) return;
 
-      if (socketPeriod && socketPeriod.periodId !== currentPeriod.periodId) {
-        if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
-          updates.period = socketPeriod;
-          hasUpdates = true;
-        }
-      }
+    // Check period updates
+    if (
+      socketPeriod?.periodId &&
+      socketPeriod.periodId !== "Loading..." &&
+      socketPeriod.periodId !== currentPeriod.periodId
+    ) {
+      setCurrentPeriod(socketPeriod);
+    }
 
-      if (
-        socketTime &&
-        (socketTime.minutes !== timeRemaining.minutes ||
-          socketTime.seconds !== timeRemaining.seconds)
-      ) {
-        updates.time = socketTime;
-        hasUpdates = true;
-      }
-
-      if (hasUpdates) {
-        if (updates.period) {
-          setCurrentPeriod(updates.period);
-        }
-        if (updates.time) {
-          setTimeRemaining(updates.time);
-        }
-      }
+    // Check time updates
+    if (
+      socketTime &&
+      (socketTime.minutes !== timeRemaining.minutes ||
+        socketTime.seconds !== timeRemaining.seconds)
+    ) {
+      setTimeRemaining(socketTime);
     }
   }, [
     isConnected,
-    socketPeriod,
-    socketTime,
-    currentPeriod.periodId,
-    timeRemaining.minutes,
-    timeRemaining.seconds,
+    socketPeriod?.periodId,
+    socketTime?.minutes,
+    socketTime?.seconds,
   ]);
 
+  // Timer countdown effect
   useEffect(() => {
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
       const currentId = parseInt(currentPeriod.periodId) || 0;
@@ -215,13 +408,7 @@ function Lottery5d() {
         return () => clearTimeout(timer);
       }
     }
-  }, [
-    timeRemaining.minutes,
-    timeRemaining.seconds,
-    activeButton,
-    isConnected,
-    currentPeriod.periodId,
-  ]);
+  }, [timeRemaining.minutes, timeRemaining.seconds, activeButton, isConnected]);
 
   // Auto-close success popup
   useEffect(() => {
@@ -234,270 +421,95 @@ function Lottery5d() {
   }, [showSuccessPopup]);
 
   useEffect(() => {
-    fetchUserBets();
-  }, [activeTab, currentPage, activeButton, refetchData]);
+    fetchUserBets(currentPage);
+  }, [activeTab, currentPage, activeButton, refetchData, fetchUserBets]);
 
   useEffect(() => {
     if (activeTab === "chart") {
       fetchChartData();
     }
-  }, [activeTab, currentPage, activeButton, refetchData]);
+  }, [activeTab, currentPage, activeButton, refetchData, fetchChartData]);
 
   useEffect(() => {
     fetchLastResult();
-  }, [refetchData]);
+  }, [refetchData, fetchLastResult]);
 
   useEffect(() => {
-    fetchGameHistory(currentPage, buttonData[activeButton]?.duration);
-  }, [activeTab, currentPage, activeButton, refetchData]);
+    const duration = buttonData[activeButton]?.duration;
+    if (duration) {
+      fetchGameHistory(currentPage, duration);
+    }
+  }, [activeTab, currentPage, activeButton, refetchData, fetchGameHistory]);
 
   useEffect(() => {
     setCurrentPage(1);
     setTotalPages(1);
   }, [activeButton]);
 
-  const handleRefreshBalance = async () => {
-    if (isRefreshingBalance) return;
-    setIsRefreshingBalance(true);
-    try {
-      const response = await getWalletBalance();
-      if (response?.success && response?.mainWallet) {
-        const balance = Number(response.mainWallet.balance) || 0;
-        setWalletBalance(balance);
-      } else {
-        setError("Failed to refresh balance");
-      }
-    } catch (error) {
-      setError("Failed to refresh balance. Please try again.");
-    } finally {
-      setIsRefreshingBalance(false);
-    }
-  };
-
-  const fetchWalletBalance = async () => {
-    try {
-      const response = await getWalletBalance();
-      if (response?.success && response?.mainWallet) {
-        const balance = Number(response.mainWallet.balance) || 0;
-        setWalletBalance(balance);
-      } else {
-        setWalletBalance(0);
-      }
-    } catch (error) {
-      console.error("Failed to fetch wallet balance:", error);
-      setWalletBalance(0);
-    }
-  };
-
-  const fetchChartData = async () => {
-    const duration = buttonData[activeButton].duration;
-    setIsLoading(true);
-    await fetchGameChat(currentPage, duration);
-  };
-  const fetchGameChat = async (page, duration) => {
-    try {
-      let data = await apiServices.getGameHistory("5d", duration, page, 10);
-      if (data.success) {
-        setChartData(data?.data?.results);
-        setTotalPages(data?.data?.pagination.total || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching game data:", error);
-      setGameHistoryData([]);
-    }
-  };
-
-  const fetchUserBets = async (page = 1, limit = 10) => {
-    if (!isMounted.current) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const duration = buttonData[activeButton].duration;
-      // Use the gameApi to fetch user bets
-      const response = await gameApi.getUserBets(
-        gameType,
-        duration,
-        page,
-        limit
-      );
-
-      if (isMounted.current) {
-        if (response && response.success) {
-          // Handle different possible response structures
-          let betsData = [];
-
-          if (Array.isArray(response.data)) {
-            betsData = response.data;
-          } else if (response.data && Array.isArray(response.data.results)) {
-            betsData = response.data.results;
-          } else if (response.data && Array.isArray(response.data.bets)) {
-            betsData = response.data.bets;
-          } else {
-            console.log("⚠️ Unexpected response structure:", response);
-          }
-          if (betsData.length > 0) {
-            const latestBet = betsData[0];
-            const updatedAt = new Date(
-              latestBet.updatedAt || latestBet.createdAt
-            );
-            const now = new Date();
-            const timeDiffSeconds = (now - updatedAt) / 1000;
-            console.log("timeDiffSeconds", timeDiffSeconds);
-            if (timeDiffSeconds <= 5) {
-              setLastResult(betsData[0]);
-              setUserDidBet(false);
-              if (betsData[0].status == "won") {
-                setShowWinPopup(true);
-              } else if (betsData[0].status == "lost") {
-                setShowLossPopup(true);
-              }
-            }
-            const formattedBets = betsData.map((bet, index) => {
-              return {
-                betId: bet.betId || bet._id || bet.id || `bet-${index}`,
-                period: bet.periodId || "N/A",
-                orderTime: bet.createdAt
-                  ? new Date(bet.createdAt).toLocaleString()
-                  : bet.orderTime || new Date().toLocaleString(),
-                orderNumber:
-                  bet.betId || bet.orderNumber || `ORD-${Date.now()}-${index}`,
-                amount: `₹${bet?.betAmount || bet?.amount || 0}`,
-                quantity: bet?.betValue || 1,
-                afterTax: `₹${bet.amountAfterTax.toFixed(2)}`,
-                tax: `₹${(bet.taxAmount || 0).toFixed(2)}`,
-                result: bet?.result,
-                select:
-                  bet?.betType && bet.betValue
-                    ? `${bet.betType}: ${bet.betValue}`
-                    : bet.select || "N/A",
-                status: bet?.status,
-                winLose:
-                  bet.profitLoss !== undefined
-                    ? bet.profitLoss >= 0
-                      ? `+₹${bet.profitLoss}`
-                      : `-₹${Math.abs(bet.profitLoss)}`
-                    : bet.winLose || "₹0",
-                // Additional fields for display
-                date: bet.createdAt
-                  ? new Date(bet.createdAt).toLocaleDateString()
-                  : new Date().toLocaleDateString(),
-                time: bet.createdAt
-                  ? new Date(bet.createdAt).toLocaleTimeString()
-                  : new Date().toLocaleTimeString(),
-                sum: bet?.result.sum,
-              };
-            });
-
-            setHistoryData(formattedBets);
-
-            // Handle pagination
-            const totalPagesCalc =
-              response.pagination?.total_pages ||
-              Math.ceil((response.total || formattedBets.length) / limit) ||
-              1;
-            setTotalPages(totalPagesCalc);
-          } else {
-            setHistoryData([]);
-            setTotalPages(1);
-          }
-        } else {
-          setHistoryData([]);
-          setTotalPages(1);
-          setError("Failed to fetch betting history");
-        }
-      }
-    } catch (error) {
-      console.error("❌ Error in fetchUserBets:", error);
-      if (isMounted.current) {
-        setError("Failed to fetch user bets: " + error.message);
-        setHistoryData([]);
-        setTotalPages(1);
-      }
-    } finally {
-      if (isMounted.current) {
-        setIsLoading(false);
-      }
-    }
-  };
-  // Fetch game history
-  const fetchGameHistory = async (page, duration) => {
-    try {
-      let data = await apiServices.getGameHistory("5d", duration, page, 10);
-      if (data.success) {
-        setGameHistoryData(data?.data?.results);
-        setTotalPages(data.data?.pagination.total || 1);
-      }
-    } catch (error) {
-      console.error("Error fetching game data:", error);
-      setGameHistoryData([]);
-    }
-  };
-
-  const fetchLastResult = async () => {
-    try {
-      const duration = buttonData[activeButton].duration;
-      let data = await apiServices.getLastResult("5d", duration);
-      if (data?.success) {
-        const final = data?.result;
-        setLastResult5D(final);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   // Event handlers
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
+  const handlePageChange = useCallback(
+    (page) => {
+      if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    },
+    [totalPages]
+  );
 
-  const handleButtonClick = (buttonId) => {
-    setActiveButton(buttonId);
-    setCurrentPage(1);
-    setTimeRemaining({
-      minutes: Math.floor(buttonData[buttonId].duration / 60),
-      seconds: buttonData[buttonId].duration % 60,
-    });
-    setCurrentPeriod({ periodId: "Loading..." });
-    setIsPeriodTransitioning(true);
-    setTimeout(() => {
-      if (!isConnected) {
-        setIsPeriodTransitioning(false);
-      }
-    }, 500);
-  };
+  const handleButtonClick = useCallback(
+    (buttonId) => {
+      setActiveButton(buttonId);
+      setCurrentPage(1);
+      setTimeRemaining({
+        minutes: Math.floor(buttonData[buttonId].duration / 60),
+        seconds: buttonData[buttonId].duration % 60,
+      });
+      setCurrentPeriod({ periodId: "Loading..." });
+      setIsPeriodTransitioning(true);
+      setTimeout(() => {
+        if (!isConnected) {
+          setIsPeriodTransitioning(false);
+        }
+      }, 500);
+    },
+    [isConnected]
+  );
 
-  const handleOptionClick = (option, type) => {
+  const handleOptionClick = useCallback((option, type) => {
     setSelectedOption(option);
     setBetType(type); // number or size
     setIsModalOpen(true);
     setBetAmount(1);
     setQuantity(1);
     setPopupMultiplier("X1");
-  };
+  }, []);
 
-  const handleQuantityChange = (change) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
-    }
-  };
+  const handleQuantityChange = useCallback((change) => {
+    setQuantity((prev) => {
+      const newQuantity = prev + change;
+      return newQuantity >= 1 ? newQuantity : prev;
+    });
+  }, []);
 
-  const handleMultiplierClick = (multiplier) => {
+  const handleMultiplierClick = useCallback((multiplier) => {
     setPopupMultiplier(multiplier);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedOption(null);
     setBetType(null);
     setQuantity(1);
     setBetAmount(1);
     setPopupMultiplier("X1");
-  };
+  }, []);
 
-  const handlePlaceBet = () => {
+  const handlePlaceBet = useCallback(() => {
     if (!checked) {
       alert("Please agree to the pre-sale rules");
       return;
@@ -532,18 +544,31 @@ function Lottery5d() {
       console.log("❌ Failed to send bet to WebSocket");
       setError("Failed to place bet. Please try again.");
     }
-  };
+  }, [
+    checked,
+    popupMultiplier,
+    betAmount,
+    quantity,
+    selectedOption,
+    betType,
+    currentPeriod.periodId,
+    gameType,
+    activeButton,
+    activeImgTab,
+    placeBet,
+    handleRefreshBalance,
+  ]);
 
-  const calculateTotalAmount = () => {
+  const calculateTotalAmount = useCallback(() => {
     const multiplierValue = parseInt(popupMultiplier.replace("X", "")) || 1;
     return (betAmount * quantity * multiplierValue).toFixed(2);
-  };
+  }, [betAmount, quantity, popupMultiplier]);
 
-  const formatTime = (num) => num.toString().padStart(2, "0");
+  const formatTime = useCallback((num) => num.toString().padStart(2, "0"), []);
 
-  const getDisplayPeriodId = () => {
+  const getDisplayPeriodId = useCallback(() => {
     return currentPeriod.periodId || "Loading...";
-  };
+  }, [currentPeriod.periodId]);
 
   if (error) {
     return (
@@ -776,12 +801,12 @@ function Lottery5d() {
 
             {/* Main Content */}
             <div className="bg-[#003c26] rounded-lg w-full h-full p-1 flex space-x-1">
-              {(historyData[0]?.result
+              {(lastResult5D?.result
                 ? ["A", "B", "C", "D", "E"]
                 : [5, 9, 9, 8, 6]
               ).map((item, index) => {
-                const value = gameHistoryData[0]?.result
-                  ? gameHistoryData[0].result[item]
+                const value = lastResult5D?.result
+                  ? lastResult5D?.result[item]
                   : item;
                 return (
                   <div
@@ -1036,6 +1061,7 @@ function Lottery5d() {
               <ChartConnectorCanvas
                 chartData={chartData}
                 containerRef={containerRef}
+                activeImage={activeImgTab}
               />
               <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
                 <thead>
@@ -1065,7 +1091,7 @@ function Lottery5d() {
                           <div className="flex items-center justify-center space-x-1 relative">
                             {/* 0–9 number row */}
                             {Array.from({ length: 10 }, (_, i) => {
-                              const currentValue = row.result["A"];
+                              const currentValue = row.result[activeImgTab];
                               const isHighlighted = currentValue === i;
                               const highlightColor =
                                 i === 0
