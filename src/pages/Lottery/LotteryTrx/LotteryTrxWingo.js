@@ -17,7 +17,7 @@ import LotteryWingoheader from "../../../components/LotteryWingoheader";
 import agree from "./../../../Assets/agree-a.png";
 import notAgree from "./../../../Assets/agree-b.png";
 import gameApi from "../../../api/gameAPI";
-import { getWalletBalance } from "../../../api/apiServices";
+import apiServices, { getWalletBalance } from "../../../api/apiServices";
 import useSocket from "../../../hooks/useSocket";
 
 import img0 from "../../../Assets/WingoNew/n0-30bd92d1.png";
@@ -31,6 +31,8 @@ import img7 from "../../../Assets/WingoNew/n7-5961a17f.png";
 import img8 from "../../../Assets/WingoNew/n8-d4d951a4.png";
 import img9 from "../../../Assets/WingoNew/n9-a20f6f42.png";
 import CommanHeader from "../../../components/CommanHeader";
+import FreezePopup from "../../../components/FreezePopup";
+import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 
 const buttonData = [
   {
@@ -44,7 +46,7 @@ const buttonData = [
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
     ),
-    duration: 30,
+    duration: 60,
   },
   {
     id: 1,
@@ -53,7 +55,7 @@ const buttonData = [
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
     ),
-    duration: 60,
+    duration: 180,
   },
   {
     id: 2,
@@ -62,7 +64,7 @@ const buttonData = [
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
     ),
-    duration: 180,
+    duration: 300,
   },
   {
     id: 3,
@@ -71,7 +73,7 @@ const buttonData = [
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
     ),
-    duration: 300,
+    duration: 600,
   },
 ];
 
@@ -134,7 +136,12 @@ function LotteryTrxWingo() {
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const [fetchDataFlag, setFetchDataFlag] = useState(false);
   const API_BASE_URL = "https://api.strikecolor1.com";
-
+  const [refetchData, setRefetchData] = useState(false);
+  const [userDidBet, setUserDidBet] = useState(false);
+  const [lastResult, setLastResult] = useState(null);
+  const [gameHistoryData, setGameHistoryData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const containerRef3 = useRef(null)
   // WebSocket hook (used only for period and time, not game history)
   const {
     isConnected,
@@ -143,161 +150,9 @@ function LotteryTrxWingo() {
     timeRemaining: socketTime,
     placeBet,
   } = useSocket(gameType, buttonData[activeButton].duration);
-
-  // Fetch user bets
-  const fetchUserBets = useCallback(
-    async (page = 1, limit = 10) => {
-      if (!isMounted.current) return;
-      setIsLoading(true);
-      setError(null);
-      try {
-        console.log("🔄 Fetching user bets...");
-        const duration = buttonData[activeButton].duration;
-        const response = await gameApi.getUserBets(gameType, duration, {
-          page,
-          limit,
-        });
-        if (isMounted.current) {
-          if (response.success && Array.isArray(response.data)) {
-            const bets = response.data.map((bet) => ({
-              betId: bet.betId,
-              period: bet.periodId,
-              orderTime: new Date(bet.createdAt).toLocaleString(),
-              orderNumber: bet.betId,
-              amount: `₹${bet.betAmount}`,
-              quantity: bet.quantity || 1,
-              afterTax: `₹${(bet.betAmount * 0.98).toFixed(2)}`,
-              tax: `₹${(bet.betAmount * 0.02).toFixed(2)}`,
-              result: bet.result
-                ? `${bet.result.number} (${bet.result.size}, ${bet.result.color})`
-                : "Pending",
-              select: `${bet.betType}: ${bet.betValue}`,
-              status: bet.status || "Pending",
-              winLose:
-                bet.profitLoss >= 0
-                  ? `+₹${bet.profitLoss}`
-                  : `-₹${Math.abs(bet.profitLoss)}`,
-              date: new Date(bet.createdAt).toLocaleDateString(),
-              time: new Date(bet.createdAt).toLocaleTimeString(),
-            }));
-            setUserBets(bets);
-            setTotalPages(
-              response.pagination?.total_pages ||
-                Math.ceil(response.total / limit) ||
-                1
-            );
-            console.log("✅ User bets fetched successfully", {
-              count: bets.length,
-            });
-          } else {
-            setUserBets([]);
-            setTotalPages(1);
-            console.log("✅ No user bets found");
-          }
-        }
-      } catch (error) {
-        if (isMounted.current) {
-          setError("Failed to fetch user bets: " + error.message);
-          console.log("❌ Error fetching user bets:", error.message);
-          setUserBets([]);
-          setTotalPages(1);
-        }
-      } finally {
-        if (isMounted.current) {
-          setIsLoading(false);
-        }
-      }
-    },
-    [activeButton, gameType]
-  );
-
-  // Fetch wallet balance
-  useEffect(() => {
-    const fetchWalletBalance = async () => {
-      try {
-        const response = await getWalletBalance();
-        if (response?.success && response?.mainWallet) {
-          const balance = Number(response.mainWallet.balance) || 0;
-          setWalletBalance(balance);
-        } else {
-          setWalletBalance(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch wallet balance:", error);
-        setWalletBalance(0);
-      }
-    };
-    fetchWalletBalance();
-    const interval = setInterval(fetchWalletBalance, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Refresh wallet balance
-  const handleRefreshBalance = async () => {
-    if (isRefreshingBalance) return;
-    setIsRefreshingBalance(true);
-    try {
-      const response = await getWalletBalance();
-      if (response?.success && response?.mainWallet) {
-        const balance = Number(response.mainWallet.balance) || 0;
-        setWalletBalance(balance);
-      } else {
-        setError("Failed to refresh balance");
-      }
-    } catch (error) {
-      setError("Failed to refresh balance. Please try again.");
-    } finally {
-      setIsRefreshingBalance(false);
-    }
-  };
-
-  // Fetch game history from API
-  const fetchGameHistory = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const duration = buttonData[activeButton].duration;
-      const response = await gameApi.getGameHistory(
-        gameType,
-        duration,
-        currentPage,
-        10
-      );
-      if (response.success && response.data?.results) {
-        const mappedHistory = response.data.results.map((item) => ({
-          periodId: item.periodId,
-          blockHeight: item.verification?.blockHeight || "N/A",
-          blockTime: item.verification?.blockTime || "N/A",
-          hashValue: item.verification?.hash || "N/A",
-          result: item.result?.number || "N/A",
-          resultType: item.result?.color || item.result?.size || "N/A",
-        }));
-        setHistoryData(mappedHistory);
-        setTotalPages(response.data.pagination?.total_pages || 5);
-      } else {
-        setError("Failed to load game history.");
-        setHistoryData([]);
-        setTotalPages(1);
-      }
-    } catch (err) {
-      setError(err.message || "Error fetching game history.");
-      setHistoryData([]);
-      setTotalPages(1);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeButton, currentPage, gameType]);
-
-  // Fetch user bets and game history when activeTab or currentPage changes
-  useEffect(() => {
-    if (activeTab === "myHistory") {
-      fetchUserBets(currentPage).catch(console.error);
-    } else if (activeTab === "gameHistory") {
-      fetchGameHistory();
-    }
-  }, [activeTab, currentPage, fetchUserBets, fetchGameHistory]);
-
-  // WebSocket data handling for period and time
+  const containerRef = useRef(null);
+  const containerRef1 = useRef(null);
+  const [kdPopHeight, setKdPopHeigth] = useState(0);
   useEffect(() => {
     if (isConnected && socketPeriod) {
       if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
@@ -338,6 +193,188 @@ function LotteryTrxWingo() {
       return () => clearTimeout(timer);
     }
   }, [timeRemaining.minutes, timeRemaining.seconds, activeButton, isConnected]);
+
+  useEffect(() => {
+    let heightA = null;
+    let heightB = null;
+    if (containerRef.current) {
+      heightA = containerRef.current.getBoundingClientRect().height;
+    }
+    if (containerRef1.current) {
+      heightB = containerRef1.current.getBoundingClientRect().height;
+    }
+    let newHeight = heightA + heightB + 15;
+    setKdPopHeigth(newHeight);
+  }, []);
+  // Fetch wallet balance
+  useEffect(() => {
+    const fetchWalletBalance = async () => {
+      try {
+        const response = await getWalletBalance();
+        if (response?.success && response?.mainWallet) {
+          const balance = Number(response.mainWallet.balance) || 0;
+          setWalletBalance(balance);
+        } else {
+          setWalletBalance(0);
+        }
+      } catch (error) {
+        console.error("Failed to fetch wallet balance:", error);
+        setWalletBalance(0);
+      }
+    };
+    fetchWalletBalance();
+    const interval = setInterval(fetchWalletBalance, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  // Fetch user bets
+  const fetchUserBets = async (page = 1, limit = 10) => {
+    if (!isMounted.current) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log("🔄 Fetching user bets...");
+      const duration = buttonData[activeButton].duration;
+      const response = await gameApi.getUserBets(gameType, duration, {
+        page,
+        limit,
+      });
+      if (isMounted.current) {
+        if (response.success && Array.isArray(response.data)) {
+          const bets = response.data.map((bet) => ({
+            betId: bet.betId,
+            period: bet.periodId,
+            orderTime: new Date(bet.createdAt).toLocaleString(),
+            orderNumber: bet.betId,
+            amount: `₹${bet.betAmount}`,
+            quantity: bet.quantity || 1,
+            afterTax: `₹${(bet.betAmount * 0.98).toFixed(2)}`,
+            tax: `₹${(bet.betAmount * 0.02).toFixed(2)}`,
+            result: bet.result
+              ? `${bet.result.number} (${bet.result.size}, ${bet.result.color})`
+              : "Pending",
+            select: `${bet.betType}: ${bet.betValue}`,
+            status: bet.status || "Pending",
+            winLose:
+              bet.profitLoss >= 0
+                ? `+₹${bet.profitLoss}`
+                : `-₹${Math.abs(bet.profitLoss)}`,
+            date: new Date(bet.createdAt).toLocaleDateString(),
+            time: new Date(bet.createdAt).toLocaleTimeString(),
+          }));
+          setUserBets(bets);
+          setTotalPages(
+            response.pagination?.total_pages ||
+              Math.ceil(response.total / limit) ||
+              1
+          );
+          console.log("✅ User bets fetched successfully", {
+            count: bets.length,
+          });
+        } else {
+          setUserBets([]);
+          setTotalPages(1);
+          console.log("✅ No user bets found");
+        }
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        setError("Failed to fetch user bets: " + error.message);
+        console.log("❌ Error fetching user bets:", error.message);
+        setUserBets([]);
+        setTotalPages(1);
+      }
+    } finally {
+      if (isMounted.current) {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  // Refresh wallet balance
+  const handleRefreshBalance = async () => {
+    if (isRefreshingBalance) return;
+    setIsRefreshingBalance(true);
+    try {
+      const response = await getWalletBalance();
+      if (response?.success && response?.mainWallet) {
+        const balance = Number(response.mainWallet.balance) || 0;
+        setWalletBalance(balance);
+      } else {
+        setError("Failed to refresh balance");
+      }
+    } catch (error) {
+      setError("Failed to refresh balance. Please try again.");
+    } finally {
+      setIsRefreshingBalance(false);
+    }
+  };
+
+  // Fetch game history from API
+  const fetchGameHistoryData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const duration = buttonData[activeButton].duration;
+      const response = await apiServices.getGameHistory(
+        gameType,
+        duration,
+        currentPage,
+        10
+      );
+      console.log(response);
+      if (response?.success && response?.data?.results) {
+        const mappedHistory = response.data.results.map((item) => ({
+          periodId: item.periodId,
+          blockHeight: item.verification?.blockHeight || "N/A",
+          blockTime: item.verification?.blockTime || "N/A",
+          hashValue: item.verification?.hash || "N/A",
+          result: item.result?.number ?? "N/A",
+          resultType: item.result?.size || item.result?.color || "N/A",
+        }));
+        setHistoryData(mappedHistory);
+        setTotalPages(response.data.pagination?.totalPages || 5);
+        setCurrentPage(response.data.pagination?.page);
+      } else {
+        setError("Failed to load game history.");
+        setHistoryData([]);
+        setTotalPages(1);
+      }
+    } catch (err) {
+      setError(err.message || "Error fetching game history.");
+      setHistoryData([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchGameChat = async (page, duration) => {
+    try {
+      let data = await apiServices.getGameHistory(gameType, duration, page, 10);
+      if (data.success) {
+        setChartData(data?.data?.results);
+        setTotalPages(data?.data?.pagination.total || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching game data:", error);
+      setGameHistoryData([]);
+    }
+  };
+  useEffect(() => {
+    if (activeTab === "gameHistory") {
+      const duration = buttonData[activeButton].duration;
+      fetchGameHistoryData(currentPage, duration);
+    }
+  }, [activeTab, currentPage, activeButton, refetchData]);
+
+  useEffect(() => {
+    if (activeTab === "chart") {
+      const duration = buttonData[activeButton].duration;
+      fetchGameChat(currentPage, duration);
+    }
+  }, [activeTab, currentPage, activeButton, refetchData]);
+  useEffect(() => {
+    // fetchUserBets();
+  }, [activeTab, currentPage, activeButton, refetchData]);
 
   // Auto-close success popup
   useEffect(() => {
@@ -459,7 +496,7 @@ function LotteryTrxWingo() {
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center pr-3 pl-3   pt-11 pb-24">
       <CommanHeader isGameHeader={true} />
-      <div className="text-center w-full max-w-sm mt-8" style={{zIndex:1}}>
+      <div className="text-center w-full max-w-sm mt-8" style={{ zIndex: 1 }}>
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
           {/* Background image */}
           <div className="absolute inset-0 z-0">
@@ -552,7 +589,10 @@ function LotteryTrxWingo() {
             </button>
           </div>
         </div>
-        <div className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md" style={{zIndex:1}}>
+        <div
+          className="bg-[#4d4d4c] rounded-lg mt-4 shadow-md"
+          style={{ zIndex: 1 }}
+        >
           <div className="button-container flex justify-between ">
             {buttonData.map((button) => (
               <button
@@ -669,68 +709,77 @@ function LotteryTrxWingo() {
                 ))}
           </div>
         </div>
-
-        <div className="bg-[#333332] rounded-lg shadow-md mb-2 p-2 space-y-2">
-          <div className="flex justify-between space-x-2 mb-2">
-            <button
-              className="bg-green-500 flex-1 text-white py-2 rounded-tr-lg rounded-bl-lg text-sm"
-              onClick={() => handleOptionClick("Green", "color")}
-            >
-              Green
-            </button>
-            <button
-              className="bg-violet-500 flex-1 text-white py-2 rounded text-sm"
-              onClick={() => handleOptionClick("Violet", "color")}
-            >
-              Violet
-            </button>
-            <button
-              className="bg-red-500 flex-1 text-white py-2 rounded-tl-lg rounded-br-lg text-sm"
-              onClick={() => handleOptionClick("Red", "color")}
-            >
-              Red
-            </button>
-          </div>
-          <div className="bg-[#4d4d4c] p-2 rounded-lg">
-            <div className="flex justify-between space-x-1">
-              {[0, 1, 2, 3, 4].map((num) => (
-                <span
-                  key={num}
-                  className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
-                  onClick={() => handleOptionClick(num.toString(), "number")}
-                >
-                  <img
-                    src={numberImages[num]}
-                    alt={`Icon ${num}`}
-                    className="w-full h-full"
-                  />
-                </span>
-              ))}
-            </div>
-            <div className="flex justify-between space-x-1 mt-2">
-              {[5, 6, 7, 8, 9].map((num) => (
-                <span
-                  key={num}
-                  className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
-                  onClick={() => handleOptionClick(num.toString(), "number")}
-                >
-                  <img
-                    src={numberImages[num]}
-                    alt={`Icon ${num}`}
-                    className="w-full h-full"
-                  />
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="flex justify-center items-center space-x-1">
-            <span className="border border-red-700 text-red-500 text-sm px-4 py-2 rounded-lg">
-              Random
-            </span>
-            {multiplierOptions.map((value) => (
+        <FreezePopup
+          timeRemaining={timeRemaining}
+          duration={buttonData[activeButton].duration}
+          handleRefresh={() => setRefetchData((prev) => !prev)}
+          gameType={gameType}
+          height={kdPopHeight}
+        >
+          <div
+            ref={containerRef}
+            className="bg-[#333332] rounded-lg shadow-md mb-2 p-2 space-y-2"
+          >
+            <div className="flex justify-between space-x-2 mb-2">
               <button
-                key={value}
-                className={`
+                className="bg-green-500 flex-1 text-white py-2 rounded-tr-lg rounded-bl-lg text-sm"
+                onClick={() => handleOptionClick("Green", "color")}
+              >
+                Green
+              </button>
+              <button
+                className="bg-violet-500 flex-1 text-white py-2 rounded text-sm"
+                onClick={() => handleOptionClick("Violet", "color")}
+              >
+                Violet
+              </button>
+              <button
+                className="bg-red-500 flex-1 text-white py-2 rounded-tl-lg rounded-br-lg text-sm"
+                onClick={() => handleOptionClick("Red", "color")}
+              >
+                Red
+              </button>
+            </div>
+            <div className="bg-[#4d4d4c] p-2 rounded-lg">
+              <div className="flex justify-between space-x-1">
+                {[0, 1, 2, 3, 4].map((num) => (
+                  <span
+                    key={num}
+                    className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
+                    onClick={() => handleOptionClick(num.toString(), "number")}
+                  >
+                    <img
+                      src={numberImages[num]}
+                      alt={`Icon ${num}`}
+                      className="w-full h-full"
+                    />
+                  </span>
+                ))}
+              </div>
+              <div className="flex justify-between space-x-1 mt-2">
+                {[5, 6, 7, 8, 9].map((num) => (
+                  <span
+                    key={num}
+                    className="bg-gray-200 w-14 h-14 rounded-full flex items-center justify-center cursor-pointer"
+                    onClick={() => handleOptionClick(num.toString(), "number")}
+                  >
+                    <img
+                      src={numberImages[num]}
+                      alt={`Icon ${num}`}
+                      className="w-full h-full"
+                    />
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-center items-center space-x-1">
+              <span className="border border-red-700 text-red-500 text-sm px-4 py-2 rounded-lg">
+                Random
+              </span>
+              {multiplierOptions.map((value) => (
+                <button
+                  key={value}
+                  className={`
       text-[10px] px-2 py-2 rounded-lg flex-1 border 
       ${
         selectedMultiplier === value
@@ -738,29 +787,30 @@ function LotteryTrxWingo() {
           : "bg-[#242424] text-[#a8a5a1] border-[#3a3a3a]"
       }
     `}
-                onClick={() => handleMultiplierClick(value)}
-              >
-                {value}
+                  onClick={() => handleMultiplierClick(value)}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-center mt-4">
+              <button className="bg-blue-500 text-white rounded-full flex overflow-hidden w-full max-w-xs">
+                <span
+                  className="flex-1 py-2 bg-[#feaa57]"
+                  onClick={() => handleOptionClick("Big", "size")}
+                >
+                  Big
+                </span>
+                <span
+                  className="flex-1 py-2"
+                  onClick={() => handleOptionClick("Small", "size")}
+                >
+                  Small
+                </span>
               </button>
-            ))}
+            </div>
           </div>
-          <div className="flex justify-center mt-4">
-            <button className="bg-blue-500 text-white rounded-full flex overflow-hidden w-full max-w-xs">
-              <span
-                className="flex-1 py-2 bg-[#feaa57]"
-                onClick={() => handleOptionClick("Big", "size")}
-              >
-                Big
-              </span>
-              <span
-                className="flex-1 py-2"
-                onClick={() => handleOptionClick("Small", "size")}
-              >
-                Small
-              </span>
-            </button>
-          </div>
-        </div>
+        </FreezePopup>
 
         <div className="flex justify-between space-x-1 mb-4 mt-2">
           <button
@@ -823,7 +873,11 @@ function LotteryTrxWingo() {
                   </thead>
                   <tbody>
                     {historyData.map((record, rowIndex) => {
-                      const maskedPeriod = `${record.periodId?.toString().substring(0, 3)}**${record.periodId?.toString().substring(11)}`;
+                      const period = record.periodId?.toString() || "";
+                      const hash = record.hashValue?.toString() || "";
+
+                      const maskedPeriod = `${period.slice(0, 3)}***${period.slice(-4)}`;
+                      const maskedHash = `***${hash.slice(-4)}`;
                       return (
                         <tr key={rowIndex} className="text-[#f5f3f0]">
                           <td className="text-sm px-2 text-center py-3">
@@ -836,13 +890,16 @@ function LotteryTrxWingo() {
                             {record.blockTime || "N/A"}
                           </td>
                           <td className="text-sm text-center py-2">
-                            {record.hashValue || "N/A"}
+                            {maskedHash || "N/A"}
                           </td>
                           <td className="text-center">
                             <span className="inline-block text-white mr-2 text-xs px-1 py-1 border bg-[#ff4081] rounded-full py-1">
-                              {record.result}
+                              {record.result ? record?.result : "0"}
                             </span>
-                            {record.resultType || "N/A"}
+                            <span style={{color:record.resultType == 'Big'?'#DD9138':'#5088D3'}}>
+                              {" "}
+                              {record.resultType == "Big" ? "B" : "S"}
+                            </span>
                           </td>
                         </tr>
                       );
@@ -866,69 +923,72 @@ function LotteryTrxWingo() {
             </div>
           )}
           {activeTab === "chart" && (
-            <div className="p-2 rounded-t-lg">
+            <div className="p-2 rounded-t-lg relative" ref={containerRef3}>
+              <ChartConnectorCanvas
+                chartData={chartData}
+                containerRef={containerRef3}
+              />
               <table className="table-fixed w-full text-left bg-[#333332] rounded-t-lg">
                 <thead>
                   <tr className="bg-gray-700 rounded-t-lg">
-                    <th className="px-2 w-2/5 py-2 text-center text-white text-sm border-b rounded-tl-xl border-[#3a3947]">
+                    <th className="px-2 w-2/5 py-2 text-center text-white text-xs font-normal border-b rounded-tl-xl border-[#3a3947]">
                       Period
                     </th>
-                    <th className="px-2 w-3/5 py-2 text-center text-white text-sm border-b rounded-tr-xl border-[#3a3947]">
+                    <th className="px-2 w-3/5 py-2 text-center text-white text-xs font-normal border-b rounded-tr-xl border-[#3a3947]">
                       Number
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {historyData.length > 0 ? (
-                    historyData.map((row, index) => (
+                  {chartData.length > 0 ? (
+                    chartData.map((row, index) => (
                       <tr
                         key={index}
-                        className="relative border-b border-gray-700"
+                        className="border-gray-700 text-white text-xs text-center"
                       >
-                        <td className="px-2 text-gray-200 text-sm py-2">
+                        {/* Period ID */}
+                        <td className="px-2 py-4 text-gray-300">
                           {row.periodId}
                         </td>
-                        <td className="px-2 py-4 text-xs relative">
-                          <div className="flex items-center justify-start space-x-1">
-                            {[...Array(10)].map((_, numIndex) => {
-                              let baseClass =
-                                "inline-flex items-center justify-center text-xs w-6 h-6 rounded-full text-white";
-                              let style = {};
-                              if (numIndex === parseInt(row.result)) {
-                                if (numIndex === 0) {
-                                  style.background =
-                                    "linear-gradient(to-right, #ef4444 50%, #8b5cf6 50%)";
-                                } else if (numIndex === 5) {
-                                  style.background =
-                                    "linear-gradient(to-right, #22c55e 50%, #8b5cf6 50%)";
-                                } else {
-                                  style.backgroundColor =
-                                    numIndex % 2 === 0 ? "#ef4444" : "#22c55e";
-                                }
-                              } else {
-                                style.backgroundColor = "#444343";
-                                style.color = "#aaa";
-                              }
+
+                        {/* Number Row (0–9) */}
+                        <td className="px-2 py-4">
+                          <div className="flex items-center justify-center space-x-1 relative">
+                            {/* 0–9 number row */}
+                            {Array.from({ length: 10 }, (_, i) => {
+                              const currentValue = row.result.number;
+                              const isHighlighted = currentValue === i;
+                              const highlightColor =
+                                i === 0
+                                  ? "bg-gradient-to-r from-red-500 to-violet-500"
+                                  : i === 5
+                                    ? "bg-gradient-to-r from-green-500 to-violet-500"
+                                    : i % 2 === 0
+                                      ? "bg-red-500"
+                                      : "bg-green-500";
+
                               return (
                                 <span
-                                  key={numIndex}
-                                  className={baseClass}
-                                  style={style}
+                                  key={i}
+                                  className={`w-[16px] h-[16px] flex items-center justify-center rounded-full text-[12px] ${
+                                    isHighlighted
+                                      ? `highlight ${highlightColor} text-white`
+                                      : "bg-gray-600 text-gray-300 border border-gray-500"
+                                  }`}
                                 >
-                                  {numIndex}
+                                  {i}
                                 </span>
                               );
                             })}
+
+                            {/* Big/Small indicator */}
                             <span
-                              className={`inline-flex items-center rounded-full justify-center w-10 h-6 ml-1 border text-center ${
-                                row.resultType === "B"
-                                  ? "bg-yellow-600 text-white border-yellow-600"
-                                  : row.resultType === "S"
-                                    ? "bg-[#5088d3] text-white border-[#5088d3]"
-                                    : "border-gray-500 text-gray-500"
+                              className={`w-[16px] h-[16px] ml-4 flex items-center justify-center rounded-full text-xs ${
+                                row?.result?.size =='Big'? "bg-yellow-500 text-white"
+                                  : "bg-blue-400 text-white"
                               }`}
                             >
-                              {row.resultType}
+                              {row?.result?.size =='Big' ? "B" : "S"}
                             </span>
                           </div>
                         </td>

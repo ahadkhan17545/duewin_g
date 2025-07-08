@@ -6,7 +6,7 @@ const FreezePopup = ({
   duration,
   handleRefresh,
   gameType,
-  height
+  height,
 }) => {
   const [count, setCount] = useState(5);
   const [showFreezePopup, setShowFreezePopup] = useState(false);
@@ -33,9 +33,9 @@ const FreezePopup = ({
     const { minutes, seconds } = timeRemaining;
     const totalSeconds = minutes * 60 + seconds;
     if (totalSeconds == 2) {
-      setTimeout(()=>{
+      setTimeout(() => {
         handleRefresh();
-      },2000)
+      }, 2000);
     }
     if (count === 0 && showFreezePopup) {
       const timer = setTimeout(() => {
@@ -66,8 +66,8 @@ const FreezePopup = ({
         return "0%";
       case "5d":
         return "-10%";
-      case "twist":
-        return "20%";
+      case "trx_wix":
+        return "0%";
       default:
         return "17%";
     }
@@ -84,7 +84,12 @@ const FreezePopup = ({
           className="absolute left-0 right-0 flex items-center justify-center rounded-lg z-10   bg-black bg-opacity-50 p-[10px]"
           style={{
             top: getTopPercentage(gameType),
-            height: gameType == 'k3'? `${height}px`:('5d'?"275px":'')
+            height:
+              gameType == "k3" || gameType == "trx_wix"
+                ? `${height}px`
+                : "5d"
+                  ? "275px"
+                  : "",
           }}
         >
           <div className="flex gap-4">
