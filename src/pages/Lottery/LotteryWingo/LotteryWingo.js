@@ -2177,7 +2177,7 @@ function LotteryWingo() {
                                     : "text-gray-400"
                               }`}
                             >
-                              {bet.winLose}
+                              {String(bet.winLose).split(".")[0]+".00"}
                             </p>
                           </div>
                         </div>
