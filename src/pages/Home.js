@@ -1159,7 +1159,7 @@ function Home() {
                 {winners.map((winner, index) => (
                   <div
                     key={winner.id}
-                    className="absolute left-0 right-0 mx-auto flex items-center justify-between bg-[#333332] p-2 rounded-lg transition-all duration-500 ease-in-out"
+                    className="absolute left-0 right-0 mx-auto flex items-center bg-[#333332] p-2 rounded-lg transition-all duration-500 ease-in-out"
                     style={{
                       top: `${index * 65}px`,
                       opacity: 1 - index * 0.1,
@@ -1169,6 +1169,7 @@ function Home() {
                         index === 0 ? "slideDown 0.4s ease-out" : "none",
                       maxHeight: "57px",
                       minWidth: "336px",
+                      gap:window.innerWidth < 380 ? '10%' : '15%'
                     }}
                   >
                     <div className="flex items-center gap-2">
