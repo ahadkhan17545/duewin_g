@@ -142,6 +142,11 @@ function LotteryTrxWingo() {
   const [gameHistoryData, setGameHistoryData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const containerRef3 = useRef(null);
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleDetails = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
   // WebSocket hook (used only for period and time, not game history)
   const {
     isConnected,
@@ -1019,7 +1024,7 @@ function LotteryTrxWingo() {
             </div>
           )}
           {activeTab === "myHistory" && (
-            <div className="p-4 mb-4">
+            <div className="">
               {isLoading && (
                 <div className="text-center py-8">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#00b971]"></div>
@@ -1044,85 +1049,105 @@ function LotteryTrxWingo() {
                   {userBets.length > 0 ? (
                     <>
                       {userBets.map((bet, index) => (
-                        <div
-                          key={bet.betId || index}
-                          className="flex justify-between items-start border-b last:border-b-0"
-                        >
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-[#00b971] rounded-md mr-3 flex items-center justify-center">
-                              <span className="text-white font-bold text-sm">
-                                {bet.select}
-                              </span>
+                        <div key={bet.betId || index}>
+                          {/* Main Bet Row */}
+                          <div
+                            className="flex justify-between items-start border-b last:border-b-0 cursor-pointer p-2"
+                            onClick={() => toggleDetails(index)}
+                          >
+                            <div className="flex items-center">
+                              <div className="w-10 h-10 bg-[#00b971] rounded-md mr-3 flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">
+                                  {bet.select}
+                                </span>
+                              </div>
+                              <div>
+                                <p
+                                  className="text-[14px]"
+                                  style={{ color: "white" }}
+                                >
+                                  {bet.period}
+                                </p>
+                                <p className="text-gray-500 text-xs">
+                                  {bet.date} {bet.time}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-[14px]" style={{color:'white'}}>
-                                {bet.period}
-                              </p>
-                              <p className="text-gray-500 text-xs">
-                                {bet.date}
-                                {bet.time}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p
-                              className={`mt-1 border text-right rounded px-1 text-sm  ${
-                                bet.status === "won"
-                                  ? "text-green-600 border-green-600"
-                                  : bet.status === "lost"
-                                    ? "text-red-600 border-red-600"
-                                    : "text-[#00b971] border-[#00b971]"
-                              }`}
-                            >
-                              {bet.status === "won"
-                                ? "Won"
-                                : bet.status === "lost"
-                                  ? "Failed"
-                                  : "Pending"}
-                            </p>
-                   
-                            {bet.winLose !== "₹0" && (
+                            <div className="text-right">
                               <p
-                                className={`font-medium text-sm  ${
-                                  bet.winLose.startsWith("+")
-                                    ? "text-green-600"
-                                    : "text-red-600"
+                                className={`mt-1 border text-right rounded px-1 text-sm  ${
+                                  bet.status === "won"
+                                    ? "text-green-600 border-green-600"
+                                    : bet.status === "lost"
+                                      ? "text-red-600 border-red-600"
+                                      : "text-[#00b971] border-[#00b971]"
                                 }`}
                               >
-                                {bet.winLose}
+                                {bet.status === "won"
+                                  ? "Won"
+                                  : bet.status === "lost"
+                                    ? "Failed"
+                                    : "Pending"}
                               </p>
-                            )}
-                        
+
+                              {bet.winLose !== "₹0" && (
+                                <p
+                                  className={`font-medium text-sm  ${
+                                    bet.winLose.startsWith("+")
+                                      ? "text-green-600"
+                                      : "text-red-600"
+                                  }`}
+                                >
+                                  {bet.winLose}
+                                </p>
+                              )}
+                            </div>
                           </div>
+
+                          {/* Details View (Expandable) */}
+                          {openIndex === index && (
+                            <div className="bg-[#2a2a2a] rounded-b-md mx-2 mb-2 text-sm">
+                              <h3 className="text-white font-semibold mb-2 text-left">
+                                Details
+                              </h3>
+                              <div className="space-y-2">
+                                {[
+                                  { label: "Bet ID", value: bet.betId },
+                                  { label: "Select", value: bet.select },
+                                  { label: "Period", value: bet.period },
+                                  { label: "Amount", value: bet.amount },
+                                  { label: "Tax", value: bet.tax },
+                                  { label: "After Tax", value: bet.afterTax },
+                                  { label: "Win/Lose", value: bet.winLose },
+                                  {
+                                    label: "Status",
+                                    value:
+                                      bet.status === "won"
+                                        ? "Success"
+                                        : bet.status === "lost"
+                                          ? "Failed"
+                                          : "Pending",
+                                  },
+                                  { label: "Date", value: bet.date },
+                                  { label: "Time", value: bet.time },
+                                ].map(({ label, value }) => (
+                                  <div
+                                    key={label}
+                                    className="flex justify-between items-center bg-[#4d4d4c] px-2 py-1 rounded"
+                                  >
+                                    <span className="text-gray-300">
+                                      {label}
+                                    </span>
+                                    <span className="text-white">
+                                      {value || "N/A"}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
-                      {totalPages > 1 && (
-                        <div className="flex justify-center items-center mt-6 space-x-2">
-                          <button
-                            onClick={() =>
-                              setCurrentPage((prev) => Math.max(1, prev - 1))
-                            }
-                            disabled={currentPage === 1}
-                            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Previous
-                          </button>
-                          <span className="px-3 py-1">
-                            Page {currentPage} of {totalPages}
-                          </span>
-                          <button
-                            onClick={() =>
-                              setCurrentPage((prev) =>
-                                Math.min(totalPages, prev + 1)
-                              )
-                            }
-                            disabled={currentPage === totalPages}
-                            className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Next
-                          </button>
-                        </div>
-                      )}
                     </>
                   ) : (
                     <div className="text-center bg-[#4d4d4c] rounded-lg py-8">
