@@ -27,6 +27,9 @@ module.exports = {
       animation: {
         scrollUp: "scrollUp 10s linear infinite",
       },
+      fontFamily: {
+        fredoka: ["Fredoka", "sans-serif"],
+      },
     },
   },
   plugins: [],

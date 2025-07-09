@@ -236,7 +236,7 @@ function LotteryWingo() {
                 result: bet.result
                   ? typeof bet.result === "string"
                     ? bet.result
-                    : `${bet.result.number || "?"} (${bet.result.size || "?"}, ${bet.result.color || "?"})`
+                    : `${bet.result.number ?? "?"} (${bet.result.size || "?"}, ${bet.result.color || "?"})`
                   : "Pending",
                 select:
                   bet.betType && bet.betValue
@@ -256,6 +256,11 @@ function LotteryWingo() {
                 time: bet.createdAt
                   ? new Date(bet.createdAt).toLocaleTimeString()
                   : new Date().toLocaleTimeString(),
+                payout: bet?.payout,
+                betNumber:
+                  bet?.betType === "NUMBER" || bet?.betType === "SIZE"
+                    ? bet?.betValue
+                    : "",
               };
             });
 
@@ -601,6 +606,22 @@ function LotteryWingo() {
       }
     }, 500);
   }, [activeButton]);
+  useEffect(() => {
+    if (showWinPopup && !showWinPopupChecked) {
+      const timer = setTimeout(() => {
+        setShowWinPopup(false);
+        setLastResult(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    if (showLossPopup && !showLossPopupChecked) {
+      const timer = setTimeout(() => {
+        setShowLossPopup(false);
+        setLastResult(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWinPopup, showWinPopupChecked, showLossPopup, showLossPopupChecked]);
 
   // Debug token status
   const debugTokenStatus = () => {
@@ -722,6 +743,9 @@ function LotteryWingo() {
     const betPlaced = placeBet(betData);
 
     if (betPlaced) {
+      setTimeout(() => {
+        fetchUserBets(currentPage).catch(console.error);
+      }, 1500);
       setUserDidBet(true);
       setShowPopup(null);
       setShowBigPopup(null);
@@ -861,6 +885,7 @@ function LotteryWingo() {
     return (betAmount * quantity * multiplierValue).toFixed(2);
   };
   const isInsufficient = Number(walletBalance) < Number(calculateTotalAmount());
+
   return (
     <div className="bg-[#242424]  w-full mx-auto flex flex-col items-center justify-center  pr-2 pl-2   pt-20 pb-24">
       <style>
@@ -940,7 +965,7 @@ function LotteryWingo() {
                 zIndex: 0,
               }}
             >
-             <Notification/>
+              <Notification />
             </div>
 
             <button
@@ -1117,64 +1142,70 @@ function LotteryWingo() {
         )}
 
         {showWinPopup && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-black bg-opacity-70 fixed inset-0"></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Overlay */}
+            <div className="fixed inset-0 bg-black bg-opacity-70" />
+
+            {/* Popup Container */}
             <div className="relative z-10 flex flex-col items-center max-w-[400px] mx-auto">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[400px] h-[400px] overflow-hidden">
+              {/* Confetti */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[400px] h-[400px] overflow-hidden pointer-events-none">
                 <Confetti
                   width={400}
                   height={400}
-                  recycle={true}
                   numberOfPieces={75}
+                  recycle={true}
                   gravity={0.01}
+                  tweenDuration={20000}
                   initialVelocityX={{ min: -15, max: 15 }}
                   initialVelocityY={{ min: -3, max: 3 }}
-                  tweenDuration={20000}
-                  confettiSource={{
-                    x: 100,
-                    y: 200,
-                    w: 10,
-                    h: 10,
-                  }}
+                  confettiSource={{ x: 100, y: 200, w: 10, h: 10 }}
                 />
               </div>
+
+              {/* Main Popup */}
               <div className="relative w-[400px] h-[400px] flex items-center justify-center">
                 <img
                   src={win}
                   alt="Winner"
                   className="w-full h-full object-contain"
                 />
-                <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 text-center text-white">
-                  <p className="text-2xl font-bold text-white drop-shadow-lg">
-                    Congratulations
-                  </p>
+
+                {/* Text Overlay */}
+                <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 text-center text-white drop-shadow-lg">
+                  <p className="text-2xl font-bold">Congratulations</p>
                 </div>
-                <div className="absolute top-[62%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
-                  <div className="flex items-center justify-center gap-x-2 mt-1">
-                    <h2 className="text-xs whitespace-nowrap text-white font-medium mr-1">
+
+                {/* Result Info */}
+                <div className="absolute top-[62%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-black">
+                  <div className="flex items-center justify-center gap-2 mt-1 text-white">
+                    <h2 className="text-xs font-medium mr-1">
                       Lottery results
                     </h2>
-                    <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded text-white">
+                    <p className="text-xs bg-green-500 border-2 border-white px-1 py-0.5 rounded">
+                      {lastResult?.result?.color || "N/A"}
+                    </p>
+                    <p className="text-xs bg-green-500 border-2 border-white px-1 py-0.5 rounded">
                       {lastResult?.result?.number || "N/A"}
                     </p>
-                    <p className="text-xs bg-green-500 px-1 border-2 border-white py-0.5 rounded">
+                    <p className="text-xs bg-green-500 border-2 border-white px-1 py-0.5 rounded">
                       {lastResult?.result?.size || "Big"}
                     </p>
                   </div>
-                  <div className="mt-4 text-center">
+
+                  <div className="mt-4">
                     <p className="text-md font-bold text-red-500">Bonus</p>
-                    <p
-                      className="text-xl font-bold "
-                      style={{ color: "black" }}
-                    >
+                    <p className="text-xl font-bold text-black">
                       ₹{lastResult?.payout}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: "black" }}>
+                    <p className="text-xs mt-1 text-black">
                       Period: {lastResult?.duration} seconds{" "}
                       {lastResult?.periodId}
                     </p>
                   </div>
                 </div>
+
+                {/* Checkbox */}
                 <label className="absolute bottom-4 left-20 inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -1203,6 +1234,8 @@ function LotteryWingo() {
                   </span>
                 </label>
               </div>
+
+              {/* Close Button */}
               <button
                 onClick={() => {
                   setShowWinPopup(false);
@@ -1220,23 +1253,28 @@ function LotteryWingo() {
           </div>
         )}
         {showLossPopup && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            style={{ fontFamily: "'Fredoka', sans-serif" }} // ✅ Font applied here
+          >
             <div className="bg-black bg-opacity-70 fixed inset-0"></div>
             <div className="relative z-10 flex flex-col items-center max-w-[400px] mx-auto">
               <div className="relative w-[400px] h-[400px] flex items-center justify-center">
                 <img
-                  src={win}
+                  src={lost}
                   alt="Loss"
                   className="w-full h-full object-contain"
                 />
+
                 <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 text-center text-white">
-                  <p className="text-2xl font-bold text-red-500 drop-shadow-lg">
-                    Better Luck Next Time
+                  <p className="text-2xl font-bold text-[#0f5d94] drop-shadow-lg">
+                    Sorry
                   </p>
                 </div>
-                <div className="absolute top-[62%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+
+                <div className="absolute top-[62%] left-1/2 transform -translate-x-1/2 translate-y-[-40%] text-white">
                   <div className="flex items-center justify-center gap-x-2 mt-1">
-                    <h2 className="text-xs whitespace-nowrap text-white font-medium mr-1">
+                    <h2 className="text-xs whitespace-nowrap font-medium text-white mr-1">
                       Lottery results
                     </h2>
                     <p className="text-xs bg-red-500 px-1 border-2 border-white py-0.5 rounded text-white">
@@ -1249,17 +1287,19 @@ function LotteryWingo() {
                       {lastResult?.result?.parity || "Even"}
                     </p>
                   </div>
+
                   <div className="mt-4 text-center">
-                    <p className="text-md font-bold text-red-500">No Bonus</p>
+                    <p className="text-md font-bold text-[#0f5d94]">Loss</p>
                     <p className="text-xl font-bold" style={{ color: "black" }}>
                       ₹0
                     </p>
-                    <p className="text-xs text-400" style={{ color: "black" }}>
+                    <p className="text-xs" style={{ color: "black" }}>
                       Period: {lastResult?.gameType} {lastResult?.duration}{" "}
                       seconds {lastResult?.periodId}
                     </p>
                   </div>
                 </div>
+
                 <label className="absolute bottom-4 left-20 inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -1288,6 +1328,7 @@ function LotteryWingo() {
                   </span>
                 </label>
               </div>
+
               <button
                 onClick={() => {
                   setShowLossPopup(false);
@@ -1305,22 +1346,22 @@ function LotteryWingo() {
           </div>
         )}
 
-      {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-[#201d2b] rounded-2xl shadow-lg w-[90%] max-w-[300px] p-6 text-center">
-            <div className="text-white text-lg font-bold mb-4">Success</div>
-            <p className="text-white text-sm mb-6">
-              Your bet has been placed successfully!
-            </p>
-            <button
-              onClick={() => setShowSuccessPopup(false)}
-              className="bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206] px-6 py-2 rounded-full font-medium"
-            >
-              Close
-            </button>
+        {showSuccessPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
+            <div className="bg-[#201d2b] rounded-2xl shadow-lg w-[90%] max-w-[300px] p-6 text-center">
+              <div className="text-white text-lg font-bold mb-4">Success</div>
+              <p className="text-white text-sm mb-6">
+                Your bet has been placed successfully!
+              </p>
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="bg-gradient-to-b from-[#fae59f] to-[#c4933f] text-[#8f5206] px-6 py-2 rounded-full font-medium"
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         <FreezePopup
           timeRemaining={timeRemaining}
@@ -2129,7 +2170,6 @@ function LotteryWingo() {
                       }
                       return "bg-gray-500";
                     };
-
                     return (
                       <div
                         key={bet.betId || index}
@@ -2145,7 +2185,17 @@ function LotteryWingo() {
                             {/* Color Square Box */}
                             <div
                               className={`w-8 h-8 rounded ${getColorClass(bet.select)}`}
-                            ></div>
+                              style={{
+                                color: "red",
+                                textAlign: "center",
+                                paddingTop: "4px",
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {bet?.betNumber
+                                ? bet?.betNumber?.split("")[0]
+                                : ""}
+                            </div>
                             <div className="text-left">
                               <p className="text-gray-200 text-sm font-medium">
                                 {bet.period}
@@ -2160,7 +2210,7 @@ function LotteryWingo() {
                               {bet.result || "Pending"}
                             </p>
                           </div>
-                          <div className="flex flex-col items-end space-y-1">
+                         { bet?.result !="Pending" &&  <div className="flex flex-col items-end space-y-1">
                             <div
                               className={`border text-xs rounded-md px-2 py-1 ${
                                 bet.status === "won"
@@ -2182,9 +2232,9 @@ function LotteryWingo() {
                                     : "text-gray-400"
                               }`}
                             >
-                              {String(bet.winLose).split(".")[0]+".00"}
+                              {String(bet.payout).split(".")[0] + ".00"}
                             </p>
-                          </div>
+                          </div>}
                         </div>
 
                         {isDetailsOpen === index && (

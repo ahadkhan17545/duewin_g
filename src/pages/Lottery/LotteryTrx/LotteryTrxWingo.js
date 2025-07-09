@@ -34,15 +34,25 @@ import CommanHeader from "../../../components/CommanHeader";
 import FreezePopup from "../../../components/FreezePopup";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 import Notification from "../../Notification";
+import ResultPopUp from "../../../components/ResultPopUp";
 
 const buttonData = [
   {
     id: 0,
     title: (
       <>
-        Trx Wingo <br /> 1min
+        Trx Wingo <br /> 30
       </>
     ),
+    icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
+    activeIcon: (
+      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
+    ),
+    duration: 30,
+  },
+  {
+    id: 1,
+    title: "Trx Wingo 1Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
@@ -50,7 +60,7 @@ const buttonData = [
     duration: 60,
   },
   {
-    id: 1,
+    id: 2,
     title: "Trx Wingo 3Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
@@ -59,22 +69,13 @@ const buttonData = [
     duration: 180,
   },
   {
-    id: 2,
+    id: 3,
     title: "Trx Wingo 5Min",
     icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
     activeIcon: (
       <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
     ),
     duration: 300,
-  },
-  {
-    id: 3,
-    title: "Trx Wingo 10Min",
-    icon: <img src={Timeblack} alt="clock icon" className="w-14 h-14" />,
-    activeIcon: (
-      <img src={Timecolor} alt="active clock icon" className="w-14 h-14" />
-    ),
-    duration: 600,
   },
 ];
 
@@ -103,7 +104,7 @@ const tailwindColorMap = {
 function LotteryTrxWingo() {
   const isMounted = useRef(true);
   const location = useLocation();
-  const gameType = "trx_wix"; // Updated to match Postman response
+  const gameType = "trx_wix";
   const [activeTab, setActiveTab] = useState("gameHistory");
   const [activeButton, setActiveButton] = useState(
     location?.state ? location?.state : buttonData[0].id
@@ -112,7 +113,7 @@ function LotteryTrxWingo() {
   const [selectedMultiplier, setSelectedMultiplier] = useState("X1");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [betType, setBetType] = useState(null); // color, number, or size
+  const [betType, setBetType] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [walletBalance, setWalletBalance] = useState(0.24);
   const [isRefreshingBalance, setIsRefreshingBalance] = useState(false);
@@ -146,7 +147,8 @@ function LotteryTrxWingo() {
   const [openIndex, setOpenIndex] = useState(null);
   const [showWinPopup, setShowWinPopup] = useState(false);
   const [showLossPopup, setShowLossPopup] = useState(false);
-
+  const [showWinPopupChecked, setShowWinPopupChecked] = useState(false);
+  const [showLossPopupChecked, setShowLossPopupChecked] = useState(false);
   const toggleDetails = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -250,8 +252,8 @@ function LotteryTrxWingo() {
       );
       if (isMounted.current) {
         if (response.success && Array.isArray(response.data?.bets)) {
-          const latestBet =response.data?.bets[0];
-          console.log("latestBet",latestBet)
+          const latestBet = response.data?.bets[0];
+          console.log("latestBet", latestBet);
           const updatedAt = new Date(
             latestBet.updatedAt || latestBet.createdAt
           );
@@ -481,6 +483,10 @@ function LotteryTrxWingo() {
     console.log("🎯 Placing Bet:", betData);
     const betPlaced = placeBet(betData);
     if (betPlaced) {
+      console.log("sadas------------------>");
+      setTimeout(() => {
+        fetchUserBets(currentPage).catch(console.error);
+      }, 1500);
       console.log("✅ Bet sent to WebSocket successfully");
       setIsModalOpen(false);
       setSelectedOption(null);
@@ -595,7 +601,7 @@ function LotteryTrxWingo() {
                 zIndex: 0,
               }}
             >
-            <Notification/>
+              <Notification />
             </div>
 
             <button
@@ -704,19 +710,25 @@ function LotteryTrxWingo() {
             </div>
           </div>
           <div className="flex justify-between space-x-2">
-            {historyData[0]?.result
-              ? [0, 1, 2, 3, 4].map((idx) => (
-                  <span
-                    key={idx}
-                    className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                  >
-                    <img
-                      src={numberImages[historyData[0].result % 10]}
-                      alt={`Icon ${idx}`}
-                      className="w-full h-full"
-                    />
-                  </span>
-                ))
+            {historyData.length >= 5
+              ? historyData
+                  .slice(0, 5) // Get the last 5 results (assuming historyData is in descending order)
+                  .map((entry, idx) =>  {
+                    return (
+                       (
+                    <span
+                      key={idx}
+                      className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                    >
+                      <img
+                        src={numberImages[entry.result % 10]}
+                        alt={`Icon ${entry.result}`}
+                        className="w-full h-full"
+                      />
+                    </span>
+                  )
+                    )
+                  })
               : [img0, img1, img2, img3, img4].map((img, idx) => (
                   <span
                     key={idx}
@@ -833,6 +845,36 @@ function LotteryTrxWingo() {
             </div>
           </div>
         </FreezePopup>
+        {showWinPopup && (
+          <ResultPopUp
+            type="win"
+            lastResult={lastResult}
+            showConfetti={true}
+            checked={showWinPopupChecked}
+            onCheckedChange={() => setShowWinPopupChecked(!showWinPopupChecked)}
+            onClose={() => {
+              setShowWinPopup(false);
+              setLastResult(null);
+            }}
+            gameType={gameType}
+          />
+        )}
+
+        {showLossPopup && (
+          <ResultPopUp
+            type="loss"
+            lastResult={lastResult}
+            checked={showLossPopupChecked}
+            onCheckedChange={() =>
+              setShowLossPopupChecked(!showLossPopupChecked)
+            }
+            onClose={() => {
+              setShowLossPopup(false);
+              setLastResult(null);
+            }}
+            gameType={gameType}
+          />
+        )}
 
         <div className="flex justify-between space-x-1 mb-4 mt-2">
           <button
@@ -1071,11 +1113,24 @@ function LotteryTrxWingo() {
                             onClick={() => toggleDetails(index)}
                           >
                             <div className="flex items-center">
-                              <div className="w-10 h-10 bg-[#00b971] rounded-md mr-3 flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">
-                                  {bet.select}
+                              <div
+                                className="w-10 h-10 rounded-md mr-3 flex items-center justify-center"
+                                style={{
+                                  backgroundColor:
+                                    bet.select[0] === "g"
+                                      ? "#00b971"
+                                      : bet.select[0] === "r"
+                                        ? "red"
+                                        : bet.select[0] === "v"
+                                          ? "#8A2BE2"
+                                          : "#ccc",
+                                }}
+                              >
+                                <span className="text-white font-bold text-sm capitalize">
+                                  {bet.select[0]}
                                 </span>
                               </div>
+
                               <div>
                                 <p
                                   className="text-[14px]"

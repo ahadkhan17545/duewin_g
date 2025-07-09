@@ -1199,7 +1199,7 @@ function LotteryK3() {
                 zIndex: 0,
               }}
             >
-             <Notification/>
+              <Notification />
             </div>
 
             <button

@@ -166,6 +166,22 @@ function Lottery5d() {
       setWalletBalance(0);
     }
   }, []);
+  useEffect(() => {
+    if (showWinPopup && !showWinPopupChecked) {
+      const timer = setTimeout(() => {
+        setShowWinPopup(false);
+        setLastResult(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    if (showLossPopup && !showLossPopupChecked) {
+      const timer = setTimeout(() => {
+        setShowLossPopup(false);
+        setLastResult(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWinPopup, showWinPopupChecked, showLossPopup, showLossPopupChecked]);
 
   const handleRefreshBalance = useCallback(async () => {
     if (isRefreshingBalance) return;
@@ -207,7 +223,6 @@ function Lottery5d() {
 
   const fetchUserBets = useCallback(
     async (page = 1, limit = 10) => {
-      console.log("------------------>");
       // if (!isMounted.current) return;
       setIsLoading(true);
       setError(null);
@@ -222,7 +237,6 @@ function Lottery5d() {
           limit
         );
 
-        console.log("response", response);
         if (response && response.success) {
           // Handle different possible response structures
           let betsData = [];
@@ -286,7 +300,9 @@ function Lottery5d() {
                 time: bet.createdAt
                   ? new Date(bet.createdAt).toLocaleTimeString()
                   : new Date().toLocaleTimeString(),
-                sum: bet?.result.sum,
+                sum: bet?.result?.sum,
+                payout: bet?.payout,
+                betValue: bet?.betValue,
               };
             });
 
@@ -530,6 +546,9 @@ function Lottery5d() {
     const betPlaced = placeBet(betData);
 
     if (betPlaced) {
+      setTimeout(() => {
+        fetchUserBets(currentPage).catch(console.error);
+      }, 1500);
       console.log("✅ Bet sent to WebSocket successfully");
       setIsModalOpen(false);
       setSelectedOption(null);
@@ -653,7 +672,7 @@ function Lottery5d() {
                 zIndex: 0,
               }}
             >
-              <Notification/>
+              <Notification />
             </div>
 
             <button
@@ -832,7 +851,7 @@ function Lottery5d() {
                 setShowWinPopup(false);
                 setLastResult(null);
               }}
-              gameType="k3"
+              gameType="5d"
             />
           )}
 
@@ -848,7 +867,7 @@ function Lottery5d() {
                 setShowLossPopup(false);
                 setLastResult(null);
               }}
-              gameType="k3"
+              gameType="5d"
             />
           )}
           <FreezePopup
@@ -953,8 +972,8 @@ function Lottery5d() {
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
             onClick={() => {
-              setActiveTab("gameHistory")
-              setCurrentPage(1)
+              setActiveTab("gameHistory");
+              setCurrentPage(1);
             }}
           >
             Game history
@@ -965,8 +984,9 @@ function Lottery5d() {
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
-            onClick={() =>{ setActiveTab("chart")
-              setCurrentPage(1)
+            onClick={() => {
+              setActiveTab("chart");
+              setCurrentPage(1);
             }}
           >
             Chart
@@ -977,10 +997,10 @@ function Lottery5d() {
                 ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] font-bold"
                 : "bg-[#333332] text-[#a8a5a1] font-normal"
             }`}
-            onClick={() =>{
-               setActiveTab("myHistory")
-               setCurrentPage(1)
-              }}
+            onClick={() => {
+              setActiveTab("myHistory");
+              setCurrentPage(1);
+            }}
           >
             My History
           </button>
@@ -1149,158 +1169,171 @@ function Lottery5d() {
           {activeTab === "myHistory" && (
             <div className="p-2 text-right">
               {historyData?.length > 0 ? (
-                historyData?.map((history, index) => (
-                  <>
-                    <div
-                      key={index}
-                      className="flex bg-[#333335] justify-between items-start p-2 mb-2"
-                      onClick={() =>
-                        setIsDetailsOpen(isDetailsOpen === index ? null : index)
-                      }
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className="w-12 h-12 bg-[#d9ac4f] text-[14px] text-center rounded-md mb-2 mr-3"
-                          style={{ color: "white", paddingTop: "10px" }}
-                        >
-                          {/* FIX: Convert result object to string display */}
-                          {history?.result?.sum || "N/A"}
-                        </div>
-                        <div>
-                          <p style={{ color: "white" }}>{history.period}</p>
-                          <p className="text-gray-500 text-sm text-left">
-                            {history.date || "N/A"}
-                          </p>
-                        </div>
-                        <div
-                          className="text-right"
-                          style={{
-                            position: "absolute",
-                            right: "6%",
-                          }}
-                        >
-                          <p
-                            className={`mt-1 border text-right rounded px-1 text-sm  ${
-                              history.status === "won"
-                                ? "text-green-600 border-green-600"
-                                : history.status === "lost"
-                                  ? "text-red-600 border-red-600"
-                                  : "text-[#00b971] border-[#00b971]"
-                            }`}
+                historyData?.map((history, index) => {
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        className="flex bg-[#333335] justify-between items-start p-2 mb-2"
+                        onClick={() =>
+                          setIsDetailsOpen(
+                            isDetailsOpen === index ? null : index
+                          )
+                        }
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className="w-12 h-12 bg-[#d9ac4f] text-[14px] text-center rounded-md mb-2 mr-3"
+                            style={{
+                              color: "white",
+                              paddingTop: "10px",
+                              textTransform: "capitalize",
+                            }}
                           >
-                            {history.status === "won"
-                              ? "Won"
-                              : history.status === "lost"
-                                ? "Failed"
-                                : "Pending"}
-                          </p>
-
-                          {history.winLose !== "₹0" && (
+                            {/* FIX: Convert result object to string display */}
+                            {history?.betValue.split("_")[1]}
+                          </div>
+                          <div>
+                            <p style={{ color: "white" }}>{history.period}</p>
+                            <p className="text-gray-500 text-sm text-left">
+                              {history.date || "N/A"}
+                            </p>
+                          </div>
+                          <div
+                            className="text-right"
+                            style={{
+                              position: "absolute",
+                              right: "6%",
+                            }}
+                          >
                             <p
-                              className={`font-medium text-sm  ${
-                                history.winLose.startsWith("+")
-                                  ? "text-green-600"
-                                  : "text-red-600"
+                              className={`mt-1  text-right rounded px-1 text-sm  ${
+                                history.status === "won"
+                                  ? "text-green-600 border-green-600"
+                                  : history.status === "lost"
+                                    ? "text-red-600 border-red-600"
+                                    : "text-[#00b971]"
                               }`}
                             >
-                              {history.winLose}
+                              {history.status === "won"
+                                ? "Won"
+                                : history.status === "lost"
+                                  ? "Failed"
+                                  : "Pending"}
                             </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {isDetailsOpen === index && (
-                      <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
-                        <div className="mb-4">
-                          <h3 className="text-white text-lg font-medium mb-1 text-left">
-                            Details
-                          </h3>
-                        </div>
-                        <div className="space-y-3 text-sm">
-                          {[
-                            {
-                              label: "Order number",
-                              value: history?.orderNumber,
-                              valueClass: "text-right text-white",
-                            },
-                            { label: "Period", value: history?.period },
-                            {
-                              label: "Purchase amount",
-                              value: history?.amount,
-                            },
-                            { label: "Quantity", value: history?.quantity },
-                            {
-                              label: "Amount after tax",
-                              value: history?.afterTax,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Tax",
-                              value: history?.tax,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Result",
-                              // FIX: Display result properly - show sum or formatted result
-                              value: history?.result?.sum
-                                ? `Sum: ${history.result.sum}`
-                                : history?.result
-                                  ? `${history.result.A || 0}-${history.result.B || 0}-${history.result.C || 0}-${history.result.D || 0}-${history.result.E || 0}`
-                                  : "Pending",
-                              valueClass: "text-green-400",
-                            },
-                            {
-                              label: "Select",
-                              value: history?.select,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Status",
-                              value:
-                                history?.status === "won"
-                                  ? "Success"
-                                  : "Failed",
-                              valueClass:
-                                history?.status === "won"
-                                  ? "text-green-400"
-                                  : "text-[#ff5555]",
-                            },
-                            {
-                              label: "Win/lose",
-                              value: history?.winLose,
-                              valueClass: history?.winLose?.startsWith("+")
-                                ? "text-green-400"
-                                : history?.winLose?.startsWith("-")
-                                  ? "text-[#ff5555]"
-                                  : "text-[#ff5555]",
-                            },
-                            { label: "Order time", value: history?.orderTime },
-                          ].map(
-                            ({
-                              label,
-                              value,
-                              valueClass = "text-gray-400",
-                            }) => (
-                              <div
-                                key={label}
-                                className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
-                              >
-                                <span className="text-gray-300 text-sm text-left">
-                                  {label}
-                                </span>
-                                <span
-                                  className={`${valueClass} text-sm font-normal`}
+
+                            {(history.status == "won" ||
+                              history?.status == "lost") &&
+                              history.winLose !== "₹0" && (
+                                <p
+                                  className={`font-medium text-sm  ${
+                                    history.winLose.startsWith("+")
+                                      ? "text-green-600"
+                                      : "text-red-600"
+                                  }`}
                                 >
-                                  {value || "N/A"}
-                                </span>
-                              </div>
-                            )
-                          )}
+                                  {String(history.payout).split(".")[0] + ".00"}
+                                </p>
+                              )}
+                          </div>
                         </div>
                       </div>
-                    )}
-                  </>
-                ))
+                      {isDetailsOpen === index && (
+                        <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
+                          <div className="mb-4">
+                            <h3 className="text-white text-lg font-medium mb-1 text-left">
+                              Details
+                            </h3>
+                          </div>
+                          <div className="space-y-3 text-sm">
+                            {[
+                              {
+                                label: "Order number",
+                                value: history?.orderNumber,
+                                valueClass: "text-right text-white",
+                              },
+                              { label: "Period", value: history?.period },
+                              {
+                                label: "Purchase amount",
+                                value: history?.amount,
+                              },
+                              { label: "Quantity", value: history?.quantity },
+                              {
+                                label: "Amount after tax",
+                                value: history?.afterTax,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Tax",
+                                value: history?.tax,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Result",
+                                // FIX: Display result properly - show sum or formatted result
+                                value: history?.result?.sum
+                                  ? `Sum: ${history.result?.sum}`
+                                  : history?.result
+                                    ? `${history.result.A || 0}-${history.result.B || 0}-${history.result.C || 0}-${history.result.D || 0}-${history.result.E || 0}`
+                                    : "Pending",
+                                valueClass: "text-green-400",
+                              },
+                              {
+                                label: "Select",
+                                value: history?.select,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Status",
+                                value:
+                                  history?.status === "won"
+                                    ? "Success"
+                                    : "Failed",
+                                valueClass:
+                                  history?.status === "won"
+                                    ? "text-green-400"
+                                    : "text-[#ff5555]",
+                              },
+                              {
+                                label: "Win/lose",
+                                value: history?.winLose,
+                                valueClass: history?.winLose?.startsWith("+")
+                                  ? "text-green-400"
+                                  : history?.winLose?.startsWith("-")
+                                    ? "text-[#ff5555]"
+                                    : "text-[#ff5555]",
+                              },
+                              {
+                                label: "Order time",
+                                value: history?.orderTime,
+                              },
+                            ].map(
+                              ({
+                                label,
+                                value,
+                                valueClass = "text-gray-400",
+                              }) => (
+                                <div
+                                  key={label}
+                                  className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                                >
+                                  <span className="text-gray-300 text-sm text-left">
+                                    {label}
+                                  </span>
+                                  <span
+                                    className={`${valueClass} text-sm font-normal`}
+                                  >
+                                    {value || "N/A"}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })
               ) : (
                 <div className="text-center bg-[#4d4d4c]">
                   <div className="flex flex-col bg-[#4d4d4c] items-center justify-center">

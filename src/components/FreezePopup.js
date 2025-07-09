@@ -32,10 +32,14 @@ const FreezePopup = ({
   useEffect(() => {
     const { minutes, seconds } = timeRemaining;
     const totalSeconds = minutes * 60 + seconds;
-    if (totalSeconds == 2) {
+    if (totalSeconds == 2 && gameType != "trx_wix") {
       setTimeout(() => {
         handleRefresh();
       }, 2200);
+    } else if (totalSeconds == 2 && gameType == "trx_wix") {
+      setTimeout(() => {
+        handleRefresh();
+      }, 3000);
     }
     if (count === 0 && showFreezePopup) {
       const timer = setTimeout(() => {
