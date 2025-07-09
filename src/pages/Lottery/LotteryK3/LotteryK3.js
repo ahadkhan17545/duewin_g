@@ -144,52 +144,56 @@ const BettingModal = ({
   // Helper function to determine bet type for Total tab
   const getTotalBetType = () => {
     if (activeImgTab !== "total") return null;
-    
+
     // Check if numbers 3-18 are selected
-    const numberSelections = selectedOptions.filter(option => 
-      typeof option === 'number' && option >= 3 && option <= 18
+    const numberSelections = selectedOptions.filter(
+      (option) => typeof option === "number" && option >= 3 && option <= 18
     );
-    
+
     // Check for size selections
-    const sizeSelections = selectedOptions.filter(option => 
-      option === 'Big' || option === 'Small'
+    const sizeSelections = selectedOptions.filter(
+      (option) => option === "Big" || option === "Small"
     );
-    
+
     // Check for parity selections
-    const paritySelections = selectedOptions.filter(option => 
-      option === 'Odd' || option === 'Even'
+    const paritySelections = selectedOptions.filter(
+      (option) => option === "Odd" || option === "Even"
     );
-    
+
     if (numberSelections.length > 0) return "SUM";
     if (sizeSelections.length > 0) return "SUM_SIZE";
     if (paritySelections.length > 0) return "SUM_PARITY";
-    
+
     return null;
   };
 
   // Helper function to determine bet type for 2 same tab
   const getTwoSameBetType = () => {
     if (activeImgTab !== "2same") return null;
-    
+
     // Check if violet dice numbers are selected (ANY_TYPE)
     if (selectedTwoSameNumbers.length > 0) {
       return "ANY_PAIR";
     }
-    
+
     // Check if red + green combination is selected (SPECIFIC_TYPE)
-    if (selectedPair.red && selectedPair.green && isValidPair(selectedPair.red, selectedPair.green)) {
+    if (
+      selectedPair.red &&
+      selectedPair.green &&
+      isValidPair(selectedPair.red, selectedPair.green)
+    ) {
       return "SPECIFIC_PAIR";
     }
-    
+
     return null;
   };
 
   // Helper function to get bet value for 2 same tab
   const getTwoSameBetValue = () => {
     if (activeImgTab !== "2same") return "";
-    
+
     const betType = getTwoSameBetType();
-    
+
     if (betType === "ANY_TYPE") {
       // Convert 11,22,33 to "11,22,33"
       return selectedTwoSameNumbers.join(",");
@@ -198,7 +202,7 @@ const BettingModal = ({
       const redDice = Math.floor(selectedPair.red / 11); // 11 -> 1, 22 -> 2, etc.
       return `${redDice},${redDice},${selectedPair.green}`;
     }
-    
+
     return "";
   };
 
@@ -225,19 +229,73 @@ const BettingModal = ({
     setQuantity(1);
     setSelectedMultiplier("X1");
   };
+  // Helper function to generate combinations
+  const generateCombinations = (arr, size) => {
+    if (size > arr.length) return [];
+    if (size === 1) return arr.map((item) => [item]);
+    if (size === arr.length) return [arr];
+
+    const combinations = [];
+
+    for (let i = 0; i <= arr.length - size; i++) {
+      const head = arr[i];
+      const tailCombinations = generateCombinations(arr.slice(i + 1), size - 1);
+      for (const tail of tailCombinations) {
+        combinations.push([head, ...tail]);
+      }
+    }
+
+    return combinations;
+  };
+
+  // Helper function to get bet value for different tab
+  const getDifferentBetValue = () => {
+    if (activeImgTab !== "different") return "";
+
+    // Check which section has selections
+    const threeDifferentNumbers = selectedOptions.filter(
+      (opt) => opt >= 1 && opt <= 6
+    );
+    const hasContinuous = selectedOptions.includes("3 Continuous");
+    const twoDifferentNumbers = selectedOptions.filter(
+      (opt) => opt >= 11 && opt <= 16
+    );
+
+    let combinations = [];
+
+    if (threeDifferentNumbers.length >= 3) {
+      // Generate combinations of 3 from selected numbers
+      const threeCombinations = generateCombinations(threeDifferentNumbers, 3);
+      combinations = threeCombinations.map((combo) => combo.join(","));
+    } else if (hasContinuous) {
+      // For continuous, send as is
+      combinations = ["3 Continuous"];
+    } else if (twoDifferentNumbers.length >= 2) {
+      // Generate combinations of 2 from selected numbers
+      // Convert back to display numbers (11->1, 12->2, etc.)
+      const displayNumbers = twoDifferentNumbers.map((num) => num - 10);
+      const twoCombinations = generateCombinations(displayNumbers, 2);
+      combinations = twoCombinations.map((combo) => combo.join(","));
+    }
+
+    return combinations.join("|"); // Join multiple combinations with |
+  };
 
   const handlePlaceBet = () => {
     if (!checked) {
       alert("Please agree to the pre-sale rules");
       return;
     }
-    
+
     const multiplierValue = parseInt(selectedMultiplier.replace("X", "")) || 1;
     const baseAmount = calculateTotalBetAmount();
     const totalAmount = baseAmount * quantity * betAmount * multiplierValue;
-    
-    let betType, selection, wsType, betValue = "";
-    
+
+    let betType,
+      selection,
+      wsType,
+      betValue = "";
+
     if (activeImgTab === "total") {
       wsType = getTotalBetType();
       if (!wsType) {
@@ -249,14 +307,17 @@ const BettingModal = ({
       betValue = selectedOptions.join(",");
     } else if (activeImgTab === "2same") {
       wsType = getTwoSameBetType();
-      console.log("wsType------->",wsType)
+      console.log("wsType------->", wsType);
       if (!wsType) {
         setError("Please make a valid selection");
         return;
       }
       betType = "pair";
       betValue = getTwoSameBetValue();
-      selection = wsType === "ANY_PAIR" ? selectedTwoSameNumbers : [selectedPair.red, selectedPair.green];
+      selection =
+        wsType === "ANY_PAIR"
+          ? selectedTwoSameNumbers
+          : [selectedPair.red, selectedPair.green];
     } else if (activeImgTab === "3same") {
       wsType = "triple";
       betType = "triple";
@@ -265,11 +326,32 @@ const BettingModal = ({
         selection.push("Any 3");
       }
       betValue = selection.join(",");
-    } else {
-      wsType = "different";
-      betType = "different";
-      selection = selectedOptions;
-      betValue = selectedOptions.join(",");
+    } else if (activeImgTab === "different") {
+      // Determine bet type and get combinations
+      const threeDifferentNumbers = selectedOptions.filter(
+        (opt) => opt >= 1 && opt <= 6
+      );
+      const hasContinuous = selectedOptions.includes("3 Continuous");
+      const twoDifferentNumbers = selectedOptions.filter(
+        (opt) => opt >= 11 && opt <= 16
+      );
+
+      if (threeDifferentNumbers.length >= 3) {
+        wsType = "different";
+        betType = "different";
+        selection = threeDifferentNumbers;
+        betValue = getDifferentBetValue(); // This will contain all combinations
+      } else if (hasContinuous) {
+        wsType = "continuous";
+        betType = "different";
+        selection = ["3 Continuous"];
+        betValue = "3 Continuous";
+      } else if (twoDifferentNumbers.length >= 2) {
+        wsType = "different";
+        betType = "different";
+        selection = twoDifferentNumbers;
+        betValue = getDifferentBetValue(); // This will contain all combinations
+      }
     }
     const betData = {
       amount: totalAmount,
@@ -304,7 +386,8 @@ const BettingModal = ({
         {activeImgTab === "total" && selectedOptions.length > 0 && (
           <div className="mb-2">
             <p className="text-sm mb-1">
-              {getTotalBetType() === "SUM" && `Selected numbers: ${selectedOptions.length} bets`}
+              {getTotalBetType() === "SUM" &&
+                `Selected numbers: ${selectedOptions.length} bets`}
               {getTotalBetType() === "SUM_SIZE" && `Size selection: 1 bet`}
               {getTotalBetType() === "SUM_PARITY" && `Parity selection: 1 bet`}
             </p>
@@ -313,11 +396,11 @@ const BettingModal = ({
                 <span
                   key={index}
                   className={`px-3 py-1 rounded text-sm font-medium ${
-                    typeof option === 'number' 
-                      ? 'bg-purple-600' 
-                      : option === 'Big' || option === 'Small'
-                        ? 'bg-red-600'
-                        : 'bg-blue-600'
+                    typeof option === "number"
+                      ? "bg-purple-600"
+                      : option === "Big" || option === "Small"
+                        ? "bg-red-600"
+                        : "bg-blue-600"
                   }`}
                 >
                   {option}
@@ -328,41 +411,44 @@ const BettingModal = ({
         )}
 
         {/* Other tab selections display (only for non-total tabs) */}
-        {activeImgTab !== "total" && selectedOptions.some((option) => option >= 1 && option <= 6) && (
-          <div className="mb-2">
-            <p className="text-sm mb-1">
-              3 different numbers:{" "}
-              {getCombinationCount(
-                selectedOptions.filter((opt) => opt >= 1 && opt <= 6).length,
-                3
-              )}{" "}
-              bets
-            </p>
-            <div className="flex space-x-2">
-              {selectedOptions
-                .filter((option) => option >= 1 && option <= 6)
-                .map((option) => (
-                  <span
-                    key={option}
-                    className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                  >
-                    {option}
-                  </span>
-                ))}
+        {activeImgTab !== "total" &&
+          selectedOptions.some((option) => option >= 1 && option <= 6) && (
+            <div className="mb-2">
+              <p className="text-sm mb-1">
+                3 different numbers:{" "}
+                {getCombinationCount(
+                  selectedOptions.filter((opt) => opt >= 1 && opt <= 6).length,
+                  3
+                )}{" "}
+                bets
+              </p>
+              <div className="flex space-x-2">
+                {selectedOptions
+                  .filter((option) => option >= 1 && option <= 6)
+                  .map((option) => (
+                    <span
+                      key={option}
+                      className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                    >
+                      {option}
+                    </span>
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {activeImgTab !== "total" && selectedOptions.includes("3 Continuous") && (
-          <div className="mb-2">
-            <p className="text-sm mb-1">3 continuous numbers: 1 bet</p>
-            <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-              3 continuous numbers : odds (8.64)
-            </span>
-          </div>
-        )}
+        {activeImgTab !== "total" &&
+          selectedOptions.includes("3 Continuous") && (
+            <div className="mb-2">
+              <p className="text-sm mb-1">3 continuous numbers: 1 bet</p>
+              <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                3 continuous numbers : odds (8.64)
+              </span>
+            </div>
+          )}
 
-        {activeImgTab !== "total" && selectedOptions.some((option) => option >= 11 && option <= 16) &&
+        {activeImgTab !== "total" &&
+          selectedOptions.some((option) => option >= 11 && option <= 16) &&
           !selectedTwoSameNumbers.length &&
           !selectedPair.red &&
           !selectedPair.green && (
@@ -392,29 +478,36 @@ const BettingModal = ({
           )}
 
         {/* 2 same tab selections display */}
-        {activeImgTab === "2same" && (selectedTwoSameNumbers.length > 0 || (selectedPair.red && selectedPair.green)) && (
-          <div className="mb-2">
-            <p className="text-sm mb-1">
-              {getTwoSameBetType() === "ANY_TYPE" && `2 matching numbers: ${selectedTwoSameNumbers.length} bets`}
-              {getTwoSameBetType() === "SPECIFIC_TYPE" && `Pair selection: 1 bet`}
-            </p>
-            <div className="flex space-x-2 flex-wrap">
-              {getTwoSameBetType() === "ANY_TYPE" && selectedTwoSameNumbers.map((num) => (
-                <span
-                  key={num}
-                  className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
-                >
-                  {num}
-                </span>
-              ))}
-              {getTwoSameBetType() === "SPECIFIC_TYPE" && selectedPair.red && selectedPair.green && (
-                <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
-                  {`${selectedPair.red}, ${selectedPair.green}`}
-                </span>
-              )}
+        {activeImgTab === "2same" &&
+          (selectedTwoSameNumbers.length > 0 ||
+            (selectedPair.red && selectedPair.green)) && (
+            <div className="mb-2">
+              <p className="text-sm mb-1">
+                {getTwoSameBetType() === "ANY_TYPE" &&
+                  `2 matching numbers: ${selectedTwoSameNumbers.length} bets`}
+                {getTwoSameBetType() === "SPECIFIC_TYPE" &&
+                  `Pair selection: 1 bet`}
+              </p>
+              <div className="flex space-x-2 flex-wrap">
+                {getTwoSameBetType() === "ANY_TYPE" &&
+                  selectedTwoSameNumbers.map((num) => (
+                    <span
+                      key={num}
+                      className="bg-purple-600 px-3 py-1 rounded text-sm font-medium"
+                    >
+                      {num}
+                    </span>
+                  ))}
+                {getTwoSameBetType() === "SPECIFIC_TYPE" &&
+                  selectedPair.red &&
+                  selectedPair.green && (
+                    <span className="bg-red-600 px-3 py-1 rounded text-sm font-medium">
+                      {`${selectedPair.red}, ${selectedPair.green}`}
+                    </span>
+                  )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {(selectedThreeSameNumbers.length > 0 ||
           selectedOptions.includes("Any 3")) && (
@@ -1072,168 +1165,219 @@ function LotteryK3() {
 
     return totalAmount;
   };
-const handleOptionClick = (option, type) => {
-  if (activeImgTab === "total") {
-    // Handle Total tab selections with mutual exclusivity
-    const isNumber = typeof option === 'number' && option >= 3 && option <= 18;
-    const isSize = option === 'Big' || option === 'Small';
-    const isParity = option === 'Odd' || option === 'Even';
-    
-    if (isNumber) {
-      // Clear any size/parity selections and toggle number
-      const currentNumbers = selectedOptions.filter(opt => 
-        typeof opt === 'number' && opt >= 3 && opt <= 18
-      );
-      
-      if (currentNumbers.includes(option)) {
-        setSelectedOptions(currentNumbers.filter(opt => opt !== option));
-      } else {
-        setSelectedOptions([...currentNumbers, option]);
+
+  const handleOptionClick = (option, type) => {
+    if (activeImgTab === "total") {
+      // Handle Total tab selections with mutual exclusivity
+      const isNumber =
+        typeof option === "number" && option >= 3 && option <= 18;
+      const isSize = option === "Big" || option === "Small";
+      const isParity = option === "Odd" || option === "Even";
+
+      if (isNumber) {
+        // Clear any size/parity selections and toggle number
+        const currentNumbers = selectedOptions.filter(
+          (opt) => typeof opt === "number" && opt >= 3 && opt <= 18
+        );
+
+        if (currentNumbers.includes(option)) {
+          setSelectedOptions(currentNumbers.filter((opt) => opt !== option));
+        } else {
+          setSelectedOptions([...currentNumbers, option]);
+        }
+      } else if (isSize) {
+        // Clear any number/parity selections and set size
+        setSelectedOptions(selectedOptions.includes(option) ? [] : [option]);
+      } else if (isParity) {
+        // Clear any number/size selections and set parity
+        setSelectedOptions(selectedOptions.includes(option) ? [] : [option]);
       }
-    } else if (isSize) {
-      // Clear any number/parity selections and set size
-      setSelectedOptions(selectedOptions.includes(option) ? [] : [option]);
-    } else if (isParity) {
-      // Clear any number/size selections and set parity
-      setSelectedOptions(selectedOptions.includes(option) ? [] : [option]);
-    }
-    
-    // Clear other tab selections
-    setSelectedTwoSameNumbers([]);
-    setSelectedPair({ red: null, green: null });
-    setSelectedThreeSameNumbers([]);
-    
-  } else if (activeImgTab === "2same") {
-    // Existing 2same logic...
-    if (type === "twoSame" && [11, 22, 33, 44, 55, 66].includes(option)) {
-      setSelectedTwoSameNumbers((prev) => {
-        const newSelected = prev.includes(option)
-          ? prev.filter((num) => num !== option)
-          : [...prev, option].filter((num) =>
-              [11, 22, 33, 44, 55, 66].includes(num)
+
+      // Clear other tab selections
+      setSelectedTwoSameNumbers([]);
+      setSelectedPair({ red: null, green: null });
+      setSelectedThreeSameNumbers([]);
+    } else if (activeImgTab === "2same") {
+      // Existing 2same logic...
+      if (type === "twoSame" && [11, 22, 33, 44, 55, 66].includes(option)) {
+        setSelectedTwoSameNumbers((prev) => {
+          const newSelected = prev.includes(option)
+            ? prev.filter((num) => num !== option)
+            : [...prev, option].filter((num) =>
+                [11, 22, 33, 44, 55, 66].includes(num)
+              );
+          setSelectedOptions(newSelected);
+          setSelectedPair({ red: null, green: null });
+          return newSelected;
+        });
+      } else if (
+        type === "pairRed" &&
+        [11, 22, 33, 44, 55, 66].includes(option)
+      ) {
+        setSelectedPair((prev) => {
+          const newPair = { ...prev, red: prev.red === option ? null : option };
+
+          if (
+            newPair.red &&
+            newPair.green &&
+            !isValidPair(newPair.red, newPair.green)
+          ) {
+            alert(
+              "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
             );
-        setSelectedOptions(newSelected);
-        setSelectedPair({ red: null, green: null });
-        return newSelected;
-      });
-    } else if (
-      type === "pairRed" &&
-      [11, 22, 33, 44, 55, 66].includes(option)
-    ) {
-      setSelectedPair((prev) => {
-        const newPair = { ...prev, red: prev.red === option ? null : option };
+            return prev;
+          }
 
-        if (
-          newPair.red &&
-          newPair.green &&
-          !isValidPair(newPair.red, newPair.green)
-        ) {
-          alert(
-            "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
-          );
-          return prev;
-        }
+          const pair =
+            newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
+          setSelectedOptions(pair ? [pair] : []);
+          setSelectedTwoSameNumbers([]);
+          return newPair;
+        });
+      } else if (type === "pairGreen" && [1, 2, 3, 4, 5, 6].includes(option)) {
+        setSelectedPair((prev) => {
+          const newPair = {
+            ...prev,
+            green: prev.green === option ? null : option,
+          };
 
-        const pair =
-          newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
-        setSelectedOptions(pair ? [pair] : []);
-        setSelectedTwoSameNumbers([]);
-        return newPair;
-      });
-    } else if (type === "pairGreen" && [1, 2, 3, 4, 5, 6].includes(option)) {
-      setSelectedPair((prev) => {
-        const newPair = {
-          ...prev,
-          green: prev.green === option ? null : option,
-        };
-
-        if (
-          newPair.red &&
-          newPair.green &&
-          !isValidPair(newPair.red, newPair.green)
-        ) {
-          alert(
-            "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
-          );
-          return prev;
-        }
-
-        const pair =
-          newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
-        setSelectedOptions(pair ? [pair] : []);
-        setSelectedTwoSameNumbers([]);
-        return newPair;
-      });
-    }
-  } else if (activeImgTab === "3same") {
-    // Existing 3same logic...
-    if (
-      type === "threeSame" &&
-      [111, 222, 333, 444, 555, 666].includes(option)
-    ) {
-      setSelectedThreeSameNumbers((prev) => {
-        const newSelected = prev.includes(option)
-          ? prev.filter((num) => num !== option)
-          : [...prev, option].filter((num) =>
-              [111, 222, 333, 444, 555, 666].includes(num)
+          if (
+            newPair.red &&
+            newPair.green &&
+            !isValidPair(newPair.red, newPair.green)
+          ) {
+            alert(
+              "Invalid pair: Same numbers cannot be paired (e.g., 22 cannot be paired with 2)"
             );
-        setSelectedOptions(newSelected);
-        return newSelected;
-      });
-    } else if (type === "anyThree") {
-      const isCurrentlySelected = selectedOptions.includes("Any 3");
-      setSelectedOptions(isCurrentlySelected ? [] : ["Any 3"]);
+            return prev;
+          }
+
+          const pair =
+            newPair.red && newPair.green ? [newPair.red, newPair.green] : null;
+          setSelectedOptions(pair ? [pair] : []);
+          setSelectedTwoSameNumbers([]);
+          return newPair;
+        });
+      }
+    } else if (activeImgTab === "3same") {
+      // Existing 3same logic...
+      if (
+        type === "threeSame" &&
+        [111, 222, 333, 444, 555, 666].includes(option)
+      ) {
+        setSelectedThreeSameNumbers((prev) => {
+          const newSelected = prev.includes(option)
+            ? prev.filter((num) => num !== option)
+            : [...prev, option].filter((num) =>
+                [111, 222, 333, 444, 555, 666].includes(num)
+              );
+          setSelectedOptions(newSelected);
+          return newSelected;
+        });
+      } else if (type === "anyThree") {
+        const isCurrentlySelected = selectedOptions.includes("Any 3");
+        setSelectedOptions(isCurrentlySelected ? [] : ["Any 3"]);
+        setSelectedThreeSameNumbers([]);
+      }
+    } else if (activeImgTab === "different") {
+      // NEW LOGIC: Handle Different tab with mutual exclusivity
+
+      // Determine which section the clicked option belongs to
+      const isThreeDifferent =
+        option >= 1 && option <= 6 && type === "threeDifferent";
+      const isContinuous = option === "3 Continuous" && type === "continuous";
+      const isTwoDifferent =
+        option >= 11 && option <= 16 && type === "twoDifferent";
+
+      // Get current selections by section
+      const currentThreeDifferent = selectedOptions.filter(
+        (opt) => opt >= 1 && opt <= 6
+      );
+      const currentContinuous = selectedOptions.includes("3 Continuous");
+      const currentTwoDifferent = selectedOptions.filter(
+        (opt) => opt >= 11 && opt <= 16
+      );
+
+      let newSelectedOptions = [];
+
+      if (isThreeDifferent) {
+        // User clicked on 3 different numbers section
+        // Clear other sections and handle 3 different selection
+        if (currentThreeDifferent.includes(option)) {
+          // Remove this option from 3 different
+          newSelectedOptions = currentThreeDifferent.filter(
+            (opt) => opt !== option
+          );
+        } else {
+          // Add this option to 3 different
+          newSelectedOptions = [...currentThreeDifferent, option];
+        }
+      } else if (isContinuous) {
+        // User clicked on 3 continuous numbers section
+        // Clear other sections and handle continuous selection
+        if (currentContinuous) {
+          // Remove continuous selection
+          newSelectedOptions = [];
+        } else {
+          // Add continuous selection
+          newSelectedOptions = ["3 Continuous"];
+        }
+      } else if (isTwoDifferent) {
+        // User clicked on 2 different numbers section
+        // Clear other sections and handle 2 different selection
+        if (currentTwoDifferent.includes(option)) {
+          // Remove this option from 2 different
+          newSelectedOptions = currentTwoDifferent.filter(
+            (opt) => opt !== option
+          );
+        } else {
+          // Add this option to 2 different
+          newSelectedOptions = [...currentTwoDifferent, option];
+        }
+      }
+
+      // Update selected options
+      setSelectedOptions(newSelectedOptions);
+
+      // Clear other tab selections
+      setSelectedTwoSameNumbers([]);
+      setSelectedPair({ red: null, green: null });
       setSelectedThreeSameNumbers([]);
     }
-  } else if (activeImgTab === "different") {
-    // Existing different logic...
-    const isSelected = selectedOptions.includes(option);
-    let newSelectedOptions;
-    if (isSelected) {
-      newSelectedOptions = selectedOptions.filter((item) => item !== option);
-    } else {
-      newSelectedOptions = [...selectedOptions, option];
-    }
-    setSelectedOptions(newSelectedOptions);
-    setSelectedTwoSameNumbers([]);
-    setSelectedPair({ red: null, green: null });
-    setSelectedThreeSameNumbers([]);
-  }
-};
+  };
+  // Updated calculateTotalBetAmount for Total tab
+  const calculateTotalBetAmount = () => {
+    if (activeImgTab === "total") {
+      // For total tab, each selection counts as 1 bet
+      return selectedOptions.length > 0 ? selectedOptions.length : 0;
+    } else if (activeImgTab === "2same") {
+      let totalAmount = 0;
 
-// Updated calculateTotalBetAmount for Total tab
-const calculateTotalBetAmount = () => {
-  if (activeImgTab === "total") {
-    // For total tab, each selection counts as 1 bet
-    return selectedOptions.length > 0 ? selectedOptions.length : 0;
-  } else if (activeImgTab === "2same") {
-    let totalAmount = 0;
-    
-    // ANY_TYPE: Each violet dice number counts as 1 bet
-    totalAmount += selectedTwoSameNumbers.length;
-    
-    // SPECIFIC_TYPE: Each valid pair counts as 1 bet
-    if (
-      selectedPair.red &&
-      selectedPair.green &&
-      isValidPair(selectedPair.red, selectedPair.green)
-    ) {
-      totalAmount += 1;
+      // ANY_TYPE: Each violet dice number counts as 1 bet
+      totalAmount += selectedTwoSameNumbers.length;
+
+      // SPECIFIC_TYPE: Each valid pair counts as 1 bet
+      if (
+        selectedPair.red &&
+        selectedPair.green &&
+        isValidPair(selectedPair.red, selectedPair.green)
+      ) {
+        totalAmount += 1;
+      }
+
+      return totalAmount;
+    } else if (activeImgTab === "3same") {
+      let totalAmount = 0;
+      totalAmount += selectedThreeSameNumbers.length;
+      if (selectedOptions.includes("Any 3")) {
+        totalAmount += 1;
+      }
+      return totalAmount;
+    } else if (activeImgTab === "different") {
+      return calculateDifferentBetAmount();
     }
-    
-    return totalAmount;
-  } else if (activeImgTab === "3same") {
-    let totalAmount = 0;
-    totalAmount += selectedThreeSameNumbers.length;
-    if (selectedOptions.includes("Any 3")) {
-      totalAmount += 1;
-    }
-    return totalAmount;
-  } else if (activeImgTab === "different") {
-    return calculateDifferentBetAmount();
-  }
-  return selectedOptions.length > 0 ? 1 : 0;
-};
+    return selectedOptions.length > 0 ? 1 : 0;
+  };
   const getDiceImage = (number) => {
     return diceImages[number] || diceImages[1];
   };
