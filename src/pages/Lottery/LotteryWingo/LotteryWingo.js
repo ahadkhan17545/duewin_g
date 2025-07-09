@@ -42,6 +42,7 @@ import { useLocation } from "react-router-dom";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
 import CommanHeader from "../../../components/CommanHeader";
 import Notification from "../../Notification";
+
 const imageMap = {
   0: img0,
   1: img1,
@@ -125,6 +126,7 @@ function LotteryWingo() {
   const { playCountdownAudio, playResultAudio } = useAudio();
   const hasPlayedCountdownRef = useRef(false);
   const previousResult = useRef(null);
+
   // Component state
   const [activeTab, setActiveTab] = useState("gameHistory");
   const [activeButton, setActiveButton] = useState(
@@ -174,6 +176,8 @@ function LotteryWingo() {
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const API_BASE_URL = "https://api.strikecolor1.com";
   const containerRef = useRef(null);
+
+  // Fixed fetchUserBets function
   const fetchUserBets = async (page = 1, limit = 10) => {
     if (!isMounted.current) return;
     setIsLoading(true);
@@ -181,7 +185,6 @@ function LotteryWingo() {
 
     try {
       const duration = buttonData[activeButton].duration;
-      // Use the gameApi to fetch user bets
       const response = await gameApi.getUserBets(
         gameType,
         duration,
@@ -191,7 +194,6 @@ function LotteryWingo() {
 
       if (isMounted.current) {
         if (response && response.success) {
-          // Handle different possible response structures
           let betsData = [];
 
           if (Array.isArray(response.data)) {
@@ -203,6 +205,7 @@ function LotteryWingo() {
           } else {
             console.log("⚠️ Unexpected response structure:", response);
           }
+
           if (betsData.length > 0) {
             const latestBet = betsData[0];
             const updatedAt = new Date(
@@ -210,7 +213,7 @@ function LotteryWingo() {
             );
             const now = new Date();
             const timeDiffSeconds = (now - updatedAt) / 1000;
-            console.log("timeDiffSeconds", timeDiffSeconds);
+
             if (timeDiffSeconds <= 5) {
               setLastResult(betsData[0]);
               setUserDidBet(false);
@@ -220,6 +223,7 @@ function LotteryWingo() {
                 setShowLossPopup(true);
               }
             }
+
             const formattedBets = betsData.map((bet, index) => {
               return {
                 betId: bet.betId || bet._id || bet.id || `bet-${index}`,
@@ -249,7 +253,6 @@ function LotteryWingo() {
                       ? `+₹${bet.profitLoss}`
                       : `-₹${Math.abs(bet.profitLoss)}`
                     : bet.winLose || "₹0",
-                // Additional fields for display
                 date: bet.createdAt
                   ? new Date(bet.createdAt).toLocaleDateString()
                   : new Date().toLocaleDateString(),
@@ -266,11 +269,25 @@ function LotteryWingo() {
 
             setUserBets(formattedBets);
 
-            // Handle pagination
-            const totalPagesCalc =
-              response.pagination?.total_pages ||
-              Math.ceil((response.total || formattedBets.length) / limit) ||
-              1;
+            // Fixed: Handle pagination properly for both formats
+            let totalPagesCalc = 1;
+            if (response.pagination) {
+              totalPagesCalc =
+                response.pagination.totalPages ||
+                response.pagination.total_pages ||
+                Math.ceil(
+                  (response.pagination.total || formattedBets.length) / limit
+                );
+            } else if (response.data && response.data.pagination) {
+              totalPagesCalc =
+                response.data.pagination.totalPages ||
+                response.data.pagination.total_pages ||
+                Math.ceil(
+                  (response.data.pagination.total || formattedBets.length) /
+                    limit
+                );
+            }
+
             setTotalPages(totalPagesCalc);
           } else {
             setUserBets([]);
@@ -298,25 +315,21 @@ function LotteryWingo() {
 
   useEffect(() => {
     const totalSeconds = timeRemaining.minutes * 60 + timeRemaining.seconds;
-    // Play countdown audio when exactly 4 seconds remain (changed from 5)
     if (totalSeconds === 4 && !hasPlayedCountdownRef.current) {
       playCountdownAudio();
       hasPlayedCountdownRef.current = true;
     }
-    // Play result audio when exactly 0 seconds remain (changed from 1)
     if (totalSeconds === 0 && hasPlayedCountdownRef.current) {
       playResultAudio();
     }
-    // Reset countdown flag when new period starts (more than 4 seconds, changed from 5)
     if (totalSeconds > 4) {
       hasPlayedCountdownRef.current = false;
     }
-    // Log when timer reaches 0
     if (totalSeconds === 0) {
       setFetchDataFlag((prev) => !prev);
     }
   }, [timeRemaining, playCountdownAudio, playResultAudio]);
-  // Update the wallet balance fetching logic
+
   useEffect(() => {
     const fetchWalletBalance = async () => {
       try {
@@ -366,7 +379,6 @@ function LotteryWingo() {
     placeBet,
   } = useSocket(gameType, buttonData[activeButton].duration);
 
-  // Update state based on socket data
   useEffect(() => {
     if (isConnected && socketPeriod) {
       if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
@@ -386,7 +398,6 @@ function LotteryWingo() {
     }
   }, [isConnected, socketTime]);
 
-  // Auto-close betting popups when time remaining is 5 seconds or less
   useEffect(() => {
     if (
       (showPopup || selectedNumberPopup || showBigPopup) &&
@@ -397,7 +408,6 @@ function LotteryWingo() {
     }
   }, [timeRemaining, showPopup, selectedNumberPopup, showBigPopup]);
 
-  // Modified: Show loading state during period transitions
   useEffect(() => {
     if (timeRemaining.minutes === 0 && timeRemaining.seconds === 0) {
       setIsPeriodTransitioning(true);
@@ -424,14 +434,12 @@ function LotteryWingo() {
     }
   }, [timeRemaining.minutes, timeRemaining.seconds, activeButton, isConnected]);
 
-  // Update state more efficiently
   useEffect(() => {
     if (isConnected) {
       const updates = {};
       let hasUpdates = false;
 
       if (socketPeriod && socketPeriod.periodId !== currentPeriod.periodId) {
-        // Only update if we have a valid period ID (not loading)
         if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
           updates.period = socketPeriod;
           hasUpdates = true;
@@ -448,7 +456,6 @@ function LotteryWingo() {
       }
 
       if (hasUpdates) {
-        // Update period immediately without transitioning state
         if (updates.period) setCurrentPeriod(updates.period);
         if (updates.time) setTimeRemaining(updates.time);
       }
@@ -462,7 +469,6 @@ function LotteryWingo() {
     timeRemaining.seconds,
   ]);
 
-  // Auto-close success popup after 3 seconds
   useEffect(() => {
     if (showSuccessPopup) {
       const timer = setTimeout(() => {
@@ -474,11 +480,12 @@ function LotteryWingo() {
 
   useEffect(() => {
     if (currentResult && currentResult !== previousResult.current) {
-      setTimeout(() => playResultAudio(), 300); // Reduced from 1000ms to 300ms
+      setTimeout(() => playResultAudio(), 300);
       previousResult.current = currentResult;
     }
   }, [currentResult, playResultAudio]);
-  // Fetch game data from API
+
+  // Fixed fetchGameData function
   const fetchGameData = async (page, duration) => {
     try {
       const accessToken = localStorage.getItem("token");
@@ -506,6 +513,8 @@ function LotteryWingo() {
       const data = await response.json();
 
       let results = [];
+      let pagination = { totalPages: 1 };
+
       if (data.success && data.data) {
         const dataArray =
           data.data.results || (Array.isArray(data.data) ? data.data : []);
@@ -528,24 +537,33 @@ function LotteryWingo() {
             },
           ];
         }
+
+        // Fixed: Handle both pagination formats
+        if (data.data.pagination) {
+          pagination = {
+            totalPages:
+              data.data.pagination.totalPages ||
+              data.data.pagination.total_pages ||
+              1,
+            currentPage: data.data.pagination.page || page,
+            total: data.data.pagination.total || 0,
+            hasMore: data.data.pagination.hasMore || false,
+          };
+        }
       }
 
-      return {
-        results,
-        pagination: data.data?.pagination || { total_pages: 1 },
-      };
+      return { results, pagination };
     } catch (error) {
       console.error("Error fetching game data:", error);
-      return { results: [], pagination: { total_pages: 1 } };
+      return { results: [], pagination: { totalPages: 1 } };
     }
   };
+
   useEffect(() => {
     setRefetchData((prev) => !prev);
   }, [activeButton]);
 
-  // Fetch user bets
-
-  // Game History useEffect
+  // Fixed useEffect for Game History
   useEffect(() => {
     if (activeTab === "gameHistory") {
       const duration = buttonData[activeButton].duration;
@@ -554,7 +572,7 @@ function LotteryWingo() {
         const response = await fetchGameData(currentPage, duration);
         if (isMounted.current) {
           setGameHistoryData(response.results);
-          setTotalPages(response.pagination.total_pages || 1);
+          setTotalPages(response.pagination.totalPages || 1);
           setIsLoading(false);
         }
       };
@@ -562,7 +580,7 @@ function LotteryWingo() {
     }
   }, [activeTab, currentPage, activeButton, fetchDataFlag, refetchData]);
 
-  // Chart useEffect
+  // Fixed useEffect for Chart
   useEffect(() => {
     if (activeTab === "chart") {
       const duration = buttonData[activeButton].duration;
@@ -571,7 +589,7 @@ function LotteryWingo() {
         const response = await fetchGameData(currentPage, duration);
         if (isMounted.current) {
           setChartData(response.results);
-          setTotalPages(response.pagination.total_pages || 1);
+          setTotalPages(response.pagination.totalPages || 1);
           setIsLoading(false);
         }
       };
@@ -589,7 +607,11 @@ function LotteryWingo() {
     fetchUserBets(currentPage).catch(console.error);
   }, [refetchData]);
 
-  // Initial timer setup
+  // Add this useEffect to reset pagination when switching tabs
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, activeButton]);
+
   useEffect(() => {
     const duration = buttonData[activeButton].duration;
     setTimeRemaining({
@@ -606,6 +628,7 @@ function LotteryWingo() {
       }
     }, 500);
   }, [activeButton]);
+
   useEffect(() => {
     if (showWinPopup && !showWinPopupChecked) {
       const timer = setTimeout(() => {
@@ -623,7 +646,6 @@ function LotteryWingo() {
     }
   }, [showWinPopup, showWinPopupChecked, showLossPopup, showLossPopupChecked]);
 
-  // Debug token status
   const debugTokenStatus = () => {
     const token = localStorage.getItem("token");
   };
@@ -672,8 +694,11 @@ function LotteryWingo() {
     setQuantity(1);
   };
 
+  // Fixed handlePageChange function
   const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page);
+    }
   };
 
   const handleRandomClick = () => {
@@ -702,6 +727,7 @@ function LotteryWingo() {
   const formatTime = (num) => num.toString().padStart(2, "0");
   const handleOpenPreSalePopup = () => setShowPreSalePopup(true);
   const handleClosePreSalePopup = () => setShowPreSalePopup(false);
+
   const handleNumberClick = (number) => {
     const colorKey = iconColorMap[number] || "Green";
     setSelectedNumberPopup({ number, color: colorKey });
@@ -709,6 +735,7 @@ function LotteryWingo() {
     setPopupMultiplier("X1");
     setQuantity(1);
   };
+
   const handleCloseNumberPopup = () => {
     setSelectedNumberPopup(null);
     setBetAmount(1);
@@ -2210,31 +2237,33 @@ function LotteryWingo() {
                               {bet.result || "Pending"}
                             </p>
                           </div>
-                         { bet?.result !="Pending" &&  <div className="flex flex-col items-end space-y-1">
-                            <div
-                              className={`border text-xs rounded-md px-2 py-1 ${
-                                bet.status === "won"
-                                  ? "border-green-500 text-green-500"
-                                  : bet.status === "lost"
-                                    ? "border-red-500 text-red-500"
-                                    : "border-red-500 text-red-500"
-                              }`}
-                              style={{ textTransform: "capitalize" }}
-                            >
-                              {bet.status === "won" ? "Success" : "Failed"}
+                          {bet?.result != "Pending" && (
+                            <div className="flex flex-col items-end space-y-1">
+                              <div
+                                className={`border text-xs rounded-md px-2 py-1 ${
+                                  bet.status === "won"
+                                    ? "border-green-500 text-green-500"
+                                    : bet.status === "lost"
+                                      ? "border-red-500 text-red-500"
+                                      : "border-red-500 text-red-500"
+                                }`}
+                                style={{ textTransform: "capitalize" }}
+                              >
+                                {bet.status === "won" ? "Success" : "Failed"}
+                              </div>
+                              <p
+                                className={`font-medium text-sm ${
+                                  bet.winLose?.startsWith("+")
+                                    ? "text-green-500"
+                                    : bet.winLose?.startsWith("-")
+                                      ? "text-red-500"
+                                      : "text-gray-400"
+                                }`}
+                              >
+                                {String(bet.payout).split(".")[0] + ".00"}
+                              </p>
                             </div>
-                            <p
-                              className={`font-medium text-sm ${
-                                bet.winLose?.startsWith("+")
-                                  ? "text-green-500"
-                                  : bet.winLose?.startsWith("-")
-                                    ? "text-red-500"
-                                    : "text-gray-400"
-                              }`}
-                            >
-                              {String(bet.payout).split(".")[0] + ".00"}
-                            </p>
-                          </div>}
+                          )}
                         </div>
 
                         {isDetailsOpen === index && (
@@ -2323,48 +2352,54 @@ function LotteryWingo() {
 
                   {/* Pagination for My History */}
                   {totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-4 space-x-2">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                      >
-                        Previous
-                      </button>
+                    <>
+                      <div className="flex justify-center items-center mt-4 space-x-2">
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                        >
+                          Previous
+                        </button>
 
-                      <div className="flex items-center space-x-1">
-                        {Array.from(
-                          { length: Math.min(5, totalPages) },
-                          (_, i) => {
-                            const pageNum =
-                              currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                            if (pageNum > totalPages) return null;
+                        <div className="flex items-center space-x-1">
+                          {Array.from(
+                            { length: Math.min(5, totalPages) },
+                            (_, i) => {
+                              const pageNum =
+                                currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                              if (pageNum > totalPages) return null;
 
-                            return (
-                              <button
-                                key={pageNum}
-                                onClick={() => handlePageChange(pageNum)}
-                                className={`px-3 py-1 rounded text-sm transition-colors ${
-                                  currentPage === pageNum
-                                    ? "bg-[#d9ac4f] text-black font-medium"
-                                    : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                                }`}
-                              >
-                                {pageNum}
-                              </button>
-                            );
-                          }
-                        )}
+                              return (
+                                <button
+                                  key={pageNum}
+                                  onClick={() => handlePageChange(pageNum)}
+                                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                                    currentPage === pageNum
+                                      ? "bg-[#d9ac4f] text-black font-medium"
+                                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                                  }`}
+                                >
+                                  {pageNum}
+                                </button>
+                              );
+                            }
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                        >
+                          Next
+                        </button>
                       </div>
-
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                      >
-                        Next
-                      </button>
-                    </div>
+                      <div className="text-center mt-3 text-xs text-gray-500">
+                        Page {currentPage} of {totalPages} • {userBets.length}{" "}
+                        records shown
+                      </div>
+                    </>
                   )}
                 </>
               )}
@@ -2372,7 +2407,7 @@ function LotteryWingo() {
           )}
         </div>
 
-        <div className="text-center mb-0 w-full mt-2 relative z-0">
+        {/* <div className="text-center mb-0 w-full mt-2 relative z-0">
           <div className="bg-[#333332] rounded-xl shadow-lg p-4 flex items-center justify-center space-x-4 relative z-0">
             <button
               className="p-3 text-[#a8a5a1] bg-[#4d4d4c] rounded-lg disabled:opacity-50 z-0"
@@ -2392,7 +2427,7 @@ function LotteryWingo() {
               <IoIosArrowForward />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

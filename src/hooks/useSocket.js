@@ -214,6 +214,10 @@ const useSocket = (gameType = "wingo", duration = 60) => {
   // Place bet function
   const placeBet = useCallback(
     (betData) => {
+      if(betData?.betValue == "3 Continuous"){
+        betData.betValue = null
+        betData.betType = "STRAIGHT"
+      }
       const fullBetData = {
         ...betData,
         gameType,

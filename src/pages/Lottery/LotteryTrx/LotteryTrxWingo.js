@@ -713,21 +713,19 @@ function LotteryTrxWingo() {
             {historyData.length >= 5
               ? historyData
                   .slice(0, 5) // Get the last 5 results (assuming historyData is in descending order)
-                  .map((entry, idx) =>  {
+                  .map((entry, idx) => {
                     return (
-                       (
-                    <span
-                      key={idx}
-                      className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                    >
-                      <img
-                        src={numberImages[entry.result % 10]}
-                        alt={`Icon ${entry.result}`}
-                        className="w-full h-full"
-                      />
-                    </span>
-                  )
-                    )
+                      <span
+                        key={idx}
+                        className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                      >
+                        <img
+                          src={numberImages[entry.result % 10]}
+                          alt={`Icon ${entry.result}`}
+                          className="w-full h-full"
+                        />
+                      </span>
+                    );
                   })
               : [img0, img1, img2, img3, img4].map((img, idx) => (
                   <span

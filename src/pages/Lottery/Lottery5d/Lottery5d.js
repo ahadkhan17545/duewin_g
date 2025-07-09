@@ -166,6 +166,7 @@ function Lottery5d() {
       setWalletBalance(0);
     }
   }, []);
+
   useEffect(() => {
     if (showWinPopup && !showWinPopupChecked) {
       const timer = setTimeout(() => {
@@ -201,16 +202,22 @@ function Lottery5d() {
     }
   }, [isRefreshingBalance]);
 
+  // Fixed fetchGameChart with proper pagination handling
   const fetchGameChat = useCallback(async (page, duration) => {
     try {
       let data = await apiServices.getGameHistory("5d", duration, page, 10);
       if (data.success) {
         setChartData(data?.data?.results);
-        setTotalPages(data?.data?.pagination.total || 1);
+        // Fixed: Handle both pagination formats
+        const totalPagesCalc = data?.data?.pagination?.totalPages || 
+                             data?.data?.pagination?.total_pages || 
+                             Math.ceil((data?.data?.pagination?.total || data?.data?.results?.length) / 10) || 1;
+        setTotalPages(totalPagesCalc);
       }
     } catch (error) {
       console.error("Error fetching game data:", error);
-      setGameHistoryData([]);
+      setChartData([]);
+      setTotalPages(1);
     }
   }, []);
 
@@ -221,15 +228,14 @@ function Lottery5d() {
     setIsLoading(false);
   }, [activeButton, currentPage, fetchGameChat]);
 
+  // Fixed fetchUserBets with proper pagination handling
   const fetchUserBets = useCallback(
     async (page = 1, limit = 10) => {
-      // if (!isMounted.current) return;
       setIsLoading(true);
       setError(null);
 
       try {
         const duration = buttonData[activeButton].duration;
-        // Use the gameApi to fetch user bets
         const response = await gameApi.getUserBets(
           gameType,
           duration,
@@ -238,7 +244,6 @@ function Lottery5d() {
         );
 
         if (response && response.success) {
-          // Handle different possible response structures
           let betsData = [];
 
           if (Array.isArray(response.data)) {
@@ -258,7 +263,7 @@ function Lottery5d() {
             );
             const now = new Date();
             const timeDiffSeconds = (now - updatedAt) / 1000;
-            console.log("timeDiffSeconds", timeDiffSeconds);
+            
             if (timeDiffSeconds <= 5) {
               setLastResult(betsData[0]);
               setUserDidBet(false);
@@ -268,6 +273,7 @@ function Lottery5d() {
                 setShowLossPopup(true);
               }
             }
+
             const formattedBets = betsData.map((bet, index) => {
               return {
                 betId: bet.betId || bet._id || bet.id || `bet-${index}`,
@@ -293,7 +299,6 @@ function Lottery5d() {
                       ? `+₹${bet.profitLoss}`
                       : `-₹${Math.abs(bet.profitLoss)}`
                     : bet.winLose || "₹0",
-                // Additional fields for display
                 date: bet.createdAt
                   ? new Date(bet.createdAt).toLocaleDateString()
                   : new Date().toLocaleDateString(),
@@ -308,11 +313,18 @@ function Lottery5d() {
 
             setHistoryData(formattedBets);
 
-            // Handle pagination
-            const totalPagesCalc =
-              response.pagination?.total_pages ||
-              Math.ceil((response.total || formattedBets.length) / limit) ||
-              1;
+            // Fixed: Handle pagination properly for both formats
+            let totalPagesCalc = 1;
+            if (response.pagination) {
+              totalPagesCalc = response.pagination.totalPages || 
+                             response.pagination.total_pages || 
+                             Math.ceil((response.pagination.total || formattedBets.length) / limit);
+            } else if (response.data && response.data.pagination) {
+              totalPagesCalc = response.data.pagination.totalPages || 
+                             response.data.pagination.total_pages || 
+                             Math.ceil((response.data.pagination.total || formattedBets.length) / limit);
+            }
+            
             setTotalPages(totalPagesCalc);
           } else {
             setHistoryData([]);
@@ -339,17 +351,22 @@ function Lottery5d() {
     [activeButton, gameType]
   );
 
-  // Fetch game history
+  // Fixed fetchGameHistory with proper pagination handling
   const fetchGameHistory = useCallback(async (page, duration) => {
     try {
       let data = await apiServices.getGameHistory("5d", duration, page, 10);
       if (data.success) {
         setGameHistoryData(data?.data?.results);
-        setTotalPages(data.data?.pagination.total || 1);
+        // Fixed: Handle both pagination formats
+        const totalPagesCalc = data?.data?.pagination?.totalPages || 
+                             data?.data?.pagination?.total_pages || 
+                             Math.ceil((data?.data?.pagination?.total || data?.data?.results?.length) / 10) || 1;
+        setTotalPages(totalPagesCalc);
       }
     } catch (error) {
       console.error("Error fetching game data:", error);
       setGameHistoryData([]);
+      setTotalPages(1);
     }
   }, []);
 
@@ -373,11 +390,10 @@ function Lottery5d() {
     return () => clearInterval(interval);
   }, [fetchWalletBalance]);
 
-  // Socket connection effect - Fixed to prevent infinite loops
+  // Socket connection effect
   useEffect(() => {
     if (!isConnected) return;
 
-    // Check period updates
     if (
       socketPeriod?.periodId &&
       socketPeriod.periodId !== "Loading..." &&
@@ -386,7 +402,6 @@ function Lottery5d() {
       setCurrentPeriod(socketPeriod);
     }
 
-    // Check time updates
     if (
       socketTime &&
       (socketTime.minutes !== timeRemaining.minutes ||
@@ -456,10 +471,10 @@ function Lottery5d() {
     }
   }, [activeTab, currentPage, activeButton, refetchData, fetchGameHistory]);
 
+  // Add this useEffect to reset pagination when switching tabs
   useEffect(() => {
     setCurrentPage(1);
-    setTotalPages(1);
-  }, [activeButton]);
+  }, [activeTab, activeButton]);
 
   // Cleanup effect
   useEffect(() => {
@@ -468,12 +483,14 @@ function Lottery5d() {
     };
   }, []);
 
-  // Event handlers
+  // Fixed handlePageChange function
   const handlePageChange = useCallback(
     (page) => {
-      if (page >= 1 && page <= totalPages) setCurrentPage(page);
+      if (page >= 1 && page <= totalPages && page !== currentPage) {
+        setCurrentPage(page);
+      }
     },
-    [totalPages]
+    [totalPages, currentPage]
   );
 
   const handleButtonClick = useCallback(
@@ -497,7 +514,7 @@ function Lottery5d() {
 
   const handleOptionClick = useCallback((option, type) => {
     setSelectedOption(option);
-    setBetType(type); // number or size
+    setBetType(type);
     setIsModalOpen(true);
     setBetAmount(1);
     setQuantity(1);
@@ -538,7 +555,7 @@ function Lottery5d() {
       periodId: currentPeriod.periodId,
       gameType: gameType,
       duration: buttonData[activeButton]?.duration,
-      position: activeImgTab, // A, B, C, D, E, or SUM
+      position: activeImgTab,
     };
 
     console.log("🎯 Placing Bet:", betData);
@@ -557,7 +574,7 @@ function Lottery5d() {
       setBetAmount(1);
       setPopupMultiplier("X1");
       setShowSuccessPopup(true);
-      handleRefreshBalance(); // Refresh balance after placing bet
+      handleRefreshBalance();
     } else {
       console.log("❌ Failed to send bet to WebSocket");
       setError("Failed to place bet. Please try again.");
@@ -575,6 +592,8 @@ function Lottery5d() {
     activeImgTab,
     placeBet,
     handleRefreshBalance,
+    currentPage,
+    fetchUserBets
   ]);
 
   const calculateTotalAmount = useCallback(() => {
@@ -587,6 +606,71 @@ function Lottery5d() {
   const getDisplayPeriodId = useCallback(() => {
     return currentPeriod.periodId || "Loading...";
   }, [currentPeriod.periodId]);
+
+  // Pagination Component
+  const PaginationComponent = () => {
+    if (totalPages <= 1) return null;
+
+    return (
+      <>
+        <div className="flex justify-center items-center mt-4 space-x-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+          >
+            Previous
+          </button>
+
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+
+              if (pageNum < 1 || pageNum > totalPages) return null;
+
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                    currentPage === pageNum
+                      ? "bg-[#d9ac4f] text-black font-medium"
+                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+          >
+            Next
+          </button>
+        </div>
+        <div className="text-center mt-3 text-xs text-gray-500">
+          Page {currentPage} of {totalPages} • {
+            activeTab === "gameHistory" ? gameHistoryData.length :
+            activeTab === "chart" ? chartData.length :
+            historyData.length
+          } records shown
+        </div>
+      </>
+    );
+  };
 
   if (error) {
     return (
@@ -602,7 +686,6 @@ function Lottery5d() {
 
       <div className="text-center w-full max-w-sm mt-8" style={{ zIndex: 1 }}>
         <div className="relative rounded-2xl shadow-lg overflow-hidden">
-          {/* Background image */}
           <div className="absolute inset-0 z-0">
             <img
               src={walletbggame}
@@ -611,12 +694,9 @@ function Lottery5d() {
             />
           </div>
 
-          {/* Overlay */}
           <div className="absolute inset-0 bg-[#4d4d4c] opacity-70 z-10"></div>
 
-          {/* Main content */}
           <div className="relative z-20 p-2">
-            {/* Balance + Refresh */}
             <div className="relative flex items-center justify-center ml-2">
               <div className="text-lg font-bold text-white">
                 ₹{walletBalance.toFixed(2)}
@@ -636,7 +716,6 @@ function Lottery5d() {
               />
             </div>
 
-            {/* Wallet label */}
             <div className="flex items-center justify-center mb-4 mt-[-2]">
               <img src={wallet} alt="icon" className="w-5 h-5" />
               <span className="ml-2 text-[#f5f3f0] text-xs ">
@@ -644,7 +723,6 @@ function Lottery5d() {
               </span>
             </div>
 
-            {/* Buttons */}
             <div className="flex justify-center gap-10 mb-2">
               <Link to="/withdraw">
                 <button className="bg-[#d23838] text-white text-sm font-semibold px-10 py-2 rounded-full hover:bg-red-600 transition-all">
@@ -713,8 +791,8 @@ function Lottery5d() {
                 <div
                   className="icon"
                   style={{
-                    fontSize: "16px", // Smaller icon
-                    marginBottom: "2px", // Less gap
+                    fontSize: "16px",
+                    marginBottom: "2px",
                   }}
                 >
                   {activeButton === button.id ? button.activeIcon : button.icon}
@@ -1076,6 +1154,51 @@ function Lottery5d() {
                   </div>
                 </div>
               )}
+                      {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum =
+                        currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      if (pageNum > totalPages) return null;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${
+                            currentPage === pageNum
+                              ? "bg-[#d9ac4f] text-black font-medium"
+                              : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+              <div className="text-center mt-3 text-xs text-gray-500">
+                Page {currentPage} of {totalPages} • {gameHistoryData.length} records
+                shown
+              </div>
             </div>
           )}
           {activeTab === "chart" && (
@@ -1164,7 +1287,53 @@ function Lottery5d() {
                   )}
                 </tbody>
               </table>
+                      {totalPages > 1 && (
+                <div className="flex justify-center items-center mt-4 space-x-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const pageNum =
+                        currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                      if (pageNum > totalPages) return null;
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`px-3 py-1 rounded text-sm transition-colors ${
+                            currentPage === pageNum
+                              ? "bg-[#d9ac4f] text-black font-medium"
+                              : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+              <div className="text-center mt-3 text-xs text-gray-500">
+                Page {currentPage} of {totalPages} • {chartData.length} records
+                shown
+              </div>
             </div>
+            
           )}
           {activeTab === "myHistory" && (
             <div className="p-2 text-right">
@@ -1331,6 +1500,8 @@ function Lottery5d() {
                           </div>
                         </div>
                       )}
+                              {/* Pagination for My History */}
+             
                     </>
                   );
                 })
@@ -1345,9 +1516,59 @@ function Lottery5d() {
                   </div>
                 </div>
               )}
+                   {totalPages > 1 && (
+                    <>
+                      <div className="flex justify-center items-center mt-4 space-x-2">
+                        <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                        >
+                          Previous
+                        </button>
+
+                        <div className="flex items-center space-x-1">
+                          {Array.from(
+                            { length: Math.min(5, totalPages) },
+                            (_, i) => {
+                              const pageNum =
+                                currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                              if (pageNum > totalPages) return null;
+
+                              return (
+                                <button
+                                  key={pageNum}
+                                  onClick={() => handlePageChange(pageNum)}
+                                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                                    currentPage === pageNum
+                                      ? "bg-[#d9ac4f] text-black font-medium"
+                                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                                  }`}
+                                >
+                                  {pageNum}
+                                </button>
+                              );
+                            }
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                        >
+                          Next
+                        </button>
+                      </div>
+                      <div className="text-center mt-3 text-xs text-gray-500">
+                        Page {currentPage} of {totalPages} • {historyData.length}{" "}
+                        records shown
+                      </div>
+                    </>
+                  )}
             </div>
           )}
-          <div className="text-center mb-0 w-full mt-2">
+          {/* <div className="text-center mb-0 w-full mt-2">
             <div className="bg-[#333332] rounded-xl shadow-lg p-4 flex items-center justify-center space-x-4">
               <button
                 className="p-3 text-[#666462] bg-[#4d4d4c] rounded-lg disabled:opacity-50"
@@ -1367,7 +1588,7 @@ function Lottery5d() {
                 <IoIosArrowForward />
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
