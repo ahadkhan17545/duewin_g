@@ -2407,27 +2407,6 @@ function LotteryWingo() {
           )}
         </div>
 
-        {/* <div className="text-center mb-0 w-full mt-2 relative z-0">
-          <div className="bg-[#333332] rounded-xl shadow-lg p-4 flex items-center justify-center space-x-4 relative z-0">
-            <button
-              className="p-3 text-[#a8a5a1] bg-[#4d4d4c] rounded-lg disabled:opacity-50 z-0"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <IoIosArrowBack className="w-5 h-5" />
-            </button>
-            <span className="px-8 text-sm text-[#a8a5a1] font-semibold">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              className="p-3 text-[#a8a5a1] bg-[#4d4d4c] rounded-lg disabled:opacity-50 z-0"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <IoIosArrowForward />
-            </button>
-          </div>
-        </div> */}
       </div>
     </div>
   );

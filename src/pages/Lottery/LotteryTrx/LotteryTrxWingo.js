@@ -292,8 +292,8 @@ function LotteryTrxWingo() {
           }));
           setUserBets(bets);
           setTotalPages(
-            response.pagination?.total_pages ||
-              Math.ceil(response.total / limit) ||
+            response.data.pagination?.totalPages ||
+              Math.ceil(response.data.pagination?.total / limit) ||
               1
           );
           console.log("✅ User bets fetched successfully", {
@@ -1235,27 +1235,56 @@ function LotteryTrxWingo() {
               )}
             </div>
           )}
-          <div className="text-center mb-16 w-full mt-2">
-            <div className="bg-[#333332] rounded-t-xl shadow-lg p-4 flex items-center justify-center space-x-4">
-              <button
-                className="p-3 text-[#a8a5a1] bg-[#6f7381] rounded-lg shadow disabled:opacity-50"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                <IoIosArrowBack className="w-5 h-5" />
-              </button>
-              <span className="px-8 text-sm text-[#a8a5a1] font-semibold">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                className="p-3 text-[#8f5206] bg-[#d9ac4f] rounded-lg shadow disabled:opacity-50"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                <IoIosArrowForward />
-              </button>
-            </div>
-          </div>
+            { (
+                <>
+                  <div className="flex justify-center items-center mt-4 space-x-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                    >
+                      Previous
+                    </button>
+
+                    <div className="flex items-center space-x-1">
+                      {Array.from(
+                        { length: Math.min(5, totalPages) },
+                        (_, i) => {
+                          const pageNum =
+                            currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                          if (pageNum > totalPages) return null;
+
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`px-3 py-1 rounded text-sm transition-colors ${
+                                currentPage === pageNum
+                                  ? "bg-[#d9ac4f] text-black font-medium"
+                                  : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        }
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="text-center mt-3 text-xs text-gray-500">
+                    Page {currentPage} of {totalPages} • {historyData?.length}{" "}
+                    records shown
+                  </div>
+                </>
+              )}
         </div>
       </div>
 
