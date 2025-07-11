@@ -70,7 +70,7 @@ function ActivityPage() {
         </p>
       </div>
 
-      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between">
+      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between" style={{paddingBottom:'50px'}}>
         <div className="grid grid-cols-3 text-[#a8a5a1] items-center mb-2">
           <div className="text-center">
             <Link to="/invitebonus">

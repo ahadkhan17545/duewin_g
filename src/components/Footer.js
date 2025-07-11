@@ -54,82 +54,86 @@ function Footer() {
       }}
     >
       <div
-        className="bg-[#333332] shadow-lg rounded-t-3xl relative footer-responsive"
+        className="relative footer-responsive"
         style={{
           width: "100%",
           maxWidth: "400px",
           height: "70px",
-          display: "flex",
-          alignItems: "center",
-          overflow: "visible"
         }}
       >
-        {/* Circular cutout for the home button */}
+        {/* Main navigation bar with curved cutout */}
         <div
-          className="absolute left-1/2"
+          className="bg-[#333332] shadow-lg rounded-t-3xl relative"
           style={{
-            top: "0",
-            width: "60px",
-            height: "60px",
-            background: "radial-gradient(circle at 50% 0%, transparent 30px, #333332 30px)",
-            zIndex: 10,
-            transform: "translateX(-50%)"
+            width: "100%",
+            height: "70px",
+            display: "flex",
+            alignItems: "center",
+            overflow: "visible",
+            WebkitMask: "radial-gradient(circle at 50% 0%, transparent 40px, white 41px)",
+            mask: "radial-gradient(circle at 50% 0%, transparent 40px, white 41px)"
           }}
-        ></div>
-
-        <div className="relative w-full h-full flex justify-around items-center">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              onClick={() => handleTabClick(tab.id)}
-              className={`flex flex-col items-center justify-center cursor-pointer ${
-                tab.id === "home" ? "relative z-20" : "px-2"
-              }`}
-              style={{
-                flex: 1,
-                maxWidth: tab.id === "home" ? "20%" : "22%", // Increased side icon space
-              }}
-            >
-              {tab.id === "home" ? (
+        >
+          <div className="relative w-full h-full flex justify-around items-center">
+            {tabs.map((tab) => (
+            
+              tab.id !== "home" && (
                 <div
-                  className="flex items-center justify-center"
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id)}
+                  className="flex flex-col items-center justify-center cursor-pointer px-2"
                   style={{
-                    width: "100px",       // Reduced size
-                    height: "80px",      // Reduced size
-                    position: "relative",
-                           // Adjusted for better alignment
-                    borderRadius: "50%",
-                    zIndex: 20,
+                    flex: 1,
+                    maxWidth: "22%",
+                    marginLeft:tab.id=='activity' ? '-15%':'',
+                    marginRight:tab.id=='wallet' ? '-13%':''
                   }}
                 >
-                  <img src={tab.icon} alt={tab.label} style={{ width: '80px', height: '80px' }} /> {/* Reduced image size */}
+                  <img
+                    src={activeTab === tab.id ? tab.activeIcon : tab.icon}
+                    alt={tab.label}
+                    className={`${tab.id === "wallet" || tab.id === "account" ? "w-8 h-8" : "w-10 h-10"}`}
+                  />
+                  <span
+                    className="text-xs font-medium tracking-wide whitespace-nowrap"
+                    style={{
+                      color: activeTab === tab.id ? "#d9ac4f" : "#d1d5db",
+                      fontFamily: "Arial, sans-serif",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {tab.label}
+                  </span>
                 </div>
-              ) : (
-                <img
-                  src={activeTab === tab.id ? tab.activeIcon : tab.icon}
-                  alt={tab.label}
-                  className={` ${tab.id === "wallet" || tab.id === "account" ? "w-8 h-8" : "w-10 h-10"}`} // Smaller size for wallet and account
-                />
-              )}
+              )
+              
+              
+            ))}
+          </div>
+        </div>
 
-              {tab.id !== "home" && (
-                <span
-                  className="text-xs font-medium tracking-wide whitespace-nowrap"
-                  style={{
-                    color: activeTab === tab.id ? "#d9ac4f" : "#d1d5db",
-                    fontFamily: "Arial, sans-serif",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                   
-                    
-                    
-                  }}
-                >
-                  {tab.label}
-                </span>
-              )}
-            </div>
-          ))}
+        {/* Home button positioned inside the curved cutout */}
+        <div
+          onClick={() => handleTabClick("home")}
+          className="absolute left-1/2 cursor-pointer"
+          style={{
+            top: "-35px", // Position it inside the curve
+            transform: "translateX(-50%)",
+            zIndex: 20,
+            background:'#323232',
+            borderRadius:'50%'
+          }}
+        >
+          <img 
+            src={home} 
+            alt="Home" 
+            style={{ 
+              width: '80px', 
+              height: '80px',
+              borderRadius: '50%'
+            }} 
+          />
         </div>
       </div>
     </div>
