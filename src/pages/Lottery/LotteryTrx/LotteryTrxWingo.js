@@ -414,6 +414,22 @@ function LotteryTrxWingo() {
       return () => clearTimeout(timer);
     }
   }, [showSuccessPopup]);
+    useEffect(() => {
+      if (
+      isModalOpen &&
+        timeRemaining.seconds <= 5 &&
+        timeRemaining.minutes === 0 &&  buttonData[activeButton].duration == 30
+      ) {
+        handleCloseModal();
+      }
+          if (
+        isModalOpen&&
+        timeRemaining.seconds <= 10 &&
+        timeRemaining.minutes === 0 &&  buttonData[activeButton].duration != 30
+      ) {
+        handleCloseModal();
+      }
+    }, [timeRemaining, isModalOpen  ]);
 
   // Event handlers
   const handlePageChange = (page) => {

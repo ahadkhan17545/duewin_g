@@ -531,6 +531,15 @@ function Lottery5d() {
   const handleMultiplierClick = useCallback((multiplier) => {
     setPopupMultiplier(multiplier);
   }, []);
+    useEffect(() => {
+    if (
+      (isModalOpen ) &&
+      timeRemaining.seconds <= 10 &&
+      timeRemaining.minutes === 0
+    ) {
+      handleCloseModal();
+    }
+  }, [timeRemaining,   isModalOpen]);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);

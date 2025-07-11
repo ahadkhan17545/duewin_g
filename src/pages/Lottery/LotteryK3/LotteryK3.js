@@ -138,6 +138,7 @@ const BettingModal = ({
   activeButton,
   buttonData,
   setError,
+  timeRemaining,
 }) => {
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
 
@@ -380,7 +381,7 @@ const BettingModal = ({
   };
 
   return (
-    shouldShowBettingModal() && (
+    shouldShowBettingModal(timeRemaining) && (
       <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[400px] bg-[#222222] text-white rounded-t-lg p-4 shadow-xl z-50">
         {/* Total tab selections display */}
         {activeImgTab === "total" && selectedOptions.length > 0 && (
@@ -621,7 +622,10 @@ const BettingModal = ({
     )
   );
 
-  function shouldShowBettingModal() {
+  function shouldShowBettingModal(timeRemaining) {
+    if (timeRemaining.seconds <= 10 && timeRemaining.minutes === 0) {
+      return false
+    }
     if (activeImgTab === "total") {
       return selectedOptions.length > 0;
     } else if (activeImgTab === "2same") {
@@ -710,8 +714,8 @@ function LotteryK3() {
   const [showWinPopup, setShowWinPopup] = useState(false);
   const [showLossPopup, setShowLossPopup] = useState(false);
   const [lastResultDice, setLastResultDice] = useState(null);
-  const [displayedDice, setDisplayedDice] = useState([1, 1, 1]); // to control what's shown on screen
-  const [isRolling, setIsRolling] = useState(false); // to control animation state
+  const [displayedDice, setDisplayedDice] = useState([1, 1, 1]);
+  const [isRolling, setIsRolling] = useState(false);
   const [showWinPopupChecked, setShowWinPopupChecked] = useState(false);
   const [showLossPopupChecked, setShowLossPopupChecked] = useState(false);
   useEffect(() => {
@@ -1084,7 +1088,10 @@ function LotteryK3() {
             // Handle pagination
             const totalPagesCalc =
               response.data?.pagination?.totalPages ||
-              Math.ceil((response.data?.pagination?.total || formattedBets.length) / limit) ||
+              Math.ceil(
+                (response.data?.pagination?.total || formattedBets.length) /
+                  limit
+              ) ||
               1;
             setTotalPages(totalPagesCalc);
           } else {
@@ -2000,6 +2007,7 @@ function LotteryK3() {
           activeButton={activeButton}
           buttonData={buttonData}
           setError={setError}
+          timeRemaining={timeRemaining}
         />
 
         {showSuccessPopup && (
@@ -2495,56 +2503,53 @@ function LotteryK3() {
             </div>
           )}
         </div>
-            { (
-                <>
-                  <div className="flex justify-center items-center mt-4 space-x-2">
+        {
+          <>
+            <div className="flex justify-center items-center mt-4 space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+              >
+                Previous
+              </button>
+
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum =
+                    currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                  if (pageNum > totalPages) return null;
+
+                  return (
                     <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-3 py-1 rounded text-sm transition-colors ${
+                        currentPage === pageNum
+                          ? "bg-[#d9ac4f] text-black font-medium"
+                          : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                      }`}
                     >
-                      Previous
+                      {pageNum}
                     </button>
+                  );
+                })}
+              </div>
 
-                    <div className="flex items-center space-x-1">
-                      {Array.from(
-                        { length: Math.min(5, totalPages) },
-                        (_, i) => {
-                          const pageNum =
-                            currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                          if (pageNum > totalPages) return null;
-
-                          return (
-                            <button
-                              key={pageNum}
-                              onClick={() => handlePageChange(pageNum)}
-                              className={`px-3 py-1 rounded text-sm transition-colors ${
-                                currentPage === pageNum
-                                  ? "bg-[#d9ac4f] text-black font-medium"
-                                  : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                              }`}
-                            >
-                              {pageNum}
-                            </button>
-                          );
-                        }
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <div className="text-center mt-3 text-xs text-gray-500">
-                    Page {currentPage} of {totalPages} • {historyData?.length}{" "}
-                    records shown
-                  </div>
-                </>
-              )}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+              >
+                Next
+              </button>
+            </div>
+            <div className="text-center mt-3 text-xs text-gray-500">
+              Page {currentPage} of {totalPages} • {historyData?.length} records
+              shown
+            </div>
+          </>
+        }
       </div>
     </div>
   );

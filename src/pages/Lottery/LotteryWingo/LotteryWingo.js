@@ -402,7 +402,14 @@ function LotteryWingo() {
     if (
       (showPopup || selectedNumberPopup || showBigPopup) &&
       timeRemaining.seconds <= 5 &&
-      timeRemaining.minutes === 0
+      timeRemaining.minutes === 0 &&  buttonData[activeButton].duration == 30
+    ) {
+      handleCancelBet();
+    }
+        if (
+      (showPopup || selectedNumberPopup || showBigPopup) &&
+      timeRemaining.seconds <= 10 &&
+      timeRemaining.minutes === 0 &&  buttonData[activeButton].duration != 30
     ) {
       handleCancelBet();
     }
