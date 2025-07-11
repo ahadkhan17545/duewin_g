@@ -252,7 +252,7 @@ function ProfilePage() {
         </div>
 
         {/* Content section with padding to account for the overlapping balance card */}
-        <div className="w-full flex flex-col items-center pt-20 px-4">
+        <div className="w-full flex flex-col items-center pt-20 px-4" style={{paddingBottom:'25px'}}>
           <div className="w-full">
             <Link to="/safe" className="block">
               <div className="bg-[#333332] p-1 rounded-lg shadow-md  cursor-pointer">

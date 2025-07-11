@@ -253,7 +253,7 @@ function PromotionPage() {
       </div>
 
       {/* Content section that partially overlaps with the background */}
-      <div className="relative z-20 w-full px-4 mx-auto mt-[-16rem] max-w-md">
+      <div className="relative z-20 w-full px-4 mx-auto mt-[-16rem] max-w-md" style={{paddingBottom:'25px'}}>
         <h1 className="text-[#8f5206] text-3xl text-center mb-1 font-sans">
           {commissionYesterday?.totalAmount || 0}
         </h1>
