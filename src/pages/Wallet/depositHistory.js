@@ -551,7 +551,7 @@ function DepositHistory() {
                           <div className="flex justify-between items-center relative">
                             <span>Order number</span>
                             <div className="flex items-center gap-1 max-w-[60%]">
-                              <span className="text-white truncate">{orderId}</span>
+                              <span className="text-white truncate">{orderId.replace('.', '')}</span>
                               <button
                                 onClick={() => handleCopy(orderId)}
                                 className="p-2 rounded flex-shrink-0"

@@ -131,15 +131,15 @@ const Deposit = () => {
       amount: Number(inputAmount),
       gateway: selectedChannel.key,
     };
-    if(selectedChannel.key=="OKPAY"){
-      payload.pay_type =  selectedPayment
+    if (selectedChannel.key == "OKPAY") {
+      payload.pay_type = selectedPayment;
     }
 
     try {
       setIsSubmitting(true);
       const res = await apiServices.depositPayment(payload);
       if (res?.success) {
-        window.location.href=res?.paymentUrl
+        window.location.href = res?.paymentUrl;
         setInputAmount("");
         setSelectedChannel("");
       } else {
@@ -222,57 +222,116 @@ const Deposit = () => {
         </div>
         {/* Deposit Amount (for non-USDT selections) */}
         {selectedPayment == "UPI" && (
-          <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
-            <div className="flex items-center gap-2 mb-6">
-              <span className="material-symbols-outlined text-[#d9ac4f]">
-                payments
-              </span>
-              <h2 className="text-lg font-semibold">Deposit amount</h2>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              {["500", "1K", "5K", "10K", "20K", "50K"].map((amount) => (
-                <button
-                  key={amount}
-                  onClick={() => handlePresetAmountClick(amount)}
-                  className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
-                >
-                  <span className="text-[#666462]"> ₹ </span> {amount}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative mb-6">
-              <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
-                <span className="text-[#d9ac4f] mr-2">₹</span>
-                <input
-                  type="number"
-                  placeholder="Please enter the amount"
-                  value={inputAmount}
-                  onChange={handleInputChange}
-                  className="bg-transparent w-full outline-none placeholder-neutral-400"
-                  min="100"
-                />
+          <>
+            {/* Payment Channels (for non-USDT selections) */}
+            <div className="bg-[#333332] p-3 rounded-xl mt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <img src={iconquickpay} alt="icon" className="h-8 w-8" />
+                <span className="font-semibold text-white">Select channel</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {paymentChannelList?.map((item, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${
+                      item.isHighlight
+                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                        : "bg-[#4d4d4c] hover:bg-neutral-700"
+                    }`}
+                    onClick={() => handleChannelSelect(item)}
+                  >
+                    <div className="font-semibold text-neutral-400 text-sm">
+                      {item.name}
+                    </div>
+                    <div className="text-neutral-400 text-sm">
+                      Balance: {item.balance}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <button
-              className={`w-full transition-colors rounded-full py-3 mb-2 ${
-                selectedPayment && selectedChannel && inputAmount >= 110
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#6f7381] text-white"
-              }`}
-              disabled={
-                !selectedPayment ||
-                !selectedChannel ||
-                Number(inputAmount) < 110 ||
-                isSubmitting
-              }
-              onClick={submitPayment}
-            >
-              {isSubmitting ? "Processing..." : "Deposit"}
-            </button>
-          </div>
+            {/* Recharge Instructions */}
+
+            <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="material-symbols-outlined text-[#d9ac4f]">
+                  payments
+                </span>
+                <h2 className="text-lg font-semibold">Deposit amount</h2>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                {["500", "1K", "5K", "10K", "20K", "50K"].map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handlePresetAmountClick(amount)}
+                    className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                  >
+                    <span className="text-[#666462]"> ₹ </span> {amount}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative mb-6">
+                <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
+                  <span className="text-[#d9ac4f] mr-2">₹</span>
+                  <input
+                    type="number"
+                    placeholder="Please enter the amount"
+                    value={inputAmount}
+                    onChange={handleInputChange}
+                    className="bg-transparent w-full outline-none placeholder-neutral-400"
+                    min="100"
+                  />
+                </div>
+              </div>
+
+              <button
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${
+                  selectedPayment && selectedChannel && inputAmount >= 110
+                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#6f7381] text-white"
+                }`}
+                disabled={
+                  !selectedPayment ||
+                  !selectedChannel ||
+                  Number(inputAmount) < 110 ||
+                  isSubmitting
+                }
+                onClick={submitPayment}
+              >
+                {isSubmitting ? "Processing..." : "Deposit"}
+              </button>
+            </div>
+            <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-amber-500 mb-2">
+                  <img src={iconshouming} alt="icon" className="h-8 w-8" />
+                  <h3 className="font-semibold text-[#f5f3f0]">
+                    Recharge Instructions
+                  </h3>
+                </div>
+
+                <div className="border p-4 rounded-xl space-y-2 border-[#666462]">
+                  {[
+                    "If the transfer time is up, please fill out the deposit form again.",
+                    "The transfer amount must match the order you created, otherwise the money cannot be credited successfully.",
+                    "If you transfer the wrong amount, our company will not be responsible for the lost amount!",
+                    "Note: do not cancel the deposit order after the money has been transferred.",
+                  ].map((instruction, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 text-neutral-400 text-sm"
+                    >
+                      <BsDiamondFill className="text-amber-500 text-sm mt-1" />
+                      <p>{instruction}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {/* Conditional Rendering Based on Payment Selection */}
@@ -403,9 +462,10 @@ const Deposit = () => {
 
                 <div className="border p-4 rounded-xl space-y-2 border-[#666462]">
                   {[
-                    "If the transfer time is up, please fill out the deposit form again.",
+                    "Minimum deposit: 10USDT, deposits less than 10USDT will not be credited",
+                    "Do not deposit any non-currency assets to the above address, or the assets will not be recovered.",
+                    "Please confirm that the operating environment is safe to avoid information being tampered with or leaked.",
                     "The transfer amount must match the order you created, otherwise the money cannot be credited successfully.",
-                    "If you transfer the wrong amount, our company will not be responsible for the lost amount!",
                     "Note: do not cancel the deposit order after the money has been transferred.",
                   ].map((instruction, index) => (
                     <div
@@ -431,65 +491,9 @@ const Deposit = () => {
             </div>
           </>
         ) : (
-          <>
-            {/* Payment Channels (for non-USDT selections) */}
-            <div className="bg-[#333332] p-3 rounded-xl mt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <img src={iconquickpay} alt="icon" className="h-8 w-8" />
-                <span className="font-semibold text-white">Select channel</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {paymentChannelList?.map((item, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-xl cursor-pointer transition relative ${
-                      item.isHighlight
-                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                        : "bg-[#4d4d4c] hover:bg-neutral-700"
-                    }`}
-                    onClick={() => handleChannelSelect(item)}
-                  >
-                    <div className="font-semibold text-neutral-400 text-sm">
-                      {item.name}
-                    </div>
-                    <div className="text-neutral-400 text-sm">
-                      Balance: {item.balance}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recharge Instructions */}
-            <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-amber-500 mb-2">
-                  <img src={iconshouming} alt="icon" className="h-8 w-8" />
-                  <h3 className="font-semibold text-[#f5f3f0]">
-                    Recharge Instructions
-                  </h3>
-                </div>
-
-                <div className="border p-4 rounded-xl space-y-2 border-[#666462]">
-                  {[
-                    "If the transfer time is up, please fill out the deposit form again.",
-                    "The transfer amount must match the order you created, otherwise the money cannot be credited successfully.",
-                    "If you transfer the wrong amount, our company will not be responsible for the lost amount!",
-                    "Note: do not cancel the deposit order after the money has been transferred.",
-                  ].map((instruction, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 text-neutral-400 text-sm"
-                    >
-                      <BsDiamondFill className="text-amber-500 text-sm mt-1" />
-                      <p>{instruction}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </>
+          <></>
         )}
+
         <div className="bg-[#242424] rounded-xl font-sans mt-6">
           <div className="flex items-center gap-3 mb-4">
             <img src={deposit} alt="icon" className="h-6 w-6" />
@@ -501,7 +505,7 @@ const Deposit = () => {
         {withdrawHistory?.length > 0 &&
           withdrawHistory?.map((item, index) => {
             return (
-              <div key={index} className="space-y-4">
+              <div key={index} className="space-y-4 pb-2">
                 {/* First Deposit Entry - Completed */}
                 <div className="bg-[#333332] p-2 rounded-lg">
                   <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">

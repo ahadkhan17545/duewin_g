@@ -582,12 +582,7 @@ function WithdrawHistory() {
                         {withdrawal?.rejection_reason || "N/A"}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#a8a5a1]">Method</span>
-                      <span className="text-[#a8a5a1] font-medium">
-                        {withdrawal.payment_gateway}
-                      </span>
-                    </div>
+
                   </div>
                 </div>
               ))

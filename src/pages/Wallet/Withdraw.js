@@ -778,6 +778,18 @@ const Withdraw = () => {
                         {formatDate(withdrawal.created_at)}
                       </span>
                     </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#a8a5a1]">Order Number</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal?.transaction_id}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#a8a5a1]">Remark</span>
+                      <span className="text-[#a8a5a1] font-medium">
+                        {withdrawal?.rejection_reason || "N/A"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))
