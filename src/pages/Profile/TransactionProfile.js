@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { MdExpandMore } from "react-icons/md";
 import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
+
 const filterOptions = [
   "game_win",
   "deposit",
@@ -20,6 +21,14 @@ const filterOptions = [
   "game_move_out",
   "activity_reward",
 ];
+
+// Function to format filter options for display
+const formatFilterLabel = (filterValue) => {
+  return filterValue
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 function TransactionProfile() {
   const [filter, setFilter] = useState(filterOptions[0]);
@@ -64,7 +73,7 @@ function TransactionProfile() {
       const params = {
         page: pageNum,
         limit: 10,
-        type: filter,
+        type: filter, // Still using original filter value for API
         ...getDateFilterParams(selectedDate),
       };
 
@@ -96,7 +105,7 @@ function TransactionProfile() {
   };
 
   const handleFilterSelect = (option) => {
-    setFilter(option);
+    setFilter(option); // Still using original value
     closeModal();
   };
 
@@ -191,7 +200,7 @@ function TransactionProfile() {
               className="modal-button flex-1 bg-[#2d2d2d] p-3 rounded-lg flex justify-between items-center"
               onClick={() => openModal("filter")}
             >
-              <span className="truncate">{filter}</span>
+              <span className="truncate">{formatFilterLabel(filter)}</span>
               <MdExpandMore className="text-gray-400 ml-1" />
             </button>
             <button
@@ -219,7 +228,7 @@ function TransactionProfile() {
                 <div className="px-4 py-3">
                   <div className="bg-[#242424] flex justify-between items-center py-2 px-3 rounded-md mb-1">
                     <span className="text-gray-400 text-sm">Detail</span>
-                    <span className="text-white text-sm">{txn.type}</span>
+                    <span className="text-white text-sm">{formatFilterLabel(txn.type)}</span>
                   </div>
                   <div className="bg-[#242424] flex justify-between items-center py-2 px-3 rounded-md mb-1">
                     <span className="text-gray-400 text-sm">Time</span>
@@ -304,13 +313,13 @@ function TransactionProfile() {
             <div
               key={index}
               className={`py-4 w-full text-center cursor-pointer transition-colors ${
-                filter.temp === option
+                filter === option
                   ? "text-white bg-[#333332]"
                   : "text-[#a8a5a1]"
               }`}
               onClick={() => handleFilterSelect(option)}
             >
-              {option}
+              {formatFilterLabel(option)}
             </div>
           ))}
         </div>
