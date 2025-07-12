@@ -1269,7 +1269,7 @@ function Home() {
                 ))}
 
                 {/* 🔒 Bottom 10 Hardcoded Cards */}
-                <div className="bg-[#333332]] px-2 py-4 rounded-lg text-white space-y-4">
+                <div className="bg-[#333332]] px-2 py-1 rounded-lg text-white space-y-4">
                   {/* 🔝 Top Logo */}
                   <div className="flex justify-between align-center">
                     <img
@@ -1277,13 +1277,14 @@ function Home() {
                       alt="Logo"
                       className="w-20 h-13 object-contain"
                     />
-                    <h1
-                      className="text-red-500 text-[25px] pt-[17px]"
-                      style={{ fontFamily: "fantasy" }}
-                    >
-                      18+ Only
-                    </h1>
+<h1
+  className="text-red-500 text-[25px] pt-[17px] border-2 border-red-500 rounded-full px-6 py-3 inline-block"
+  style={{ fontFamily: "fantasy" }}
+>
+  18+ Only
+</h1>
                   </div>
+                  <p style={{marginTop:'-10px'}}>Our offical partners</p>
 
                   {/* 📦 2-column Grid with 10 Image Cards */}
                   <div className="grid grid-cols-3 gap-4">
