@@ -1,5 +1,8 @@
 const BASE_URL = "https://api.strikecolor1.com/api";
 
+// Debug API calls
+const DEBUG_API = true;
+
 // Helper function to get the auth token
 const getAuthToken = () => {
   // Retrieve token from localStorage (set by auth.js)
@@ -81,7 +84,18 @@ const apiRequest = async (
   }
 
   try {
+    if (DEBUG_API) {
+      console.log(`Making API call to: ${url}`);
+      console.log('Request config:', config);
+      console.log('Auth token:', authToken ? 'Present' : 'Missing');
+    }
+    
     const response = await fetch(url, config);
+
+    if (DEBUG_API) {
+      console.log(`API response status: ${response.status}`);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -103,10 +117,15 @@ const apiRequest = async (
     }
 
     const data = await response.json();
-    console.log("API response:", data);
+    if (DEBUG_API) {
+      console.log("API response:", data);
+    }
     return data;
   } catch (error) {
-    console.error(`Failed to fetch ${endpoint}:`, error.message);
+    if (DEBUG_API) {
+      console.error(`Failed to fetch ${endpoint}:`, error.message);
+      console.error('Full error:', error);
+    }
     // throw error;
   }
 };

@@ -489,19 +489,46 @@ function Home() {
   }, [activeCategory]);
 
   useEffect(() => {
+    // iOS Safari specific fixes
     const preventHorizontalSwipe = (e) => {
-      if (
-        Math.abs(e.touches[0].clientX - e.touches[0].screenX) >
-        Math.abs(e.touches[0].clientY - e.touches[0].screenY)
-      ) {
-        e.preventDefault();
+      // Only prevent horizontal swipes on the main container
+      const target = e.target;
+      const isSlider = target.closest('.slick-slider') || target.closest('.slick-track');
+      
+      if (!isSlider) {
+        const touch = e.touches[0];
+        const startX = touch.clientX;
+        const startY = touch.clientY;
+        
+        // Allow vertical scrolling, prevent horizontal
+        if (Math.abs(e.movementX) > Math.abs(e.movementY)) {
+          e.preventDefault();
+        }
       }
     };
-    document.addEventListener("touchmove", preventHorizontalSwipe, {
-      passive: false,
-    });
-    return () =>
-      document.removeEventListener("touchmove", preventHorizontalSwipe);
+
+    // Add passive: false only for iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const options = isIOS ? { passive: false } : { passive: true };
+    
+    document.addEventListener("touchmove", preventHorizontalSwipe, options);
+    
+    // Force repaint on iOS to fix rendering issues
+    if (isIOS) {
+      const forceRepaint = () => {
+        document.body.style.display = 'none';
+        // Trigger reflow by accessing offsetHeight
+        const _ = document.body.offsetHeight;
+        document.body.style.display = '';
+      };
+      
+      // Force repaint after component mounts
+      setTimeout(forceRepaint, 100);
+    }
+    
+    return () => {
+      document.removeEventListener("touchmove", preventHorizontalSwipe, options);
+    };
   }, []);
 
   const [checked, setChecked] = useState(false);

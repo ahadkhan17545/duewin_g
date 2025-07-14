@@ -2,21 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   background-color: #9195A3;
   overflow-x: hidden;
   display: flex;
   justify-content: center;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
 }
 
 #root {
   width: 100%;
   max-width: 400px; /* Cap at 400px on laptops */
   min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
   margin: 0 auto;
   position: relative; /* Make this a positioning context */
 }
@@ -31,6 +42,23 @@ body {
   /* This will ensure header takes full width */
   header {
     max-width: 100% !important;
+  }
+}
+
+/* iOS Safari specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent horizontal scrolling on iOS */
+  html, body {
+    overflow-x: hidden;
+    position: relative;
   }
 }
 

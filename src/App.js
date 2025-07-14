@@ -95,7 +95,20 @@ function ScrollToTop() {
     const navigationType = useNavigationType();
 
     React.useEffect(() => {
-        window.scrollTo({ top: 0, behavior: "instant" });
+        // iOS Safari specific scroll fix
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        if (isIOS) {
+            // Force scroll to top with a slight delay for iOS
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: "instant" });
+                // Additional fix for iOS Safari
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }, 50);
+        } else {
+            window.scrollTo({ top: 0, behavior: "instant" });
+        }
     }, [pathname, navigationType]);
 
     return null;
