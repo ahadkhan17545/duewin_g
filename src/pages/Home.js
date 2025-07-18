@@ -1358,7 +1358,7 @@ function Home() {
                     <p className="text-[#ff4c4c] pt-2">
                       Gambling can be addictive, please play rationally.
                     </p>
-                    <p className="text-[#ff4c4c]" style={{paddingBottom:'25px'}}>
+                    <p className="text-[#ff4c4c]" style={{paddingBottom:'30px'}}>
                       Strike only accepts customers above the age of{" "}
                       <span className="font-bold">18</span>.
                     </p>
