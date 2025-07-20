@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { io } from "socket.io-client";
+import { showError } from "../utils/toastUtils";
 
 const SOCKET_URL = "wss://api.strikecolor1.com";
 
@@ -173,6 +174,11 @@ const useSocket = (gameType = "wingo", duration = 60) => {
 
           return { ...prev, ...updates };
         });
+      });
+            // Handle bet error events
+      socket.on("betError", (data) => {
+        const errorMessage = data.error || data.message || "Failed to place bet. Please try again.";
+        showError(errorMessage);
       });
     },
     [gameType, duration]

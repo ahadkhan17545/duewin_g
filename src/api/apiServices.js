@@ -1,3 +1,5 @@
+import { showError } from "../utils/toastUtils";
+
 const BASE_URL = "https://api.strikecolor1.com/api";
 
 // Debug API calls
@@ -126,6 +128,7 @@ const apiRequest = async (
       console.error(`Failed to fetch ${endpoint}:`, error.message);
       console.error('Full error:', error);
     }
+    showError(error.message || 'Something went wrong while calling API');
     // throw error;
   }
 };
@@ -154,7 +157,7 @@ export const getVipHistory = async () => {
 export const getWithdrawalHistory = async (page = 1, limit = 10) => {
   return await apiRequest("/wallet/withdrawal-history", "GET", null, {
     page,
-    limit,
+    limit
   });
 };
 
@@ -651,6 +654,20 @@ export const getGameHistory = async (gameType,duration,page,limit) => {
   return await apiRequest(`/games/${gameType}/${duration}/history?page=${page}&limit=${limit}`, "GET");
 };
 
+export const getAllPayments = async () => {
+  return await apiRequest(`/payments/available-gateways`, "GET");
+};
+
+export const sendOtp = async (phone, purpose = 'bank_account') => {
+  const payload = { phone, purpose };
+  return await apiRequest(`/otp/send`, "POST", payload);
+};
+
+export const verifyOtp = async (payload) => {
+  return await apiRequest(`/otp/verify`, "POST", payload);
+};
+
+
 export default {
   getWalletBalance,
   getVipInfo,
@@ -716,5 +733,8 @@ export default {
   getCommissionWithDateData,
   getUserBetsPerGame,
   getLastResult,
-  getGameHistory
+  getGameHistory,
+  getAllPayments,
+  verifyOtp,
+  sendOtp
 };

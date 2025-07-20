@@ -17,6 +17,8 @@ import iconquickpay from "../../Assets/finalicons/iconquickpay.png";
 import refresh from "../../Assets/finalicons/refresh.png";
 import apiServices from "../../api/apiServices";
 import CommanHeader from "../../components/CommanHeader";
+
+// Legacy payment channels (keeping for backup, but not used)
 const paymentChannel = [
   { name: "Ok Pay", balance: "500 - 50K", key: "OKPAY", isHighlight: true },
   { name: "GH Pay", balance: "500 - 50K", key: "GHPAY", isHighlight: false },
@@ -29,8 +31,9 @@ const paymentChannel = [
 const Deposit = () => {
   const [inputAmount, setInputAmount] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("");
-  const [paymentChannelList, setPaymentChannelList] = useState(paymentChannel);
-  const [selectedChannel, setSelectedChannel] = useState(paymentChannel[0]);
+  const [paymentChannelList, setPaymentChannelList] = useState([]);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [usdtChannel, setUsdtChannel] = useState([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAmountSelected, setIsAmountSelected] = useState(false);
@@ -42,6 +45,7 @@ const Deposit = () => {
   const [withdrawHistory, setWithDrawHistory] = useState([]);
   const [walletBalance, setWalletBalance] = useState(0);
   const [page, setPage] = useState(1);
+
   const fetchWithdrawals = async () => {
     try {
       const data = await apiServices.getDepositHistory(page, 10);
@@ -51,6 +55,7 @@ const Deposit = () => {
       console.log(err);
     }
   };
+
   const fetchWalletBalance = async () => {
     try {
       const response = await apiServices?.getWalletBalance();
@@ -67,9 +72,49 @@ const Deposit = () => {
       setWalletBalance(0);
     }
   };
+
+  const fetchAvailableGateways = async () => {
+    try {
+      const response = await apiServices?.getAllPayments();
+      
+      if (response?.data?.gateways) {
+        // Filter UPI gateways (not USDT)
+        const upiGateways = response.data.gateways
+          .filter((item) => item?.name !== 'USDT WG Pay')
+          .map((gateway, index) => ({
+            ...gateway,
+            isHighlight: index === 0, // First gateway highlighted by default
+            balance: `${gateway.min_amount} - ${gateway.max_amount}`, // Format balance range
+            key: gateway.code || gateway.name // Use code if available, otherwise name
+          }));
+        
+        // Filter USDT gateways
+        const usdtGateways = response.data.gateways
+          .filter((item) => item?.name === 'USDT WG Pay')
+          .map((gateway) => ({
+            ...gateway,
+            balance: `${gateway.min_amount} - ${gateway.max_amount}`, // Format balance range
+            key: gateway.code || gateway.name,
+            bonus: gateway.bonus || "" // Add bonus if available
+          }));
+
+        setPaymentChannelList(upiGateways);
+        setUsdtChannel(usdtGateways);
+
+        // Auto-select first UPI gateway if available
+        if (upiGateways.length > 0) {
+          setSelectedChannel(upiGateways[0]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch gateways:", error);
+    }
+  };
+
   useEffect(() => {
     fetchWithdrawals();
     fetchWalletBalance();
+    fetchAvailableGateways();
   }, []);
 
   const handleInputChange = (e) => {
@@ -87,23 +132,45 @@ const Deposit = () => {
     }
 
     setInputAmount(numericAmount.toString());
+    setIsAmountSelected(true);
   };
 
   const handleChannelSelect = (selected) => {
+    // Update paymentChannelList highlighting
     const updatedChannels = paymentChannelList.map((channel) => ({
       ...channel,
-      isHighlight: channel.key === selected.key, // only selected gets true
+      isHighlight: channel.id === selected.id, // Use id for comparison
     }));
     setPaymentChannelList(updatedChannels);
     setSelectedChannel(selected);
   };
 
+  const handleUsdtChannelSelect = (selected) => {
+    setSelectedChannel(selected);
+  };
+
   const handlePaymentWaySelect = (payment) => {
     setSelectedPayment(payment.key);
+    // Reset channel selection when payment method changes
+    setSelectedChannel(null);
+    
+    // Auto-select first available channel for the selected payment method
+    if (payment.key === "UPI" && paymentChannelList.length > 0) {
+      const firstChannel = { ...paymentChannelList[0], isHighlight: true };
+      const updatedChannels = paymentChannelList.map((channel, index) => ({
+        ...channel,
+        isHighlight: index === 0,
+      }));
+      setPaymentChannelList(updatedChannels);
+      setSelectedChannel(firstChannel);
+    } else if (payment.key === "USDT" && usdtChannel.length > 0) {
+      setSelectedChannel(usdtChannel[0]);
+    }
   };
 
   const clearInput = () => {
     setInputAmount("");
+    setIsAmountSelected(false);
   };
 
   const handleCopyOrderNumber = (orderNumber) => {
@@ -127,11 +194,25 @@ const Deposit = () => {
       alert("Please select a payment channel");
       return;
     }
+
+    // Check if amount is within gateway limits
+    if (selectedChannel.min_amount && Number(inputAmount) < selectedChannel.min_amount) {
+      alert(`Minimum amount is ₹${selectedChannel.min_amount}`);
+      return;
+    }
+
+    if (selectedChannel.max_amount && Number(inputAmount) > selectedChannel.max_amount) {
+      alert(`Maximum amount is ₹${selectedChannel.max_amount}`);
+      return;
+    }
+
     const payload = {
       amount: Number(inputAmount),
-      gateway: selectedChannel.key,
+      gateway: selectedChannel.key || selectedChannel.code || selectedChannel.name,
     };
-    if (selectedChannel.key == "OKPAY") {
+
+    // Add pay_type for specific gateways if needed
+    if (selectedChannel.key === "OKPAY" || selectedChannel.name === "OKPAY") {
       payload.pay_type = selectedPayment;
     }
 
@@ -141,7 +222,43 @@ const Deposit = () => {
       if (res?.success) {
         window.location.href = res?.paymentUrl;
         setInputAmount("");
-        setSelectedChannel("");
+        setSelectedChannel(null);
+        setIsAmountSelected(false);
+      } else {
+        alert(res?.message || "Deposit failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Deposit error:", error);
+      alert("An error occurred while processing the deposit.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitUsdtPayment = async () => {
+    if (!selectedChannel) {
+      alert("Please select a USDT channel");
+      return;
+    }
+
+    if (!inputAmount || isNaN(inputAmount) || Number(inputAmount) < 10) {
+      alert("Please enter a valid USDT amount (minimum 10 USDT)");
+      return;
+    }
+
+    const payload = {
+      amount: Number(inputAmount),
+      gateway: selectedChannel.key || selectedChannel.code || selectedChannel.name,
+    };
+
+    try {
+      setIsSubmitting(true);
+      const res = await apiServices.depositPayment(payload);
+      if (res?.success) {
+        window.location.href = res?.paymentUrl;
+        setInputAmount("");
+        setSelectedChannel(null);
+        setIsAmountSelected(false);
       } else {
         alert(res?.message || "Deposit failed. Please try again.");
       }
@@ -183,7 +300,7 @@ const Deposit = () => {
               onClick={fetchWalletBalance}
               src={refresh}
               alt="icon"
-              className="h-5 w-7"
+              className="h-5 w-7 cursor-pointer"
             />
           </div>
         </div>
@@ -220,10 +337,11 @@ const Deposit = () => {
             </div>
           ))}
         </div>
-        {/* Deposit Amount (for non-USDT selections) */}
-        {selectedPayment == "UPI" && (
+
+        {/* UPI Payment Flow */}
+        {selectedPayment === "UPI" && (
           <>
-            {/* Payment Channels (for non-USDT selections) */}
+            {/* Payment Channels */}
             <div className="bg-[#333332] p-3 rounded-xl mt-4">
               <div className="flex items-center gap-2 mb-3">
                 <img src={iconquickpay} alt="icon" className="h-8 w-8" />
@@ -232,7 +350,7 @@ const Deposit = () => {
               <div className="grid grid-cols-2 gap-3">
                 {paymentChannelList?.map((item, index) => (
                   <div
-                    key={index}
+                    key={item.id || index}
                     className={`p-3 rounded-xl cursor-pointer transition relative ${
                       item.isHighlight
                         ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
@@ -244,15 +362,14 @@ const Deposit = () => {
                       {item.name}
                     </div>
                     <div className="text-neutral-400 text-sm">
-                      Balance: {item.balance}
+                      Balance: ₹{item.balance}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Recharge Instructions */}
-
+            {/* Deposit Amount */}
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
               <div className="flex items-center gap-2 mb-6">
                 <span className="material-symbols-outlined text-[#d9ac4f]">
@@ -282,21 +399,23 @@ const Deposit = () => {
                     value={inputAmount}
                     onChange={handleInputChange}
                     className="bg-transparent w-full outline-none placeholder-neutral-400"
-                    min="100"
+                    min={selectedChannel?.min_amount || 100}
+                    max={selectedChannel?.max_amount}
                   />
                 </div>
               </div>
 
               <button
                 className={`w-full transition-colors rounded-full py-3 mb-2 ${
-                  selectedPayment && selectedChannel && inputAmount >= 110
+                  selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
                     ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
                     : "bg-[#6f7381] text-white"
                 }`}
                 disabled={
                   !selectedPayment ||
                   !selectedChannel ||
-                  Number(inputAmount) < 110 ||
+                  !inputAmount ||
+                  Number(inputAmount) < (selectedChannel?.min_amount || 100) ||
                   isSubmitting
                 }
                 onClick={submitPayment}
@@ -304,6 +423,8 @@ const Deposit = () => {
                 {isSubmitting ? "Processing..." : "Deposit"}
               </button>
             </div>
+
+            {/* Recharge Instructions */}
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-amber-500 mb-2">
@@ -334,8 +455,8 @@ const Deposit = () => {
           </>
         )}
 
-        {/* Conditional Rendering Based on Payment Selection */}
-        {selectedPayment === "USDT" ? (
+        {/* USDT Payment Flow */}
+        {selectedPayment === "USDT" && (
           <>
             {/* Select Channel Section */}
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
@@ -344,24 +465,12 @@ const Deposit = () => {
                 <span className="font-semibold text-white">Select channel</span>
               </div>
               <div className="space-y-2">
-                {[
-                  {
-                    name: "Upay-USDT",
-                    balance: "Balance: 10 - 100K",
-                    bonus: "2% bonus",
-                    highlight: true,
-                  },
-                  {
-                    name: "Tron-USDT",
-                    balance: "Balance: 10 - 100K",
-                    bonus: "2% bonus",
-                  },
-                ].map((item, index) => (
+                {usdtChannel?.map((item, index) => (
                   <div
-                    key={index}
-                    onClick={() => handleChannelSelect(item.name)}
+                    key={item.id || index}
+                    onClick={() => handleUsdtChannelSelect(item)}
                     className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${
-                      selectedChannel === item.name
+                      selectedChannel?.id === item.id
                         ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
                         : "bg-[#4d4d4c] hover:bg-neutral-700"
                     }`}
@@ -369,10 +478,10 @@ const Deposit = () => {
                     <div className="flex items-center">
                       <img src={tpay} alt="icon" className="h-10 w-10 mr-4" />
                       <div>
-                        <div className="font-semibold  text-[14px]">
+                        <div className="font-semibold text-[14px]">
                           {item.name}
                         </div>
-                        <div className="text-[14px]">{item.balance}</div>
+                        <div className="text-[14px]">₹{item.balance}</div>
                       </div>
                     </div>
                     <div className="text-amber-500 text-sm">{item.bonus}</div>
@@ -405,30 +514,12 @@ const Deposit = () => {
                 <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
                   <img src={tpay} alt="icon" className="h-6 w-6 mr-2" />
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Please enter USDT amount"
                     value={inputAmount}
                     onChange={handleInputChange}
                     className="bg-transparent w-full outline-none placeholder-neutral-400 text-white"
-                  />
-                  <button
-                    onClick={clearInput}
-                    className="text-neutral-400 hover:text-neutral-300"
-                  >
-                    <img src={cross} alt="cross" className="h-7 w-8" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="relative mb-6">
-                <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
-                  <span className="text-[#d9ac4f] mr-2">₹</span>
-                  <input
-                    type="text"
-                    placeholder="Please enter the amount"
-                    value={inputAmount}
-                    onChange={handleInputChange}
-                    className="bg-transparent w-full outline-none placeholder-neutral-400 text-white"
+                    min="10"
                   />
                   <button
                     onClick={clearInput}
@@ -441,12 +532,19 @@ const Deposit = () => {
 
               <button
                 className={`w-full transition-colors rounded-full py-3 ${
-                  isAmountSelected
+                  selectedChannel && inputAmount && Number(inputAmount) >= 10
                     ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
                     : "bg-[#6f7381] text-white"
                 }`}
+                disabled={
+                  !selectedChannel ||
+                  !inputAmount ||
+                  Number(inputAmount) < 10 ||
+                  isSubmitting
+                }
+                onClick={submitUsdtPayment}
               >
-                Deposit
+                {isSubmitting ? "Processing..." : "Deposit"}
               </button>
             </div>
 
@@ -479,21 +577,10 @@ const Deposit = () => {
                 </div>
               </div>
             </div>
-
-            {/* Deposit History */}
-            <div className="bg-[#242424] rounded-xl font-sans mt-6">
-              <div className="flex items-center gap-3 mb-4">
-                <img src={deposit} alt="icon" className="h-6 w-6" />
-                <h2 className="text-neutral-200 text-lg font-medium">
-                  Deposit history
-                </h2>
-              </div>
-            </div>
           </>
-        ) : (
-          <></>
         )}
 
+        {/* Deposit History */}
         <div className="bg-[#242424] rounded-xl font-sans mt-6">
           <div className="flex items-center gap-3 mb-4">
             <img src={deposit} alt="icon" className="h-6 w-6" />
@@ -502,11 +589,11 @@ const Deposit = () => {
             </h2>
           </div>
         </div>
+
         {withdrawHistory?.length > 0 &&
           withdrawHistory?.map((item, index) => {
             return (
               <div key={index} className="space-y-4 pb-2">
-                {/* First Deposit Entry - Completed */}
                 <div className="bg-[#333332] p-2 rounded-lg">
                   <div className="flex justify-between items-center mb-3 border-b py-2 border-[#666462]">
                     <button className="bg-emerald-600 hover:bg-emerald-700 transition px-4 py-1.5 rounded-md text-white text-sm">
@@ -542,7 +629,7 @@ const Deposit = () => {
                         <span className="text-[#a8a5a1]">{item?.order_id}</span>
                         <button
                           onClick={() =>
-                            handleCopyOrderNumber("RC20250216131819825449900")
+                            handleCopyOrderNumber(item?.order_id)
                           }
                           className="ml-2 text-neutral-400 hover:text-neutral-300"
                         >
@@ -555,13 +642,14 @@ const Deposit = () => {
               </div>
             );
           })}
+
         <div className="px-2 mt-6">
           <button className="w-full mb-4 bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206] transition py-2 rounded-full font-medium">
             All history
           </button>
         </div>
 
-        {/* Popup for Copy Success (Moved outside conditional rendering) */}
+        {/* Popup for Copy Success */}
         {showPopup.visible && (
           <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-black bg-opacity-80 text-white p-4 rounded-lg shadow-lg flex flex-col items-center w-32 h-32">

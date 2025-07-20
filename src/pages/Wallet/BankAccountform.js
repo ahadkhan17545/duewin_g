@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import bankicon from "../../Assets/Bankicons/bankicon.png";
 import nameicon from "../../Assets/Bankicons/nameicon.png";
 import bankcardicon from "../../Assets/Bankicons/bankcardicon.png";
 import phoneicon from "../../Assets/Bankicons/phoneicon.png";
 import mailicon from "../../Assets/Bankicons/mailicon.png";
 import hint from "../../Assets/loader/hint.png";
-import ifsc from "../../Assets/Bankicons/ifsccodeicon.png"
+import ifsc from "../../Assets/Bankicons/ifsccodeicon.png";
 import BankAccountHeader from "../../components/BankAccountHeader";
-import apiServices from "../../api/apiServices";
+import apiServices, { getUserProfile } from "../../api/apiServices";
 import { useNavigate } from "react-router-dom";
 
 const BankAccountForm = () => {
@@ -15,8 +15,28 @@ const BankAccountForm = () => {
   const [recipientName, setRecipientName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [ifscCode, setIfscCode] = useState("");
-  const [isPrimaryAccount, setIsPrimaryAccount] = useState(false)
-  const [error ,setError] = useState("")
+  const [isPrimaryAccount, setIsPrimaryAccount] = useState(false);
+  const [error, setError] = useState("");
+  const [sessionId,setSessionId] = useState('')
+
+  // OTP related states
+  const [showOtpPopup, setShowOtpPopup] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isOtpSending, setIsOtpSending] = useState(false);
+  const [isOtpVerifying, setIsOtpVerifying] = useState(false);
+  const [phone, setPhone] = useState(null); // Will get from localStorage
+  const [otpError, setOtpError] = useState("");
+  const [formData, setFormData] = useState(null); // Store form data for later submission
+
+  const fetchPrfole = async () => {
+    let storedPhone = await getUserProfile();
+    if (storedPhone) {
+      setPhone(storedPhone?.user?.phone_no);
+    }
+  };
+  useEffect(() => {
+    fetchPrfole();
+  }, []);
 
   const banks = [
     "Axis Bank Ltd.",
@@ -118,7 +138,9 @@ const BankAccountForm = () => {
     "Vidharbha Konkan Gramin Bank",
     "Uttarakhand Gramin Bank",
   ];
+
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -127,24 +149,105 @@ const BankAccountForm = () => {
       account_holder_name: String(recipientName),
       account_number: String(accountNumber),
       ifsc_code: String(ifscCode),
-      is_primary: isPrimaryAccount
+      is_primary: isPrimaryAccount,
     };
-    try {
-      const data = await apiServices.addBankAccount(payload)
-      if (data?.success == true) {
-        setBankName("");
-        setRecipientName("")
-        setAccountNumber("")
-        setIfscCode("")
-        setIsPrimaryAccount(false)
-        setError("")
-        navigate(-1)
-      }else{
-        setError("Please enter valid inputs.")
-      }
 
+    // Store form data for later use
+    setFormData(payload);
+
+    try {
+      setIsOtpSending(true);
+      setError("");
+
+      // Send OTP first
+      const otpResponse = await apiServices.sendOtp(phone, "bank_account");
+
+      if (otpResponse?.success) {
+        setShowOtpPopup(true);
+        setSessionId(otpResponse?.otpSessionId)
+      } else {
+        setError("Failed to send OTP. Please try again.");
+      }
     } catch (err) {
-      console.log(err)
+      console.log(err);
+      setError("Failed to send OTP. Please try again.");
+    } finally {
+      setIsOtpSending(false);
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    if (!otp || otp.length !== 4) {
+      setOtpError("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    try {
+      setIsOtpVerifying(true);
+      setOtpError("");
+
+      const verifyPayload = {
+        phone: phone,
+        code: otp,
+        otp_session_id:sessionId
+      };
+
+      const verifyResponse = await apiServices.verifyOtp(verifyPayload);
+
+      if (verifyResponse?.success) {
+        // OTP verified, now submit the bank account
+        const data = await apiServices.addBankAccount(formData);
+
+        if (data?.success === true) {
+          // Clear form and navigate
+          setBankName("");
+          setRecipientName("");
+          setAccountNumber("");
+          setIfscCode("");
+          setIsPrimaryAccount(false);
+          setError("");
+          setShowOtpPopup(false);
+          setOtp("");
+          navigate(-1);
+          setSessionId('')
+        } else {
+          setOtpError("Failed to add bank account. Please try again.");
+        }
+      } else {
+        setOtpError("Invalid OTP. Please try again.");
+      }
+    } catch (err) {
+      console.log(err);
+      setOtpError("Failed to verify OTP. Please try again.");
+    } finally {
+      setIsOtpVerifying(false);
+    }
+  };
+
+  const closeOtpPopup = () => {
+    setShowOtpPopup(false);
+    setOtp("");
+    setOtpError("");
+  };
+
+  const resendOtp = async () => {
+    try {
+      setIsOtpSending(true);
+      setOtpError("");
+
+      const otpResponse = await apiServices.sendOtp(phone, "bank_account");
+
+      if (otpResponse?.success) {
+        setOtpError(""); // Clear any previous errors
+        // You might want to show a success message here
+      } else {
+        setOtpError("Failed to resend OTP. Please try again.");
+      }
+    } catch (err) {
+      console.log(err);
+      setOtpError("Failed to resend OTP. Please try again.");
+    } finally {
+      setIsOtpSending(false);
     }
   };
 
@@ -153,15 +256,33 @@ const BankAccountForm = () => {
       <BankAccountHeader />
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
         <div className="min-h-screen flex flex-col bg-[#333332] pb-8">
-
           <div className="mt-16 mx-auto max-w-md w-full bg-[#242424] text-white p-6 rounded-lg overflow-y-auto">
             {/* Warning Banner */}
             <div className="flex items-center gap-3 p-4 mb-8 bg-[#333332] rounded-lg">
               <img src={hint} alt="hint" className="w-7 h-7" />
               <p className="text-sm text-red-500">
-                To ensure the safety of your funds, please bind your bank account
+                To ensure the safety of your funds, please bind your bank
+                account
               </p>
             </div>
+
+            {/* Phone Number Field - Add this if you don't have phone from context */}
+            {phone && (
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <img src={phoneicon} alt="Phone Icon" className="w-5 h-5" />
+                  <label className="text-sm font-medium">Phone Number</label>
+                </div>
+                <input
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  className="w-full p-4 bg-[#333332] rounded-lg text-gray-300"
+                  value={phone}
+                  disabled={true}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+            )}
 
             {/* Bank Selection */}
             <div className="mb-8">
@@ -173,16 +294,18 @@ const BankAccountForm = () => {
                 <select
                   className="w-full p-4 text-[#8f5206] font-medium rounded-lg text-left appearance-none truncate"
                   style={{
-                    background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
+                    background:
+                      "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                   }}
-                  onChange={(e) => { setBankName(e.target.value) }}
+                  onChange={(e) => {
+                    setBankName(e.target.value);
+                  }}
                   value={bankName}
                 >
-
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Please select a bank
                   </option>
                   {banks.map((bank, idx) => (
@@ -213,7 +336,9 @@ const BankAccountForm = () => {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
                 <img src={nameicon} alt="Name Icon" className="w-5 h-5" />
-                <label className="text-sm font-medium">Full recipient's name</label>
+                <label className="text-sm font-medium">
+                  Full recipient's name
+                </label>
               </div>
               <input
                 type="text"
@@ -227,8 +352,14 @@ const BankAccountForm = () => {
             {/* Bank Account Number */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
-                <img src={bankcardicon} alt="Bank Card Icon" className="w-5 h-5" />
-                <label className="text-sm font-medium">Bank account number</label>
+                <img
+                  src={bankcardicon}
+                  alt="Bank Card Icon"
+                  className="w-5 h-5"
+                />
+                <label className="text-sm font-medium">
+                  Bank account number
+                </label>
               </div>
               <input
                 type="text"
@@ -269,16 +400,74 @@ const BankAccountForm = () => {
 
             {/* Save Button */}
             <button
-              className="w-full p-2 text-xl bg-[#6f7381] text-white font-bold rounded-full mt-8 transition-colors"
+              className="w-full p-2 text-xl bg-[#6f7381] text-white font-bold rounded-full mt-8 transition-colors disabled:opacity-50"
               type="submit"
-              disabled={!ifscCode || !recipientName || !bankName || !accountNumber}
+              disabled={
+                !ifscCode ||
+                !recipientName ||
+                !bankName ||
+                !accountNumber ||
+                isOtpSending
+              }
             >
-              S a v e
+              {isOtpSending ? "Sending OTP..." : "S a v e"}
             </button>
-            <p className="text-red-500">{error}</p>
+            <p className="text-red-500 mt-2">{error}</p>
           </div>
         </div>
       </form>
+
+      {/* OTP Verification Popup */}
+      {showOtpPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#242424] p-6 rounded-lg max-w-sm w-full mx-4">
+            <h3 className="text-white text-lg font-medium mb-4">Verify OTP</h3>
+            <p className="text-gray-300 text-sm mb-4">
+              Please enter the 4-digit OTP sent to {phone}
+            </p>
+
+            <input
+              type="text"
+              placeholder="Enter 4-digit OTP"
+              className="w-full p-3 bg-[#333332] rounded-lg text-gray-300 mb-4"
+              value={otp}
+              onChange={(e) =>
+                setOtp(e.target.value.replace(/\D/g, "").slice(0, 635))
+              }
+              maxLength={6}
+            />
+
+            {otpError && (
+              <p className="text-red-500 text-sm mb-4">{otpError}</p>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleOtpVerification}
+                disabled={isOtpVerifying || otp.length !== 4}
+                className="flex-1 p-3 bg-[#6f7381] text-white rounded-lg disabled:opacity-50"
+              >
+                {isOtpVerifying ? "Verifying..." : "Verify"}
+              </button>
+
+              <button
+                onClick={closeOtpPopup}
+                className="flex-1 p-3 bg-gray-600 text-white rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <button
+              onClick={resendOtp}
+              disabled={isOtpSending}
+              className="w-full mt-3 p-2 text-sm text-yellow-500 underline disabled:opacity-50"
+            >
+              {isOtpSending ? "Sending..." : "Resend OTP"}
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

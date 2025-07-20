@@ -1,5 +1,12 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigationType } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 import { isAuthenticated } from "./api/auth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -89,159 +96,264 @@ import SubordinateLevelPage from "./pages/Promotion/SubordinateLevelPage";
 import GlobalLoader from "./components/GlobalLoader";
 import AboutDetails from "./pages/Profile/AboutDetails";
 import RiskDetails from "./pages/Profile/RiskDetails";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ScrollToTop() {
-    const { pathname } = useLocation();
-    const navigationType = useNavigationType();
+  const { pathname } = useLocation();
+  const navigationType = useNavigationType();
 
-    React.useEffect(() => {
-        // iOS Safari specific scroll fix
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        
-        if (isIOS) {
-            // Force scroll to top with a slight delay for iOS
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: "instant" });
-                // Additional fix for iOS Safari
-                document.body.scrollTop = 0;
-                document.documentElement.scrollTop = 0;
-            }, 50);
-        } else {
-            window.scrollTo({ top: 0, behavior: "instant" });
-        }
-    }, [pathname, navigationType]);
+  React.useEffect(() => {
+    // iOS Safari specific scroll fix
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-    return null;
+    if (isIOS) {
+      // Force scroll to top with a slight delay for iOS
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "instant" });
+        // Additional fix for iOS Safari
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }, 50);
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [pathname, navigationType]);
+
+  return null;
 }
 
 // Enhanced Protected Route Component
 const ProtectedRoute = ({ children }) => {
-    const authStatus = isAuthenticated();
+  const authStatus = isAuthenticated();
 
-    if (!authStatus) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!authStatus) {
+    return <Navigate to="/login" replace />;
+  }
 
-    return children;
+  return children;
 };
 
 // Layout component for protected routes
 const ProtectedLayout = () => {
-    return (
-        <ProtectedRoute>
-            <Outlet />
-        </ProtectedRoute>
-    );
+  return (
+    <ProtectedRoute>
+      <Outlet />
+    </ProtectedRoute>
+  );
 };
 
 function App() {
-    return (
-        <Provider store={store}>
-            <BrowserRouter>
-                <ScrollToTop />
-                <GlobalLoader/>
-                <div className="flex flex-col min-h-screen">
-                    <main className="flex-grow">
-                        <Suspense fallback={<LoadingFallback />}>
-                            <AudioProvider>
-                                <Routes>
-                                    {/* Public Routes */}
-                                    <Route path="/login" element={<LoginPage />} />
-                                    <Route path="/signup" element={<SignupPage />} />
-                                    <Route path="/forgotpassword" element={<ForgotPassword />} />
-                                    <Route path="/customerservice" element={<CustomerService />} />
-                                    <Route path="/privacyagreement" element={<PrivacyAgreement />} />
-                                    <Route path="/bdgwin" element={<BDGWin />} />
+  return (
+    <Provider store={store}>
+      <BrowserRouter>
+        <ScrollToTop />
+        <GlobalLoader />
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            <Suspense fallback={<LoadingFallback />}>
+              <AudioProvider>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/forgotpassword" element={<ForgotPassword />} />
+                  <Route
+                    path="/customerservice"
+                    element={<CustomerService />}
+                  />
+                  <Route
+                    path="/privacyagreement"
+                    element={<PrivacyAgreement />}
+                  />
+                  <Route path="/bdgwin" element={<BDGWin />} />
 
-                                    {/* Protected Routes */}
-                                    <Route element={<ProtectedLayout />}>
-                                        <Route path="/" element={<Home />} />
-                                        <Route path="/profilepage" element={<ProfilePage />} />
-                                        <Route path="/wallet" element={<Wallet />} />
-                                        <Route path="/activitypage" element={<ActivityPage />} />
-                                        <Route path="/promotionpage" element={<PromotionPage />} />
-                                        <Route path="/subordinate" element={<Subordinate />} />
-                                        <Route path="/commissiondetailpage" element={<CommissionDetailsPage />} />
-                                        <Route path="/promotionrule" element={<PromotionRule />} />
-                                        <Route path="/agentcustomer" element={<AgentCustomer />} />
-                                        <Route path="/rebateratio" element={<RebateRatio />} />
-                                        <Route path="/newsubordinate" element={<NewSubordinate />} />
-                                        <Route path="/invitepage" element={<InvitePage />} />
-                                        <Route path="/invitebonus" element={<ActivityAward />} />
-                                        <Route path="/rebate" element={<Rebate />} />
-                                        <Route path="/jackpot" element={<Jackpot />} />
-                                        <Route path="/gift" element={<Gift />} />
-                                        <Route path="/attendancebonus" element={<Attandancebonus />} />
-                                        <Route path="/game-rules" element={<AttendanceBonusCombined />} />
-                                        <Route path="/activityawards" element={<ActivityAwardss />} />
-                                        <Route path="/invitationrule" element={<InviteBonusTable />} />
-                                        <Route path="/invitaionrecord" element={<MemberInfoCard />} />
-                                        <Route path="/activitygamesrules" element={<ActivityDetails />} />
-                                        <Route path="/chat-support" element={<OnlineChatSupport />} />
-                                        <Route path="/lotterywingo" element={<LotteryWingo />} />
-                                        <Route path="/depositwingo" element={<DepositWingo />} />
-                                        <Route path="/withdrawwingo" element={<WithdrawWingo />} />
-                                        <Route path="/lotteryk3" element={<LotteryK3 />} />
-                                        <Route path="/depositk3" element={<DepositK3 />} />
-                                        <Route path="/withdrawk3" element={<WithdrawK3 />} />
-                                        <Route path="/lottery5d" element={<Lottery5d />} />
-                                         <Route path="/lotterytrxwing" element={<LotteryTrxWingo />} />
-                                        <Route path="/deposit5d" element={<Deposit5d />} />
-                                        <Route path="/withdraw5d" element={<Withdraw5d />} />
-                                       
-                                        <Route path="/deposittrx" element={<DepositTrx />} />
-                                        <Route path="/withdrawtrx" element={<WithdrawTrx />} />
-                                        <Route path="/orderdetail" element={<OrderDetailsComponent />} />
-                                        <Route path="/deposit" element={<Deposit />} />
-                                        <Route path="/withdraw" element={<Withdraw />} />
-                                        <Route path="/deposit-history" element={<DepositHistory />} />
-                                        <Route path="/withdraw-history" element={<WithdrawHistory />} />
-                                        <Route path="/bankaccountform" element={<BankAccountForm />} />
-                                        <Route path="/addusdt" element={<WalletForm />} />
-                                        <Route path="/passwordchangeform" element={<PasswordChangeForm />} />
-                                        <Route path="/resetemail" element={<LoginVerificationForm />} />
-                                        <Route path="/aboutusprofile" element={<AboutusProfile />} />
-                                        <Route path="/aboutDetail" element={<AboutDetails />} />
-                                        <Route path="/riskDetails" element={<RiskDetails />} />
-                                        <Route path="/arwallet" element={<ARWallet />} />
-                                        <Route path="/beginnerguide" element={<BeginnerGuide />} />
-                                        <Route path="/customerserviceprofile" element={<CustomerServiceProfile />} />
-                                        <Route path="/deposithistoryprofile" element={<DepositHistoryProfile />} />
-                                        <Route path="/depositprofile" element={<DepositProfile />} />
-                                        <Route path="/feedbackprofile" element={<FeedbackProfile />} />
-                                        <Route path="/gamehistoryprofile" element={<GameHistoryProfile />} />
-                                        <Route path="/gamestatistics" element={<GameStatistics />} />
-                                        <Route path="/giftsprofile" element={<GiftsProfile />} />
-                                        <Route path="/notificationprofile" element={<NotificationProfile />} />
-                                        <Route path="/notificationsservice" element={<Notifications />} />
-                                        <Route path="/safeprofile" element={<SafeProfile />} />
-                                        <Route path="/settingsprofile" element={<UserProfile />} />
-                                        <Route path="/transactionprofile" element={<TransactionProfile />} />
-                                        <Route path="/vipprofile" element={<VIPProfile />} />
-                                        <Route path="/withdrawhistoryprofile" element={<WithdrawHistoryProfile />} />
-                                        <Route path="/safe" element={<FinancialCard />} />
-                                        <Route path="/about-safe" element={<RulesComponent />} />
-                                        <Route path="/viphistory" element={<VIPHistory />} />
-                                        <Route path="/SlotGame" element={<SlotGame />} />
-                                        <Route path="/original-games" element={<OriginalGames />} />
-                                        <Route path="/SportsGame" element={<SportsGame />} />
-                                        <Route path="/casino-games" element={<CasinoGames />} />
-                                        <Route path="/collect-reward" element={<CollectReward />} />
-                                         <Route path="/attendance-history" element={<AttendanceHistory />} />
-                                         <Route path="/subordinate/level/:id" element={<SubordinateLevelPage />} />
-                                    </Route>
+                  {/* Protected Routes */}
+                  <Route element={<ProtectedLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/profilepage" element={<ProfilePage />} />
+                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/activitypage" element={<ActivityPage />} />
+                    <Route path="/promotionpage" element={<PromotionPage />} />
+                    <Route path="/subordinate" element={<Subordinate />} />
+                    <Route
+                      path="/commissiondetailpage"
+                      element={<CommissionDetailsPage />}
+                    />
+                    <Route path="/promotionrule" element={<PromotionRule />} />
+                    <Route path="/agentcustomer" element={<AgentCustomer />} />
+                    <Route path="/rebateratio" element={<RebateRatio />} />
+                    <Route
+                      path="/newsubordinate"
+                      element={<NewSubordinate />}
+                    />
+                    <Route path="/invitepage" element={<InvitePage />} />
+                    <Route path="/invitebonus" element={<ActivityAward />} />
+                    <Route path="/rebate" element={<Rebate />} />
+                    <Route path="/jackpot" element={<Jackpot />} />
+                    <Route path="/gift" element={<Gift />} />
+                    <Route
+                      path="/attendancebonus"
+                      element={<Attandancebonus />}
+                    />
+                    <Route
+                      path="/game-rules"
+                      element={<AttendanceBonusCombined />}
+                    />
+                    <Route
+                      path="/activityawards"
+                      element={<ActivityAwardss />}
+                    />
+                    <Route
+                      path="/invitationrule"
+                      element={<InviteBonusTable />}
+                    />
+                    <Route
+                      path="/invitaionrecord"
+                      element={<MemberInfoCard />}
+                    />
+                    <Route
+                      path="/activitygamesrules"
+                      element={<ActivityDetails />}
+                    />
+                    <Route
+                      path="/chat-support"
+                      element={<OnlineChatSupport />}
+                    />
+                    <Route path="/lotterywingo" element={<LotteryWingo />} />
+                    <Route path="/depositwingo" element={<DepositWingo />} />
+                    <Route path="/withdrawwingo" element={<WithdrawWingo />} />
+                    <Route path="/lotteryk3" element={<LotteryK3 />} />
+                    <Route path="/depositk3" element={<DepositK3 />} />
+                    <Route path="/withdrawk3" element={<WithdrawK3 />} />
+                    <Route path="/lottery5d" element={<Lottery5d />} />
+                    <Route
+                      path="/lotterytrxwing"
+                      element={<LotteryTrxWingo />}
+                    />
+                    <Route path="/deposit5d" element={<Deposit5d />} />
+                    <Route path="/withdraw5d" element={<Withdraw5d />} />
 
-                                    {/* Default Redirect */}
-                                    <Route path="*" element={<Navigate to="/login" replace />} />
-                                    
-                                </Routes>
-                            </AudioProvider>
-                        </Suspense>
-                    </main>
-                </div>
-            </BrowserRouter>
-        </Provider>
-    );
+                    <Route path="/deposittrx" element={<DepositTrx />} />
+                    <Route path="/withdrawtrx" element={<WithdrawTrx />} />
+                    <Route
+                      path="/orderdetail"
+                      element={<OrderDetailsComponent />}
+                    />
+                    <Route path="/deposit" element={<Deposit />} />
+                    <Route path="/withdraw" element={<Withdraw />} />
+                    <Route
+                      path="/deposit-history"
+                      element={<DepositHistory />}
+                    />
+                    <Route
+                      path="/withdraw-history"
+                      element={<WithdrawHistory />}
+                    />
+                    <Route
+                      path="/bankaccountform"
+                      element={<BankAccountForm />}
+                    />
+                    <Route path="/addusdt" element={<WalletForm />} />
+                    <Route
+                      path="/passwordchangeform"
+                      element={<PasswordChangeForm />}
+                    />
+                    <Route
+                      path="/resetemail"
+                      element={<LoginVerificationForm />}
+                    />
+                    <Route
+                      path="/aboutusprofile"
+                      element={<AboutusProfile />}
+                    />
+                    <Route path="/aboutDetail" element={<AboutDetails />} />
+                    <Route path="/riskDetails" element={<RiskDetails />} />
+                    <Route path="/arwallet" element={<ARWallet />} />
+                    <Route path="/beginnerguide" element={<BeginnerGuide />} />
+                    <Route
+                      path="/customerserviceprofile"
+                      element={<CustomerServiceProfile />}
+                    />
+                    <Route
+                      path="/deposithistoryprofile"
+                      element={<DepositHistoryProfile />}
+                    />
+                    <Route
+                      path="/depositprofile"
+                      element={<DepositProfile />}
+                    />
+                    <Route
+                      path="/feedbackprofile"
+                      element={<FeedbackProfile />}
+                    />
+                    <Route
+                      path="/gamehistoryprofile"
+                      element={<GameHistoryProfile />}
+                    />
+                    <Route
+                      path="/gamestatistics"
+                      element={<GameStatistics />}
+                    />
+                    <Route path="/giftsprofile" element={<GiftsProfile />} />
+                    <Route
+                      path="/notificationprofile"
+                      element={<NotificationProfile />}
+                    />
+                    <Route
+                      path="/notificationsservice"
+                      element={<Notifications />}
+                    />
+                    <Route path="/safeprofile" element={<SafeProfile />} />
+                    <Route path="/settingsprofile" element={<UserProfile />} />
+                    <Route
+                      path="/transactionprofile"
+                      element={<TransactionProfile />}
+                    />
+                    <Route path="/vipprofile" element={<VIPProfile />} />
+                    <Route
+                      path="/withdrawhistoryprofile"
+                      element={<WithdrawHistoryProfile />}
+                    />
+                    <Route path="/safe" element={<FinancialCard />} />
+                    <Route path="/about-safe" element={<RulesComponent />} />
+                    <Route path="/viphistory" element={<VIPHistory />} />
+                    <Route path="/SlotGame" element={<SlotGame />} />
+                    <Route path="/original-games" element={<OriginalGames />} />
+                    <Route path="/SportsGame" element={<SportsGame />} />
+                    <Route path="/casino-games" element={<CasinoGames />} />
+                    <Route path="/collect-reward" element={<CollectReward />} />
+                    <Route
+                      path="/attendance-history"
+                      element={<AttendanceHistory />}
+                    />
+                    <Route
+                      path="/subordinate/level/:id"
+                      element={<SubordinateLevelPage />}
+                    />
+                  </Route>
+
+                  {/* Default Redirect */}
+                  <Route path="*" element={<Navigate to="/login" replace />} />
+                </Routes>
+              </AudioProvider>
+            </Suspense>
+          </main>
+        </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
+      </BrowserRouter>
+    </Provider>
+  );
 }
 
 export default App;
