@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DepositHeader from "../../components/DepositHeader";
 import { AiOutlineFileText } from "react-icons/ai";
 import { BsDiamondFill } from "react-icons/bs";
@@ -8,6 +8,7 @@ import paytm from "../../Assets/gamesimage/paytm.png";
 import upi from "../../Assets/gamesimage/UPI.png";
 import all from "../../Assets/gamesimage/all.png";
 import tpay from "../../Assets/gamesimage/Tpay.png";
+import paythird from "../../Assets/newIcon/paythird.png";
 import cross from "../../Assets/cross.png";
 import iconshouming from "../../Assets/finalicons/iconshouming.png";
 import deposit from "../../Assets/finalicons/deposit-copy-icon.png";
@@ -17,6 +18,8 @@ import iconquickpay from "../../Assets/finalicons/iconquickpay.png";
 import refresh from "../../Assets/finalicons/refresh.png";
 import apiServices from "../../api/apiServices";
 import CommanHeader from "../../components/CommanHeader";
+import walletImage from "../../Assets/newIcon/savewalleticon.png"
+import iconInr from "../../Assets/finalicons/iconinr.png";
 
 // Legacy payment channels (keeping for backup, but not used)
 const paymentChannel = [
@@ -30,7 +33,7 @@ const paymentChannel = [
 
 const Deposit = () => {
   const [inputAmount, setInputAmount] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState("");
+  const [selectedPayment, setSelectedPayment] = useState("UPI");
   const [paymentChannelList, setPaymentChannelList] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [usdtChannel, setUsdtChannel] = useState([]);
@@ -76,7 +79,7 @@ const Deposit = () => {
   const fetchAvailableGateways = async () => {
     try {
       const response = await apiServices?.getAllPayments();
-      
+
       if (response?.data?.gateways) {
         // Filter UPI gateways (not USDT)
         const upiGateways = response.data.gateways
@@ -87,7 +90,7 @@ const Deposit = () => {
             balance: `${gateway.min_amount} - ${gateway.max_amount}`, // Format balance range
             key: gateway.code || gateway.name // Use code if available, otherwise name
           }));
-        
+
         // Filter USDT gateways
         const usdtGateways = response.data.gateways
           .filter((item) => item?.name === 'USDT WG Pay')
@@ -153,7 +156,7 @@ const Deposit = () => {
     setSelectedPayment(payment.key);
     // Reset channel selection when payment method changes
     setSelectedChannel(null);
-    
+
     // Auto-select first available channel for the selected payment method
     if (payment.key === "UPI" && paymentChannelList.length > 0) {
       const firstChannel = { ...paymentChannelList[0], isHighlight: true };
@@ -269,7 +272,11 @@ const Deposit = () => {
       setIsSubmitting(false);
     }
   };
-
+  const rupeesAmount = useMemo(() => {
+    const amount = parseFloat(inputAmount);
+    if (isNaN(amount) || amount <= 0) return '';
+    return (amount * 93).toFixed(2);
+  }, [inputAmount]);
   return (
     <div className="bg-[#242424] min-h-screen flex flex-col w-full items-center justify-center mt-4">
       <CommanHeader
@@ -309,16 +316,16 @@ const Deposit = () => {
         <div className="grid grid-cols-4 gap-1 mb-4">
           {[
             { name: "UPI-QRpay", img: upi, key: "UPI" },
+            { name: "Wake UP-APP", img: paythird, key: "WAKE_UP" },
             { name: "USDT", img: tpay, key: "USDT" },
           ].map((item, index) => (
             <div
               key={index}
               onClick={() => handlePaymentWaySelect(item)}
-              className={`p-1 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${
-                selectedPayment === item.key
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                  : "bg-[#333332] hover:bg-neutral-700"
-              }`}
+              className={`p-1 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${selectedPayment === item.key
+                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                : "bg-[#333332] hover:bg-neutral-700"
+                }`}
               style={{ width: "79px", height: "87px" }}
             >
               <img
@@ -351,17 +358,16 @@ const Deposit = () => {
                 {paymentChannelList?.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className={`p-3 rounded-xl cursor-pointer transition relative ${
-                      item.isHighlight
-                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                        : "bg-[#4d4d4c] hover:bg-neutral-700"
-                    }`}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${item.isHighlight
+                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
+                      : "bg-[#4d4d4c] hover:bg-neutral-700"
+                      }`}
                     onClick={() => handleChannelSelect(item)}
                   >
-                    <div className="font-semibold text-neutral-400 text-sm">
+                    <div className="font-semibold text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
                       {item.name}
                     </div>
-                    <div className="text-neutral-400 text-sm">
+                    <div className="text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
                       Balance: ₹{item.balance}
                     </div>
                   </div>
@@ -373,7 +379,7 @@ const Deposit = () => {
             <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
               <div className="flex items-center gap-2 mb-6">
                 <span className="material-symbols-outlined text-[#d9ac4f]">
-                  payments
+                  <img src={walletImage} width={24} height={24} />
                 </span>
                 <h2 className="text-lg font-semibold">Deposit amount</h2>
               </div>
@@ -392,9 +398,10 @@ const Deposit = () => {
 
               <div className="relative mb-6">
                 <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
-                  <span className="text-[#d9ac4f] mr-2">₹</span>
+                  {/* <span className="text-[#d9ac4f] mr-2">₹</span> */}
+                  <img src={iconInr} alt="icon" className="h-4 w-4 mr-2" />
                   <input
-                    type="number"
+                    type="text"
                     placeholder="Please enter the amount"
                     value={inputAmount}
                     onChange={handleInputChange}
@@ -402,15 +409,166 @@ const Deposit = () => {
                     min={selectedChannel?.min_amount || 100}
                     max={selectedChannel?.max_amount}
                   />
+                  {inputAmount && (
+                    <button
+                      onClick={() => setInputAmount('')}
+                      className="ml-2 p-1 hover:bg-neutral-700 rounded-full transition-colors"
+                      aria-label="Clear input"
+                    >
+                      <svg
+                        className="h-4 w-4 text-neutral-400 hover:text-white"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 mb-2 ${
-                  selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
-                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#6f7381] text-white"
-                }`}
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#6f7381] text-white"
+                  }`}
+                disabled={
+                  !selectedPayment ||
+                  !selectedChannel ||
+                  !inputAmount ||
+                  Number(inputAmount) < (selectedChannel?.min_amount || 100) ||
+                  isSubmitting
+                }
+                onClick={submitPayment}
+              >
+                {isSubmitting ? "Processing..." : "Deposit"}
+              </button>
+            </div>
+
+            {/* Recharge Instructions */}
+            <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-amber-500 mb-2">
+                  <img src={iconshouming} alt="icon" className="h-8 w-8" />
+                  <h3 className="font-semibold text-[#f5f3f0]">
+                    Recharge Instructions
+                  </h3>
+                </div>
+
+                <div className="border p-4 rounded-xl space-y-2 border-[#666462]">
+                  {[
+                    "If the transfer time is up, please fill out the deposit form again.",
+                    "The transfer amount must match the order you created, otherwise the money cannot be credited successfully.",
+                    "If you transfer the wrong amount, our company will not be responsible for the lost amount!",
+                    "Note: do not cancel the deposit order after the money has been transferred.",
+                  ].map((instruction, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 text-neutral-400 text-sm"
+                    >
+                      <BsDiamondFill className="text-amber-500 text-sm mt-1" />
+                      <p>{instruction}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        {selectedPayment === "WAKE_UP" && (
+          <>
+            {/* Payment Channels */}
+            <div className="bg-[#333332] p-3 rounded-xl mt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <img src={iconquickpay} alt="icon" className="h-8 w-8" />
+                <span className="font-semibold text-white">Select channel</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {paymentChannelList?.map((item, index) => (
+                  <div
+                    key={item.id || index}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${item.isHighlight
+                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
+                      : "bg-[#4d4d4c] hover:bg-neutral-700"
+                      }`}
+                    onClick={() => handleChannelSelect(item)}
+                  >
+                    <div className="font-semibold text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                      {item.name}
+                    </div>
+                    <div className="text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                      Balance: ₹{item.balance}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Deposit Amount */}
+            <div className="bg-[#333332] mt-4 p-3 rounded-xl text-white">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="material-symbols-outlined text-[#d9ac4f]">
+                  <img src={walletImage} width={24} height={24} />
+                </span>
+                <h2 className="text-lg font-semibold">Deposit amount</h2>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                {["500", "1K", "5K", "10K", "20K", "50K"].map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handlePresetAmountClick(amount)}
+                    className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                  >
+                    <span className="text-[#666462]"> ₹ </span> {amount}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative mb-6">
+                <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
+                  {/* <span className="text-[#d9ac4f] mr-2">₹</span> */}
+                  <img src={iconInr} alt="icon" className="h-4 w-4 mr-2" />
+                  <input
+                    type="text"
+                    placeholder="Please enter the amount"
+                    value={inputAmount}
+                    onChange={handleInputChange}
+                    className="bg-transparent w-full outline-none placeholder-neutral-400"
+                    min={selectedChannel?.min_amount || 100}
+                    max={selectedChannel?.max_amount}
+                  />
+                  {inputAmount && (
+                    <button
+                      onClick={() => setInputAmount('')}
+                      className="ml-2 p-1 hover:bg-neutral-700 rounded-full transition-colors"
+                      aria-label="Clear input"
+                    >
+                      <svg
+                        className="h-4 w-4 text-neutral-400 hover:text-white"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <button
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#6f7381] text-white"
+                  }`}
                 disabled={
                   !selectedPayment ||
                   !selectedChannel ||
@@ -469,19 +627,18 @@ const Deposit = () => {
                   <div
                     key={item.id || index}
                     onClick={() => handleUsdtChannelSelect(item)}
-                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${
-                      selectedChannel?.id === item.id
-                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                        : "bg-[#4d4d4c] hover:bg-neutral-700"
-                    }`}
+                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${selectedChannel?.id === item.id
+                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                      : "bg-[#4d4d4c] hover:bg-neutral-700"
+                      }`}
                   >
                     <div className="flex items-center">
                       <img src={tpay} alt="icon" className="h-10 w-10 mr-4" />
                       <div>
-                        <div className="font-semibold text-[14px]">
+                        <div className="font-semibold text-[14px]" style={{ color: selectedChannel?.id === item.id ? "#8F5206" : "#a8a5a1" }}>
                           {item.name}
                         </div>
-                        <div className="text-[14px]">₹{item.balance}</div>
+                        <div className="text-[14px]" style={{ color: selectedChannel?.id === item.id ? "#8F5206" : "#a8a5a1" }}>₹{item.balance}</div>
                       </div>
                     </div>
                     <div className="text-amber-500 text-sm">{item.bonus}</div>
@@ -514,11 +671,11 @@ const Deposit = () => {
                 <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3">
                   <img src={tpay} alt="icon" className="h-6 w-6 mr-2" />
                   <input
-                    type="number"
+                    type="text"
                     placeholder="Please enter USDT amount"
                     value={inputAmount}
                     onChange={handleInputChange}
-                    className="bg-transparent w-full outline-none placeholder-neutral-400 text-white"
+                    className="bg-transparent w-full outline-none placeholder-neutral-400 text-white hide-scrollbar"
                     min="10"
                   />
                   <button
@@ -528,14 +685,28 @@ const Deposit = () => {
                     <img src={cross} alt="cross" className="h-7 w-8" />
                   </button>
                 </div>
+                <div className="relative mb-4 mt-2">
+                  <div className="flex items-center bg-neutral-800 rounded-full px-4 py-3 opacity-75">
+                    <div className="h-6 w-6 mr-2 flex items-center justify-center text-yellow-500 font-bold">
+                      ₹
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Rupees equivalent will appear here"
+                      value={rupeesAmount ? `₹ ${rupeesAmount}` : 0}
+                      disabled
+                      className="bg-transparent w-full outline-none placeholder-neutral-500 text-neutral-300 cursor-not-allowed"
+                    />
+      
+                  </div>
+                </div>
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 ${
-                  selectedChannel && inputAmount && Number(inputAmount) >= 10
-                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                    : "bg-[#6f7381] text-white"
-                }`}
+                className={`w-full transition-colors rounded-full py-3 ${selectedChannel && inputAmount && Number(inputAmount) >= 10
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                  : "bg-[#6f7381] text-white"
+                  }`}
                 disabled={
                   !selectedChannel ||
                   !inputAmount ||

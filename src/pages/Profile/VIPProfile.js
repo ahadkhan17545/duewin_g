@@ -124,100 +124,106 @@ const CardCarousel = ({
         animate={{ x: `calc(50% - ${(selectedIndex + 0.5) * cardWidth}px)` }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {vipCards.map((card, index) => (
-          <div
-            key={index}
-            className="relative shrink-0 w-[80%] rounded-lg overflow-hidden px-2 py-2 text-white"
-            style={{
-              backgroundImage: `url(${card.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
+        {vipCards.map((card, index) => {
+          const remainingExp = card.required_exp - userExp;
+          return (
             <div
-              className="absolute inset-0"
-              style={{ background: card.colorGradient }}
-            />
-            <div className="relative z-10">
-              {/* Top Row */}
-              <div className="flex items-center gap-2 mb-1">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={userExp >= card.required_exp ? creach : reach}
-                    alt="VIP Icon"
-                    className="w-5 h-5"
-                  />
-                  <span className="text-sm font-bold">{card.label}</span>
-                </div>
+              key={index}
+              className="relative shrink-0 w-[80%] rounded-lg overflow-hidden px-2 py-2 text-white"
+              style={{
+                backgroundImage: `url(${card.image})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{ background: card.colorGradient }}
+              />
+              <div className="relative z-10">
+                {/* Top Row */}
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={userExp >= card.required_exp ? creach : reach}
+                      alt="VIP Icon"
+                      className="w-5 h-5"
+                    />
+                    <span className="text-sm font-bold">{card.label}</span>
+                  </div>
 
-                <div className="flex items-center bg-black bg-opacity-50 px-2 py-1 rounded-full">
-                  <img
-                    src={userExp >= card.required_exp ? reached : lockvip}
-                    alt="lock"
-                    className="h-4 w-4 mr-1"
-                  />
+                  <div className="flex items-center bg-opacity-50 px-2 py-1 rounded-full">
+                    <img
+                      src={userExp >= card.required_exp ? reached : lockvip}
+                      alt="lock"
+                      className="h-4 w-4 mr-1"
+                    />
                   <span className="text-xs">
                     {userExp >= card.required_exp ? "Achieved" : "Not open yet"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Requirement */}
-              <div className="mb-4">
-                <p className="text-xs font-light">
-                  Upgrading {card.label} requires
-                </p>
-                <span className="text-xs font-medium">
-                  {card.expRequired} EXP
-                </span>
-              </div>
-
-              {/* Button */}
-              <div className="mb-1">
-                <button className="border border-white text-xs px-3 py-1 rounded-sm">
-                  Bet ₹1 = 1 EXP
-                </button>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="relative mb-6">
-                <div className="h-2 bg-[#748AAA]/50 rounded-full">
-                  <div
-                    className="h-full bg-yellow-200 rounded-l-full relative"
-                    style={{ width: `${calculateProgress()}%` }}
-                  >
-                    <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      </span>
+                    
                   </div>
                 </div>
-                <div
-                  style={{
-                    fontSize:
-                      selectedIndex > 7
-                        ? "8px"
-                        : selectedIndex > 2
-                          ? "9px"
-                          : undefined, 
-                  }}
-                  className="absolute top-3 left-2 text-xs bg-[#899fbf] bg-opacity-70 px-2 py-0.5 rounded-full"
-                >
-                  {userExp}/{card.required_exp}
-                </div>
-                <div className="text-[8px] text-white absolute right-0 top-5 whitespace-nowrap px-1">
-                  {card.required_exp} can be leveled up
-                </div>
-              </div>
 
-              {/* VIP Badge */}
-              <div className="absolute top-0 right-[-5px] w-12 h-12">
-                <img
-                  src={vipMapLogo[index + 1]}
-                  alt="VIP Badge"
-                  className="w-full h-full object-cover rounded-full"
-                />
+                {/* Requirement */}
+                <div className="mb-4">
+                  <p className="text-xs font-light">
+                    Upgrading {card.label} requires
+                  </p>
+                    {remainingExp > 0 && (
+                      <span className="text-xs font-medium">
+                        {remainingExp} EXP
+                      </span>
+                    )}
+                </div>
+
+                {/* Button */}
+                <div className="mb-1">
+                  <button className="border border-white text-xs px-3 py-1 rounded-sm">
+                    Bet ₹1 = 1 EXP
+                  </button>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="relative mb-6">
+                  <div className="h-2 bg-[#748AAA]/50 rounded-full">
+                    <div
+                      className="h-full bg-yellow-200 rounded-l-full relative"
+                      style={{ width: `${calculateProgress()}%` }}
+                    >
+                      <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontSize:
+                        selectedIndex > 7
+                          ? "8px"
+                          : selectedIndex > 2
+                            ? "9px"
+                            : undefined,
+                    }}
+                    className="absolute top-3 left-2 text-xs bg-[#899fbf] bg-opacity-70 px-2 py-0.5 rounded-full"
+                  >
+                    {userExp}/{card.required_exp}
+                  </div>
+                  <div className="text-[8px] text-white absolute right-0 top-5 whitespace-nowrap px-1">
+                    {card.required_exp} can be leveled up
+                  </div>
+                </div>
+
+                {/* VIP Badge */}
+                <div className="absolute top-0 right-[-5px] w-12 h-12">
+                  <img
+                    src={vipMapLogo[index + 1]}
+                    alt="VIP Badge"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
 
       {/* Pagination dots */}
@@ -546,7 +552,7 @@ function VIPProfile() {
         console.log("data", data);
 
         setUserData(data);
-      } catch (err) {}
+      } catch (err) { }
     };
     fetchUserProfile();
   }, []);
@@ -631,21 +637,19 @@ function VIPProfile() {
               <div className="bg-[#333332] mt-4 rounded-lg">
                 <div className="flex text-center border-b border-gray-700">
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
-                      activeTab === "history"
-                        ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
-                        : "text-gray-400 hover:bg-[#3a3a3a]"
-                    }`}
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "history"
+                      ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
+                      : "text-gray-400 hover:bg-[#3a3a3a]"
+                      }`}
                     onClick={() => setActiveTab("history")}
                   >
                     History
                   </div>
                   <div
-                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${
-                      activeTab === "rules"
-                        ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
-                        : "text-gray-400 hover:bg-[#3a3a3a]"
-                    }`}
+                    className={`w-1/2 py-3 font-semibold cursor-pointer font-['Roboto',sans-serif] transition-all duration-300 ${activeTab === "rules"
+                      ? "text-yellow-500 bg-[#444343] border-b-2 border-yellow-500"
+                      : "text-gray-400 hover:bg-[#3a3a3a]"
+                      }`}
                     onClick={() => setActiveTab("rules")}
                   >
                     Rules

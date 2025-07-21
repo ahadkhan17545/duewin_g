@@ -67,10 +67,7 @@ function GameHistoryProfile() {
   const descriptions = [
     "Lottery",
     "Casino",
-    "Fishing",
-    "Rummy",
     "Original",
-    "Slots",
   ];
   const inactiveImages = [Img1, Img2, Img3, Img4, Img5, Img1];
   const activeImages = [
@@ -350,7 +347,7 @@ function GameHistoryProfile() {
                               : "text-yellow-500"
                         }`}
                       >
-                        {bet?.status}
+                        {bet?.status === "won" ? 'Win' : bet?.status === "lost" ? 'Loss' : 'Pending'}
                       </span>
                     </div>
 

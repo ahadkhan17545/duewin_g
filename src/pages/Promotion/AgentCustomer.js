@@ -12,6 +12,7 @@ const agreements = [
     id: 1,
     title: "Telegram Support",
     icon: iconcon,
+    link: "https://t.me/killer_mao", 
   },
   {
     id: 2,
@@ -54,9 +55,9 @@ function AgentCustomer() {
                 {item.title === "Online Chat Support" ? (
                   <span className="text-lg text-white">{item.title}</span>
                 ) : (
-                  <Link to={item.path} className="text-lg text-white hover:text-[#d9ac4f]">
+                  <a href={item.link} target="_blank" className="text-lg text-white hover:text-[#d9ac4f]">
                     {item.title}
-                  </Link>
+                  </a>
                 )}
               </div>
 

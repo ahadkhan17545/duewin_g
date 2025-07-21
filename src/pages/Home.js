@@ -7,6 +7,7 @@ import user2 from "../Assets/Userimg/user2.png";
 import user3 from "../Assets/Userimg/user3.png";
 import user4 from "../Assets/Userimg/user4.png";
 import user5 from "../Assets/Userimg/user5.png";
+import homepartner from "../Assets/newIcon/homepartner.png";
 import user6 from "../Assets/Userimg/user6.png";
 import user7 from "../Assets/Userimg/user7.png";
 import user8 from "../Assets/Userimg/user8.png";
@@ -75,6 +76,98 @@ import live from "../Assets/home/live.png";
 import headerLogo from "../Assets/newLogo/newLogo.png";
 import { startLoading, stopLoading } from "../redux/Slice/Loader";
 import Notification from "./Notification";
+
+import firstDeposit from "../Assets/newIcon/firstDepositS.webp";
+import Bonus888 from "../Assets/newIcon/888Bonuss.webp";
+import ytS from "../Assets/newIcon/ytS.webp";
+import winstreakS from "../Assets/newIcon/winstreakS.webp";
+import supportFundsS from "../Assets/newIcon/supportFundsS.webp";
+import invitationBonusS from "../Assets/newIcon/invitationBonusS.webp";
+import attandenceBonusS from "../Assets/newIcon/attandenceBonusS.webp"
+import VIPS from "../Assets/newIcon/VIPS.png"
+import avaitorS from "../Assets/newIcon/avaitorS.webp"
+import agentS from "../Assets/newIcon/agentS.webp"
+import lucky10S from "../Assets/newIcon/lucky10S.webp"
+
+const bonusIcons = [
+  {
+    id: 'first-deposit',
+    name: 'First Deposit',
+    image: firstDeposit,
+    link: '/bonus/first-deposit',
+    description: 'Get bonus on your first deposit'
+  },
+  {
+    id: '888-bonus',
+    name: '888 Bonus',
+    image: Bonus888,
+    link: '/bonus/888-bonus',
+    description: 'Daily lucky draw of ₹888'
+  },
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    image: ytS,
+    link: '/youtube',
+    description: 'Subscribe to our YouTube channel'
+  },
+  {
+    id: 'win-streak',
+    name: 'Win Streak',
+    image: winstreakS,
+    link: '/bonus/win-streak',
+    description: 'Win streak bonus rewards'
+  },
+  {
+    id: 'support-funds',
+    name: 'Support Funds',
+    image: supportFundsS,
+    link: '/bonus/support-funds',
+    description: 'Up to 9% support funds on losses'
+  },
+  {
+    id: 'invitation-bonus',
+    name: 'Invitation Bonus',
+    image: invitationBonusS,
+    link: '/bonus/invitation',
+    description: 'High invitation bonus for new agents'
+  },
+  {
+    id: 'attendance-bonus',
+    name: 'Attendance Bonus',
+    image: attandenceBonusS,
+    link: '/AttendanceBonus',
+    description: 'Daily attendance bonus rewards'
+  },
+  {
+    id: 'VIPS-bonus',
+    name: 'VIPS Bonus',
+    image: VIPS,
+    link: '/bonus/VIPS',
+    description: 'Daily VIPS bonus rewards'
+  },
+  {
+    id: 'avaitorS-bonus',
+    name: 'avaitorS Bonus',
+    image: avaitorS,
+    link: '/bonus/avaitorS',
+    description: 'Daily avaitorS bonus rewards'
+  },
+    {
+    id: 'agentS-bonus',
+    name: 'avaitorS Bonus',
+    image: agentS,
+    link: '/bonus/agentS',
+    description: 'Daily agentS bonus rewards'
+  },
+      {
+    id: 'lucky10S-bonus',
+    name: 'lucky10S Bonus',
+    image: lucky10S,
+    link: '/bonus/lucky10S',
+    description: 'Daily lucky10S bonus rewards'
+  }
+];
 
 // Game categories
 const gameCategories = [
@@ -494,12 +587,12 @@ function Home() {
       // Only prevent horizontal swipes on the main container
       const target = e.target;
       const isSlider = target.closest('.slick-slider') || target.closest('.slick-track');
-      
+
       if (!isSlider) {
         const touch = e.touches[0];
         const startX = touch.clientX;
         const startY = touch.clientY;
-        
+
         // Allow vertical scrolling, prevent horizontal
         if (Math.abs(e.movementX) > Math.abs(e.movementY)) {
           e.preventDefault();
@@ -510,9 +603,9 @@ function Home() {
     // Add passive: false only for iOS
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const options = isIOS ? { passive: false } : { passive: true };
-    
+
     document.addEventListener("touchmove", preventHorizontalSwipe, options);
-    
+
     // Force repaint on iOS to fix rendering issues
     if (isIOS) {
       const forceRepaint = () => {
@@ -521,11 +614,11 @@ function Home() {
         const _ = document.body.offsetHeight;
         document.body.style.display = '';
       };
-      
+
       // Force repaint after component mounts
       setTimeout(forceRepaint, 100);
     }
-    
+
     return () => {
       document.removeEventListener("touchmove", preventHorizontalSwipe, options);
     };
@@ -706,7 +799,7 @@ function Home() {
         }
         const user = data.user;
         setUserData(user);
-      } catch (err) {}
+      } catch (err) { }
     };
 
     fetchUserProfile();
@@ -793,13 +886,18 @@ function Home() {
         <div className="w-full flex flex-col overflow-x-hidden p-3 mt-20">
           <div className="w-full py-2 overflow-hidden">
             <Slider {...settings}>
-              {[bannerone, bannerthree].map((img, index) => (
-                <div key={index} className="px-1">
-                  <img
-                    src={img}
-                    alt={`Slide ${index + 1}`}
-                    className="w-full h-44 object-contain rounded-lg"
-                  />
+              {bonusIcons.map((bonus, index) => (
+                <div key={bonus.id} className="px-1">
+                  <Link to={bonus.link} className="block hover:opacity-80 transition-opacity">
+                    <div className="flex flex-col items-center text-center">
+                      <img
+                        src={bonus.image}
+                        alt={bonus.name}
+                        className="w-full h-44 object-contain rounded-lg"
+                      />
+
+                    </div>
+                  </Link>
                 </div>
               ))}
             </Slider>
@@ -815,7 +913,7 @@ function Home() {
                     zIndex: 0,
                   }}
                 >
-                <Notification/>
+                  <Notification />
                 </div>
                 <Link to="/notificationsService">
                   <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
@@ -847,17 +945,15 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
-                    activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
-                  }`}
+                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
+                    ? "opacity-100"
+                    : "opacity-80"
+                    }`}
                   style={{
-                    background: `linear-gradient(60deg, ${
-                      category.title === "Lottery"
-                        ? "#323838, #30413B,#2D4D40"
-                        : "#323838, #3B3541,#542E57"
-                    })`,
+                    background: `linear-gradient(60deg, ${category.title === "Lottery"
+                      ? "#323838, #30413B,#2D4D40"
+                      : "#323838, #3B3541,#542E57"
+                      })`,
                   }}
                 >
                   <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
@@ -867,11 +963,10 @@ function Home() {
                     <img
                       src={category.image}
                       alt={category.title}
-                      className={`w-[220px] object-contain -mt-4 -mr-4 ${
-                        category.title === "Hot Games"
-                          ? "h-[300px]"
-                          : "h-[220px] -mt-9"
-                      }`}
+                      className={`w-[220px] object-contain -mt-4 -mr-4 ${category.title === "Hot Games"
+                        ? "h-[300px]"
+                        : "h-[220px] -mt-9"
+                        }`}
                     />
                   </div>
                 </div>
@@ -882,21 +977,19 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
-                    activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
-                  }`}
+                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
+                    ? "opacity-100"
+                    : "opacity-80"
+                    }`}
                   style={{
-                    background: `linear-gradient(90deg, ${
-                      category.title === "Live Casino"
-                        ? "#323838,#433767"
-                        : category.title === "Sports"
-                          ? "#323838, #303D36,#2E4A33"
-                          : category.title === "Slots"
-                            ? "#323838,#4B3F31"
-                            : "#323838,#333937,#404D33"
-                    })`,
+                    background: `linear-gradient(90deg, ${category.title === "Live Casino"
+                      ? "#323838,#433767"
+                      : category.title === "Sports"
+                        ? "#323838, #303D36,#2E4A33"
+                        : category.title === "Slots"
+                          ? "#323838,#4B3F31"
+                          : "#323838,#333937,#404D33"
+                      })`,
                   }}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
@@ -995,8 +1088,8 @@ function Home() {
                               className="w-full h-auto object-contain rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1030,8 +1123,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1089,8 +1182,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1147,8 +1240,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                                (e.target.src =
-                                  "https://via.placeholder.com/150?text=Image+Not+Found")
+                              (e.target.src =
+                                "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1196,7 +1289,7 @@ function Home() {
                         index === 0 ? "slideDown 0.4s ease-out" : "none",
                       maxHeight: "57px",
                       minWidth: "336px",
-                      gap:window.innerWidth < 380 ? '10%' : '15%'
+                      gap: window.innerWidth < 380 ? '10%' : '15%'
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -1295,46 +1388,9 @@ function Home() {
                   </div>
                 ))}
 
-                {/* 🔒 Bottom 10 Hardcoded Cards */}
-                <div className="bg-[#333332]] px-2 py-1 rounded-lg text-white space-y-4">
-                  {/* 🔝 Top Logo */}
-                  <div className="flex justify-between align-center">
-                    <img
-                      src={headerLogo}
-                      alt="Logo"
-                      className="w-20 h-13 object-contain"
-                    />
-<h1
-  className="text-red-500 text-[25px] pt-[17px] border-2 border-red-500 rounded-full px-6 py-3 inline-block"
-  style={{ fontFamily: "fantasy" }}
->
-  18+ Only
-</h1>
-                  </div>
-                  <p style={{marginTop:'-10px'}}>Our offical partners</p>
-
-                  {/* 📦 2-column Grid with 10 Image Cards */}
-                  <div className="grid grid-cols-3 gap-4">
-                    {staticUserData.map((user, index) => (
-                      <div
-                        key={index}
-                        className="relative bg-[#333332] rounded-lg p-2 h-20 flex items-center justify-center overflow-hidden"
-                        style={{ height: "50px" }}
-                      >
-                        <img
-                          src={user.img}
-                          alt={`user-${index}`}
-                          className="w-full h-full object-contain rounded"
-                        />
-                        {/* Optional overlay if color is provided */}
-                        {user.color && (
-                          <div
-                            className={`absolute inset-0 ${user.color} bg-opacity-60`}
-                          ></div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="bg-[#333332] px-2 py-1 rounded-lg text-white space-y-4">
+                  {/* Full Width Image */}
+                  <img src={homepartner} alt="image" className="w-full mt-2 h-[475px] object-cover" />
 
                   {/* 📝 Bottom Paragraphs (Styled Like the Image) */}
                   <div className="space-y-3 text-sm text-[#d9d7d3]">
@@ -1358,7 +1414,7 @@ function Home() {
                     <p className="text-[#ff4c4c] pt-2">
                       Gambling can be addictive, please play rationally.
                     </p>
-                    <p className="text-[#ff4c4c]" style={{paddingBottom:'30px'}}>
+                    <p className="text-[#ff4c4c]" style={{ paddingBottom: '30px' }}>
                       Strike only accepts customers above the age of{" "}
                       <span className="font-bold">18</span>.
                     </p>
@@ -1475,64 +1531,71 @@ function Home() {
               >
                 Login Welcome
               </h2>
-              <div className="flex-1 overflow-y-auto px-3 pb-3 w-full flex flex-col items-center text-center">
+              <div className="flex-1 overflow-y-auto max-h-[400px] px-3 pb-3 w-full flex flex-col items-center text-center">
+                {/* Header */}
                 <div
                   className="text-black text-xs font-semibold text-center mt-4 w-fit px-2 font-[Arial] py-1"
                   style={{ backgroundColor: "rgb(255, 255, 0)" }}
                 >
-                  ⭐ Strike Game ⭐
+                  Login Welcome
                 </div>
-                <p className="text-base font-medium text-white tracking-wide mt-3">
-                  Please Remember To Use
+
+                {/* Main Title */}
+                <div className="text-white text-lg font-bold mt-3 mb-2">
+                  🌟 STRIKEGAME.LIVE 🌟
+                </div>
+
+                {/* Description */}
+                <p className="text-white text-sm font-[Arial] leading-relaxed mt-2 px-2">
+                  📌 Strike is the digital evolution of a legendary Goa-based casino, trusted since 2016. Known for its thrilling in-house action and high-stakes excitement, Strike is now launching online — bringing the casino floor straight to your screen.
                 </p>
-                <div className="flex flex-col gap-1 mt-2 text-base">
+
+                {/* Official Services */}
+                <div className="flex flex-col gap-2 mt-4 text-base">
                   {[
-                    {
-                      title: "Official Website",
-                      subtitle: "To check latest website list",
-                    },
-                    { title: "Official Telegram" },
-                    { title: "Official Customer Service" },
-                    { title: "Agent Gold Event" },
+                    { title: "Official Telegram Group", link: "https://t.me/killer_mao" },
+                    { title: "Official Customer Service", link: "https://t.me/killer_mao" }
                   ].map((item, index) => (
                     <div
                       key={index}
-                      className="flex flex-col items-center leading-tight"
+                      className="flex items-center justify-center gap-2"
                     >
-                      <div className="flex items-center justify-center gap-1">
-                        <input
-                          type="checkbox"
-                          checked
-                          className="w-4 h-4 accent-green-500"
-                        />
-                        <span className="text-[#0000EE] font-bold text-sm">
-                          {item.title}
-                        </span>
-                      </div>
-                      {item.subtitle && (
-                        <p className="text-white text-sm font-[Arial] tracking-wide font-medium mt-[2px]">
-                          {item.subtitle}
-                        </p>
-                      )}
+                      <span className="text-green-500 text-lg">✅</span>
+                      <a href={item.link} target="_blank" className="text-[#0000EE] font-bold text-sm">
+                        {item.title}
+                      </a>
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 text-sm font-medium">
-                  <p>⭐ Strike Game Operating 5 Years+</p>
-                  <p>⭐ The Most Professional Game</p>
-                  <p>⭐ High Quality Agent Benefits</p>
-                  <p>⭐ No.1 Casino Game Platform</p>
+
+                {/* Features List */}
+                <div className="mt-4 text-sm font-medium space-y-1">
+                  <p className="text-white">⭐ High invitation bonus for new agents</p>
+                  <p className="text-white">⭐ Up to 9% support funds on user losses</p>
+                  <p className="text-white">⭐ Daily Lucky Draw of ₹888 for 3 lucky users</p>
+                  <p className="text-white">⭐ Instant withdrawals anytime</p>
+                  <p className="text-white">⭐ 24×7 customer service support</p>
+                  <p className="text-white">⭐ The most professional action gaming experience</p>
+                  <p className="text-white">⭐ High-quality agent benefits & earnings</p>
+                  <p className="text-white">⭐ The number one casino-action game platform</p>
                 </div>
-                <p className="flex items-center justify-center mt-4">
-                  💎{" "}
-                  <span className="text-white font-medium text-sm font-[Arial]">
-                    Click Promote - Become Agent
-                  </span>{" "}
-                  💎
-                </p>
-                <p className="text-white text-sm font-[Arial]">
-                  Get income every day
-                </p>
+
+                {/* Promotion Section */}
+                <div className="mt-4 space-y-1">
+                  <p className="flex items-center justify-center">
+                    💎{" "}
+                    <span className="text-white font-medium text-sm font-[Arial] mx-1">
+                      Click to promote – become an agent
+                    </span>{" "}
+                    💎
+                  </p>
+                  <p className="text-white text-sm font-[Arial]">
+                    💎 Earn income every day
+                  </p>
+                  <p className="text-white text-sm font-[Arial]">
+                    💎 Official Telegram id ......................
+                  </p>
+                </div>
               </div>
               <div className="mt-2 pb-3">
                 <button

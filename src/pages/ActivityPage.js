@@ -15,7 +15,13 @@ import signInBanner from "../Assets/signInBanner.png";
 import giftRedeem from "../Assets/giftRedeem.png";
 import BettingRebate from "../Assets/BettingRebate.png";
 import superJackpot from "../Assets/superJackpot.png";
-
+import firstDeposit from "../Assets/newIcon/firstDepositS.webp";
+import Bonus888 from "../Assets/newIcon/888Bonuss.webp";
+import ytS from "../Assets/newIcon/ytS.webp";
+import winstreakS from "../Assets/newIcon/winstreakS.webp";
+import supportFundsS from "../Assets/newIcon/supportFundsS.webp";
+import invitationBonusS from "../Assets/newIcon/invitationBonusS.webp";
+import attandenceBonusS from "../Assets/newIcon/attandenceBonusS.webp";
 function ActivityPage() {
   const [isPhoneLogin, setIsPhoneLogin] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -70,7 +76,7 @@ function ActivityPage() {
         </p>
       </div>
 
-      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between" style={{paddingBottom:'50px'}}>
+      <div className="bg-custom-dark-gray p-4 shadow-md w-full max-w-md h-full  flex flex-col justify-between" style={{ paddingBottom: '50px' }}>
         <div className="grid grid-cols-3 text-[#a8a5a1] items-center mb-2">
           <div className="text-center">
             <Link to="/invitebonus">
@@ -160,14 +166,14 @@ function ActivityPage() {
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4 mt-6">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827180534ickk.png"
+              src={firstDeposit}
               alt="First Deposit Bonus"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              First Deposit Bonus
+              🌟 First Deposit Bonus 🌟
             </h2>
           </div>
         </div>
@@ -175,14 +181,14 @@ function ActivityPage() {
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240827175709gnr5.png"
+              src={Bonus888}
               alt="Daily Bonus"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Daily Bonus
+              🌟 Daily 888 Bonus 🌟
             </h2>
           </div>
         </div>
@@ -190,14 +196,14 @@ function ActivityPage() {
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828174930butj.png"
+              src={ytS}
               alt="Aviator Challenger"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Aviator Challenger
+              🌟 Youtube Video Context 🌟
             </h2>
           </div>
         </div>
@@ -205,14 +211,14 @@ function ActivityPage() {
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175051yb1x.png"
+              src={winstreakS}
               alt="Lucky 10 Days"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Lucky 10 Days
+             🌟 Win Streak Bonus 🌟
             </h2>
           </div>
         </div>
@@ -220,29 +226,29 @@ function ActivityPage() {
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_20240828175144x8p1.png"
-              alt="Wingo Win Streak Bonus"
+             src={supportFundsS}
+             alt="Wingo Win Streak Bonus"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Wingo Win Streak Bonus
+              🌟 Strike Support Fund🌟
             </h2>
           </div>
         </div>
 
-        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
+        <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
           <Link to="/activitygamesrules">
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_202408291537368dtv.png"
-              alt="Diuwin Content Creators"
+             src={invitationBonusS}
+             alt="Diuwin Content Creators"
               className="w-full h-auto rounded-lg"
             />
           </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Diuwin Content Creators
+              🌟 Invitation Bonus 🌟
             </h2>
           </div>
         </div>
@@ -250,14 +256,14 @@ function ActivityPage() {
         <div className=" bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
           <div>
             <img
-              src="https://ossimg.diuacting.com/DiuWin/banner/Banner_202408291537368dtv.png"
-              alt="Descriptive Alt Text"
+              src={attandenceBonusS}
+                alt="Descriptive Alt Text"
               className="w-full h-auto rounded-lg"
             />
           </div>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
-              Diuwin Content Creators
+            🌟 Attendance Bonus 🌟
             </h2>
             {/* <p className="text-gray-700 text-sm ">
               The more consecutive days you sign in, the higher the reward will

@@ -220,7 +220,7 @@ function ProfilePage() {
                     <img src={wallet} alt="AR Wallet" className="w-7 h-7" />
                   </div>
                   <p className="text-white text-sm font-medium mt-1">
-                    ARWallet
+                    Wallet
                   </p>
                 </Link>
 

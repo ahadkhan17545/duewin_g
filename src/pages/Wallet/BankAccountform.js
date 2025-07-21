@@ -17,25 +17,30 @@ const BankAccountForm = () => {
   const [ifscCode, setIfscCode] = useState("");
   const [isPrimaryAccount, setIsPrimaryAccount] = useState(false);
   const [error, setError] = useState("");
-  const [sessionId,setSessionId] = useState('')
+  const [sessionId, setSessionId] = useState("");
+  
+  // Bank search states
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // OTP related states
   const [showOtpPopup, setShowOtpPopup] = useState(false);
   const [otp, setOtp] = useState("");
   const [isOtpSending, setIsOtpSending] = useState(false);
   const [isOtpVerifying, setIsOtpVerifying] = useState(false);
-  const [phone, setPhone] = useState(null); // Will get from localStorage
+  const [phone, setPhone] = useState(null);
   const [otpError, setOtpError] = useState("");
-  const [formData, setFormData] = useState(null); // Store form data for later submission
+  const [formData, setFormData] = useState(null);
 
-  const fetchPrfole = async () => {
+  const fetchProfile = async () => {
     let storedPhone = await getUserProfile();
     if (storedPhone) {
       setPhone(storedPhone?.user?.phone_no);
     }
   };
+
   useEffect(() => {
-    fetchPrfole();
+    fetchProfile();
   }, []);
 
   const banks = [
@@ -141,6 +146,17 @@ const BankAccountForm = () => {
 
   const navigate = useNavigate();
 
+  // Filter banks based on search term
+  const filteredBanks = banks.filter(bank =>
+    bank.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleBankSelect = (bank) => {
+    setBankName(bank);
+    setSearchTerm("");
+    setIsDropdownOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -152,19 +168,17 @@ const BankAccountForm = () => {
       is_primary: isPrimaryAccount,
     };
 
-    // Store form data for later use
     setFormData(payload);
 
     try {
       setIsOtpSending(true);
       setError("");
 
-      // Send OTP first
       const otpResponse = await apiServices.sendOtp(phone, "bank_account");
 
       if (otpResponse?.success) {
         setShowOtpPopup(true);
-        setSessionId(otpResponse?.otpSessionId)
+        setSessionId(otpResponse?.otpSessionId);
       } else {
         setError("Failed to send OTP. Please try again.");
       }
@@ -178,7 +192,7 @@ const BankAccountForm = () => {
 
   const handleOtpVerification = async () => {
     if (!otp || otp.length !== 4) {
-      setOtpError("Please enter a valid 6-digit OTP");
+      setOtpError("Please enter a valid 4-digit OTP");
       return;
     }
 
@@ -189,17 +203,15 @@ const BankAccountForm = () => {
       const verifyPayload = {
         phone: phone,
         code: otp,
-        otp_session_id:sessionId
+        otp_session_id: sessionId,
       };
 
       const verifyResponse = await apiServices.verifyOtp(verifyPayload);
 
       if (verifyResponse?.success) {
-        // OTP verified, now submit the bank account
         const data = await apiServices.addBankAccount(formData);
 
         if (data?.success === true) {
-          // Clear form and navigate
           setBankName("");
           setRecipientName("");
           setAccountNumber("");
@@ -209,7 +221,7 @@ const BankAccountForm = () => {
           setShowOtpPopup(false);
           setOtp("");
           navigate(-1);
-          setSessionId('')
+          setSessionId("");
         } else {
           setOtpError("Failed to add bank account. Please try again.");
         }
@@ -238,8 +250,7 @@ const BankAccountForm = () => {
       const otpResponse = await apiServices.sendOtp(phone, "bank_account");
 
       if (otpResponse?.success) {
-        setOtpError(""); // Clear any previous errors
-        // You might want to show a success message here
+        setOtpError("");
       } else {
         setOtpError("Failed to resend OTP. Please try again.");
       }
@@ -258,15 +269,14 @@ const BankAccountForm = () => {
         <div className="min-h-screen flex flex-col bg-[#333332] pb-8">
           <div className="mt-16 mx-auto max-w-md w-full bg-[#242424] text-white p-6 rounded-lg overflow-y-auto">
             {/* Warning Banner */}
-            <div className="flex items-center gap-3 p-4 mb-8 bg-[#333332] rounded-lg">
+            <div className="flex items-center gap-3 p-2 mb-8 bg-[#333332] rounded-lg">
               <img src={hint} alt="hint" className="w-7 h-7" />
-              <p className="text-sm text-red-500">
-                To ensure the safety of your funds, please bind your bank
-                account
+              <p className="text-xs text-red-500">
+                To ensure the safety of your funds, please bind your bank account
               </p>
             </div>
 
-            {/* Phone Number Field - Add this if you don't have phone from context */}
+            {/* Phone Number Field */}
             {phone && (
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
@@ -284,39 +294,29 @@ const BankAccountForm = () => {
               </div>
             )}
 
-            {/* Bank Selection */}
+            {/* Bank Selection with Search */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
                 <img src={bankicon} alt="Bank Icon" className="w-5 h-5" />
                 <label className="text-sm font-medium">Choose a bank</label>
               </div>
-              <div className="relative w-full max-w-sm">
-                <select
-                  className="w-full p-4 text-[#8f5206] font-medium rounded-lg text-left appearance-none truncate"
+              
+              <div className="relative">
+                {/* Display Selected Bank or Search Input */}
+                <div
+                  className="w-full p-4 rounded-lg cursor-pointer flex items-center justify-between"
                   style={{
-                    background:
-                      "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    background: "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
                   }}
-                  onChange={(e) => {
-                    setBankName(e.target.value);
-                  }}
-                  value={bankName}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  <option value="" disabled>
-                    Please select a bank
-                  </option>
-                  {banks.map((bank, idx) => (
-                    <option key={idx} value={bank}>
-                      {bank}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <span className="text-[#8f5206] font-medium truncate">
+                    {bankName || "Please select a bank"}
+                  </span>
                   <svg
-                    className="w-4 h-4 text-[#8f5206]"
+                    className={`w-4 h-4 text-[#8f5206] transition-transform ${
+                      isDropdownOpen ? "rotate-180" : ""
+                    }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -329,6 +329,59 @@ const BankAccountForm = () => {
                     />
                   </svg>
                 </div>
+
+                {/* Dropdown */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 bg-[#333332] border border-gray-600 rounded-lg mt-1 shadow-lg z-50 max-h-60 overflow-hidden">
+                    {/* Search Input */}
+                    <div className="p-3 border-b border-gray-600">
+                      <input
+                        type="text"
+                        placeholder="Search banks..."
+                        className="w-full p-2 bg-[#242424] text-white rounded border border-gray-500 focus:border-yellow-500 focus:outline-none"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        autoFocus
+                      />
+                    </div>
+                    
+                    {/* Bank List */}
+                    <div className="max-h-48 overflow-y-auto">
+                      {filteredBanks.length > 0 ? (
+                        filteredBanks.map((bank, idx) => (
+                          <div
+                            key={idx}
+                            className="p-3 hover:bg-[#242424] cursor-pointer text-white border-b border-gray-700 last:border-b-0"
+                            onClick={() => handleBankSelect(bank)}
+                          >
+                            {bank}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-3 text-gray-400 text-center">
+                          No banks found
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Clear Selection */}
+                {bankName && (
+                  <button
+                    type="button"
+                    className="absolute right-8 top-1/2 transform -translate-y-1/2 text-[#8f5206] hover:text-red-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setBankName("");
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -336,9 +389,7 @@ const BankAccountForm = () => {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
                 <img src={nameicon} alt="Name Icon" className="w-5 h-5" />
-                <label className="text-sm font-medium">
-                  Full recipient's name
-                </label>
+                <label className="text-sm font-medium">Full recipient's name</label>
               </div>
               <input
                 type="text"
@@ -352,14 +403,8 @@ const BankAccountForm = () => {
             {/* Bank Account Number */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
-                <img
-                  src={bankcardicon}
-                  alt="Bank Card Icon"
-                  className="w-5 h-5"
-                />
-                <label className="text-sm font-medium">
-                  Bank account number
-                </label>
+                <img src={bankcardicon} alt="Bank Card Icon" className="w-5 h-5" />
+                <label className="text-sm font-medium">Bank account number</label>
               </div>
               <input
                 type="text"
@@ -385,19 +430,6 @@ const BankAccountForm = () => {
               />
             </div>
 
-            <div className="mb-6 flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="primaryAccount"
-                checked={isPrimaryAccount}
-                onChange={(e) => setIsPrimaryAccount(e.target.checked)}
-                className="w-5 h-5 text-yellow-500 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500 focus:ring-2"
-              />
-              <label htmlFor="primaryAccount" className="text-sm text-gray-300">
-                Set as primary bank account
-              </label>
-            </div>
-
             {/* Save Button */}
             <button
               className="w-full p-2 text-xl bg-[#6f7381] text-white font-bold rounded-full mt-8 transition-colors disabled:opacity-50"
@@ -417,6 +449,14 @@ const BankAccountForm = () => {
         </div>
       </form>
 
+      {/* Click outside to close dropdown */}
+      {isDropdownOpen && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setIsDropdownOpen(false)}
+        />
+      )}
+
       {/* OTP Verification Popup */}
       {showOtpPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -432,14 +472,12 @@ const BankAccountForm = () => {
               className="w-full p-3 bg-[#333332] rounded-lg text-gray-300 mb-4"
               value={otp}
               onChange={(e) =>
-                setOtp(e.target.value.replace(/\D/g, "").slice(0, 635))
+                setOtp(e.target.value.replace(/\D/g, "").slice(0, 4))
               }
-              maxLength={6}
+              maxLength={4}
             />
 
-            {otpError && (
-              <p className="text-red-500 text-sm mb-4">{otpError}</p>
-            )}
+            {otpError && <p className="text-red-500 text-sm mb-4">{otpError}</p>}
 
             <div className="flex gap-3">
               <button

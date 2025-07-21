@@ -371,11 +371,10 @@ function LoginPage() {
 
           <div className="flex justify-center mb-4 -mt-4">
             <button
-              className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${
-                uiState.isPhoneLogin
+              className={`flex flex-col items-center w-1/2 py-2 font-medium text-xl ${uiState.isPhoneLogin
                   ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]"
                   : "text-gray-400"
-              }`}
+                }`}
               onClick={() => updateUiState({ isPhoneLogin: true })}
             >
               <div className="h-8 flex items-center justify-center">
@@ -388,11 +387,10 @@ function LoginPage() {
               <span className="text-sm">phone number</span>
             </button>
             <button
-              className={`flex flex-col items-center w-1/2 py-1.5 font-medium text-xl ${
-                !uiState.isPhoneLogin
+              className={`flex flex-col items-center w-1/2 py-1.5 font-medium text-xl ${!uiState.isPhoneLogin
                   ? "text-[#d9ac4f] border-b-2 border-[#d9ac4f]"
                   : "text-gray-400"
-              }`}
+                }`}
               onClick={() => updateUiState({ isPhoneLogin: false })}
             >
               <div className="h-8 flex items-center justify-center">
@@ -528,7 +526,7 @@ function LoginPage() {
                     updateUiState({ showPassword: !uiState.showPassword })
                   }
                 >
-                  {uiState.showPassword ? (
+                  {!uiState.showPassword ? (
                     <FaEyeSlash className="text-gray-500 w-6 h-6" />
                   ) : (
                     <FaEye className="text-gray-500 w-6 h-6" />
@@ -592,9 +590,8 @@ function LoginPage() {
                 Forgot password
               </span>
             </Link>
-            <a
-              href="https://t.me/killer_mao" // replace with your real link
-              target="_blank"
+            <Link 
+              to="/agentcustomer"
               rel="noopener noreferrer"
               className="flex flex-col items-center cursor-pointer"
             >
@@ -604,7 +601,7 @@ function LoginPage() {
               <span className="text-white text-xs font-medium">
                 Customer Service
               </span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

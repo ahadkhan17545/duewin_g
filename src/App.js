@@ -158,6 +158,8 @@ function App() {
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/signup" element={<SignupPage />} />
                   <Route path="/forgotpassword" element={<ForgotPassword />} />
+                  <Route path="/privacy-policy" element={<AboutDetails />} />
+                  <Route path="/agentcustomer" element={<AgentCustomer />} />
                   <Route
                     path="/customerservice"
                     element={<CustomerService />}
@@ -181,7 +183,7 @@ function App() {
                       element={<CommissionDetailsPage />}
                     />
                     <Route path="/promotionrule" element={<PromotionRule />} />
-                    <Route path="/agentcustomer" element={<AgentCustomer />} />
+
                     <Route path="/rebateratio" element={<RebateRatio />} />
                     <Route
                       path="/newsubordinate"

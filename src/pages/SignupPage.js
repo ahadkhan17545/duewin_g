@@ -34,9 +34,9 @@ function SignupPage() {
   const [privacyAgreement, setPrivacyAgreement] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
- if(loading){
+  if (loading) {
     dispatch(startLoading());
-  }else {
+  } else {
     dispatch(stopLoading());
   }
 
@@ -154,18 +154,18 @@ function SignupPage() {
   }
 
   return (
-  <div className="bg-[#333332] w-full flex flex-col items-center justify-center min-h-screen" >
-       <Header />
-      <div className="w-full mx-auto p-3 flex-1">
-       
-        <div className="text-left mb-0 w-full px-4 sm:px-10 mt-2">
+    <div className="bg-[#333332] w-full flex flex-col items-center justify-center min-h-screen" >
+      <Header />
+      <div className="w-full mx-auto flex-1">
+
+        <div className="text-left mb-0 w-full sm:px-2 mt-2">
           <h1 className="text-sm font-bold text-white mb-1">Register</h1>
-          <p className="text-white text-sm sm:text-base">
+          <p className="text-white text-xs xs:text-base">
             Please register by phone number
           </p>
         </div>
 
-        <div className="bg-[#242424] p-4 sm:p-8 shadow-md w-full min-h-full mt-10 flex flex-col justify-center">
+        <div className="bg-[#242424] p-4 sm:p-4 shadow-md w-full min-h-full mt-10 flex flex-col justify-center">
           <div className="text-center pb-2 w-full mb-3">
             <div className="flex justify-center mb-2">
               <img src={phoneicon} alt="Phone" className="w-6 h-6" />
@@ -189,14 +189,15 @@ function SignupPage() {
                 <img src={phoneicon} alt="Phone" className="w-5 h-6" />
                 Phone number
               </label>
-              <div className="flex items-center relative">
-                <div className="relative country-code-selector">
+              <div className="flex items-center relative gap-2">
+                {/* Country Code Dropdown */}
+                <div className="relative country-code-selector mb-4">
                   <button
                     type="button"
                     onClick={() => setShowDropdown(!showDropdown)}
-                    className="bg-[#333332] text-gray-400 rounded-l-lg py-2 px-4 flex items-center gap-1 h-12 border-none"
+                    className="bg-[#333332] text-gray-400 rounded-lg py-2 px-4 flex items-center justify-between w-full h-12 border-none"
                   >
-                    {selectedCode}
+                    <span>{selectedCode}</span>
                     <svg
                       className="w-3 h-3"
                       fill="none"
@@ -212,31 +213,32 @@ function SignupPage() {
                     </svg>
                   </button>
                   {showDropdown && (
-                    <div className="absolute left-0 top-full mt-1 w-80 bg-[#333332] rounded-md shadow-lg z-10">
+                    <div className="absolute left-0 top-full mt-1 w-[250px] bg-[#333332] rounded-md shadow-lg z-10 hide-scrollbar max-h-48 overflow-y-auto">
                       {countryCodes.map(({ code, country }) => (
                         <div
                           key={code}
-                          className="px-5 py-3 text-[#a8a5a1] cursor-pointer flex items-center gap-4"
+                          className="px-4 py-3 text-[#a8a5a1] cursor-pointer hover:bg-[#404040] flex items-center justify-between"
                           onClick={() => {
                             setSelectedCode(code);
                             setShowDropdown(false);
                           }}
                         >
-                          <span>{code}</span>
-                          <span className="text-base">{country}</span>
+                          <span className="font-medium">{code}</span>
+                          <span className="text-sm text-gray-500">{country}</span>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
 
+                {/* Phone Number Input */}
                 <input
                   type="text"
                   id="phone"
                   value={phoneNumber}
                   onChange={handleInputChange(setPhoneNumber)}
-                  className="bg-[#333332] text-gray-400 rounded-r-lg outline-none block w-full p-2.5 h-12 border-none"
-                  placeholder="Enter 10-digit phone number"
+                  className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 h-12 border-none mb-4 text-sm"
+                  placeholder="Please enter the phone number"
                   required
                 />
               </div>
@@ -245,7 +247,7 @@ function SignupPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block mb-2 text-md text-white flex items-center gap-2"
+                className="block mb-2 text-md text-white flex items-center gap-2 mt-[-20px]"
               >
                 <img src={lockicon} alt="Lock" className="w-5 h-6" />
                 Set password
@@ -257,7 +259,7 @@ function SignupPage() {
                   placeholder="Set password (min 6 characters)"
                   value={password}
                   onChange={handleInputChange(setPassword)}
-                  className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 pr-10"
+                  className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 pr-10 text-sm"
                   style={{ border: "none" }}
                   required
                 />
@@ -265,7 +267,7 @@ function SignupPage() {
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
                   onClick={togglePasswordVisibility}
                 >
-                  {showPassword ? (
+                  {!showPassword ? (
                     <FaEyeSlash className="text-gray-500" />
                   ) : (
                     <FaEye className="text-gray-500" />
@@ -289,7 +291,7 @@ function SignupPage() {
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={handleInputChange(setConfirmPassword)}
-                  className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 pr-10"
+                  className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 pr-10 text-sm"
                   style={{ border: "none" }}
                   required
                 />
@@ -297,7 +299,7 @@ function SignupPage() {
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
                   onClick={toggleConfirmPasswordVisibility}
                 >
-                  {showConfirmPassword ? (
+                  {!showConfirmPassword ? (
                     <FaEyeSlash className="text-gray-500" />
                   ) : (
                     <FaEye className="text-gray-500" />
@@ -309,7 +311,7 @@ function SignupPage() {
             <div>
               <label
                 htmlFor="inviteCode"
-                className="block mb-2 text-md  text-white flex items-center gap-2"
+                className="block mb-2 text-md  text-white flex items-center gap-2 "
               >
                 <img
                   src={invitecodeicon}
@@ -323,7 +325,7 @@ function SignupPage() {
                 id="inviteCode"
                 value={inviteCode}
                 onChange={handleInputChange(setInviteCode)}
-                className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5"
+                className="bg-[#333332] text-gray-400 rounded-lg outline-none block w-full p-2.5 text-sm"
                 placeholder="Enter invitation code (required)"
                 style={{ border: "none" }}
                 required
@@ -359,45 +361,47 @@ function SignupPage() {
               </div>
               <label
                 htmlFor="privacyAgreement"
-                className="ml-2 text-sm text-white mt-5"
+                className="ml-2 text-xs text-white mt-5"
               >
                 I have read and agree{" "}
-                <span className="text-custom-pink">[Privacy Agreement]</span>
+                <Link to="/privacy-policy" className="text-custom-pink">[Privacy Agreement]</Link>
               </label>
             </div>
 
-            <button
-              type="submit"
-              className={`w-full bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] py-3 rounded-full focus:outline-none ${
-                loading ||
-                !phoneNumber ||
-                !password ||
-                !confirmPassword ||
-                !inviteCode ||
-                !privacyAgreement
+            <div className="flex flex-col items-center w-full">
+              <button
+                type="submit"
+                className={`w-[85%] bg-[linear-gradient(90deg,#FAE59F_0%,#C4933F_100%)] text-[#8f5206] py-3 rounded-full focus:outline-none ${loading ||
+                  !phoneNumber ||
+                  !password ||
+                  !confirmPassword ||
+                  !inviteCode ||
+                  !privacyAgreement
                   ? "opacity-50 cursor-not-allowed"
                   : ""
-              }`}
-              disabled={
-                loading ||
-                !phoneNumber ||
-                !password ||
-                !confirmPassword ||
-                !inviteCode ||
-                !privacyAgreement
-              }
-            >
-              {loading ? "Registering..." : "Register"}
-            </button>
-            <Link to="/login">
-              <button
-                type="button"
-                className="w-full border mt-4 border-[#d9ac4f] text-[#a8a5a1] py-3 rounded-full focus:outline-none"
+                  }`}
+                disabled={
+                  loading ||
+                  !phoneNumber ||
+                  !password ||
+                  !confirmPassword ||
+                  !inviteCode ||
+                  !privacyAgreement
+                }
               >
-                I have an account,{" "}
-                <span className="font-bold text-[#d9ac4f]">Login</span>
+                {loading ? "Registering..." : "Register"}
               </button>
-            </Link>
+
+              <Link to="/login" className="w-full flex justify-center">
+                <button
+                  type="button"
+                  className="w-[85%] border mt-4 border-[#d9ac4f] text-[#a8a5a1] py-3 rounded-full focus:outline-none"
+                >
+                  I have an account,{" "}
+                  <span className="font-bold text-[#d9ac4f]">Login</span>
+                </button>
+              </Link>
+            </div>
           </form>
         </div>
       </div>
