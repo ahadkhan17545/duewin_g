@@ -94,42 +94,42 @@ const bonusIcons = [
     id: 'first-deposit',
     name: 'First Deposit',
     image: firstDeposit,
-    link: '/bonus/first-deposit',
+    link: '/',
     description: 'Get bonus on your first deposit'
   },
   {
     id: '888-bonus',
     name: '888 Bonus',
     image: Bonus888,
-    link: '/bonus/888-bonus',
+    link: '/',
     description: 'Daily lucky draw of ₹888'
   },
   {
     id: 'youtube',
     name: 'YouTube',
     image: ytS,
-    link: '/youtube',
+    link: '/',
     description: 'Subscribe to our YouTube channel'
   },
   {
     id: 'win-streak',
     name: 'Win Streak',
     image: winstreakS,
-    link: '/bonus/win-streak',
+    link: '/',
     description: 'Win streak bonus rewards'
   },
   {
     id: 'support-funds',
     name: 'Support Funds',
     image: supportFundsS,
-    link: '/bonus/support-funds',
+    link: '/',
     description: 'Up to 9% support funds on losses'
   },
   {
     id: 'invitation-bonus',
     name: 'Invitation Bonus',
     image: invitationBonusS,
-    link: '/bonus/invitation',
+    link: '/invitebonus',
     description: 'High invitation bonus for new agents'
   },
   {
@@ -143,30 +143,30 @@ const bonusIcons = [
     id: 'VIPS-bonus',
     name: 'VIPS Bonus',
     image: VIPS,
-    link: '/bonus/VIPS',
+    link: '/vipprofile',
     description: 'Daily VIPS bonus rewards'
   },
   {
     id: 'avaitorS-bonus',
     name: 'avaitorS Bonus',
     image: avaitorS,
-    link: '/bonus/avaitorS',
+    link: '/',
     description: 'Daily avaitorS bonus rewards'
   },
     {
     id: 'agentS-bonus',
     name: 'avaitorS Bonus',
     image: agentS,
-    link: '/bonus/agentS',
+    link: '/agentcustomer',
     description: 'Daily agentS bonus rewards'
   },
-      {
-    id: 'lucky10S-bonus',
-    name: 'lucky10S Bonus',
-    image: lucky10S,
-    link: '/bonus/lucky10S',
-    description: 'Daily lucky10S bonus rewards'
-  }
+  //     {
+  //   id: 'lucky10S-bonus',
+  //   name: 'lucky10S Bonus',
+  //   image: lucky10S,
+  //   link: '/',
+  //   description: 'Daily lucky10S bonus rewards'
+  // }
 ];
 
 // Game categories
