@@ -1005,7 +1005,6 @@ function LotteryTrxWingo() {
                   </thead>
                   <tbody>
                     {historyData.map((record, rowIndex) => {
-                      console.log(record)
                       const period = record.periodId?.toString() || "";
                       const hash = record.hashValue?.toString() || "";
 
