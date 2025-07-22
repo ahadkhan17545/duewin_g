@@ -1484,17 +1484,13 @@ function LotteryK3() {
               <Notification />
             </div>
 
-            <button
-              className="text-xs min-w-[80px] px-3 py-[1px] rounded-md flex items-center justify-center gap-1"
-              style={{
-                backgroundImage: `url(${invitation})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <img src={fire} alt="icon" className="w-3 h-3" /> Detail
-            </button>
+                <Link to="/notificationsService">
+                  <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
+                    <img src={fire} alt="Hot Icon" className="w-3 h-3" />
+
+                    <span className="ml-1 text-xs font-semibold">Detail</span>
+                  </button>
+                </Link>
           </div>
         </div>
 
