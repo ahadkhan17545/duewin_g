@@ -18,7 +18,7 @@ import iconquickpay from "../../Assets/finalicons/iconquickpay.png";
 import refresh from "../../Assets/finalicons/refresh.png";
 import apiServices from "../../api/apiServices";
 import CommanHeader from "../../components/CommanHeader";
-import walletImage from "../../Assets/newIcon/savewalleticon.png"
+import walletImage from "../../Assets/newIcon/savewalleticon.png";
 import iconInr from "../../Assets/finalicons/iconinr.png";
 
 // Legacy payment channels (keeping for backup, but not used)
@@ -83,22 +83,22 @@ const Deposit = () => {
       if (response?.data?.gateways) {
         // Filter UPI gateways (not USDT)
         const upiGateways = response.data.gateways
-          .filter((item) => item?.name !== 'USDT WG Pay')
+          .filter((item) => item?.name !== "USDT WG Pay")
           .map((gateway, index) => ({
             ...gateway,
             isHighlight: index === 0, // First gateway highlighted by default
             balance: `${gateway.min_amount} - ${gateway.max_amount}`, // Format balance range
-            key: gateway.code || gateway.name // Use code if available, otherwise name
+            key: gateway.code || gateway.name, // Use code if available, otherwise name
           }));
 
         // Filter USDT gateways
         const usdtGateways = response.data.gateways
-          .filter((item) => item?.name === 'USDT WG Pay')
+          .filter((item) => item?.name === "USDT WG Pay")
           .map((gateway) => ({
             ...gateway,
             balance: `${gateway.min_amount} - ${gateway.max_amount}`, // Format balance range
             key: gateway.code || gateway.name,
-            bonus: gateway.bonus || "" // Add bonus if available
+            bonus: gateway.bonus || "", // Add bonus if available
           }));
 
         setPaymentChannelList(upiGateways);
@@ -199,19 +199,26 @@ const Deposit = () => {
     }
 
     // Check if amount is within gateway limits
-    if (selectedChannel.min_amount && Number(inputAmount) < selectedChannel.min_amount) {
+    if (
+      selectedChannel.min_amount &&
+      Number(inputAmount) < selectedChannel.min_amount
+    ) {
       alert(`Minimum amount is ₹${selectedChannel.min_amount}`);
       return;
     }
 
-    if (selectedChannel.max_amount && Number(inputAmount) > selectedChannel.max_amount) {
+    if (
+      selectedChannel.max_amount &&
+      Number(inputAmount) > selectedChannel.max_amount
+    ) {
       alert(`Maximum amount is ₹${selectedChannel.max_amount}`);
       return;
     }
 
     const payload = {
       amount: Number(inputAmount),
-      gateway: selectedChannel.key || selectedChannel.code || selectedChannel.name,
+      gateway:
+        selectedChannel.key || selectedChannel.code || selectedChannel.name,
     };
 
     // Add pay_type for specific gateways if needed
@@ -251,7 +258,8 @@ const Deposit = () => {
 
     const payload = {
       amount: Number(inputAmount),
-      gateway: selectedChannel.key || selectedChannel.code || selectedChannel.name,
+      gateway:
+        selectedChannel.key || selectedChannel.code || selectedChannel.name,
     };
 
     try {
@@ -274,9 +282,68 @@ const Deposit = () => {
   };
   const rupeesAmount = useMemo(() => {
     const amount = parseFloat(inputAmount);
-    if (isNaN(amount) || amount <= 0) return '';
+    if (isNaN(amount) || amount <= 0) return "";
     return (amount * 93).toFixed(2);
   }, [inputAmount]);
+
+  const generateUsdtPresetAmounts = (minAmount = 10) => {
+    const baseAmounts = [];
+
+    // Start with the minimum amount
+    baseAmounts.push(minAmount.toString());
+
+    // Generate USDT preset amounts
+    if (minAmount <= 10) {
+      baseAmounts.push("50", "100", "500", "1K", "5K");
+    } else if (minAmount <= 50) {
+      baseAmounts.push("100", "500", "1K", "5K", "10K");
+    } else {
+      // Scale for higher amounts
+      const multipliers = [2, 5, 10, 20, 50];
+      multipliers.forEach((mult) => {
+        const amount = minAmount * mult;
+        if (amount < 1000) {
+          baseAmounts.push(amount.toString());
+        } else {
+          baseAmounts.push(`${Math.floor(amount / 1000)}K`);
+        }
+      });
+    }
+
+    return [...new Set(baseAmounts)].slice(0, 6);
+  };
+
+  const generatePresetAmounts = (minAmount) => {
+    const baseAmounts = [];
+
+    // Start with the minimum amount
+    baseAmounts.push(minAmount.toString());
+
+    // Generate preset amounts based on min_amount
+    if (minAmount <= 100) {
+      baseAmounts.push("500", "1K", "5K", "10K", "20K", "50K");
+    } else if (minAmount <= 500) {
+      baseAmounts.push("1K", "5K", "10K", "20K", "50K", "100K");
+    } else if (minAmount <= 1000) {
+      baseAmounts.push("5K", "10K", "20K", "50K", "100K", "500K");
+    } else {
+      // For higher minimum amounts, scale accordingly
+      const multipliers = [2, 5, 10, 20, 50, 100];
+      multipliers.forEach((mult) => {
+        const amount = minAmount * mult;
+        if (amount < 1000) {
+          baseAmounts.push(amount.toString());
+        } else if (amount < 100000) {
+          baseAmounts.push(`${Math.floor(amount / 1000)}K`);
+        } else {
+          baseAmounts.push(`${Math.floor(amount / 100000)}L`);
+        }
+      });
+    }
+
+    // Remove duplicates and return first 6 amounts
+    return [...new Set(baseAmounts)].slice(0, 6);
+  };
   return (
     <div className="bg-[#242424] min-h-screen flex flex-col w-full items-center justify-center mt-4">
       <CommanHeader
@@ -293,6 +360,8 @@ const Deposit = () => {
             backgroundSize: "100%",
             backgroundPosition: "top",
             borderRadius: ".26667rem",
+            height: "160px",
+            marginBottom: "10px",
           }}
           className="bg-cover bg-center p-4 rounded-xl h-[145px] flex flex-col justify-between relative"
         >
@@ -322,10 +391,11 @@ const Deposit = () => {
             <div
               key={index}
               onClick={() => handlePaymentWaySelect(item)}
-              className={`p-1 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${selectedPayment === item.key
-                ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                : "bg-[#333332] hover:bg-neutral-700"
-                }`}
+              className={`p-1 rounded-md text-center cursor-pointer relative flex flex-col items-center justify-center ${
+                selectedPayment === item.key
+                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                  : "bg-[#333332] hover:bg-neutral-700"
+              }`}
               style={{ width: "79px", height: "87px" }}
             >
               <img
@@ -358,16 +428,27 @@ const Deposit = () => {
                 {paymentChannelList?.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className={`p-3 rounded-xl cursor-pointer transition relative ${item.isHighlight
-                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
-                      : "bg-[#4d4d4c] hover:bg-neutral-700"
-                      }`}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${
+                      item.isHighlight
+                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
+                        : "bg-[#4d4d4c] hover:bg-neutral-700"
+                    }`}
                     onClick={() => handleChannelSelect(item)}
                   >
-                    <div className="font-semibold text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                    <div
+                      className="font-semibold text-neutral-400 text-sm"
+                      style={{
+                        color: item.isHighlight ? "#8F5206" : "#a8a5a1",
+                      }}
+                    >
                       {item.name}
                     </div>
-                    <div className="text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                    <div
+                      className="text-neutral-400 text-sm"
+                      style={{
+                        color: item.isHighlight ? "#8F5206" : "#a8a5a1",
+                      }}
+                    >
                       Balance: ₹{item.balance}
                     </div>
                   </div>
@@ -385,15 +466,17 @@ const Deposit = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {["500", "1K", "5K", "10K", "20K", "50K"].map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => handlePresetAmountClick(amount)}
-                    className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
-                  >
-                    <span className="text-[#666462]"> ₹ </span> {amount}
-                  </button>
-                ))}
+                {generatePresetAmounts(selectedChannel?.min_amount || 100).map(
+                  (amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => handlePresetAmountClick(amount)}
+                      className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                    >
+                      <span className="text-[#666462]"> ₹ </span> {amount}
+                    </button>
+                  )
+                )}
               </div>
 
               <div className="relative mb-6">
@@ -411,7 +494,7 @@ const Deposit = () => {
                   />
                   {inputAmount && (
                     <button
-                      onClick={() => setInputAmount('')}
+                      onClick={() => setInputAmount("")}
                       className="ml-2 p-1 hover:bg-neutral-700 rounded-full transition-colors"
                       aria-label="Clear input"
                     >
@@ -432,10 +515,14 @@ const Deposit = () => {
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 mb-2 ${selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#6f7381] text-white"
-                  }`}
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${
+                  selectedPayment &&
+                  selectedChannel &&
+                  inputAmount &&
+                  Number(inputAmount) >= (selectedChannel?.min_amount || 100)
+                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#6f7381] text-white"
+                }`}
                 disabled={
                   !selectedPayment ||
                   !selectedChannel ||
@@ -491,16 +578,27 @@ const Deposit = () => {
                 {paymentChannelList?.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className={`p-3 rounded-xl cursor-pointer transition relative ${item.isHighlight
-                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
-                      : "bg-[#4d4d4c] hover:bg-neutral-700"
-                      }`}
+                    className={`p-3 rounded-xl cursor-pointer transition relative ${
+                      item.isHighlight
+                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8F5206]"
+                        : "bg-[#4d4d4c] hover:bg-neutral-700"
+                    }`}
                     onClick={() => handleChannelSelect(item)}
                   >
-                    <div className="font-semibold text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                    <div
+                      className="font-semibold text-neutral-400 text-sm"
+                      style={{
+                        color: item.isHighlight ? "#8F5206" : "#a8a5a1",
+                      }}
+                    >
                       {item.name}
                     </div>
-                    <div className="text-neutral-400 text-sm" style={{ color: item.isHighlight ? "#8F5206" : "#a8a5a1" }}>
+                    <div
+                      className="text-neutral-400 text-sm"
+                      style={{
+                        color: item.isHighlight ? "#8F5206" : "#a8a5a1",
+                      }}
+                    >
                       Balance: ₹{item.balance}
                     </div>
                   </div>
@@ -518,15 +616,17 @@ const Deposit = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {["500", "1K", "5K", "10K", "20K", "50K"].map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => handlePresetAmountClick(amount)}
-                    className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
-                  >
-                    <span className="text-[#666462]"> ₹ </span> {amount}
-                  </button>
-                ))}
+                {generatePresetAmounts(selectedChannel?.min_amount || 100).map(
+                  (amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => handlePresetAmountClick(amount)}
+                      className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                    >
+                      <span className="text-[#666462]"> ₹ </span> {amount}
+                    </button>
+                  )
+                )}
               </div>
 
               <div className="relative mb-6">
@@ -544,7 +644,7 @@ const Deposit = () => {
                   />
                   {inputAmount && (
                     <button
-                      onClick={() => setInputAmount('')}
+                      onClick={() => setInputAmount("")}
                       className="ml-2 p-1 hover:bg-neutral-700 rounded-full transition-colors"
                       aria-label="Clear input"
                     >
@@ -565,10 +665,14 @@ const Deposit = () => {
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 mb-2 ${selectedPayment && selectedChannel && inputAmount && Number(inputAmount) >= (selectedChannel?.min_amount || 100)
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#6f7381] text-white"
-                  }`}
+                className={`w-full transition-colors rounded-full py-3 mb-2 ${
+                  selectedPayment &&
+                  selectedChannel &&
+                  inputAmount &&
+                  Number(inputAmount) >= (selectedChannel?.min_amount || 100)
+                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#6f7381] text-white"
+                }`}
                 disabled={
                   !selectedPayment ||
                   !selectedChannel ||
@@ -627,18 +731,37 @@ const Deposit = () => {
                   <div
                     key={item.id || index}
                     onClick={() => handleUsdtChannelSelect(item)}
-                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${selectedChannel?.id === item.id
-                      ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
-                      : "bg-[#4d4d4c] hover:bg-neutral-700"
-                      }`}
+                    className={`p-3 rounded-xl cursor-pointer transition flex items-center justify-between ${
+                      selectedChannel?.id === item.id
+                        ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]"
+                        : "bg-[#4d4d4c] hover:bg-neutral-700"
+                    }`}
                   >
                     <div className="flex items-center">
                       <img src={tpay} alt="icon" className="h-10 w-10 mr-4" />
                       <div>
-                        <div className="font-semibold text-[14px]" style={{ color: selectedChannel?.id === item.id ? "#8F5206" : "#a8a5a1" }}>
+                        <div
+                          className="font-semibold text-[14px]"
+                          style={{
+                            color:
+                              selectedChannel?.id === item.id
+                                ? "#8F5206"
+                                : "#a8a5a1",
+                          }}
+                        >
                           {item.name}
                         </div>
-                        <div className="text-[14px]" style={{ color: selectedChannel?.id === item.id ? "#8F5206" : "#a8a5a1" }}>₹{item.balance}</div>
+                        <div
+                          className="text-[14px]"
+                          style={{
+                            color:
+                              selectedChannel?.id === item.id
+                                ? "#8F5206"
+                                : "#a8a5a1",
+                          }}
+                        >
+                          ₹{item.balance}
+                        </div>
                       </div>
                     </div>
                     <div className="text-amber-500 text-sm">{item.bonus}</div>
@@ -655,16 +778,17 @@ const Deposit = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {["10", "50", "100", "500", "1K", "5K"].map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => handlePresetAmountClick(amount)}
-                    className="flex items-center justify-center bg-[#4d4d4c] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f] border border-[#666462]"
-                  >
-                    <img src={tpay} alt="icon" className="h-6 w-6 mr-2" />
-                    {amount}
-                  </button>
-                ))}
+                {generateUsdtPresetAmounts(selectedChannel?.min_amount || 100).map(
+                  (amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => handlePresetAmountClick(amount)}
+                      className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                    >
+                      <span className="text-[#666462]"> ₹ </span> {amount}
+                    </button>
+                  )
+                )}
               </div>
 
               <div className="relative mb-4">
@@ -697,16 +821,16 @@ const Deposit = () => {
                       disabled
                       className="bg-transparent w-full outline-none placeholder-neutral-500 text-neutral-300 cursor-not-allowed"
                     />
-      
                   </div>
                 </div>
               </div>
 
               <button
-                className={`w-full transition-colors rounded-full py-3 ${selectedChannel && inputAmount && Number(inputAmount) >= 10
-                  ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
-                  : "bg-[#6f7381] text-white"
-                  }`}
+                className={`w-full transition-colors rounded-full py-3 ${
+                  selectedChannel && inputAmount && Number(inputAmount) >= 10
+                    ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-[#8f5206]"
+                    : "bg-[#6f7381] text-white"
+                }`}
                 disabled={
                   !selectedChannel ||
                   !inputAmount ||
@@ -799,9 +923,7 @@ const Deposit = () => {
                       <div className="flex items-center">
                         <span className="text-[#a8a5a1]">{item?.order_id}</span>
                         <button
-                          onClick={() =>
-                            handleCopyOrderNumber(item?.order_id)
-                          }
+                          onClick={() => handleCopyOrderNumber(item?.order_id)}
                           className="ml-2 text-neutral-400 hover:text-neutral-300"
                         >
                           <FaCopy />

@@ -16,7 +16,7 @@ import whitetick from "../../Assets/whitetick.png";
 import activeImg6 from "../../Assets/finalicons/allicon2.png";
 import activeImg7 from "../../Assets/finalicons/bankcardicon1.png";
 import CommanHeader from "../../components/CommanHeader";
-
+import tpay from "../../Assets/gamesimage/Tpay.png";
 function DepositHistory() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
@@ -40,9 +40,9 @@ function DepositHistory() {
   const monthRef = useRef(null);
   const dayRef = useRef(null);
 
-  const images = [img6, paytm, upi, all, img8];
-  const activeImages = [activeImg6, paytm, upi, all, img8];
-  const descriptions = ["All","UPI-QRpay",  "USDT"];
+  const images = [img6, paytm, tpay, all, img8];
+  const activeImages = [activeImg6, paytm, tpay, all, img8];
+  const descriptions = ["All","UPI-QRpay",  "USDT","Wake UP-APP"];
 
   // Current date as per system instructions (May 23, 2025)
   const currentDate = new Date(2025, 4, 23);

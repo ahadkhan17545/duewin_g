@@ -883,7 +883,7 @@ function Home() {
       >
         <Homeheader />
         <div className="w-full flex flex-col overflow-x-hidden p-3 mt-20">
-          <div className="w-full py-2 overflow-hidden">
+          <div className="w-full overflow-hidden">
             <Slider {...settings}>
               {bonusIcons.map((bonus, index) => (
                 <div key={bonus.id} className="px-1">

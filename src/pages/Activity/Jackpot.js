@@ -97,9 +97,9 @@ const Jackpot = () => {
     fetchRebate(1)
     fetchRebateStats()
   }, [])
-  const images = [img6, img1, img2, img3, img4, img5];
-  const activeImages = [activeImg6, activeImg1, activeImg2, activeImg3, activeImg4, activeImg5];
-  const tabNames = ["All", "Lottery", "Casino", "Sport", "Rummy", "Slot"];
+  const images = [img6, img1];
+  const activeImages = [activeImg6, activeImg1];
+  const tabNames = ["Original", "Provider"];
 
   const openPopup = () => {
     setShowPopup(true);

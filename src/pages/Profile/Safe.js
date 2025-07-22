@@ -263,7 +263,7 @@ const FinancialCard = () => {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-white text-sm">Each amount</span>
                 <input
-                  type="number"
+                  type="text"
                   value={transferAmount}
                   onChange={handleAmountChange}
                   className="w-20 text-right border border-gray-300 rounded-md px-2 py-1 text-gray-800 bg-gray-100"
@@ -337,7 +337,7 @@ const FinancialCard = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white text-sm">Each amount</span>
                 <input
-                  type="number"
+                  type="text"
                   value={transferAmount}
                   onChange={handleAmountChange}
                   max={maxTransferLimit}

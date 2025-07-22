@@ -88,15 +88,18 @@ const apiRequest = async (
   try {
     if (DEBUG_API) {
       console.log(`Making API call to: ${url}`);
-      console.log('Request config:', config);
-      console.log('Auth token:', authToken ? 'Present' : 'Missing');
+      console.log("Request config:", config);
+      console.log("Auth token:", authToken ? "Present" : "Missing");
     }
-    
+
     const response = await fetch(url, config);
 
     if (DEBUG_API) {
       console.log(`API response status: ${response.status}`);
-      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
     }
 
     if (!response.ok) {
@@ -126,9 +129,9 @@ const apiRequest = async (
   } catch (error) {
     if (DEBUG_API) {
       console.error(`Failed to fetch ${endpoint}:`, error.message);
-      console.error('Full error:', error);
+      console.error("Full error:", error);
     }
-    showError(error.message || 'Something went wrong while calling API');
+    showError(error.message || "Something went wrong while calling API");
     // throw error;
   }
 };
@@ -157,7 +160,7 @@ export const getVipHistory = async () => {
 export const getWithdrawalHistory = async (page = 1, limit = 10) => {
   return await apiRequest("/wallet/withdrawal-history", "GET", null, {
     page,
-    limit
+    limit,
   });
 };
 
@@ -393,11 +396,21 @@ export const getUserBets = async (gameType, limit = 10, page = 1) => {
     limit,
   });
 };
-export const getUserBetsPerGame = async (gameType,duration , page = 1,limit = 10) => {
-  return await apiRequest(`/games/${gameType}/${duration}/my-bets`, "GET", null, {
-    page,
-    limit,
-  });
+export const getUserBetsPerGame = async (
+  gameType,
+  duration,
+  page = 1,
+  limit = 10
+) => {
+  return await apiRequest(
+    `/games/${gameType}/${duration}/my-bets`,
+    "GET",
+    null,
+    {
+      page,
+      limit,
+    }
+  );
 };
 
 export const getListOfGameAndDuration = () => {
@@ -647,18 +660,21 @@ export const getCommissionWithDateData = async (selectedDate) => {
   );
 };
 
-export const getLastResult = async (gameType,duration,) => {
+export const getLastResult = async (gameType, duration) => {
   return await apiRequest(`/games/${gameType}/${duration}/last-result`, "GET");
 };
-export const getGameHistory = async (gameType,duration,page,limit) => {
-  return await apiRequest(`/games/${gameType}/${duration}/history?page=${page}&limit=${limit}`, "GET");
+export const getGameHistory = async (gameType, duration, page, limit) => {
+  return await apiRequest(
+    `/games/${gameType}/${duration}/history?page=${page}&limit=${limit}`,
+    "GET"
+  );
 };
 
 export const getAllPayments = async () => {
   return await apiRequest(`/payments/available-gateways`, "GET");
 };
 
-export const sendOtp = async (phone, purpose = 'bank_account') => {
+export const sendOtp = async (phone, purpose = "bank_account") => {
   const payload = { phone, purpose };
   return await apiRequest(`/otp/send`, "POST", payload);
 };
@@ -666,7 +682,25 @@ export const sendOtp = async (phone, purpose = 'bank_account') => {
 export const verifyOtp = async (payload) => {
   return await apiRequest(`/otp/verify`, "POST", payload);
 };
+export const forgotPassword = async (payload) => {
+  return await fetch("https://api.strikecolor1.com/api/users/forgot-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+};
 
+export const resetPassword = async (payload) => {
+  return await fetch("https://api.strikecolor1.com/api/users/reset-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+};
 
 export default {
   getWalletBalance,
@@ -736,5 +770,5 @@ export default {
   getGameHistory,
   getAllPayments,
   verifyOtp,
-  sendOtp
+  sendOtp,
 };

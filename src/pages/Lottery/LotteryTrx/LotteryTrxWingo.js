@@ -352,14 +352,21 @@ function LotteryTrxWingo() {
       );
       console.log(response);
       if (response?.success && response?.data?.results) {
-        const mappedHistory = response.data.results.map((item) => ({
-          periodId: item.periodId,
-          blockHeight: item.verification?.blockHeight || "N/A",
-          blockTime: item.verification?.blockTime || "N/A",
-          hashValue: item.verification?.hash || "N/A",
-          result: item.result?.number ?? "N/A",
-          resultType: item.result?.size || item.result?.color || "N/A",
-        }));
+        const mappedHistory = response.data.results.map((item) => {
+          const blockTimeRaw = item.verification?.time;
+          const blockTimeFormatted = blockTimeRaw
+            ? `${String(new Date(blockTimeRaw).getHours()).padStart(2, "0")}:${String(new Date(blockTimeRaw).getMinutes()).padStart(2, "0")}`
+            : "N/A";
+
+          return {
+            periodId: item.periodId,
+            blockHeight: item.verification?.block || "N/A",
+            blockTime: blockTimeFormatted,
+            hashValue: item.verification?.hash || "N/A",
+            result: item.result?.number ?? "N/A",
+            resultType: item.result?.size || item.result?.color || "N/A",
+          };
+        });
         setHistoryData(mappedHistory);
         setTotalPages(response.data.pagination?.totalPages || 5);
         setCurrentPage(response.data.pagination?.page);
@@ -414,22 +421,24 @@ function LotteryTrxWingo() {
       return () => clearTimeout(timer);
     }
   }, [showSuccessPopup]);
-    useEffect(() => {
-      if (
+  useEffect(() => {
+    if (
       isModalOpen &&
-        timeRemaining.seconds <= 5 &&
-        timeRemaining.minutes === 0 &&  buttonData[activeButton].duration == 30
-      ) {
-        handleCloseModal();
-      }
-          if (
-        isModalOpen&&
-        timeRemaining.seconds <= 10 &&
-        timeRemaining.minutes === 0 &&  buttonData[activeButton].duration != 30
-      ) {
-        handleCloseModal();
-      }
-    }, [timeRemaining, isModalOpen  ]);
+      timeRemaining.seconds <= 5 &&
+      timeRemaining.minutes === 0 &&
+      buttonData[activeButton].duration == 30
+    ) {
+      handleCloseModal();
+    }
+    if (
+      isModalOpen &&
+      timeRemaining.seconds <= 10 &&
+      timeRemaining.minutes === 0 &&
+      buttonData[activeButton].duration != 30
+    ) {
+      handleCloseModal();
+    }
+  }, [timeRemaining, isModalOpen]);
 
   // Event handlers
   const handlePageChange = (page) => {
@@ -620,13 +629,13 @@ function LotteryTrxWingo() {
               <Notification />
             </div>
 
-                <Link to="/notificationsService">
-                  <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
-                    <img src={fire} alt="Hot Icon" className="w-3 h-3" />
+            <Link to="/notificationsService">
+              <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
+                <img src={fire} alt="Hot Icon" className="w-3 h-3" />
 
-                    <span className="ml-1 text-xs font-semibold">Detail</span>
-                  </button>
-                </Link>
+                <span className="ml-1 text-xs font-semibold">Detail</span>
+              </button>
+            </Link>
           </div>
         </div>
         <div
@@ -1247,56 +1256,53 @@ function LotteryTrxWingo() {
               )}
             </div>
           )}
-            { (
-                <>
-                  <div className="flex justify-center items-center mt-4 space-x-2">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                    >
-                      Previous
-                    </button>
+          {
+            <>
+              <div className="flex justify-center items-center mt-4 space-x-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                >
+                  Previous
+                </button>
 
-                    <div className="flex items-center space-x-1">
-                      {Array.from(
-                        { length: Math.min(5, totalPages) },
-                        (_, i) => {
-                          const pageNum =
-                            currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                          if (pageNum > totalPages) return null;
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum =
+                      currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                    if (pageNum > totalPages) return null;
 
-                          return (
-                            <button
-                              key={pageNum}
-                              onClick={() => handlePageChange(pageNum)}
-                              className={`px-3 py-1 rounded text-sm transition-colors ${
-                                currentPage === pageNum
-                                  ? "bg-[#d9ac4f] text-black font-medium"
-                                  : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                              }`}
-                            >
-                              {pageNum}
-                            </button>
-                          );
-                        }
-                      )}
-                    </div>
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-1 rounded text-sm transition-colors ${
+                          currentPage === pageNum
+                            ? "bg-[#d9ac4f] text-black font-medium"
+                            : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
 
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <div className="text-center mt-3 text-xs text-gray-500">
-                    Page {currentPage} of {totalPages} • {historyData?.length}{" "}
-                    records shown
-                  </div>
-                </>
-              )}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+              <div className="text-center mt-3 text-xs text-gray-500">
+                Page {currentPage} of {totalPages} • {historyData?.length}{" "}
+                records shown
+              </div>
+            </>
+          }
         </div>
       </div>
 
