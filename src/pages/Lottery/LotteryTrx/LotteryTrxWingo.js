@@ -5,7 +5,8 @@ import walletbggame from "../../../Assets/walletbggame.png";
 import Timecolor from "../../../Assets/timecolor.png";
 import Timeblack from "../../../Assets/timeblack.png";
 import refresh from "../../../Assets/refresh.png";
-import trxbg from "../../../Assets/trxbg.png";
+import trxbg from "../../../Assets/newIcon/trxbg.png";
+import question from "../../../Assets/newIcon/questionIcon.png";
 import empty from "../../../Assets/empty.png";
 import wallet from "../../../Assets/wallets.png";
 import fire from "../../../Assets/fire.png";
@@ -412,6 +413,7 @@ function LotteryTrxWingo() {
             hashValue: item.verification?.hash || "N/A",
             result: item.result?.number ?? "N/A",
             resultType: item.result?.size || item.result?.color || "N/A",
+            link:item?.verification?.link
           };
         });
         setHistoryData(mappedHistory);
@@ -721,7 +723,7 @@ function LotteryTrxWingo() {
         </div>
 
         <div
-          className="rounded-lg mt-4 shadow-md mb-4 p-4"
+          className="rounded-lg mt-4 mb-4 p-4"
           style={{
             backgroundImage: `url(${trxbg})`,
             backgroundSize: "cover",
@@ -1003,6 +1005,7 @@ function LotteryTrxWingo() {
                   </thead>
                   <tbody>
                     {historyData.map((record, rowIndex) => {
+                      console.log(record)
                       const period = record.periodId?.toString() || "";
                       const hash = record.hashValue?.toString() || "";
 
@@ -1014,8 +1017,12 @@ function LotteryTrxWingo() {
                             {maskedPeriod || "N/A"}
                           </td>
                           <td className="text-sm text-center py-2">
-                            {record.blockHeight || "N/A"}
+                            <div className="flex items-center justify-center gap-1" style={{display:'flex',flexDirection:'column'}}>
+                              <img onClick={()=> {window.location.href=record?.link}} src={question} className="w-3 h-3" />
+                              <span>{record.blockHeight || "N/A"}</span>
+                            </div>
                           </td>
+
                           <td className="text-sm text-center py-2">
                             {record.blockTime || "N/A"}
                           </td>
@@ -1555,50 +1562,68 @@ function LotteryTrxWingo() {
       )}
 
       {showHowToPlay && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
-          <div className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-2xl shadow-lg w-[90%] max-w-[360px] min-h-[65vh]">
-            <div className="text-center text-lg text-[#8f5206] font-normal mb-2 py-2 bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[50] p-4">
+          <div className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-2xl shadow-lg w-full max-w-[360px] min-h-[65vh] flex flex-col">
+            {/* Header */}
+            <div className="text-center text-lg text-[#8f5206] font-medium py-4 bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-t-2xl">
               How to Play
             </div>
-            <div className="bg-[#201d2b] p-4 text-white text-sm max-h-[50vh] overflow-y-auto rounded-b-lg">
+
+            {/* Content */}
+            <div className="bg-[#201d2b] p-4 text-white text-sm flex-1 overflow-y-auto">
               <p>
                 1 minute 1 issue, 45 seconds to order, 15 seconds waiting for
                 the draw. It opens all day. The total number of trades is 1440
                 issues.
               </p>
-              <p className="mt-2">
+              <p className="mt-3">
                 If you spend 100 to trade, after deducting a 2% service fee,
                 your contract amount is 98:
               </p>
-              <p className="mt-2">
-                1. Select Green: If the result shows Green (1,3,5,7,9), you will
-                get (98*2) 196.00.
+              <p className="mt-3">
+                <span className="font-medium text-green-400">
+                  1. Select Green:
+                </span>{" "}
+                If the result shows 1,3,7,9 you will get (98×2) 196; If the
+                result shows 5, you will get (98×1.5) 147.
               </p>
-              <p className="mt-2">
-                2. Select Red: If the result shows Red (0,2,4,6,8), you will get
-                (98*2) 196.00.
+              <p className="mt-3">
+                <span className="font-medium text-red-400">2. Select Red:</span>{" "}
+                If the result shows 2,4,6,8 you will get (98×2) 196; If the
+                result shows 0, you will get (98×1.5) 147.
               </p>
-              <p className="mt-2">
-                3. Select Violet: If the result shows Violet (0,5), you will get
-                (98*4.5) 441.00.
+              <p className="mt-3">
+                <span className="font-medium text-purple-400">
+                  3. Select Violet:
+                </span>{" "}
+                If the result shows 0 or 5, you will get (98×4.5) 441.
               </p>
-              <p className="mt-2">
-                4. Select Number: If the result matches the number you selected
-                (0-9), you will get (98*9) 882.00.
+              <p className="mt-3">
+                <span className="font-medium text-blue-400">
+                  4. Select Number:
+                </span>{" "}
+                If the result matches the number you selected, you will get
+                (98×9) 882.
               </p>
-              <p className="mt-2">
-                5. Select Big: If the result shows 5,6,7,8,9, you will get
-                (98*2) 196.00.
+              <p className="mt-3">
+                <span className="font-medium text-yellow-400">
+                  5. Select Big:
+                </span>{" "}
+                If the result shows 5,6,7,8,9 you will get (98×2) 196.
               </p>
-              <p className="mt-2">
-                6. Select Small: If the result shows 0,1,2,3,4, you will get
-                (98*2) 196.00.
+              <p className="mt-3">
+                <span className="font-medium text-orange-400">
+                  6. Select Small:
+                </span>{" "}
+                If the result shows 0,1,2,3,4 you will get (98×2) 196.
               </p>
             </div>
-            <div className="flex justify-center py-4 bg-[#242424]">
+
+            {/* Footer with Close Button */}
+            <div className="flex justify-center py-4 bg-[#201d2b] rounded-b-2xl">
               <button
                 onClick={() => setShowHowToPlay(false)}
-                className="w-16 h-10 flex items-center justify-center text-white bg-gradient-to-b from-[#c4933f] to-[#fae59f] rounded-full font-medium shadow-md"
+                className="px-8 py-2.5 flex items-center justify-center text-[#8f5206] bg-gradient-to-b from-[#fae59f] to-[#c4933f] rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px]"
               >
                 Close
               </button>
