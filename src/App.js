@@ -215,7 +215,7 @@ function App() {
                       element={<MemberInfoCard />}
                     />
                     <Route
-                      path="/activitygamesrules"
+                      path="/activitygamesrules/:pageName"
                       element={<ActivityDetails />}
                     />
                     <Route

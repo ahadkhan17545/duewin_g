@@ -4,6 +4,7 @@ import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
 
 const filterOptions = [
+  "transfer_in",
   "game_win",
   "deposit",
   "withdrawal",
@@ -14,7 +15,6 @@ const filterOptions = [
   "referral_bonus",
   "rebate",
   "vip_reward",
-  "transfer_in",
   "transfer_out",
   "refund",
   "game_move_in",

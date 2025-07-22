@@ -164,7 +164,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4 mt-6">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/first-deposit">
             <img
               src={firstDeposit}
               alt="First Deposit Bonus"
@@ -179,7 +179,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/bonus-888">
             <img
               src={Bonus888}
               alt="Daily Bonus"
@@ -194,7 +194,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/youtube">
             <img
               src={ytS}
               alt="Aviator Challenger"
@@ -209,7 +209,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/winstreak">
             <img
               src={winstreakS}
               alt="Lucky 10 Days"
@@ -224,7 +224,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/support-funds">
             <img
              src={supportFundsS}
              alt="Wingo Win Streak Bonus"
@@ -239,7 +239,7 @@ function ActivityPage() {
         </div>
 
         <div className="bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-4">
-          <Link to="/activitygamesrules">
+          <Link to="/activitygamesrules/invitation-bonus">
             <img
              src={invitationBonusS}
              alt="Diuwin Content Creators"
@@ -254,13 +254,13 @@ function ActivityPage() {
         </div>
 
         <div className=" bg-custom-light-gray rounded-lg shadow-md flex flex-col mb-14">
-          <div>
+          <Link to="/attendancebonus">
             <img
               src={attandenceBonusS}
                 alt="Descriptive Alt Text"
               className="w-full h-auto rounded-lg"
             />
-          </div>
+          </Link>
           <div className="w-full h-1/4 flex flex-col items-left justify-center p-2">
             <h2 className="text-lg text-[#f5f3f0] font-semibold">
             🌟 Attendance Bonus 🌟

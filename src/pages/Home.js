@@ -87,49 +87,48 @@ import attandenceBonusS from "../Assets/newIcon/attandenceBonusS.webp"
 import VIPS from "../Assets/newIcon/VIPS.png"
 import avaitorS from "../Assets/newIcon/avaitorS.webp"
 import agentS from "../Assets/newIcon/agentS.webp"
-import lucky10S from "../Assets/newIcon/lucky10S.webp"
 
 const bonusIcons = [
   {
     id: 'first-deposit',
     name: 'First Deposit',
     image: firstDeposit,
-    link: '/',
+    link: '/activitygamesrules/first-deposit',
     description: 'Get bonus on your first deposit'
   },
   {
     id: '888-bonus',
     name: '888 Bonus',
     image: Bonus888,
-    link: '/',
+    link: '/activitygamesrules/bonus-888',
     description: 'Daily lucky draw of ₹888'
   },
   {
     id: 'youtube',
     name: 'YouTube',
     image: ytS,
-    link: '/',
+    link: '/activitygamesrules/youtube',
     description: 'Subscribe to our YouTube channel'
   },
   {
     id: 'win-streak',
     name: 'Win Streak',
     image: winstreakS,
-    link: '/',
+    link: '/activitygamesrules/winstreak',
     description: 'Win streak bonus rewards'
   },
   {
     id: 'support-funds',
     name: 'Support Funds',
     image: supportFundsS,
-    link: '/',
+    link: '/activitygamesrules/support-funds',
     description: 'Up to 9% support funds on losses'
   },
   {
     id: 'invitation-bonus',
     name: 'Invitation Bonus',
     image: invitationBonusS,
-    link: '/invitebonus',
+    link: '/activitygamesrules/invitation-bonus',
     description: 'High invitation bonus for new agents'
   },
   {
@@ -150,7 +149,7 @@ const bonusIcons = [
     id: 'avaitorS-bonus',
     name: 'avaitorS Bonus',
     image: avaitorS,
-    link: '/',
+    link: '/activitygamesrules/aviator',
     description: 'Daily avaitorS bonus rewards'
   },
     {
