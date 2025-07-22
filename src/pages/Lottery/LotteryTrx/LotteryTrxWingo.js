@@ -100,7 +100,28 @@ const tailwindColorMap = {
   Small: "bg-blue-600 hover:bg-blue-500",
   Number: "bg-gray-600 hover:bg-gray-500",
 };
+const CopyIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
 
+const CheckIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <polyline points="20,6 9,17 4,12"></polyline>
+  </svg>
+);
 function LotteryTrxWingo() {
   const isMounted = useRef(true);
   const location = useLocation();
@@ -163,6 +184,32 @@ function LotteryTrxWingo() {
   const containerRef = useRef(null);
   const containerRef1 = useRef(null);
   const [kdPopHeight, setKdPopHeigth] = useState(0);
+  const [copiedOrderId, setCopiedOrderId] = useState(null);
+
+  const handleCopyOrderNumber = async (orderNumber) => {
+    try {
+      await navigator.clipboard.writeText(orderNumber);
+      setCopiedOrderId(orderNumber);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = orderNumber;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setCopiedOrderId(orderNumber);
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    }
+  };
   useEffect(() => {
     if (isConnected && socketPeriod) {
       if (socketPeriod.periodId && socketPeriod.periodId !== "Loading...") {
@@ -1179,35 +1226,73 @@ function LotteryTrxWingo() {
                                     : "Pending"}
                               </p>
 
-                              {bet.winLose !== "₹0" && (
-                                <p
-                                  className={`font-medium text-sm  ${
-                                    bet.winLose.startsWith("+")
-                                      ? "text-green-600"
-                                      : "text-red-600"
-                                  }`}
-                                >
-                                  {bet.winLose}
-                                </p>
-                              )}
+                              {bet?.result !== "Pending" &&
+                                bet.winLose !== "₹0" && (
+                                  <p
+                                    className={`font-medium text-sm  ${
+                                      bet.winLose.startsWith("+")
+                                        ? "text-green-600"
+                                        : "text-red-600"
+                                    }`}
+                                  >
+                                    {bet.winLose}
+                                  </p>
+                                )}
                             </div>
                           </div>
 
                           {/* Details View (Expandable) */}
                           {openIndex === index && (
-                            <div className="bg-[#2a2a2a] rounded-b-md mx-2 mb-2 text-sm">
-                              <h3 className="text-white font-semibold mb-2 text-left">
-                                Details
-                              </h3>
-                              <div className="space-y-2">
+                            <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
+                              <div className="mb-4">
+                                <h3 className="text-white text-lg font-medium mb-1 text-left">
+                                  Details
+                                </h3>
+                              </div>
+                              <div className="space-y-3 text-sm">
                                 {[
-                                  { label: "Bet ID", value: bet.betId },
-                                  { label: "Select", value: bet.select },
-                                  { label: "Period", value: bet.period },
-                                  { label: "Amount", value: bet.amount },
-                                  { label: "Tax", value: bet.tax },
-                                  { label: "After Tax", value: bet.afterTax },
-                                  { label: "Win/Lose", value: bet.winLose },
+                                  {
+                                    label: "Bet ID",
+                                    value: bet.betId,
+                                    showCopy: true,
+                                    valueClass: "text-right text-white",
+                                  },
+                                  {
+                                    label: "Select",
+                                    value: bet.select,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Period",
+                                    value: bet.period,
+                                  },
+                                  {
+                                    label: "Amount",
+                                    value: bet.amount,
+                                  },
+                                  {
+                                    label: "Tax",
+                                    value: bet.tax,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "After Tax",
+                                    value: bet.afterTax,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Win/Lose",
+                                    value:
+                                      bet?.result === "Pending"
+                                        ? "Pending"
+                                        : bet.winLose,
+                                    valueClass:
+                                      bet?.result === "Pending"
+                                        ? "text-yellow-400"
+                                        : bet.winLose?.startsWith("+")
+                                          ? "text-green-400"
+                                          : "text-[#ff5555]",
+                                  },
                                   {
                                     label: "Status",
                                     value:
@@ -1216,22 +1301,60 @@ function LotteryTrxWingo() {
                                         : bet.status === "lost"
                                           ? "Failed"
                                           : "Pending",
+                                    valueClass:
+                                      bet.status === "won"
+                                        ? "text-green-400"
+                                        : bet.status === "lost"
+                                          ? "text-[#ff5555]"
+                                          : "text-yellow-400",
                                   },
-                                  { label: "Date", value: bet.date },
-                                  { label: "Time", value: bet.time },
-                                ].map(({ label, value }) => (
-                                  <div
-                                    key={label}
-                                    className="flex justify-between items-center bg-[#4d4d4c] px-2 py-1 rounded"
-                                  >
-                                    <span className="text-gray-300">
-                                      {label}
-                                    </span>
-                                    <span className="text-white">
-                                      {value || "N/A"}
-                                    </span>
-                                  </div>
-                                ))}
+                                  {
+                                    label: "Date",
+                                    value: bet.date,
+                                  },
+                                  {
+                                    label: "Time",
+                                    value: bet.time,
+                                  },
+                                ].map(
+                                  ({
+                                    label,
+                                    value,
+                                    valueClass = "text-gray-400",
+                                    showCopy = false,
+                                  }) => (
+                                    <div
+                                      key={label}
+                                      className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                                    >
+                                      <span className="text-gray-300 text-sm text-left">
+                                        {label}
+                                      </span>
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          className={`${valueClass} text-sm font-normal`}
+                                        >
+                                          {value || "N/A"}
+                                        </span>
+                                        {showCopy && value && (
+                                          <button
+                                            onClick={() =>
+                                              handleCopyOrderNumber(value)
+                                            }
+                                            className="p-1 hover:bg-[#5a5a59] rounded transition-colors duration-200 group"
+                                            title="Copy bet ID"
+                                          >
+                                            {copiedOrderId === value ? (
+                                              <CheckIcon className="w-4 h-4 text-green-400" />
+                                            ) : (
+                                              <CopyIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                            )}
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             </div>
                           )}

@@ -88,6 +88,28 @@ const buttonData = [
     duration: 600,
   },
 ];
+const CopyIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const CheckIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <polyline points="20,6 9,17 4,12"></polyline>
+  </svg>
+);
 
 const imageUrls = [
   { number: 3, url: redball, textColor: "#ff0000", description: "207.36X" },
@@ -624,7 +646,7 @@ const BettingModal = ({
 
   function shouldShowBettingModal(timeRemaining) {
     if (timeRemaining.seconds <= 10 && timeRemaining.minutes === 0) {
-      return false
+      return false;
     }
     if (activeImgTab === "total") {
       return selectedOptions.length > 0;
@@ -718,6 +740,32 @@ function LotteryK3() {
   const [isRolling, setIsRolling] = useState(false);
   const [showWinPopupChecked, setShowWinPopupChecked] = useState(false);
   const [showLossPopupChecked, setShowLossPopupChecked] = useState(false);
+  const [copiedOrderId, setCopiedOrderId] = useState(null);
+
+  const handleCopyOrderNumber = async (orderNumber) => {
+    try {
+      await navigator.clipboard.writeText(orderNumber);
+      setCopiedOrderId(orderNumber);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = orderNumber;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setCopiedOrderId(orderNumber);
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    }
+  };
   useEffect(() => {
     fetchWalletBalance();
     const interval = setInterval(fetchWalletBalance, 30000);
@@ -1484,13 +1532,13 @@ function LotteryK3() {
               <Notification />
             </div>
 
-                <Link to="/notificationsService">
-                  <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
-                    <img src={fire} alt="Hot Icon" className="w-3 h-3" />
+            <Link to="/notificationsService">
+              <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
+                <img src={fire} alt="Hot Icon" className="w-3 h-3" />
 
-                    <span className="ml-1 text-xs font-semibold">Detail</span>
-                  </button>
-                </Link>
+                <span className="ml-1 text-xs font-semibold">Detail</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -2339,152 +2387,186 @@ function LotteryK3() {
           {activeTab === "myHistory" && (
             <div className="p-2 text-right">
               {historyData.length > 0 ? (
-                historyData.map((history, index) => (
-                  <>
-                    <div
-                      key={index}
-                      className="flex bg-[#333335] justify-between items-start p-2 mb-2"
-                      onClick={() =>
-                        setIsDetailsOpen(isDetailsOpen === index ? null : index)
-                      }
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className="w-12 h-12 bg-[#d9ac4f] text-[14px] text-center rounded-md mb-2 mr-3"
-                          style={{ color: "white", paddingTop: "10px" }}
-                        >
-                          {history?.result}
-                        </div>
-                        <div>
-                          <p style={{ color: "white" }}>{history.period}</p>
-                          <p className="text-gray-500 text-sm text-left">
-                            {history.date || "N/A"}
-                          </p>
-                        </div>
-                        <div
-                          className="text-right"
-                          style={{
-                            position: "absolute",
-                            right: "6%",
-                          }}
-                        >
-                          <p
-                            className={`mt-1 border text-right rounded px-1 text-sm  ${
-                              history.status === "won"
-                                ? "text-green-600 border-green-600"
-                                : history.status === "lost"
-                                  ? "text-red-600 border-red-600"
-                                  : "text-[#00b971] border-[#00b971]"
-                            }`}
+                historyData.map((history, index) => {
+                  return (
+                    <>
+                      <div
+                        key={index}
+                        className="flex bg-[#333335] justify-between items-start p-2 mb-2"
+                        onClick={() =>
+                          setIsDetailsOpen(
+                            isDetailsOpen === index ? null : index
+                          )
+                        }
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className="w-12 h-12 bg-[#d9ac4f] text-[14px] text-center rounded-md mb-2 mr-3"
+                            style={{ color: "white", paddingTop: "10px" }}
                           >
-                            {history.status === "won"
-                              ? "Won"
-                              : history.status === "lost"
-                                ? "Failed"
-                                : "Pending"}
-                          </p>
-
-                          {history.winLose !== "₹0" && (
+                            {history?.result}
+                          </div>
+                          <div>
+                            <p style={{ color: "white" }}>{history.period}</p>
+                            <p className="text-gray-500 text-sm text-left">
+                              {history.date || "N/A"}
+                            </p>
+                          </div>
+                          <div
+                            className="text-right"
+                            style={{
+                              position: "absolute",
+                              right: "6%",
+                            }}
+                          >
                             <p
-                              className={`font-medium text-sm  ${
-                                history.winLose.startsWith("+")
-                                  ? "text-green-600"
-                                  : "text-red-600"
+                              className={`mt-1 border text-right rounded px-1 text-sm  ${
+                                history.status === "won"
+                                  ? "text-green-600 border-green-600"
+                                  : history.status === "lost"
+                                    ? "text-red-600 border-red-600"
+                                    : "text-[#00b971] border-[#00b971]"
                               }`}
                             >
-                              {history.winLose}
+                              {history.status === "won"
+                                ? "Won"
+                                : history.status === "lost"
+                                  ? "Failed"
+                                  : "Pending"}
                             </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {isDetailsOpen === index && (
-                      <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
-                        <div className="mb-4">
-                          <h3 className="text-white text-lg font-medium mb-1 text-left">
-                            Details
-                          </h3>
-                        </div>
-                        <div className="space-y-3 text-sm">
-                          {[
-                            {
-                              label: "Order number",
-                              value: history?.orderNumber,
-                              valueClass: "text-right text-white",
-                            },
-                            { label: "Period", value: history?.period },
-                            {
-                              label: "Purchase amount",
-                              value: history?.amount,
-                            },
-                            { label: "Quantity", value: history?.quantity },
-                            {
-                              label: "Amount after tax",
-                              value: history?.afterTax,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Tax",
-                              value: history?.tax,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Result",
-                              value: history?.result || "Pending",
-                              valueClass: "text-green-400",
-                            },
-                            {
-                              label: "Select",
-                              value: history?.select,
-                              valueClass: "text-[#ff5555]",
-                            },
-                            {
-                              label: "Status",
-                              value:
-                                history?.status === "won"
-                                  ? "Success"
-                                  : "Failed",
-                              valueClass:
-                                history?.status === "won"
-                                  ? "text-green-400"
-                                  : "text-[#ff5555]",
-                            },
-                            {
-                              label: "Win/lose",
-                              value: history?.winLose,
-                              valueClass: history?.winLose?.startsWith("+")
-                                ? "text-green-400"
-                                : history?.winLose?.startsWith("-")
-                                  ? "text-[#ff5555]"
-                                  : "text-[#ff5555]",
-                            },
-                            { label: "Order time", value: history?.orderTime },
-                          ].map(
-                            ({
-                              label,
-                              value,
-                              valueClass = "text-gray-400",
-                            }) => (
-                              <div
-                                key={label}
-                                className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+
+                            {history.winLose !== "₹0" && history?.status !="pending" && (
+                              <p
+                                className={`font-medium text-sm  ${
+                                  history.winLose.startsWith("+")
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
                               >
-                                <span className="text-gray-300 text-sm text-left">
-                                  {label}
-                                </span>
-                                <span
-                                  className={`${valueClass} text-sm font-normal`}
-                                >
-                                  {value || "N/A"}
-                                </span>
-                              </div>
-                            )
-                          )}
+                                {history.winLose}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    )}
-                  </>
-                ))
+                      {isDetailsOpen === index && (
+                        <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg w-full mt-2">
+                          <div className="mb-4">
+                            <h3 className="text-white text-lg font-medium mb-1 text-left">
+                              Details
+                            </h3>
+                          </div>
+                          <div className="space-y-3 text-sm">
+                            {[
+                              {
+                                label: "Order number",
+                                value: history?.orderNumber,
+                                valueClass: "text-right text-white",
+                                showCopy: true,
+                              },
+                              { label: "Period", value: history?.period },
+                              {
+                                label: "Purchase amount",
+                                value: history?.amount,
+                              },
+                              { label: "Quantity", value: history?.quantity },
+                              {
+                                label: "Amount after tax",
+                                value: history?.afterTax,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Tax",
+                                value: history?.tax,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Result",
+                                value: history?.result ==='-' ? "Pending":history?.result,
+                                valueClass: "text-green-400",
+                              },
+                              {
+                                label: "Select",
+                                value: history?.select,
+                                valueClass: "text-[#ff5555]",
+                              },
+                              {
+                                label: "Status",
+                                value:
+                                  history.status == "pending"
+                                    ? "Pending"
+                                    : history.status === "won"
+                                      ? "Success"
+                                      : "Failed",
+                                valueClass:
+                                  history.status === "pending"
+                                    ? "text-yellow-400"
+                                    : history.status === "won"
+                                      ? "text-green-400"
+                                      : "text-[#ff5555]",
+                              },
+                              {
+                                label: "Win/lose",
+                                value:
+                                  history.status === "pending"
+                                    ? "Pending"
+                                    : history.winLose,
+                                valueClass:
+                                  history.status === 'pending'
+                                    ? "text-yellow-400"
+                                    : history.winLose?.startsWith("+")
+                                      ? "text-green-400"
+                                      : "text-[#ff5555]",
+                              },
+                              {
+                                label: "Order time",
+                                value: history?.orderTime,
+                              },
+                            ].map(
+                              ({
+                                label,
+                                value,
+                                valueClass = "text-gray-400",
+                                showCopy = false,
+                              }) => (
+                                <div
+                                  key={label}
+                                  className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
+                                >
+                                  <span className="text-gray-300 text-sm text-left">
+                                    {label}
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={`${valueClass} text-sm font-normal`}
+                                    >
+                                      {value || "N/A"}
+                                    </span>
+                                    {showCopy && value && (
+                                      <button
+                                        onClick={() =>
+                                          handleCopyOrderNumber(value)
+                                        }
+                                        className="p-1 hover:bg-[#5a5a59] rounded transition-colors duration-200 group"
+                                        title="Copy order number"
+                                      >
+                                        {copiedOrderId === value ? (
+                                          <CheckIcon className="w-4 h-4 text-green-400" />
+                                        ) : (
+                                          <CopyIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                        )}
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })
               ) : (
                 <div className="text-center bg-[#4d4d4c]">
                   <div className="flex flex-col bg-[#4d4d4c] items-center justify-center">

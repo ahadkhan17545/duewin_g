@@ -91,6 +91,29 @@ const tailwindColorMap = {
   Number: "bg-gray-600 hover:bg-gray-500",
 };
 
+const CopyIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const CheckIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <polyline points="20,6 9,17 4,12"></polyline>
+  </svg>
+)
+
 function Lottery5d() {
   const isMounted = useRef(true);
   const location = useLocation();
@@ -151,6 +174,33 @@ function Lottery5d() {
     placeBet,
   } = useSocket("fiveD", buttonData[activeButton].duration);
 
+    const [copiedOrderId, setCopiedOrderId] = useState(null);
+  
+    const handleCopyOrderNumber = async (orderNumber) => {
+      try {
+        await navigator.clipboard.writeText(orderNumber);
+        setCopiedOrderId(orderNumber);
+  
+        // Reset the copied state after 2 seconds
+        setTimeout(() => {
+          setCopiedOrderId(null);
+        }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = orderNumber;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+  
+        setCopiedOrderId(orderNumber);
+        setTimeout(() => {
+          setCopiedOrderId(null);
+        }, 2000);
+      }
+    };
+
   // Memoized functions to prevent infinite re-renders
   const fetchWalletBalance = useCallback(async () => {
     try {
@@ -209,9 +259,13 @@ function Lottery5d() {
       if (data.success) {
         setChartData(data?.data?.results);
         // Fixed: Handle both pagination formats
-        const totalPagesCalc = data?.data?.pagination?.totalPages || 
-                             data?.data?.pagination?.total_pages || 
-                             Math.ceil((data?.data?.pagination?.total || data?.data?.results?.length) / 10) || 1;
+        const totalPagesCalc =
+          data?.data?.pagination?.totalPages ||
+          data?.data?.pagination?.total_pages ||
+          Math.ceil(
+            (data?.data?.pagination?.total || data?.data?.results?.length) / 10
+          ) ||
+          1;
         setTotalPages(totalPagesCalc);
       }
     } catch (error) {
@@ -263,7 +317,7 @@ function Lottery5d() {
             );
             const now = new Date();
             const timeDiffSeconds = (now - updatedAt) / 1000;
-            
+
             if (timeDiffSeconds <= 5) {
               setLastResult(betsData[0]);
               setUserDidBet(false);
@@ -316,15 +370,22 @@ function Lottery5d() {
             // Fixed: Handle pagination properly for both formats
             let totalPagesCalc = 1;
             if (response.pagination) {
-              totalPagesCalc = response.pagination.totalPages || 
-                             response.pagination.total_pages || 
-                             Math.ceil((response.pagination.total || formattedBets.length) / limit);
+              totalPagesCalc =
+                response.pagination.totalPages ||
+                response.pagination.total_pages ||
+                Math.ceil(
+                  (response.pagination.total || formattedBets.length) / limit
+                );
             } else if (response.data && response.data.pagination) {
-              totalPagesCalc = response.data.pagination.totalPages || 
-                             response.data.pagination.total_pages || 
-                             Math.ceil((response.data.pagination.total || formattedBets.length) / limit);
+              totalPagesCalc =
+                response.data.pagination.totalPages ||
+                response.data.pagination.total_pages ||
+                Math.ceil(
+                  (response.data.pagination.total || formattedBets.length) /
+                    limit
+                );
             }
-            
+
             setTotalPages(totalPagesCalc);
           } else {
             setHistoryData([]);
@@ -358,9 +419,13 @@ function Lottery5d() {
       if (data.success) {
         setGameHistoryData(data?.data?.results);
         // Fixed: Handle both pagination formats
-        const totalPagesCalc = data?.data?.pagination?.totalPages || 
-                             data?.data?.pagination?.total_pages || 
-                             Math.ceil((data?.data?.pagination?.total || data?.data?.results?.length) / 10) || 1;
+        const totalPagesCalc =
+          data?.data?.pagination?.totalPages ||
+          data?.data?.pagination?.total_pages ||
+          Math.ceil(
+            (data?.data?.pagination?.total || data?.data?.results?.length) / 10
+          ) ||
+          1;
         setTotalPages(totalPagesCalc);
       }
     } catch (error) {
@@ -531,15 +596,15 @@ function Lottery5d() {
   const handleMultiplierClick = useCallback((multiplier) => {
     setPopupMultiplier(multiplier);
   }, []);
-    useEffect(() => {
+  useEffect(() => {
     if (
-      (isModalOpen ) &&
+      isModalOpen &&
       timeRemaining.seconds <= 10 &&
       timeRemaining.minutes === 0
     ) {
       handleCloseModal();
     }
-  }, [timeRemaining,   isModalOpen]);
+  }, [timeRemaining, isModalOpen]);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
@@ -602,7 +667,7 @@ function Lottery5d() {
     placeBet,
     handleRefreshBalance,
     currentPage,
-    fetchUserBets
+    fetchUserBets,
   ]);
 
   const calculateTotalAmount = useCallback(() => {
@@ -671,11 +736,13 @@ function Lottery5d() {
           </button>
         </div>
         <div className="text-center mt-3 text-xs text-gray-500">
-          Page {currentPage} of {totalPages} • {
-            activeTab === "gameHistory" ? gameHistoryData.length :
-            activeTab === "chart" ? chartData.length :
-            historyData.length
-          } records shown
+          Page {currentPage} of {totalPages} •{" "}
+          {activeTab === "gameHistory"
+            ? gameHistoryData.length
+            : activeTab === "chart"
+              ? chartData.length
+              : historyData.length}{" "}
+          records shown
         </div>
       </>
     );
@@ -762,13 +829,13 @@ function Lottery5d() {
               <Notification />
             </div>
 
-                <Link to="/notificationsService">
-                  <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
-                    <img src={fire} alt="Hot Icon" className="w-3 h-3" />
+            <Link to="/notificationsService">
+              <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
+                <img src={fire} alt="Hot Icon" className="w-3 h-3" />
 
-                    <span className="ml-1 text-xs font-semibold">Detail</span>
-                  </button>
-                </Link>
+                <span className="ml-1 text-xs font-semibold">Detail</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -1159,7 +1226,7 @@ function Lottery5d() {
                   </div>
                 </div>
               )}
-                      {totalPages > 1 && (
+              {totalPages > 1 && (
                 <div className="flex justify-center items-center mt-4 space-x-2">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
@@ -1201,8 +1268,8 @@ function Lottery5d() {
                 </div>
               )}
               <div className="text-center mt-3 text-xs text-gray-500">
-                Page {currentPage} of {totalPages} • {gameHistoryData.length} records
-                shown
+                Page {currentPage} of {totalPages} • {gameHistoryData.length}{" "}
+                records shown
               </div>
             </div>
           )}
@@ -1292,7 +1359,7 @@ function Lottery5d() {
                   )}
                 </tbody>
               </table>
-                      {totalPages > 1 && (
+              {totalPages > 1 && (
                 <div className="flex justify-center items-center mt-4 space-x-2">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
@@ -1338,7 +1405,6 @@ function Lottery5d() {
                 shown
               </div>
             </div>
-            
           )}
           {activeTab === "myHistory" && (
             <div className="p-2 text-right">
@@ -1425,6 +1491,7 @@ function Lottery5d() {
                                 label: "Order number",
                                 value: history?.orderNumber,
                                 valueClass: "text-right text-white",
+                                showCopy:true
                               },
                               { label: "Period", value: history?.period },
                               {
@@ -1460,22 +1527,30 @@ function Lottery5d() {
                               {
                                 label: "Status",
                                 value:
-                                  history?.status === "won"
-                                    ? "Success"
-                                    : "Failed",
+                                  history.result ==null
+                                    ? "Pending"
+                                    : history.status === "won"
+                                      ? "Success"
+                                      : "Failed",
                                 valueClass:
-                                  history?.status === "won"
-                                    ? "text-green-400"
-                                    : "text-[#ff5555]",
+                                  history.result === null
+                                    ? "text-yellow-400"
+                                    : history.status === "won"
+                                      ? "text-green-400"
+                                      : "text-[#ff5555]",
                               },
                               {
                                 label: "Win/lose",
-                                value: history?.winLose,
-                                valueClass: history?.winLose?.startsWith("+")
-                                  ? "text-green-400"
-                                  : history?.winLose?.startsWith("-")
-                                    ? "text-[#ff5555]"
-                                    : "text-[#ff5555]",
+                                value:
+                                  history.result ===null
+                                    ? "Pending"
+                                    : history.winLose,
+                                valueClass:
+                                  history.result === null
+                                    ? "text-yellow-400"
+                                    : history.winLose?.startsWith("+")
+                                      ? "text-green-400"
+                                      : "text-[#ff5555]",
                               },
                               {
                                 label: "Order time",
@@ -1486,6 +1561,7 @@ function Lottery5d() {
                                 label,
                                 value,
                                 valueClass = "text-gray-400",
+                                showCopy=false
                               }) => (
                                 <div
                                   key={label}
@@ -1494,19 +1570,35 @@ function Lottery5d() {
                                   <span className="text-gray-300 text-sm text-left">
                                     {label}
                                   </span>
-                                  <span
-                                    className={`${valueClass} text-sm font-normal`}
-                                  >
-                                    {value || "N/A"}
-                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span
+                                      className={`${valueClass} text-sm font-normal`}
+                                    >
+                                      {value || "N/A"}
+                                    </span>
+                                    {showCopy && value && (
+                                      <button
+                                        onClick={() =>
+                                          handleCopyOrderNumber(value)
+                                        }
+                                        className="p-1 hover:bg-[#5a5a59] rounded transition-colors duration-200 group"
+                                        title="Copy order number"
+                                      >
+                                        {copiedOrderId === value ? (
+                                          <CheckIcon className="w-4 h-4 text-green-400" />
+                                        ) : (
+                                          <CopyIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                        )}
+                                      </button>
+                                    )}
+                                  </div>
                                 </div>
                               )
                             )}
                           </div>
                         </div>
                       )}
-                              {/* Pagination for My History */}
-             
+                      {/* Pagination for My History */}
                     </>
                   );
                 })
@@ -1521,56 +1613,56 @@ function Lottery5d() {
                   </div>
                 </div>
               )}
-                   {totalPages > 1 && (
-                    <>
-                      <div className="flex justify-center items-center mt-4 space-x-2">
-                        <button
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                        >
-                          Previous
-                        </button>
+              {totalPages > 1 && (
+                <>
+                  <div className="flex justify-center items-center mt-4 space-x-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                    >
+                      Previous
+                    </button>
 
-                        <div className="flex items-center space-x-1">
-                          {Array.from(
-                            { length: Math.min(5, totalPages) },
-                            (_, i) => {
-                              const pageNum =
-                                currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                              if (pageNum > totalPages) return null;
+                    <div className="flex items-center space-x-1">
+                      {Array.from(
+                        { length: Math.min(5, totalPages) },
+                        (_, i) => {
+                          const pageNum =
+                            currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                          if (pageNum > totalPages) return null;
 
-                              return (
-                                <button
-                                  key={pageNum}
-                                  onClick={() => handlePageChange(pageNum)}
-                                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                                    currentPage === pageNum
-                                      ? "bg-[#d9ac4f] text-black font-medium"
-                                      : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
-                                  }`}
-                                >
-                                  {pageNum}
-                                </button>
-                              );
-                            }
-                          )}
-                        </div>
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() => handlePageChange(pageNum)}
+                              className={`px-3 py-1 rounded text-sm transition-colors ${
+                                currentPage === pageNum
+                                  ? "bg-[#d9ac4f] text-black font-medium"
+                                  : "bg-[#4d4d4c] text-white hover:bg-[#5d5d5c]"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
+                        }
+                      )}
+                    </div>
 
-                        <button
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
-                        >
-                          Next
-                        </button>
-                      </div>
-                      <div className="text-center mt-3 text-xs text-gray-500">
-                        Page {currentPage} of {totalPages} • {historyData.length}{" "}
-                        records shown
-                      </div>
-                    </>
-                  )}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 bg-[#4d4d4c] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5d5d5c] transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                  <div className="text-center mt-3 text-xs text-gray-500">
+                    Page {currentPage} of {totalPages} • {historyData.length}{" "}
+                    records shown
+                  </div>
+                </>
+              )}
             </div>
           )}
           {/* <div className="text-center mb-0 w-full mt-2">

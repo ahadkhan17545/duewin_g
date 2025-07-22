@@ -118,6 +118,28 @@ const buttonData = [
     duration: 300,
   },
 ];
+const CopyIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </svg>
+);
+
+const CheckIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <polyline points="20,6 9,17 4,12"></polyline>
+  </svg>
+);
 
 function LotteryWingo() {
   const isMounted = useRef(true);
@@ -176,6 +198,32 @@ function LotteryWingo() {
   const multiplierOptions = ["X1", "X5", "X10", "X20", "X50", "X100"];
   const API_BASE_URL = "https://api.strikecolor1.com";
   const containerRef = useRef(null);
+  const [copiedOrderId, setCopiedOrderId] = useState(null);
+
+  const handleCopyOrderNumber = async (orderNumber) => {
+    try {
+      await navigator.clipboard.writeText(orderNumber);
+      setCopiedOrderId(orderNumber);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = orderNumber;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setCopiedOrderId(orderNumber);
+      setTimeout(() => {
+        setCopiedOrderId(null);
+      }, 2000);
+    }
+  };
 
   // Fixed fetchUserBets function
   const fetchUserBets = async (page = 1, limit = 10) => {
@@ -402,14 +450,16 @@ function LotteryWingo() {
     if (
       (showPopup || selectedNumberPopup || showBigPopup) &&
       timeRemaining.seconds <= 5 &&
-      timeRemaining.minutes === 0 &&  buttonData[activeButton].duration == 30
+      timeRemaining.minutes === 0 &&
+      buttonData[activeButton].duration == 30
     ) {
       handleCancelBet();
     }
-        if (
+    if (
       (showPopup || selectedNumberPopup || showBigPopup) &&
       timeRemaining.seconds <= 10 &&
-      timeRemaining.minutes === 0 &&  buttonData[activeButton].duration != 30
+      timeRemaining.minutes === 0 &&
+      buttonData[activeButton].duration != 30
     ) {
       handleCancelBet();
     }
@@ -1002,13 +1052,13 @@ function LotteryWingo() {
               <Notification />
             </div>
 
-                <Link to="/notificationsService">
-                  <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
-                    <img src={fire} alt="Hot Icon" className="w-3 h-3" />
+            <Link to="/notificationsService">
+              <button className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] rounded-md px-4 py-1 flex items-center justify-center">
+                <img src={fire} alt="Hot Icon" className="w-3 h-3" />
 
-                    <span className="ml-1 text-xs font-semibold">Detail</span>
-                  </button>
-                </Link>
+                <span className="ml-1 text-xs font-semibold">Detail</span>
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -2269,86 +2319,120 @@ function LotteryWingo() {
                           )}
                         </div>
 
-                        {isDetailsOpen === index && (
-                          <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg">
-                            <div className="mb-4">
-                              <h3 className="text-white text-lg font-medium mb-1">
-                                Details
-                              </h3>
-                            </div>
-                            <div className="space-y-3 text-sm">
-                              {[
-                                {
-                                  label: "Order number",
-                                  value: bet.orderNumber,
-                                  valueClass: "text-right text-white",
-                                },
-                                { label: "Period", value: bet.period },
-                                { label: "Purchase amount", value: bet.amount },
-                                { label: "Quantity", value: bet.quantity },
-                                {
-                                  label: "Amount after tax",
-                                  value: bet.afterTax,
-                                  valueClass: "text-[#ff5555]",
-                                },
-                                {
-                                  label: "Tax",
-                                  value: bet.tax,
-                                  valueClass: "text-[#ff5555]",
-                                },
-                                {
-                                  label: "Result",
-                                  value: bet.result || "Pending",
-                                  valueClass: "text-green-400",
-                                },
-                                {
-                                  label: "Select",
-                                  value: bet.select,
-                                  valueClass: "text-[#ff5555]",
-                                },
-                                {
-                                  label: "Status",
-                                  value:
-                                    bet.status === "won" ? "Success" : "Failed",
-                                  valueClass:
-                                    bet.status === "won"
-                                      ? "text-green-400"
-                                      : "text-[#ff5555]",
-                                },
-                                {
-                                  label: "Win/lose",
-                                  value: bet.winLose,
-                                  valueClass: bet.winLose?.startsWith("+")
-                                    ? "text-green-400"
-                                    : bet.winLose?.startsWith("-")
-                                      ? "text-[#ff5555]"
-                                      : "text-[#ff5555]",
-                                },
-                                { label: "Order time", value: bet.orderTime },
-                              ].map(
-                                ({
-                                  label,
-                                  value,
-                                  valueClass = "text-gray-400",
-                                }) => (
-                                  <div
-                                    key={label}
-                                    className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
-                                  >
-                                    <span className="text-gray-300 text-sm">
-                                      {label}
-                                    </span>
-                                    <span
-                                      className={`${valueClass} text-sm font-normal`}
+                        <>
+                          {isDetailsOpen === index && (
+                            <div className="bg-[#2a2a2a] p-2 mx-1 mb-3 rounded-b-lg">
+                              <div className="mb-4">
+                                <h3 className="text-white text-lg font-medium mb-1">
+                                  Details
+                                </h3>
+                              </div>
+                              <div className="space-y-3 text-sm">
+                                {[
+                                  {
+                                    label: "Order number",
+                                    value: bet.orderNumber,
+                                    valueClass: "text-right text-white",
+                                    showCopy: true,
+                                  },
+                                  { label: "Period", value: bet.period },
+                                  {
+                                    label: "Purchase amount",
+                                    value: bet.amount,
+                                  },
+                                  { label: "Quantity", value: bet.quantity },
+                                  {
+                                    label: "Amount after tax",
+                                    value: bet.afterTax,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Tax",
+                                    value: bet.tax,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Result",
+                                    value: bet.result || "Pending",
+                                    valueClass: "text-green-400",
+                                  },
+                                  {
+                                    label: "Select",
+                                    value: bet.select,
+                                    valueClass: "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Status",
+                                    value:
+                                      bet.result == "Pending"
+                                        ? "Pending"
+                                        : bet.status === "won"
+                                          ? "Success"
+                                          : "Failed",
+                                    valueClass:
+                                      bet.result === "Pending"
+                                        ? "text-yellow-400"
+                                        : bet.status === "won"
+                                          ? "text-green-400"
+                                          : "text-[#ff5555]",
+                                  },
+                                  {
+                                    label: "Win/lose",
+                                    value:
+                                      bet.result === "Pending"
+                                        ? "Pending"
+                                        : bet.winLose,
+                                    valueClass:
+                                      bet.result === null
+                                        ? "text-yellow-400"
+                                        : bet.winLose?.startsWith("+")
+                                          ? "text-green-400"
+                                          : "text-[#ff5555]",
+                                  },
+                                  { label: "Order time", value: bet.orderTime },
+                                ].map(
+                                  ({
+                                    label,
+                                    value,
+                                    valueClass = "text-gray-400",
+                                    showCopy = false,
+                                  }) => (
+                                    <div
+                                      key={label}
+                                      className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
                                     >
-                                      {value || "N/A"}
-                                    </span>
-                                  </div>
-                                )
-                              )}
+                                      <span className="text-gray-300 text-sm">
+                                        {label}
+                                      </span>
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          className={`${valueClass} text-sm font-normal`}
+                                        >
+                                          {value || "N/A"}
+                                        </span>
+                                        {showCopy && value && (
+                                          <button
+                                            onClick={() =>
+                                              handleCopyOrderNumber(value)
+                                            }
+                                            className="p-1 hover:bg-[#5a5a59] rounded transition-colors duration-200 group"
+                                            title="Copy order number"
+                                          >
+                                            {copiedOrderId === value ? (
+                                              <CheckIcon className="w-4 h-4 text-green-400" />
+                                            ) : (
+                                              <CopyIcon className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                                            )}
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </>
                       </div>
                     );
                   })}
@@ -2409,7 +2493,6 @@ function LotteryWingo() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
