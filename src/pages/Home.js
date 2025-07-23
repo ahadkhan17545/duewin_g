@@ -83,81 +83,81 @@ import ytS from "../Assets/newIcon/ytS.webp";
 import winstreakS from "../Assets/newIcon/winstreakS.webp";
 import supportFundsS from "../Assets/newIcon/supportFundsS.webp";
 import invitationBonusS from "../Assets/newIcon/invitationBonusS.webp";
-import attandenceBonusS from "../Assets/newIcon/attandenceBonusS.webp"
-import VIPS from "../Assets/newIcon/VIPS.png"
-import avaitorS from "../Assets/newIcon/avaitorS.webp"
-import agentS from "../Assets/newIcon/agentS.webp"
+import attandenceBonusS from "../Assets/newIcon/attandenceBonusS.webp";
+import VIPS from "../Assets/newIcon/VIPS.png";
+import avaitorS from "../Assets/newIcon/avaitorS.webp";
+import agentS from "../Assets/newIcon/agentS.webp";
 
 const bonusIcons = [
   {
-    id: 'first-deposit',
-    name: 'First Deposit',
+    id: "first-deposit",
+    name: "First Deposit",
     image: firstDeposit,
-    link: '/activitygamesrules/first-deposit',
-    description: 'Get bonus on your first deposit'
+    link: "/activitygamesrules/first-deposit",
+    description: "Get bonus on your first deposit",
   },
   {
-    id: '888-bonus',
-    name: '888 Bonus',
+    id: "888-bonus",
+    name: "888 Bonus",
     image: Bonus888,
-    link: '/activitygamesrules/bonus-888',
-    description: 'Daily lucky draw of ₹888'
+    link: "/activitygamesrules/bonus-888",
+    description: "Daily lucky draw of ₹888",
   },
   {
-    id: 'youtube',
-    name: 'YouTube',
+    id: "youtube",
+    name: "YouTube",
     image: ytS,
-    link: '/activitygamesrules/youtube',
-    description: 'Subscribe to our YouTube channel'
+    link: "/activitygamesrules/youtube",
+    description: "Subscribe to our YouTube channel",
   },
   {
-    id: 'win-streak',
-    name: 'Win Streak',
+    id: "win-streak",
+    name: "Win Streak",
     image: winstreakS,
-    link: '/activitygamesrules/winstreak',
-    description: 'Win streak bonus rewards'
+    link: "/activitygamesrules/winstreak",
+    description: "Win streak bonus rewards",
   },
   {
-    id: 'support-funds',
-    name: 'Support Funds',
+    id: "support-funds",
+    name: "Support Funds",
     image: supportFundsS,
-    link: '/activitygamesrules/support-funds',
-    description: 'Up to 9% support funds on losses'
+    link: "/activitygamesrules/support-funds",
+    description: "Up to 9% support funds on losses",
   },
   {
-    id: 'invitation-bonus',
-    name: 'Invitation Bonus',
+    id: "invitation-bonus",
+    name: "Invitation Bonus",
     image: invitationBonusS,
-    link: '/activitygamesrules/invitation-bonus',
-    description: 'High invitation bonus for new agents'
+    link: "/activitygamesrules/invitation-bonus",
+    description: "High invitation bonus for new agents",
   },
   {
-    id: 'attendance-bonus',
-    name: 'Attendance Bonus',
+    id: "attendance-bonus",
+    name: "Attendance Bonus",
     image: attandenceBonusS,
-    link: '/AttendanceBonus',
-    description: 'Daily attendance bonus rewards'
+    link: "/AttendanceBonus",
+    description: "Daily attendance bonus rewards",
   },
   {
-    id: 'VIPS-bonus',
-    name: 'VIPS Bonus',
+    id: "VIPS-bonus",
+    name: "VIPS Bonus",
     image: VIPS,
-    link: '/vipprofile',
-    description: 'Daily VIPS bonus rewards'
+    link: "/vipprofile",
+    description: "Daily VIPS bonus rewards",
   },
   {
-    id: 'avaitorS-bonus',
-    name: 'avaitorS Bonus',
+    id: "avaitorS-bonus",
+    name: "avaitorS Bonus",
     image: avaitorS,
-    link: '/activitygamesrules/aviator',
-    description: 'Daily avaitorS bonus rewards'
+    link: "/activitygamesrules/aviator",
+    description: "Daily avaitorS bonus rewards",
   },
-    {
-    id: 'agentS-bonus',
-    name: 'avaitorS Bonus',
+  {
+    id: "agentS-bonus",
+    name: "avaitorS Bonus",
     image: agentS,
-    link: '/agentcustomer',
-    description: 'Daily agentS bonus rewards'
+    link: "/agentcustomer",
+    description: "Daily agentS bonus rewards",
   },
   //     {
   //   id: 'lucky10S-bonus',
@@ -585,7 +585,8 @@ function Home() {
     const preventHorizontalSwipe = (e) => {
       // Only prevent horizontal swipes on the main container
       const target = e.target;
-      const isSlider = target.closest('.slick-slider') || target.closest('.slick-track');
+      const isSlider =
+        target.closest(".slick-slider") || target.closest(".slick-track");
 
       if (!isSlider) {
         const touch = e.touches[0];
@@ -608,10 +609,10 @@ function Home() {
     // Force repaint on iOS to fix rendering issues
     if (isIOS) {
       const forceRepaint = () => {
-        document.body.style.display = 'none';
+        document.body.style.display = "none";
         // Trigger reflow by accessing offsetHeight
         const _ = document.body.offsetHeight;
-        document.body.style.display = '';
+        document.body.style.display = "";
       };
 
       // Force repaint after component mounts
@@ -619,7 +620,11 @@ function Home() {
     }
 
     return () => {
-      document.removeEventListener("touchmove", preventHorizontalSwipe, options);
+      document.removeEventListener(
+        "touchmove",
+        preventHorizontalSwipe,
+        options
+      );
     };
   }, []);
 
@@ -787,13 +792,13 @@ function Home() {
   const [currentWinnerIndex, setCurrentWinnerIndex] = useState(0);
   const [displayedWinners, setDisplayedWinners] = useState([]);
   const [userData, setUserData] = useState(null);
-    useEffect(()=>{
-     let value = localStorage.getItem('welcomePopupShown')
-     if(value =="true"){
-      setShowFirstPopup(true)
-      localStorage.setItem('welcomePopupShown',false)
-     }
-  },[])
+  useEffect(() => {
+    let value = localStorage.getItem("welcomePopupShown");
+    if (value == "true") {
+      setShowFirstPopup(true);
+      localStorage.setItem("welcomePopupShown", false);
+    }
+  }, []);
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -805,7 +810,7 @@ function Home() {
         }
         const user = data.user;
         setUserData(user);
-      } catch (err) { }
+      } catch (err) {}
     };
 
     fetchUserProfile();
@@ -894,14 +899,16 @@ function Home() {
             <Slider {...settings}>
               {bonusIcons.map((bonus, index) => (
                 <div key={bonus.id} className="px-1">
-                  <Link to={bonus.link} className="block hover:opacity-80 transition-opacity">
+                  <Link
+                    to={bonus.link}
+                    className="block hover:opacity-80 transition-opacity"
+                  >
                     <div className="flex flex-col items-center text-center">
                       <img
                         src={bonus.image}
                         alt={bonus.name}
                         className="w-full h-44 object-contain rounded-lg"
                       />
-
                     </div>
                   </Link>
                 </div>
@@ -951,15 +958,17 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                    ? "opacity-100"
-                    : "opacity-80"
-                    }`}
+                  className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
+                    activeCategory === category.title
+                      ? "opacity-100"
+                      : "opacity-80"
+                  }`}
                   style={{
-                    background: `linear-gradient(60deg, ${category.title === "Lottery"
-                      ? "#323838, #30413B,#2D4D40"
-                      : "#323838, #3B3541,#542E57"
-                      })`,
+                    background: `linear-gradient(60deg, ${
+                      category.title === "Lottery"
+                        ? "#323838, #30413B,#2D4D40"
+                        : "#323838, #3B3541,#542E57"
+                    })`,
                   }}
                 >
                   <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
@@ -969,10 +978,11 @@ function Home() {
                     <img
                       src={category.image}
                       alt={category.title}
-                      className={`w-[220px] object-contain -mt-4 -mr-4 ${category.title === "Hot Games"
-                        ? "h-[300px]"
-                        : "h-[220px] -mt-9"
-                        }`}
+                      className={`w-[220px] object-contain -mt-4 -mr-4 ${
+                        category.title === "Hot Games"
+                          ? "h-[300px]"
+                          : "h-[220px] -mt-9"
+                      }`}
                     />
                   </div>
                 </div>
@@ -983,19 +993,21 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${activeCategory === category.title
-                    ? "opacity-100"
-                    : "opacity-80"
-                    }`}
+                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
+                    activeCategory === category.title
+                      ? "opacity-100"
+                      : "opacity-80"
+                  }`}
                   style={{
-                    background: `linear-gradient(90deg, ${category.title === "Live Casino"
-                      ? "#323838,#433767"
-                      : category.title === "Sports"
-                        ? "#323838, #303D36,#2E4A33"
-                        : category.title === "Slots"
-                          ? "#323838,#4B3F31"
-                          : "#323838,#333937,#404D33"
-                      })`,
+                    background: `linear-gradient(90deg, ${
+                      category.title === "Live Casino"
+                        ? "#323838,#433767"
+                        : category.title === "Sports"
+                          ? "#323838, #303D36,#2E4A33"
+                          : category.title === "Slots"
+                            ? "#323838,#4B3F31"
+                            : "#323838,#333937,#404D33"
+                    })`,
                   }}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
@@ -1094,8 +1106,8 @@ function Home() {
                               className="w-full h-auto object-contain rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1129,8 +1141,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1188,8 +1200,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1246,8 +1258,8 @@ function Home() {
                               className="w-full h-40 object-cover rounded-md mb-2"
                               loading="lazy"
                               onError={(e) =>
-                              (e.target.src =
-                                "https://via.placeholder.com/150?text=Image+Not+Found")
+                                (e.target.src =
+                                  "https://via.placeholder.com/150?text=Image+Not+Found")
                               }
                             />
                           ) : (
@@ -1295,7 +1307,7 @@ function Home() {
                         index === 0 ? "slideDown 0.4s ease-out" : "none",
                       maxHeight: "57px",
                       minWidth: "336px",
-                      gap: window.innerWidth < 380 ? '10%' : '15%'
+                      gap: window.innerWidth < 380 ? "10%" : "15%",
                     }}
                   >
                     <div className="flex items-center gap-2">
@@ -1396,7 +1408,11 @@ function Home() {
 
                 <div className="bg-[#333332] px-2 py-1 rounded-lg text-white space-y-4">
                   {/* Full Width Image */}
-                  <img src={homepartner} alt="image" className="w-full mt-2 h-[475px] object-cover" />
+                  <img
+                    src={homepartner}
+                    alt="image"
+                    className="w-full mt-2 h-[475px] object-cover"
+                  />
 
                   {/* 📝 Bottom Paragraphs (Styled Like the Image) */}
                   <div className="space-y-3 text-sm text-[#d9d7d3]">
@@ -1420,7 +1436,10 @@ function Home() {
                     <p className="text-[#ff4c4c] pt-2">
                       Gambling can be addictive, please play rationally.
                     </p>
-                    <p className="text-[#ff4c4c]" style={{ paddingBottom: '30px' }}>
+                    <p
+                      className="text-[#ff4c4c]"
+                      style={{ paddingBottom: "30px" }}
+                    >
                       Strike only accepts customers above the age of{" "}
                       <span className="font-bold">18</span>.
                     </p>
@@ -1439,7 +1458,7 @@ function Home() {
             !showFirstPopup && (
               <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
                 <div className="relative flex flex-col items-center mb-12">
-                  <div className="w-[90vw] max-w-[350px] max-h-[90vh] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
+                  <div className="w-[90vw] max-w-[350px] max-h-[450px] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
                     <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
                       <h2 className="text-base font-bold">
                         Extra First Deposit Bonus
@@ -1453,9 +1472,14 @@ function Home() {
                       style={{ maxHeight: "60vh", paddingTop: "20px" }}
                     >
                       {[
-                        { deposit: 200000, bonus: 10000 },
-                        { deposit: 100000, bonus: 5000 },
+                        { deposit: 200000, bonus: 15000 },
+                        { deposit: 100000, bonus: 7000 },
                         { deposit: 30000, bonus: 2000 },
+                        { deposit: 10000, bonus: 600 },
+                        { deposit: 3000, bonus: 300 },
+                        { deposit: 1000, bonus: 150 },
+                        { deposit: 300, bonus: 60 },
+                        { deposit: 100, bonus: 20 },
                       ].map((item, index) => (
                         <div
                           key={index}
@@ -1553,21 +1577,34 @@ function Home() {
 
                 {/* Description */}
                 <p className="text-white text-sm font-[Arial] leading-relaxed mt-2 px-2">
-                  📌 Strike is the digital evolution of a legendary Goa-based casino, trusted since 2016. Known for its thrilling in-house action and high-stakes excitement, Strike is now launching online — bringing the casino floor straight to your screen.
+                  📌 Strike is the digital evolution of a legendary Goa-based
+                  casino, trusted since 2016. Known for its thrilling in-house
+                  action and high-stakes excitement, Strike is now launching
+                  online — bringing the casino floor straight to your screen.
                 </p>
 
                 {/* Official Services */}
                 <div className="flex flex-col gap-2 mt-4 text-base">
                   {[
-                    { title: "Official Telegram Group", link: "https://t.me/killer_mao" },
-                    { title: "Official Customer Service", link: "https://t.me/killer_mao" }
+                    {
+                      title: "Official Telegram Group",
+                      link: "https://t.me/killer_mao",
+                    },
+                    {
+                      title: "Official Customer Service",
+                      link: "https://t.me/killer_mao",
+                    },
                   ].map((item, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-center gap-2"
                     >
                       <span className="text-green-500 text-lg">✅</span>
-                      <a href={item.link} target="_blank" className="text-[#0000EE] font-bold text-sm">
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        className="text-[#0000EE] font-bold text-sm"
+                      >
                         {item.title}
                       </a>
                     </div>
@@ -1576,14 +1613,26 @@ function Home() {
 
                 {/* Features List */}
                 <div className="mt-4 text-sm font-medium space-y-1">
-                  <p className="text-white">⭐ High invitation bonus for new agents</p>
-                  <p className="text-white">⭐ Up to 9% support funds on user losses</p>
-                  <p className="text-white">⭐ Daily Lucky Draw of ₹888 for 3 lucky users</p>
+                  <p className="text-white">
+                    ⭐ High invitation bonus for new agents
+                  </p>
+                  <p className="text-white">
+                    ⭐ Up to 9% support funds on user losses
+                  </p>
+                  <p className="text-white">
+                    ⭐ Daily Lucky Draw of ₹888 for 3 lucky users
+                  </p>
                   <p className="text-white">⭐ Instant withdrawals anytime</p>
                   <p className="text-white">⭐ 24×7 customer service support</p>
-                  <p className="text-white">⭐ The most professional action gaming experience</p>
-                  <p className="text-white">⭐ High-quality agent benefits & earnings</p>
-                  <p className="text-white">⭐ The number one casino-action game platform</p>
+                  <p className="text-white">
+                    ⭐ The most professional action gaming experience
+                  </p>
+                  <p className="text-white">
+                    ⭐ High-quality agent benefits & earnings
+                  </p>
+                  <p className="text-white">
+                    ⭐ The number one casino-action game platform
+                  </p>
                 </div>
 
                 {/* Promotion Section */}
