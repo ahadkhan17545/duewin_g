@@ -132,7 +132,7 @@ function LotteryTrxWingo() {
     location?.state ? location?.state : buttonData[0].id
   );
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedMultiplier, setSelectedMultiplier] = useState("X1");
+  const [selectedMultiplier, setSelectedMultiplier] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [betType, setBetType] = useState(null);
@@ -746,7 +746,9 @@ function LotteryTrxWingo() {
                   <p className="text-[#d9ac4f] text-sm">How to play</p>
                 </button>
               </div>
-              <p className="text-[17px] text-[#8f5206]">{getDisplayPeriodId()}</p>
+              <p className="text-[17px] text-[#8f5206]">
+                {getDisplayPeriodId()}
+              </p>
             </div>
 
             {/* Right Side */}
@@ -890,7 +892,7 @@ function LotteryTrxWingo() {
       text-[10px] px-2 py-2 rounded-lg flex-1 border 
       ${
         selectedMultiplier === value
-          ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} border-[#e4c26c]`
+          ? "bg-[#17B15E] text-white border-[#17B15E]"
           : "bg-[#242424] text-[#a8a5a1] border-[#3a3a3a]"
       }
     `}
@@ -1033,7 +1035,7 @@ function LotteryTrxWingo() {
                                   window.location.href = record?.link;
                                 }}
                                 src={question}
-                                className="w-3 h-3"
+                                className="w-4 h-4"
                               />
                               <span>{record.blockHeight || "N/A"}</span>
                             </div>
