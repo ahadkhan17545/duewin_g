@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -99,6 +99,37 @@ import RiskDetails from "./pages/Profile/RiskDetails";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Import your landing image
+import landImage from "./Assets/newIcon/dice/3.webp";
+
+// Initial Loading Screen Component
+const InitialLoadingScreen = () => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+      <img
+        src={landImage}
+        alt="Loading"
+        className="w-full h-full object-cover"
+        style={{
+          width: '100vw',
+          height: '100vh',
+          objectFit: 'contain'
+        }}
+      />
+      {/* Optional: Add a loading spinner or text overlay */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Uncomment below if you want a loading spinner overlay */}
+        {/* 
+        <div className="bg-black bg-opacity-50 rounded-lg p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+          <p className="text-white text-sm">Loading...</p>
+        </div>
+        */}
+      </div>
+    </div>
+  );
+};
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   const navigationType = useNavigationType();
@@ -144,6 +175,22 @@ const ProtectedLayout = () => {
 };
 
 function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    // Always show loading screen for 2 seconds on app load
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 2000); // Show for exactly 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show the initial loading screen
+  if (isInitialLoading) {
+    return <InitialLoadingScreen />;
+  }
+
   return (
     <Provider store={store}>
       <BrowserRouter>
