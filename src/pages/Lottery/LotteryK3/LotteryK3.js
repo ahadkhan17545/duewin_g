@@ -196,7 +196,7 @@ const BettingModal = ({
 
     // Check if violet dice numbers are selected (ANY_TYPE)
     if (selectedTwoSameNumbers.length > 0) {
-      return "ANY_PAIR";
+      return "ANY_TYPE";
     }
 
     // Check if red + green combination is selected (SPECIFIC_TYPE)
@@ -205,7 +205,7 @@ const BettingModal = ({
       selectedPair.green &&
       isValidPair(selectedPair.red, selectedPair.green)
     ) {
-      return "SPECIFIC_PAIR";
+      return "SPECIFIC_TYPE";
     }
 
     return null;
@@ -502,12 +502,14 @@ const BettingModal = ({
 
         {/* 2 same tab selections display */}
         {activeImgTab === "2same" &&
+
+        
           (selectedTwoSameNumbers.length > 0 ||
             (selectedPair.red && selectedPair.green)) && (
             <div className="mb-2">
               <p className="text-sm mb-1">
                 {getTwoSameBetType() === "ANY_TYPE" &&
-                  `2 matching numbers: ${selectedTwoSameNumbers.length} bets`}
+                  `2 matching numbers: ${selectedTwoSameNumbers.length>0} bets`}
                 {getTwoSameBetType() === "SPECIFIC_TYPE" &&
                   `Pair selection: 1 bet`}
               </p>
