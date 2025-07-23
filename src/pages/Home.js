@@ -1458,7 +1458,7 @@ function Home() {
             !showFirstPopup && (
               <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
                 <div className="relative flex flex-col items-center mb-12">
-                  <div className="w-[90vw] max-w-[350px] max-h-[450px] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
+                  <div className="w-[90vw] max-w-[350px] max-h-[550px] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
                     <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
                       <h2 className="text-base font-bold">
                         Extra First Deposit Bonus

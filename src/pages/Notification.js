@@ -19,7 +19,7 @@ const Notification = () => {
   return (
     <div className="relative h-[20px] overflow-hidden w-[96%] text-xs text-white ml-2">
       <div className="absolute w-full animate-scrollUp">
-        {data[0]?.content? data[0]?.content :"Thanks to all our members — past and present — for being part of our journey."}
+        {data[0]?.content? data[0]?.content :"Welcome to strike games."}
       </div>
     </div>
   );

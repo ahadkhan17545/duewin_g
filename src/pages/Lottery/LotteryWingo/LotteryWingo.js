@@ -1795,12 +1795,12 @@ function LotteryWingo() {
                 >
                   Big
                 </span>
-                <span
+                {/* <span
                   className="flex-1 py-2 bg-green-500 cursor-pointer text-center text-sm"
                   onClick={() => handleToggleBigPopup("Ai Trade")}
                 >
                   Ai Trade
-                </span>
+                </span> */}
                 <span
                   className="flex-1 py-2 cursor-pointer text-center text-sm"
                   onClick={() => handleToggleBigPopup("Small")}

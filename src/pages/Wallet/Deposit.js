@@ -255,9 +255,8 @@ const Deposit = () => {
       alert("Please enter a valid USDT amount (minimum 10 USDT)");
       return;
     }
-
     const payload = {
-      amount: Number(inputAmount),
+      amount: Number(rupeesAmount),
       gateway:
         selectedChannel.key || selectedChannel.code || selectedChannel.name,
     };

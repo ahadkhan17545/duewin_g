@@ -489,11 +489,11 @@ function ProfilePage() {
                 </Link>
 
                 {/* Customer Service */}
-                {/* <Link to="/agentcustomer" className="flex flex-col items-center">
+                <Link to="/agentcustomer" className="flex flex-col items-center">
                   <img src={CustomerService} alt="Customer Service" className="w-7 h-7 mb-1" />
                   <p className="text-xs text-center leading-none">Customer Service</p>
-                </Link> */}
-                <a
+                </Link>
+                {/* <a
                   href="https://t.me/killer_mao" // replace with your real link
                   target="_blank"
                   rel="noopener noreferrer"
@@ -509,7 +509,7 @@ function ProfilePage() {
                    <p className="text-xs text-center leading-none">
                     Customer Service
                   </p>
-                </a>
+                </a> */}
 
                 {/* Beginner's Guide */}
                 <Link

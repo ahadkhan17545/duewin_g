@@ -15,7 +15,7 @@ const ActivityHeader = () => {
         <img
           src={headerLogo}
           alt="Logo"
-          className="w-30 h-12 mt-3"
+          className="mt-3" style={{width:'70px',height:'auto'}}
         />
       </div>
     </header>

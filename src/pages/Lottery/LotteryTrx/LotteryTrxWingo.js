@@ -336,7 +336,7 @@ function LotteryTrxWingo() {
                 : `-₹${Math.abs(bet.profitLoss)}`,
             date: new Date(bet.createdAt).toLocaleDateString(),
             time: new Date(bet.createdAt).toLocaleTimeString(),
-            finalAmount : bet?.winAmount
+            finalAmount: bet?.winAmount,
           }));
           setUserBets(bets);
           setTotalPages(
@@ -413,7 +413,7 @@ function LotteryTrxWingo() {
             hashValue: item.verification?.hash || "N/A",
             result: item.result?.number ?? "N/A",
             resultType: item.result?.size || item.result?.color || "N/A",
-            link:item?.verification?.link
+            link: item?.verification?.link,
           };
         });
         setHistoryData(mappedHistory);
@@ -721,19 +721,21 @@ function LotteryTrxWingo() {
             ))}
           </div>
         </div>
-
         <div
           className="rounded-lg mt-4 mb-4 p-4"
           style={{
             backgroundImage: `url(${trxbg})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "bottom",
+            height: "200px",
           }}
         >
-          <div className="flex mb-10">
-            <div className="flex flex-col min-w-0">
-              <div className="flex gap-1 items-center">
-                <p className="text-[#8f5206] border border-[#8f5206] px-2 rounded-lg text-xs">
+          {/* Top Section */}
+          <div className="flex justify-between items-start mb-6">
+            {/* Left Side */}
+            <div className="flex flex-col">
+              <div className="flex gap-2 items-center mb-2">
+                <p className="text-[#8f5206] border border-[#8f5206] px-2 py-1 rounded-lg text-xs">
                   Period
                 </p>
                 <button
@@ -741,73 +743,76 @@ function LotteryTrxWingo() {
                   className="border bg-[#333332] border-[#d9ac4f] rounded-full px-2 py-1 flex items-center justify-center gap-1 text-[#8f5206] shrink-0"
                 >
                   <img src={HowToPlay} alt="How to Play" className="w-3 h-3" />
-                  <p className="text-[#d9ac4f] text-xs">How to Play</p>
+                  <p className="text-[#d9ac4f] text-sm">How to play</p>
                 </button>
               </div>
-              <p className="text-sm mt-2  text-[#8f5206] truncate">
-                {getDisplayPeriodId()}
-              </p>
+              <p className="text-[17px] text-[#8f5206]">{getDisplayPeriodId()}</p>
             </div>
-            <div className="flex flex-col items-end min-w-0">
-              <div className="bg-[#333332] rounded-full py-1 px-2 inline-flex items-center space-x-1 shrink-0">
+
+            {/* Right Side */}
+            <div className="flex flex-col items-end">
+              <div
+                onClick={() => {
+                  window.location.href = "https://tronscan.org";
+                }}
+                className="bg-[#333332] rounded-full py-1 px-2 inline-flex items-center space-x-1 shrink-0 mb-2 cursor-pointer"
+              >
                 <img src={searchicon} alt="icon" className="h-2 w-2" />
-                <span className="text-[#d9ac4f] text-xs ">
+                <span className="text-[#d9ac4f] text-sm">
                   Public Chain Query
                 </span>
               </div>
-              <div className="flex items-center justify-end gap-1 mt-2">
-                <span className="text-[#8f5206] text-xs ml-3 shrink-0">
-                  Draw Time
-                </span>
-                <div className="flex space-x-0.5 items-center">
-                  <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
+              <div className="flex items-center gap-2">
+                <span className="text-[#8F5206] text-sm">Draw time</span>
+                <div className="flex items-center gap-0.5">
+                  <span className="border border-[#8F5206] text-[#8F5206] text-[17px] rounded px-1 py-0.5 min-w-[20px] text-center bg-white/10">
                     {formatTime(timeRemaining.minutes)[0]}
                   </span>
-                  <span className=" border border-[#8f5206] text-[#8f5206] text-sm rounded px-1 py-0.4 w-4 text-center">
+                  <span className="border border-[#8F5206] text-[#8F5206] text-[17px] rounded px-1 py-0.5 min-w-[20px] text-center bg-white/10">
                     {formatTime(timeRemaining.minutes)[1]}
                   </span>
-                  <span className="text-[#8f5206] font-bold text-lg px-0.5 w-4 text-center">
+                  <span className="text-[#8F5206] font-bold text-[17px] px-1">
                     :
                   </span>
-                  <span className=" border border-[#8f5206] text-[#8f5206]  text-sm rounded px-1 py-0.4 w-4 text-center">
+                  <span className="border border-[#8F5206] text-[#8F5206] text-[17px] rounded px-1 py-0.5 min-w-[20px] text-center bg-white/10">
                     {formatTime(timeRemaining.seconds)[0]}
                   </span>
-                  <span className=" border border-[#8f5206] text-[#8f5206]  text-sm rounded px-1 py-0.4 w-4 text-center">
+                  <span className="border border-[#8F5206] text-[#8F5206] text-[17px] rounded px-1 py-0.5 min-w-[20px] text-center bg-white/10">
                     {formatTime(timeRemaining.seconds)[1]}
                   </span>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex justify-between space-x-2">
+
+          {/* Bottom Section - Icons */}
+          <div className="flex justify-between items-center  py-[30px]">
             {historyData.length >= 5
-              ? historyData
-                  .slice(0, 5) // Get the last 5 results (assuming historyData is in descending order)
-                  .map((entry, idx) => {
-                    return (
-                      <span
-                        key={idx}
-                        className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                      >
-                        <img
-                          src={numberImages[entry.result % 10]}
-                          alt={`Icon ${entry.result}`}
-                          className="w-full h-full"
-                        />
-                      </span>
-                    );
-                  })
+              ? historyData.slice(0, 5).map((entry, idx) => {
+                  return (
+                    <div
+                      key={idx}
+                      className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                    >
+                      <img
+                        src={numberImages[entry.result % 10]}
+                        alt={`Icon ${entry.result}`}
+                        className="w-full h-full rounded-full"
+                      />
+                    </div>
+                  );
+                })
               : [img0, img1, img2, img3, img4].map((img, idx) => (
-                  <span
+                  <div
                     key={idx}
-                    className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                    className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
                   >
                     <img
                       src={img}
                       alt={`Icon ${idx}`}
-                      className="w-full h-full"
+                      className="w-full h-full rounded-full"
                     />
-                  </span>
+                  </div>
                 ))}
           </div>
         </div>
@@ -842,7 +847,7 @@ function LotteryTrxWingo() {
                 Red
               </button>
             </div>
-            <div className="bg-[#4d4d4c] p-2 rounded-lg">
+            <div className="bg-[#242424] p-2 rounded-lg">
               <div className="flex justify-between space-x-1">
                 {[0, 1, 2, 3, 4].map((num) => (
                   <span
@@ -1016,8 +1021,20 @@ function LotteryTrxWingo() {
                             {maskedPeriod || "N/A"}
                           </td>
                           <td className="text-sm text-center py-2">
-                            <div className="flex items-center justify-center gap-1" style={{display:'flex',flexDirection:'column'}}>
-                              <img onClick={()=> {window.location.href=record?.link}} src={question} className="w-3 h-3" />
+                            <div
+                              className="flex items-center justify-center gap-1"
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <img
+                                onClick={() => {
+                                  window.location.href = record?.link;
+                                }}
+                                src={question}
+                                className="w-3 h-3"
+                              />
                               <span>{record.blockHeight || "N/A"}</span>
                             </div>
                           </td>

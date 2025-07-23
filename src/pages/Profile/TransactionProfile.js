@@ -4,6 +4,7 @@ import CommanHeader from "../../components/CommanHeader";
 import apiServices from "../../api/apiServices";
 
 const filterOptions = [
+  'all',
   "transfer_in",
   "game_win",
   "deposit",
@@ -38,11 +39,8 @@ function TransactionProfile() {
   const [pagination, setPagination] = useState({});
   const today = new Date();
 
-  const [selectedDate, setSelectedDate] = useState({
-    year: today.getFullYear().toString(),
-    month: (today.getMonth() + 1).toString().padStart(2, "0"),
-    day: today.getDate().toString().padStart(2, "0"),
-  });
+  // Set selectedDate to null initially to show placeholder
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [tempDate, setTempDate] = useState({
     year: today.getFullYear().toString(),
@@ -73,8 +71,9 @@ function TransactionProfile() {
       const params = {
         page: pageNum,
         limit: 10,
-        type: filter, // Still using original filter value for API
-        ...getDateFilterParams(selectedDate),
+        type: filter,
+        // Only add date params if a date is selected
+        ...(selectedDate ? getDateFilterParams(selectedDate) : {}),
       };
 
       const res = await apiServices.getGameTransactions(params);
@@ -96,7 +95,16 @@ function TransactionProfile() {
   const openModal = (type) => {
     setModal({ type, isOpen: true });
     if (type === "date") {
-      setTempDate({ ...selectedDate });
+      // If no date is selected, use current date as temp
+      if (!selectedDate) {
+        setTempDate({
+          year: today.getFullYear().toString(),
+          month: (today.getMonth() + 1).toString().padStart(2, "0"),
+          day: today.getDate().toString().padStart(2, "0"),
+        });
+      } else {
+        setTempDate({ ...selectedDate });
+      }
     }
   };
 
@@ -105,7 +113,7 @@ function TransactionProfile() {
   };
 
   const handleFilterSelect = (option) => {
-    setFilter(option); // Still using original value
+    setFilter(option);
     closeModal();
   };
 
@@ -133,6 +141,12 @@ function TransactionProfile() {
     closeModal();
   };
 
+  // Add clear date function
+  const handleClearDate = () => {
+    setSelectedDate(null);
+    closeModal();
+  };
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -149,6 +163,7 @@ function TransactionProfile() {
   }, [modal.isOpen]);
 
   const formatDateString = (dateObj) => {
+    if (!dateObj) return "Choose a date";
     const { year, month, day } = dateObj;
     return `${year}-${month}-${day}`;
   };
@@ -178,6 +193,11 @@ function TransactionProfile() {
             <button className="text-gray-400 text-lg" onClick={onClose}>
               Cancel
             </button>
+            {type === "date" && (
+              <button className="text-red-500 text-lg" onClick={handleClearDate}>
+                Clear
+              </button>
+            )}
             <button className="text-yellow-500 text-lg" onClick={onConfirm}>
               Confirm
             </button>
@@ -204,10 +224,12 @@ function TransactionProfile() {
               <MdExpandMore className="text-gray-400 ml-1" />
             </button>
             <button
-              className="modal-button flex-1 bg-[#2d2d2d] p-3 rounded-lg flex justify-between items-center"
+              className={`modal-button flex-1 bg-[#2d2d2d] p-3 rounded-lg flex justify-between items-center ${
+                !selectedDate ? 'text-gray-500' : 'text-gray-300'
+              }`}
               onClick={() => openModal("date")}
             >
-              <span className="truncate">{formatDateString(selectedDate)}</span>
+              <span className="truncate text-[#D1D5DB]">{formatDateString(selectedDate)}</span>
               <MdExpandMore className="text-gray-400 ml-1" />
             </button>
           </div>

@@ -53,15 +53,13 @@ function RebateRatio() {
     window.scrollTo(0, 0);
   }, []); // Empty dependency array ensures this runs only on mount
 
-  const images = [img1, img2, img3, img4, img5]; // Fixed: img6 for "All"
+  const images = [img1, img2, img3]; // Fixed: img6 for "All"
   const activeImages = [
     activeImg1,
     activeImg2,
     activeImg3,
-    activeImg4,
-    activeImg5,
   ]; // Fixed: activeImg6 for "All"
-  const descriptions = ["Lottery", "Casino", "Sports", "Rummy", "Slots"];
+  const descriptions = ["Lottery", "Original", "Provider",];
 
   // Rebate percentages for each category
   const rebateLevels = {
@@ -132,11 +130,11 @@ function RebateRatio() {
         `}</style>
 
         {/* Main content wrapper with max width and proper alignment */}
-        <div className="w-full mx-auto sm:px-4 md:px-4  flex flex-col items-center">
+        <div className="w-full mx-auto sm:px-2 md:px-2  flex flex-col items-center">
           {/* Selection Items - Reduced width with horizontal scroll */}
           <div
             ref={scrollContainerRef}
-            className="flex w-full mb-2 overflow-x-auto flex-nowrap scrollbar-hidden"
+            className="flex w-full mb-2 overflow-x-auto flex-nowrap scrollbar-hidden" style={{justifyContent:'space-between'}}
           >
             {descriptions.map((desc, index) => (
               <div
