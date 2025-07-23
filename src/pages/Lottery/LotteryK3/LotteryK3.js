@@ -1128,6 +1128,7 @@ function LotteryK3() {
                 time: bet.createdAt
                   ? new Date(bet.createdAt).toLocaleTimeString()
                   : new Date().toLocaleTimeString(),
+                finalAmount:bet?.winAmount
               };
             });
 
@@ -2513,7 +2514,7 @@ function LotteryK3() {
                                     : "text-red-600"
                                 }`}
                               >
-                                {history.winLose}
+                                {history.finalAmount}
                               </p>
                             )}
                           </div>
@@ -2580,7 +2581,7 @@ function LotteryK3() {
                                 value:
                                   history.status === "pending"
                                     ? "Pending"
-                                    : history.winLose,
+                                    : history.finalAmount,
                                 valueClass:
                                   history.status === 'pending'
                                     ? "text-yellow-400"
@@ -2598,7 +2599,8 @@ function LotteryK3() {
                                 value,
                                 valueClass = "text-gray-400",
                                 showCopy = false,
-                              }) => (
+                              }) =>  {
+                                return (
                                 <div
                                   key={label}
                                   className="bg-[#4d4d4c] px-1.5 py-1.5 rounded-md flex justify-between items-center"
@@ -2610,7 +2612,7 @@ function LotteryK3() {
                                     <span
                                       className={`${valueClass} text-sm font-normal`}
                                     >
-                                      {value || "N/A"}
+                                      {value }
                                     </span>
                                     {showCopy && value && (
                                       <button
@@ -2630,6 +2632,7 @@ function LotteryK3() {
                                   </div>
                                 </div>
                               )
+                              }
                             )}
                           </div>
                         </div>

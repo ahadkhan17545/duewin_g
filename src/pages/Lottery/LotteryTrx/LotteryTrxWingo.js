@@ -307,7 +307,6 @@ function LotteryTrxWingo() {
           );
           const now = new Date();
           const timeDiffSeconds = (now - updatedAt) / 1000;
-          console.log("timeDiffSeconds", timeDiffSeconds);
           if (timeDiffSeconds <= 5) {
             setLastResult(latestBet);
             setUserDidBet(false);
@@ -337,6 +336,7 @@ function LotteryTrxWingo() {
                 : `-₹${Math.abs(bet.profitLoss)}`,
             date: new Date(bet.createdAt).toLocaleDateString(),
             time: new Date(bet.createdAt).toLocaleTimeString(),
+            finalAmount : bet?.winAmount
           }));
           setUserBets(bets);
           setTotalPages(
@@ -1241,7 +1241,7 @@ function LotteryTrxWingo() {
                                         : "text-red-600"
                                     }`}
                                   >
-                                    {bet.winLose}
+                                    {bet.finalAmount}
                                   </p>
                                 )}
                             </div>
@@ -1291,7 +1291,7 @@ function LotteryTrxWingo() {
                                     value:
                                       bet?.result === "Pending"
                                         ? "Pending"
-                                        : bet.winLose,
+                                        : bet.finalAmount,
                                     valueClass:
                                       bet?.result === "Pending"
                                         ? "text-yellow-400"
@@ -1340,7 +1340,7 @@ function LotteryTrxWingo() {
                                         <span
                                           className={`${valueClass} text-sm font-normal`}
                                         >
-                                          {value || "N/A"}
+                                          {value}
                                         </span>
                                         {showCopy && value && (
                                           <button

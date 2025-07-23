@@ -362,6 +362,7 @@ function Lottery5d() {
                 sum: bet?.result?.sum,
                 payout: bet?.payout,
                 betValue: bet?.betValue,
+                finalAmount : bet?.winAmount
               };
             });
 
@@ -1472,7 +1473,7 @@ function Lottery5d() {
                                       : "text-red-600"
                                   }`}
                                 >
-                                  {String(history.payout).split(".")[0] + ".00"}
+                                  {history?.finalAmount}
                                 </p>
                               )}
                           </div>
@@ -1544,7 +1545,7 @@ function Lottery5d() {
                                 value:
                                   history.result === null
                                     ? "Pending"
-                                    : history.winLose,
+                                    : history.finalAmount,
                                 valueClass:
                                   history.result === null
                                     ? "text-yellow-400"
@@ -1574,7 +1575,7 @@ function Lottery5d() {
                                     <span
                                       className={`${valueClass} text-sm font-normal`}
                                     >
-                                      {value || "N/A"}
+                                      {value}
                                     </span>
                                     {showCopy && value && (
                                       <button

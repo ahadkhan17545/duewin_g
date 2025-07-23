@@ -312,6 +312,7 @@ function LotteryWingo() {
                   bet?.betType === "NUMBER" || bet?.betType === "SIZE"
                     ? bet?.betValue
                     : "",
+                finalAmount : Number(bet?.winAmount).toFixed(2) 
               };
             });
 
@@ -2330,7 +2331,7 @@ function LotteryWingo() {
                                       : "text-gray-400"
                                 }`}
                               >
-                                {String(bet.payout).split(".")[0] + ".00"}
+                                {String(bet.finalAmount).split(".")[0] + ".00"}
                               </p>
                             </div>
                           )}
@@ -2398,7 +2399,7 @@ function LotteryWingo() {
                                     value:
                                       bet.result === "Pending"
                                         ? "Pending"
-                                        : bet.winLose,
+                                        : bet.finalAmount,
                                     valueClass:
                                       bet.result === null
                                         ? "text-yellow-400"
@@ -2425,7 +2426,7 @@ function LotteryWingo() {
                                         <span
                                           className={`${valueClass} text-sm font-normal`}
                                         >
-                                          {value || "N/A"}
+                                          {value}
                                         </span>
                                         {showCopy && value && (
                                           <button

@@ -781,12 +781,19 @@ function Home() {
     { img: b2dark, color: "bg-emerald-500" },
   ];
 
-  const [showFirstPopup, setShowFirstPopup] = useState(true);
+  const [showFirstPopup, setShowFirstPopup] = useState(false);
   const [showSecondPopup, setShowSecondPopup] = useState(true);
 
   const [currentWinnerIndex, setCurrentWinnerIndex] = useState(0);
   const [displayedWinners, setDisplayedWinners] = useState([]);
   const [userData, setUserData] = useState(null);
+    useEffect(()=>{
+     let value = localStorage.getItem('welcomePopupShown')
+     if(value =="true"){
+      setShowFirstPopup(true)
+      localStorage.setItem('welcomePopupShown',false)
+     }
+  },[])
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {

@@ -35,6 +35,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state) => state.login);
 
+ localStorage.setItem('welcomePopupShown',true)
   // Consolidated state to reduce re-renders
   const [uiState, setUiState] = useState({
     isPhoneLogin: true,
