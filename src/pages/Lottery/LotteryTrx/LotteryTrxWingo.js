@@ -96,11 +96,13 @@ const numberImages = [
 const tailwindColorMap = {
   Green: "bg-green-600 hover:bg-green-500",
   Violet: "bg-violet-600 hover:bg-violet-500",
-  Red: "bg-red-600 hover:bg-red-500",
+  Red: "bg-[#d23838] hover:bg-red-600",
+  ReVi: "bg-gradient-to-r from-red-600 via-violet-600 to-violet-600 hover:from-red-500 hover:via-violet-500 hover:to-violet-500",
+  GrVi: "bg-gradient-to-r from-green-600 via-violet-600 to-violet-600 hover:from-green-500 hover:via-violet-500 hover:to-violet-500",
   Big: "bg-orange-600 hover:bg-orange-500",
   Small: "bg-blue-600 hover:bg-blue-500",
-  Number: "bg-gray-600 hover:bg-gray-500",
 };
+
 const CopyIcon = ({ className }) => (
   <svg
     className={className}
@@ -366,7 +368,29 @@ function LotteryTrxWingo() {
       }
     }
   };
+  const iconColorMap = [
+    "ReVi", // 0
+    "Green", // 1
+    "Red", // 2
+    "Green", // 3
+    "Red", // 4
+    "GrVi", // 5
+    "Red", // 6
+    "Green", // 7
+    "Red", // 8
+    "Green", // 9
+  ];
 
+  const getDynamicColorForNumber = (selectedNumber) => {
+    // Convert selectedNumber to integer if it's a string
+    const numberValue = parseInt(selectedNumber);
+
+    // Return the color key from iconColorMap based on the number
+    // Use modulo 10 to handle numbers greater than 9
+    const colorKey = iconColorMap[numberValue % 10] || "Green";
+
+    return colorKey;
+  };
   // Refresh wallet balance
   const handleRefreshBalance = async () => {
     if (isRefreshingBalance) return;
@@ -1455,22 +1479,22 @@ function LotteryTrxWingo() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[1000] bg-[#333333] text-white w-full max-w-[400px] shadow-lg rounded-t-lg">
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[60] bg-neutral-900 text-white w-full max-w-[400px] shadow-lg rounded-t-lg">
           <div
-            className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} rounded-t-lg flex flex-col items-center text-center`}
+            className={`${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} rounded-t-xl flex flex-col items-center text-center`}
           >
             <h2 className="text-lg font-bold mt-2">
               {buttonData[activeButton].title}
             </h2>
-            <div className="flex w-full max-w-xs items-center bg-white text-black gap-2 justify-center mt-2 p-2 rounded-lg">
+            <div className="flex w-full max-w-xs items-center justify-center bg-white text-black gap-2 mt-2 p-2 rounded-lg">
               <span>Select</span>
               <span className="font-bold">{selectedOption}</span>
             </div>
             <div
-              className={`relative ${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} rounded-t-lg px-0 flex items-center text-center p-[14px] flex-col justify-center`}
+              className={`relative ${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} rounded-t-xl px-0 flex flex-col items-center text-center p-[14px]`}
             >
-              <div className="absolute top-0 right-0 mr-0 w-0 h-0 border-t-[30px] border-l-[200px] border-r-0 border-b-0 border-solid border-t-transparent border-l-[#333333]"></div>
-              <div className="absolute top-0 left-0 mr-0 w-0 h-0 border-t-[30px] border-r-[200px] border-l-0 border-b-0 border-solid border-t-transparent border-r-[#333333]"></div>
+              <div className="absolute top-0 mr-0 right-0 w-0 h-0 border-t-[30px] border-l-[200px] border-r-0 border-b-0 border-solid border-transparent border-l-neutral-900"></div>
+              <div className="absolute top-0 ml-0 left-0 w-0 h-0 border-t-[30px] border-r-[200px] border-l-0 border-b-0 border-solid border-transparent border-r-neutral-900"></div>
             </div>
           </div>
 
@@ -1481,7 +1505,11 @@ function LotteryTrxWingo() {
                 {["1", "10", "100", "1000"].map((label) => (
                   <button
                     key={label}
-                    className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} px-2 py-1 rounded text-sm ${betAmount === parseInt(label) ? "ring-2 ring-white" : ""}`}
+                    className={`px-2 py-1 rounded text-sm ${
+                      betAmount === parseInt(label)
+                        ? `${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} ring-2 ring-white`
+                        : "bg-neutral-700 hover:bg-neutral-600"
+                    }`}
                     onClick={() => setBetAmount(parseInt(label))}
                   >
                     {label}
@@ -1494,7 +1522,7 @@ function LotteryTrxWingo() {
               <p className="mb-2 text-sm">Quantity</p>
               <div className="flex items-center gap-1">
                 <button
-                  className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} px-2 rounded text-sm`}
+                  className={`${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} px-2 rounded text-sm`}
                   onClick={() => handleQuantityChange(-1)}
                 >
                   -
@@ -1506,7 +1534,7 @@ function LotteryTrxWingo() {
                   className="w-16 bg-neutral-800 text-center py-1 rounded text-sm"
                 />
                 <button
-                  className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} px-2 rounded text-sm`}
+                  className={`${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} px-2 rounded text-sm`}
                   onClick={() => handleQuantityChange(1)}
                 >
                   +
@@ -1518,10 +1546,10 @@ function LotteryTrxWingo() {
               {multiplierOptions.map((label) => (
                 <button
                   key={label}
-                  className={`bg-neutral-700 px-2 py-1 rounded text-sm ${
+                  className={`px-2 py-1 rounded text-sm transition ${
                     selectedMultiplier === label
-                      ? `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} ring-2 ring-white`
-                      : `${tailwindColorMap[betType === "number" ? "Number" : selectedOption]?.replace("bg-", "hover:bg-")} transition`
+                      ? `${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} ring-2 ring-white`
+                      : "bg-neutral-700 hover:bg-neutral-600"
                   }`}
                   onClick={() => handleMultiplierClick(label)}
                 >
@@ -1531,7 +1559,7 @@ function LotteryTrxWingo() {
             </div>
 
             <div className="flex items-center gap-2">
-              <div onClick={() => setChecked(!checked)}>
+              <div className="" onClick={() => setChecked(!checked)}>
                 {checked ? (
                   <img src={agree} alt="icon" className="w-5 h-5 ml-2" />
                 ) : (
@@ -1552,7 +1580,7 @@ function LotteryTrxWingo() {
                 Cancel
               </button>
               <button
-                className={`${tailwindColorMap[betType === "number" ? "Number" : selectedOption]} flex-1 py-3 transition text-sm`}
+                className={`${tailwindColorMap[betType === "number" ? getDynamicColorForNumber(selectedOption) : selectedOption]} flex-1 py-3 transition text-sm`}
                 onClick={handlePlaceBet}
               >
                 Total amount ₹{calculateTotalAmount()}
