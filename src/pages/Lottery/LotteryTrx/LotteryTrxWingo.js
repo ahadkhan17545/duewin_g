@@ -31,6 +31,23 @@ import img6 from "../../../Assets/WingoNew/n6-a56e0b9a.png";
 import img7 from "../../../Assets/WingoNew/n7-5961a17f.png";
 import img8 from "../../../Assets/WingoNew/n8-d4d951a4.png";
 import img9 from "../../../Assets/WingoNew/n9-a20f6f42.png";
+
+import img12 from "../../../Assets/trx/one.webp";
+import img22 from "../../../Assets/trx/two.png";
+import img33 from "../../../Assets/trx/three.png";
+import img44 from "../../../Assets/trx/four.webp";
+import img55 from "../../../Assets/trx/five.webp";
+import img66 from "../../../Assets/trx/six.webp";
+import img77 from "../../../Assets/trx/seven.png";
+import img88 from "../../../Assets/trx/eight.png";
+import img99 from "../../../Assets/trx/nine.png";
+import img00 from "../../../Assets/trx/zero.webp";
+import A from "../../../Assets/trx/A.png";
+import B from "../../../Assets/trx/B.png";
+import C from "../../../Assets/trx/C.png";
+import D from "../../../Assets/trx/D.png";
+import E from "../../../Assets/trx/E.png";
+import F from "../../../Assets/trx/F.webp";
 import CommanHeader from "../../../components/CommanHeader";
 import FreezePopup from "../../../components/FreezePopup";
 import ChartConnectorCanvas from "../../../utils/charConnectorCavas";
@@ -92,6 +109,24 @@ const numberImages = [
   img8,
   img9,
 ];
+const numberImage2 = {
+  0: img00,
+  1: img12,
+  2: img22,
+  3: img33,
+  4: img44,
+  5: img55,
+  6: img66,
+  7: img77,
+  8: img88,
+  9: img99,
+  A: A,
+  B: B,
+  C: C,
+  D: D,
+  E: E,
+  F: F,
+};
 
 const tailwindColorMap = {
   Green: "bg-green-600 hover:bg-green-500",
@@ -789,7 +824,12 @@ function LotteryTrxWingo() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[#8F5206] text-sm">Draw time</span>
+                <span
+                  className="text-[#8F5206] text-sm"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Draw time
+                </span>
                 <div className="flex items-center gap-0.5">
                   <span className="border border-[#8F5206] text-[#8F5206] text-[17px] rounded px-1 py-0.5 min-w-[20px] text-center bg-white/10">
                     {formatTime(timeRemaining.minutes)[0]}
@@ -812,31 +852,36 @@ function LotteryTrxWingo() {
           </div>
 
           {/* Bottom Section - Icons */}
-          <div className="flex justify-between items-center  py-[30px]">
+          <div className="flex justify-between items-center  py-[10px]">
             {historyData.length >= 5
-              ? historyData.slice(0, 5).map((entry, idx) => {
-                  return (
-                    <div
-                      key={idx}
-                      className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-                    >
-                      <img
-                        src={numberImages[entry.result % 10]}
-                        alt={`Icon ${entry.result}`}
-                        className="w-full h-full rounded-full"
-                      />
-                    </div>
-                  );
-                })
-              : [img0, img1, img2, img3, img4].map((img, idx) => (
+              ? historyData[0].hashValue
+                  .slice(-5)
+                  .split("")
+                  .map((digit, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className="rounded-full flex items-center justify-center shrink-0"
+                      >
+                        <img
+                          src={numberImage2[digit?.toUpperCase()]}
+                          alt={`Icon`}
+                          className="w-full h-full rounded-full"
+                          style={{ width: "60px", height: "60px" }}
+                        />
+                      </div>
+                    );
+                  })
+              : [img00, img12, img22, img33, img44].map((img, idx) => (
                   <div
                     key={idx}
-                    className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                    className="rounded-full flex items-center justify-center shrink-0"
                   >
                     <img
                       src={img}
                       alt={`Icon ${idx}`}
-                      className="w-full h-full rounded-full"
+                      className="rounded-full"
+                      style={{ width: "60px", height: "60px" }}
                     />
                   </div>
                 ))}
@@ -1039,8 +1084,8 @@ function LotteryTrxWingo() {
                       const period = record.periodId?.toString() || "";
                       const hash = record.hashValue?.toString() || "";
 
-                      const maskedPeriod = `${period.slice(0, 3)}***${period.slice(-4)}`;
-                      const maskedHash = `***${hash.slice(-4)}`;
+                      const maskedPeriod = `${period.slice(0, 3)}***${period.slice(-5)}`;
+                      const maskedHash = `***${hash.slice(-5)}`;
                       return (
                         <tr key={rowIndex} className="text-[#f5f3f0]">
                           <td className="text-sm px-2 text-center py-3">
@@ -1072,10 +1117,11 @@ function LotteryTrxWingo() {
                             {maskedHash || "N/A"}
                           </td>
                           <td className="text-center">
-                            <span className="inline-block text-white mr-2 text-xs px-1 py-1 border bg-[#ff4081] rounded-full py-1">
+                            <span className="inline-block text-white mr-2 text-xs px-2 py-1 bg-[#ff4081] rounded-full">
                               {record.result ? record?.result : "0"}
                             </span>
                             <span
+                              className="font-bold"
                               style={{
                                 color:
                                   record.resultType == "Big"
@@ -1083,7 +1129,6 @@ function LotteryTrxWingo() {
                                     : "#5088D3",
                               }}
                             >
-                              {" "}
                               {record.resultType == "Big" ? "B" : "S"}
                             </span>
                           </td>

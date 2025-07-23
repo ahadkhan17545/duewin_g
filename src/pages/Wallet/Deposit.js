@@ -20,17 +20,7 @@ import apiServices from "../../api/apiServices";
 import CommanHeader from "../../components/CommanHeader";
 import walletImage from "../../Assets/newIcon/savewalleticon.png";
 import iconInr from "../../Assets/finalicons/iconinr.png";
-
-// Legacy payment channels (keeping for backup, but not used)
-const paymentChannel = [
-  { name: "Ok Pay", balance: "500 - 50K", key: "OKPAY", isHighlight: true },
-  { name: "GH Pay", balance: "500 - 50K", key: "GHPAY", isHighlight: false },
-  { name: "CH Pay", balance: "200 - 50K", key: "CHPAY", isHighlight: false },
-  { name: "P Pay", balance: "500 - 50K", key: "PPAY", isHighlight: false },
-  { name: "07 Pay", balance: "100 - 50K", key: "07PAY", isHighlight: false },
-  { name: "L Pay", balance: "1000 - 50K", key: "LPAY", isHighlight: false },
-];
-
+import gift from "../../Assets/trx/gift.png";
 const Deposit = () => {
   const [inputAmount, setInputAmount] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("UPI");
@@ -397,6 +387,18 @@ const Deposit = () => {
               }`}
               style={{ width: "79px", height: "87px" }}
             >
+              {/* Gift icon for USDT */}
+              {item.key === "USDT" && (
+                <>
+                  <img
+                    src={gift}
+                    className="absolute top-[1px] right-[1px] w-7 h-7 z-10"
+                    alt="Gift"
+                  />
+                  <span className="absolute top-[9px] right-[1px] w-6 h-6 z-10 text-[#fff] text-[12px]">3%</span>
+                </>
+              )}
+
               <img
                 src={item.img}
                 className="w-12 h-12 mx-auto mb-2"
@@ -777,17 +779,17 @@ const Deposit = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-3 mb-6">
-                {generateUsdtPresetAmounts(selectedChannel?.min_amount || 100).map(
-                  (amount) => (
-                    <button
-                      key={amount}
-                      onClick={() => handlePresetAmountClick(amount)}
-                      className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
-                    >
-                      <span className="text-[#666462]"> ₹ </span> {amount}
-                    </button>
-                  )
-                )}
+                {generateUsdtPresetAmounts(
+                  selectedChannel?.min_amount || 100
+                ).map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handlePresetAmountClick(amount)}
+                    className="border border-[#666462] hover:bg-neutral-700 transition-colors rounded-lg py-2 text-[#d9ac4f]"
+                  >
+                    <span className="text-[#666462]"> ₹ </span> {amount}
+                  </button>
+                ))}
               </div>
 
               <div className="relative mb-4">

@@ -1411,7 +1411,8 @@ function Home() {
                   <img
                     src={homepartner}
                     alt="image"
-                    className="w-full mt-2 h-[475px] object-cover"
+                    className="w-full mt-2 h-[475px] object-fill"
+                    style={{marginTop:'-30px'}}
                   />
 
                   {/* 📝 Bottom Paragraphs (Styled Like the Image) */}
