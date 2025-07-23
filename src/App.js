@@ -100,12 +100,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Import your landing image
-import landImage from "./Assets/newIcon/dice/3.webp";
+import landImage from "./Assets/newIcon/dice/3.png";
 
 // Initial Loading Screen Component
 const InitialLoadingScreen = () => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+    <div className="relative flex flex-col items-center bg-[#242424] min-h-screen w-full max-w-full md:max-w-[400px] mx-auto overflow-x-hidden" style={{backgroundColor:'#232323'}}>
       <img
         src={landImage}
         alt="Loading"
@@ -116,15 +116,7 @@ const InitialLoadingScreen = () => {
           objectFit: 'contain'
         }}
       />
-      {/* Optional: Add a loading spinner or text overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
-        {/* Uncomment below if you want a loading spinner overlay */}
-        {/* 
-        <div className="bg-black bg-opacity-50 rounded-lg p-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-          <p className="text-white text-sm">Loading...</p>
-        </div>
-        */}
       </div>
     </div>
   );
@@ -176,14 +168,23 @@ const ProtectedLayout = () => {
 
 function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
-  useEffect(() => {
-    // Always show loading screen for 2 seconds on app load
-    const timer = setTimeout(() => {
+ useEffect(() => {
+    // Check if the loading screen has already been shown in this session
+    const hasShownLoading = sessionStorage.getItem('hasShownInitialLoading');
+    
+    if (hasShownLoading) {
+      // If already shown in this session, skip the loading screen
       setIsInitialLoading(false);
-    }, 2000); // Show for exactly 2 seconds
+    } else {
+      // Show loading screen for 2 seconds, then mark as shown
+      const timer = setTimeout(() => {
+        setIsInitialLoading(false);
+        // Mark that loading screen has been shown in this session
+        sessionStorage.setItem('hasShownInitialLoading', 'true');
+      }, 2000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   // Show the initial loading screen
