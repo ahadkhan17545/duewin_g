@@ -165,13 +165,14 @@ const InviteFriendsComponent = () => {
           <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
         )}
         {bonusTiers.map((bonus, index) => {
+          // Update claimed and unclaimed logic to match backend tier with frontend invitees
           const isClaimed = bonusStatus.claimedTiers.some(
-            (t) => t.tier === bonus.tier
+            (t) => t.tier === bonus.invitees
           );
           const isUnclaimed =
             bonusStatus.hasUnclaimedBonus &&
-            bonusStatus.unclaimedTier?.tier === bonus.tier;
-          const inviteesMet = bonusStatus.validReferrals >= bonus.invitees;
+            bonusStatus.unclaimedTier?.tier === bonus.invitees;
+          const inviteesMet = bonusStatus.totalReferrals >= bonus.invitees;
           const depositMet = bonusStatus.validReferrals >= bonus.invitees; // Assuming validReferrals implies deposit condition met
 
           return (
@@ -227,7 +228,7 @@ const InviteFriendsComponent = () => {
                   <div className="flex mt-4">
                     <div className="flex-1 border-r border-[#525167]">
                       <div className="text-[#dd9138] text-center text-xl">
-                        {Math.min(bonusStatus.validReferrals, bonus.invitees)} /{" "}
+                        {Math.min(bonusStatus.totalReferrals, bonus.invitees)} /{" "}
                         {bonus.invitees}
                       </div>
                       <div className="text-gray-400 text-sm text-center">
@@ -250,19 +251,19 @@ const InviteFriendsComponent = () => {
               {/* Button */}
               <div className="mt-3">
                 {isClaimed ? (
-                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-[16px] font-medium">
+                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-[16px] font-medium" disabled>
                     Claimed
                   </button>
                 ) : isUnclaimed && inviteesMet && depositMet ? (
                   <button
                     onClick={handleClaimBonus}
                     disabled={isLoading}
-                    className={`w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] text-black py-3 rounded-full text-center text-base font-medium hover:bg-[#FFCC00] ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`w-full bg-gradient-to-r from-[#17b15e] to-[#17b15e] text-white py-3 rounded-full text-center text-base font-medium hover:bg-[#1ed760] ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
-                    {isLoading ? "Processing..." : "Finished"}
+                    {isLoading ? "Processing..." : "Claim"}
                   </button>
                 ) : (
-                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-sm font-medium">
+                  <button className="w-full bg-[#5c5f70] text-white py-2 rounded-full text-center text-sm font-medium" disabled>
                     Unfinished
                   </button>
                 )}

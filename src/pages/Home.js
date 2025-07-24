@@ -845,6 +845,22 @@ function Home() {
     return () => clearInterval(interval);
   }, [winners.length]);
 
+  // Automatically close the first popup after 3 seconds
+  useEffect(() => {
+    if (showFirstPopup) {
+      const timer = setTimeout(() => setShowFirstPopup(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showFirstPopup]);
+
+  // Automatically close the second popup after 3 seconds
+  useEffect(() => {
+    if (showSecondPopup) {
+      const timer = setTimeout(() => setShowSecondPopup(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSecondPopup]);
+
   const groupedLotteryGames = {
     Wingo: lotterycardData
       .filter((game) => game.title.startsWith("Win Go"))
@@ -1425,7 +1441,7 @@ function Home() {
                     </p>
                     <p className="flex gap-2">
                       <span className="text-[#c38d2f]">◆</span>
-                      strike works with more than 10,000 online live game
+                      Strike works with more than 10,000 online live game
                       dealers and slot games, all of which are verified fair
                       games.
                     </p>
@@ -1453,222 +1469,231 @@ function Home() {
         <Footer />
       </div>
       {(showFirstPopup || showSecondPopup) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-start justify-center pt-[10vh] px-2">
-          {!userData?.has_received_first_bonus &&
-            showSecondPopup &&
-            !showFirstPopup && (
-              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
-                <div className="relative flex flex-col items-center mb-12">
-                  <div className="w-[90vw] max-w-[350px] max-h-[550px] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
-                    <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
-                      <h2 className="text-base font-bold">
-                        Extra First Deposit Bonus
-                      </h2>
-                      <p className="text-xs text-gray-300 mt-1">
-                        Each account can only receive rewards once
-                      </p>
-                    </div>
-                    <div
-                      className="overflow-y-auto px-2 pb-4"
-                      style={{ maxHeight: "60vh", paddingTop: "20px" }}
-                    >
-                      {[
-                        { deposit: 200000, bonus: 15000 },
-                        { deposit: 100000, bonus: 7000 },
-                        { deposit: 30000, bonus: 2000 },
-                        { deposit: 10000, bonus: 600 },
-                        { deposit: 3000, bonus: 300 },
-                        { deposit: 1000, bonus: 150 },
-                        { deposit: 300, bonus: 60 },
-                        { deposit: 100, bonus: 20 },
-                      ].map((item, index) => (
-                        <div
-                          key={index}
-                          className="bg-[#4d4d4c] p-2 rounded-lg mb-2"
-                        >
-                          <p className="text-sm flex justify-between">
-                            <span>
-                              First Deposit{" "}
-                              <span className="text-[#dd9138]">
-                                {item.deposit}
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-start justify-center pt-[10vh] px-2"
+          onClick={() => {
+            setShowFirstPopup(false);
+            setShowSecondPopup(false);
+          }}
+        >
+          {/* Prevent closing when clicking inside the popup */}
+          <div onClick={e => e.stopPropagation()} style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+            {!userData?.has_received_first_bonus &&
+              showSecondPopup &&
+              !showFirstPopup && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70 overflow-y-auto">
+                  <div className="relative flex flex-col items-center mb-12">
+                    <div className="w-[90vw] max-w-[350px] max-h-[550px] bg-[#333332] rounded-lg shadow-lg text-white flex flex-col">
+                      <div className="w-full bg-[#4d4d4c] text-center py-2 rounded-t-lg">
+                        <h2 className="text-base font-bold">
+                          Extra First Deposit Bonus
+                        </h2>
+                        <p className="text-xs text-gray-300 mt-1">
+                          Each account can only receive rewards once
+                        </p>
+                      </div>
+                      <div
+                        className="overflow-y-auto px-2 pb-4"
+                        style={{ maxHeight: "60vh", paddingTop: "20px" }}
+                      >
+                        {[
+                          { deposit: 200000, bonus: 15000 },
+                          { deposit: 100000, bonus: 7000 },
+                          { deposit: 30000, bonus: 2000 },
+                          { deposit: 10000, bonus: 600 },
+                          { deposit: 3000, bonus: 300 },
+                          { deposit: 1000, bonus: 150 },
+                          { deposit: 300, bonus: 60 },
+                          { deposit: 100, bonus: 20 },
+                        ].map((item, index) => (
+                          <div
+                            key={index}
+                            className="bg-[#4d4d4c] p-2 rounded-lg mb-2"
+                          >
+                            <p className="text-sm flex justify-between">
+                              <span>
+                                First Deposit{" "}
+                                <span className="text-[#dd9138]">
+                                  {item.deposit}
+                                </span>
                               </span>
-                            </span>
-                            <span className="text-[#dd9138]">
-                              + ₹{item.bonus}
-                            </span>
-                          </p>
-                          <p className="text-xs text-[#a8a5a1]">
-                            Deposit {item.deposit} for the first time and
-                            receive ₹{item.bonus} bonus.
-                          </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <div className="relative w-[70%] h-4 bg-[#242424] rounded-full">
-                              <div className="absolute top-0 left-0 h-full w-0 bg-yellow-400 rounded-full"></div>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <p className="text-sm z-10">0/{item.deposit}</p>
+                              <span className="text-[#dd9138]">
+                                + ₹{item.bonus}
+                              </span>
+                            </p>
+                            <p className="text-xs text-[#a8a5a1]">
+                              Deposit {item.deposit} for the first time and
+                              receive ₹{item.bonus} bonus.
+                            </p>
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="relative w-[70%] h-4 bg-[#242424] rounded-full">
+                                <div className="absolute top-0 left-0 h-full w-0 bg-yellow-400 rounded-full"></div>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <p className="text-sm z-10">0/{item.deposit}</p>
+                                </div>
                               </div>
+                              <button
+                                onClick={() => navigate("/deposit")}
+                                className="ml-2 px-2 py-1 text-[#ed9138] border-2 text-xs rounded-md"
+                              >
+                                Deposit
+                              </button>
                             </div>
-                            <button
-                              onClick={() => navigate("/deposit")}
-                              className="ml-2 px-2 py-1 text-[#ed9138] border-2 text-xs rounded-md"
-                            >
-                              Deposit
-                            </button>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex justify-between items-center bg-[#4d4d4c] text-[#a8a5a1] py-4 px-4 rounded-b-lg">
-                      <label
-                        className="flex items-center text-xs cursor-pointer"
-                        onClick={handleCheckboxChange}
-                      >
-                        <img
-                          src={checked ? agree : agreeborder}
-                          alt="agree"
-                          className="w-6 h-6"
-                        />
-                        <span className="ml-1">No more reminders today</span>
-                      </label>
+                        ))}
+                      </div>
+                      <div className="flex justify-between items-center bg-[#4d4d4c] text-[#a8a5a1] py-4 px-4 rounded-b-lg">
+                        <label
+                          className="flex items-center text-xs cursor-pointer"
+                          onClick={handleCheckboxChange}
+                        >
+                          <img
+                            src={checked ? agree : agreeborder}
+                            alt="agree"
+                            className="w-6 h-6"
+                          />
+                          <span className="ml-1">No more reminders today</span>
+                        </label>
 
-                      <button
-                        onClick={() => navigate("/activityPage")}
-                        className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-[#8f5206] px-8 py-2 rounded-full font-bold text-xs"
-                      >
-                        Activity
-                      </button>
+                        <button
+                          onClick={() => navigate("/activityPage")}
+                          className="bg-gradient-to-r from-[#FAE59F] to-[#C4933F] text-[#8f5206] px-8 py-2 rounded-full font-bold text-xs"
+                        >
+                          Activity
+                        </button>
+                      </div>
                     </div>
+                    <button
+                      className="mt-3 bg-opacity-20 hover:bg-opacity-30 rounded-full p-1 transition-all duration-200"
+                      onClick={() => setShowSecondPopup(false)}
+                    >
+                      <img src={close} alt="close" className="w-7 h-7" />
+                    </button>
                   </div>
-                  <button
-                    className="mt-3 bg-opacity-20 hover:bg-opacity-30 rounded-full p-1 transition-all duration-200"
-                    onClick={() => setShowSecondPopup(false)}
+                </div>
+              )}
+            {showFirstPopup && (
+              <div className="w-full max-w-[350px] h-auto max-h-[90vh] bg-[#333] rounded-lg shadow-lg text-white p-0 relative overflow-hidden flex flex-col items-center">
+                <h2
+                  className="text-lg font-bold text-white py-3 w-full text-center"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, #6F6F6F 0%, #404040 100%)",
+                    borderTopLeftRadius: "8px",
+                    borderTopRightRadius: "8px",
+                    margin: "0",
+                  }}
+                >
+                  Login Welcome
+                </h2>
+                <div className="flex-1 overflow-y-auto max-h-[400px] px-3 pb-3 w-full flex flex-col items-center text-center">
+                  {/* Header */}
+                  <div
+                    className="text-black text-xs font-semibold text-center mt-4 w-fit px-2 font-[Arial] py-1"
+                    style={{ backgroundColor: "rgb(255, 255, 0)" }}
                   >
-                    <img src={close} alt="close" className="w-7 h-7" />
+                    Login Welcome
+                  </div>
+
+                  {/* Main Title */}
+                  <div className="text-white text-lg font-bold mt-3 mb-2">
+                    🌟 STRIKEGAME.LIVE 🌟
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-white text-sm font-[Arial] leading-relaxed mt-2 px-2">
+                    📌 Strike is the digital evolution of a legendary Goa-based
+                    casino, trusted since 2016. Known for its thrilling in-house
+                    action and high-stakes excitement, Strike is now launching
+                    online — bringing the casino floor straight to your screen.
+                  </p>
+
+                  {/* Official Services */}
+                  <div className="flex flex-col gap-2 mt-4 text-base">
+                    {[
+                      {
+                        title: "Official Telegram Group",
+                        link: "https://t.me/killer_mao",
+                      },
+                      {
+                        title: "Official Customer Service",
+                        link: "https://t.me/killer_mao",
+                      },
+                    ].map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <span className="text-green-500 text-lg">✅</span>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          className="text-[#0000EE] font-bold text-sm"
+                        >
+                          {item.title}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Features List */}
+                  <div className="mt-4 text-sm font-medium space-y-1">
+                    <p className="text-white">
+                      ⭐ High invitation bonus for new agents
+                    </p>
+                    <p className="text-white">
+                      ⭐ Up to 9% support funds on user losses
+                    </p>
+                    <p className="text-white">
+                      ⭐ Daily Lucky Draw of ₹888 for 3 lucky users
+                    </p>
+                    <p className="text-white">⭐ Instant withdrawals anytime</p>
+                    <p className="text-white">⭐ 24×7 customer service support</p>
+                    <p className="text-white">
+                      ⭐ The most professional action gaming experience
+                    </p>
+                    <p className="text-white">
+                      ⭐ High-quality agent benefits & earnings
+                    </p>
+                    <p className="text-white">
+                      ⭐ The number one casino-action game platform
+                    </p>
+                  </div>
+
+                  {/* Promotion Section */}
+                  <div className="mt-4 space-y-1">
+                    <p className="flex items-center justify-center">
+                      💎{" "}
+                      <span className="text-white font-medium text-sm font-[Arial] mx-1">
+                        Click to promote – become an agent
+                      </span>{" "}
+                      💎
+                    </p>
+                    <p className="text-white text-sm font-[Arial]">
+                      💎 Earn income every day
+                    </p>
+                    <p className="text-white text-sm font-[Arial]">
+                      💎 Official Telegram id ......................
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-2 pb-3">
+                  <button
+                    className="px-8 py-2 rounded-full font-bold text-white text-sm"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
+                    }}
+                    onClick={() => {
+                      setShowFirstPopup(false);
+                    }}
+                  >
+                    Confirm
                   </button>
                 </div>
               </div>
             )}
-          {showFirstPopup && (
-            <div className="w-full max-w-[350px] h-auto max-h-[90vh] bg-[#333] rounded-lg shadow-lg text-white p-0 relative overflow-hidden flex flex-col items-center">
-              <h2
-                className="text-lg font-bold text-white py-3 w-full text-center"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, #6F6F6F 0%, #404040 100%)",
-                  borderTopLeftRadius: "8px",
-                  borderTopRightRadius: "8px",
-                  margin: "0",
-                }}
-              >
-                Login Welcome
-              </h2>
-              <div className="flex-1 overflow-y-auto max-h-[400px] px-3 pb-3 w-full flex flex-col items-center text-center">
-                {/* Header */}
-                <div
-                  className="text-black text-xs font-semibold text-center mt-4 w-fit px-2 font-[Arial] py-1"
-                  style={{ backgroundColor: "rgb(255, 255, 0)" }}
-                >
-                  Login Welcome
-                </div>
-
-                {/* Main Title */}
-                <div className="text-white text-lg font-bold mt-3 mb-2">
-                  🌟 STRIKEGAME.LIVE 🌟
-                </div>
-
-                {/* Description */}
-                <p className="text-white text-sm font-[Arial] leading-relaxed mt-2 px-2">
-                  📌 Strike is the digital evolution of a legendary Goa-based
-                  casino, trusted since 2016. Known for its thrilling in-house
-                  action and high-stakes excitement, Strike is now launching
-                  online — bringing the casino floor straight to your screen.
-                </p>
-
-                {/* Official Services */}
-                <div className="flex flex-col gap-2 mt-4 text-base">
-                  {[
-                    {
-                      title: "Official Telegram Group",
-                      link: "https://t.me/killer_mao",
-                    },
-                    {
-                      title: "Official Customer Service",
-                      link: "https://t.me/killer_mao",
-                    },
-                  ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <span className="text-green-500 text-lg">✅</span>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        className="text-[#0000EE] font-bold text-sm"
-                      >
-                        {item.title}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Features List */}
-                <div className="mt-4 text-sm font-medium space-y-1">
-                  <p className="text-white">
-                    ⭐ High invitation bonus for new agents
-                  </p>
-                  <p className="text-white">
-                    ⭐ Up to 9% support funds on user losses
-                  </p>
-                  <p className="text-white">
-                    ⭐ Daily Lucky Draw of ₹888 for 3 lucky users
-                  </p>
-                  <p className="text-white">⭐ Instant withdrawals anytime</p>
-                  <p className="text-white">⭐ 24×7 customer service support</p>
-                  <p className="text-white">
-                    ⭐ The most professional action gaming experience
-                  </p>
-                  <p className="text-white">
-                    ⭐ High-quality agent benefits & earnings
-                  </p>
-                  <p className="text-white">
-                    ⭐ The number one casino-action game platform
-                  </p>
-                </div>
-
-                {/* Promotion Section */}
-                <div className="mt-4 space-y-1">
-                  <p className="flex items-center justify-center">
-                    💎{" "}
-                    <span className="text-white font-medium text-sm font-[Arial] mx-1">
-                      Click to promote – become an agent
-                    </span>{" "}
-                    💎
-                  </p>
-                  <p className="text-white text-sm font-[Arial]">
-                    💎 Earn income every day
-                  </p>
-                  <p className="text-white text-sm font-[Arial]">
-                    💎 Official Telegram id ......................
-                  </p>
-                </div>
-              </div>
-              <div className="mt-2 pb-3">
-                <button
-                  className="px-8 py-2 rounded-full font-bold text-white text-sm"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, #FAE59F 0%, #C4933F 100%)",
-                  }}
-                  onClick={() => {
-                    setShowFirstPopup(false);
-                  }}
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       )}
     </div>

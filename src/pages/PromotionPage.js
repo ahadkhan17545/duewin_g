@@ -375,7 +375,7 @@ function PromotionPage() {
               type="button"
               className="w-full bg-gradient-to-r from-[#fae59f] to-[#c4933f] p-2 text-sm text-center text-[#8f5206] font-bold text-lg rounded-full font-sans"
             >
-              INVITATION LINK
+              DOWNLOAD QR CODE
             </button>
           </Link>
         </div>

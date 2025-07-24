@@ -74,7 +74,7 @@ const Rebate = () => {
       if (data?.allGames) {
         newMissions.push({
           type: 'Daily mission',
-          status: 'Unfinished',
+          status: 'Incomplete',
           icon: lottery,
           title: 'Daily betting bonus',
           progress: `${allGamesProgress}/${allGamesMax}`,
@@ -89,7 +89,7 @@ const Rebate = () => {
       if (data?.lottery) {
         newMissions.push({
           type: 'Daily mission',
-          status: 'Unfinished',
+          status: 'Incomplete',
           icon: lottery,
           title: 'Lottery betting bonus',
           progress: `${lotteryProgress}/${lotteryMax}`,
@@ -101,7 +101,20 @@ const Rebate = () => {
           milestoneKey: "100K"
         });
       }
-
+      if (data?.allGames) {
+        newMissions.push({
+          type: 'Daily mission',
+          status: 'Incomplete',
+          icon: lottery,
+          title: 'Daily betting bonus',
+          progress: `${allGamesProgress}/${allGamesMax}`,
+          award: '₹10',
+          disable: data?.allGames?.milestones["500"]?.achieved,
+          isClaimed: data?.allGames?.milestones["500"]?.claimed,
+          milestoneType: "all_games",
+          milestoneKey: "500"
+        });
+      }
       setMissions(newMissions);
     } catch (err) {
       console.error("Failed to fetch activity", err);

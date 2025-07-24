@@ -161,7 +161,7 @@ const Jackpot = () => {
           {images.map((img, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg px-10 mt-6 py-1 ${selectedTab === index ? '' : 'bg-[#333332]'
+              className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg px-12 mt-6 py-1 ${selectedTab === index ? '' : 'bg-[#333332]'
                 }`}
               style={
                 selectedTab === index
@@ -209,13 +209,13 @@ const Jackpot = () => {
               <div className="text-[#dd9138] text-lg font-medium">{rebateStats?.todayRebateAmount}</div>
             </div>
             <div className="bg-[#4d4d4c] p-2 rounded">
-              <div className="text-[#a8a5a1] text-xs">Total rebate</div>
+              <div className="text-[#a8a5a1] text-xs">Total rebate count</div>
               <div className="text-[#dd9138] text-lg font-medium">{rebateStats?.totalRebates}</div>
             </div>
           </div>
 
           <div className="text-[#a8a5a1] text-xs mb-2">
-            Automatic code washing at 01:00:00 every morning
+            Betting rebate will be credited automatically after the successfull of bet 
           </div>
 
           <button
@@ -261,7 +261,7 @@ const Jackpot = () => {
 
                       <div className="flex items-center justify-between">
                         <span className='text-xs'>Rebate rate</span>
-                        <span className="text-red-400 text-xs">{rebate?.rate}%</span>
+                        <span className="text-red-400 text-xs">{rebate?.rebateRate}%</span>
                       </div>
 
                       <div className="flex items-center justify-between">

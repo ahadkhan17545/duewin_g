@@ -1663,51 +1663,103 @@ function LotteryTrxWingo() {
             {/* Content */}
             <div className="bg-[#201d2b] p-4 text-white text-sm flex-1 overflow-y-auto">
               <p>
-                1 minute 1 issue, 45 seconds to order, 15 seconds waiting for
-                the draw. It opens all day. The total number of trades is 1440
-                issues.
+              What is a hash value?
+
               </p>
               <p className="mt-3">
-                If you spend 100 to trade, after deducting a 2% service fee,
-                your contract amount is 98:
+              A person of Bitcoin's fundamental value is exposed to one knowledge, one hash value.
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-green-400">
-                  1. Select Green:
-                </span>{" "}
-                If the result shows 1,3,7,9 you will get (98×2) 196; If the
-                result shows 5, you will get (98×1.5) 147.
+                
+              Hash is a value algorithm calculated with a hash function (or hash function/hash), and we can also translate it into a hash, so the hash value is also called a hash value. . To understand hash values, you must understand hash functions. A hash function can computationally transform an input of arbitrary length into an output of fixed length.
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-red-400">2. Select Red:</span>{" "}
-                If the result shows 2,4,6,8 you will get (98×2) 196; If the
-                result shows 0, you will get (98×1.5) 147.
+                
+              Functions all have the property that if the input value is the same, the output hash value is the same. If the input value is different, the output hash value is usually different, but if the event is extremely small. If the hash value is solved when the input value changes, the hash function has a hash value that is non-reversible and easy to verify, and if there is indeed a derived value, if it is possible to achieve the hash value of the output input value, you can Hash value for immediate verification.
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-purple-400">
-                  3. Select Violet:
-                </span>{" "}
-                If the result shows 0 or 5, you will get (98×4.5) 441.
+                
+              The value of each block is unique, eternal and unrevealable, undeniable at the time, the awards circulating in the blockchain are automatically tampered with, and the records cannot be tampered with.
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-blue-400">
-                  4. Select Number:
-                </span>{" "}
-                If the result matches the number you selected, you will get
-                (98×9) 882.
+                
+              USDT have how many type?
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-yellow-400">
-                  5. Select Big:
-                </span>{" "}
-                If the result shows 5,6,7,8,9 you will get (98×2) 196.
+                
+              1) Based on Bitcoin platform Omni-USDT, deposit address is Bitcoin address, withdrawal is bitcoin network.
+
               </p>
               <p className="mt-3">
-                <span className="font-medium text-orange-400">
-                  6. Select Small:
-                </span>{" "}
-                If the result shows 0,1,2,3,4 you will get (98×2) 196.
+              2)Bases on Ethereum platform ERC20 protocol, deposit address is based on ETH address, withdrawal also based on ETH network.
+
               </p>
+              <p className="mt-3">
+              3)Based on TRC20-USDT, TRC20 protocal and TRX Network, deposit address using TRON address, withdrawal using TRON network.
+
+
+              </p>
+              <p className="mt-3">
+              Trx WinGo is based on TRC20 Protocal and TRX network (TRC20-USDT) Block hash last 1 digit to giving the result, (Can click the Block Height to check the Block Hash)
+
+
+              </p>
+              <p className="mt-3">
+              How To Play:
+
+
+              </p>
+              <p className="mt-3">             
+              1)1 minute 1 game, within 50 second need to place bet, before 5 second unable to place bet
+              </p>
+              <p className="mt-3">
+              2)After the betting close, latest has value will be the result
+              </p>
+              <p className="mt-3">
+              3)Bet for whole day, One day total bet is 1440 time.
+              </p>
+              <p className="mt-3">
+              4)If you bet of 100, will deduct 2 fee, so your betting amount will be 98
+              </p>
+              <p className="mt-3">
+              5)3 minute 1 time, 5 minute 1 time, 10 minute 1 time rule same as the 1 minute 1 time, except open result time not same.
+              </p>
+              <p className="mt-3">
+              6)Block hash last digit will be the result:
+              </p>
+              <p className="mt-3">
+              Example:
+              </p>
+              <p className="mt-3">
+              Hash Value **b569, result will be 9
+              </p>
+              <p className="mt-3">
+              Hash Value **d14c, result will be 4
+              </p>
+              <p className="mt-3">
+              -When you bet on Green: If the result either 1,3,7,9, you will get (98*2)=196, if the result is 5, you will get (98*1.5)=147
+              </p>
+              <p className="mt-3">
+              -When you bet on Red: If the result either 2,4,6,8, you will get (98*2)=196, if the result is 0, you will get (98*1.5)=147
+              </p>
+              <p className="mt-3">
+              -When you bet on Purple/Violet: If the result either 0 or 5, you will get (98*4.5)=441
+              </p>
+              <p className="mt-3">
+              When you bet on Number bet: When the result is same as your bet, you will get (98*9)882
+              </p>
+              <p className="mt-3">
+              -When you bet on Big: When the result showing either 5,6,7,8,9, you will get (98x2)=196
+              </p>
+              <p className="mt-3">             
+              -When you bet on Small: When the result showing either 0,1,2,3,4, you will get (98x2)=196
+              </p>
+              
             </div>
 
             {/* Footer with Close Button */}

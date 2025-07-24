@@ -8,6 +8,7 @@ import lockicon from "../Assets/loginicons/lockicon.png";
 import phoneicon from "../Assets/loginicons/phoneicon.png";
 import invitecodeicon from "../Assets/loginicons/invitecodeicon.png";
 import { startLoading, stopLoading } from "../redux/Slice/Loader";
+import { loginUser } from "../api/auth";
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -130,8 +131,11 @@ function SignupPage() {
     console.log("Dispatching signup with:", signupData);
     try {
       await dispatch(signupUser(signupData)).unwrap();
+      // Auto-login after successful registration
+      await dispatch(loginUser({ phone_no: phoneNumber, password })).unwrap();
+      navigate("/home");
     } catch (err) {
-      console.error("Signup failed:", err);
+      console.error("Signup or auto-login failed:", err);
     }
   };
 

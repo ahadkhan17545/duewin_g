@@ -264,7 +264,7 @@ function GameHistoryProfile() {
             {descriptions.map((desc, index) => (
               <div
                 key={index}
-                className={`p-2 rounded-lg shadow-md px-8 mb-1 mt-2 flex-shrink-0 transition-all duration-300 
+                className={`p-1 rounded-lg shadow-md px-8 mb-1 mt-2 m-2.5 flex-shrink-0 transition-all duration-300 
                 ${selectedIndex === index ? "bg-gradient-to-r from-[#fae59f] to-[#c4933f]" : "bg-[#333332]"}
                 ${isDragging ? "cursor-grabbing" : "cursor-pointer"}`}
                 onClick={() => {

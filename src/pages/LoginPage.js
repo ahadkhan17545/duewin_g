@@ -54,11 +54,16 @@ function LoginPage() {
     password: "",
     countryCode: "+91",
   });
-  if (loading) {
-    dispatch(startLoading());
-  } else {
-    dispatch(stopLoading());
-  }
+
+  useEffect(() => {
+    if (loading) {
+      dispatch(startLoading());
+      console.log("[LoginPage] startLoading dispatched");
+    } else {
+      dispatch(stopLoading());
+      console.log("[LoginPage] stopLoading dispatched");
+    }
+  }, [loading, dispatch]);
 
   // Memoized validation to prevent unnecessary recalculations
   const isButtonActive = useMemo(() => {
@@ -106,6 +111,7 @@ function LoginPage() {
   useEffect(() => {
     if (token && !uiState.hasNavigated) {
       updateUiState({ hasNavigated: true });
+      console.log("[LoginPage] Navigating to / after login, token:", token);
       navigate("/");
     }
   }, [token, navigate, uiState.hasNavigated, updateUiState]);
@@ -212,6 +218,7 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     updateUiState({ formError: null });
+    console.log("[LoginPage] handleSubmit called");
 
     let loginData;
     if (uiState.isPhoneLogin) {
@@ -268,8 +275,9 @@ function LoginPage() {
       await dispatch(loginUser(loginData)).unwrap();
       localStorage.setItem("authToken", token);
       updateUiState({ retryCount: 0 });
+      console.log("[LoginPage] Login successful, token:", token);
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error("[LoginPage] Login failed:", err);
 
       if (err && err.includes && err.includes("timeout")) {
         if (uiState.retryCount < 2) {

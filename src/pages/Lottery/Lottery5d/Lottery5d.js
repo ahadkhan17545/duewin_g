@@ -1827,50 +1827,76 @@ function Lottery5d() {
             {/* Content */}
             <div className="bg-[#201d2b] p-4 text-white text-sm flex-1 overflow-y-auto">
               <p>
-                1 minute 1 issue, 45 seconds to order, 15 seconds waiting for
-                the draw. It opens all day. The total number of trades is 1440
-                issues.
+              5D lottery game rules
               </p>
               <p className="mt-3">
-                If you spend 100 to trade, after deducting a 2% service fee,
-                your contract amount is 98:
+              Draw instructions
               </p>
               <p className="mt-3">
-                <span className="font-medium text-green-400">
-                  1. Select Green:
-                </span>{" "}
-                If the result shows 1,3,7,9 you will get (98×2) 196; If the
-                result shows 5, you will get (98×1.5) 147.
+                5-digit number (00000-99999) will be drawn randomly in each period
               </p>
               <p className="mt-3">
-                <span className="font-medium text-red-400">2. Select Red:</span>{" "}
-                If the result shows 2,4,6,8 you will get (98×2) 196; If the
-                result shows 0, you will get (98×1.5) 147.
+              for example：
               </p>
               <p className="mt-3">
-                <span className="font-medium text-purple-400">
-                  3. Select Violet:
-                </span>{" "}
-                If the result shows 0 or 5, you will get (98×4.5) 441.
+              The draw number for this Period is 12345
               </p>
               <p className="mt-3">
-                <span className="font-medium text-blue-400">
-                  4. Select Number:
-                </span>{" "}
-                If the result matches the number you selected, you will get
-                (98×9) 882.
+              A=1
               </p>
               <p className="mt-3">
-                <span className="font-medium text-yellow-400">
-                  5. Select Big:
-                </span>{" "}
-                If the result shows 5,6,7,8,9 you will get (98×2) 196.
+              B=2
               </p>
               <p className="mt-3">
-                <span className="font-medium text-orange-400">
-                  6. Select Small:
-                </span>{" "}
-                If the result shows 0,1,2,3,4 you will get (98×2) 196.
+              C=3
+              </p>
+              <p className="mt-3">
+              D=4
+              </p>
+              <p className="mt-3">
+              E=5
+              </p>
+              <p className="mt-3">
+              SUM=A+B+C+D+E=15
+              </p>
+              <p className="mt-3">
+              How to play
+              </p>
+              <p className="mt-3">
+              Players can specify six outcomes of betting A, B, C, D, E and the sum
+              </p>
+              <p className="mt-3">
+              A, B, C, D, E can be purchased
+              </p>
+              <p className="mt-3">
+              Number (0 1 2 3 4 5 6 7 8 9)
+              </p>
+              <p className="mt-3">
+              Low (0 1 2 3 4)
+              </p>
+              <p className="mt-3">
+              High (5 6 7 8 9)
+              </p>
+              <p className="mt-3">
+              Odd (1 3 5 7 9)
+              </p>
+              <p className="mt-3">
+              Even (0 2 4 6 8)
+              </p>
+              <p className="mt-3">
+              Sum = A+B+C+D+E can be purchased
+              </p>
+              <p className="mt-3">
+              Low (0-22)
+              </p>
+              <p className="mt-3">
+              High (23-45)
+              </p>
+              <p className="mt-3">
+              Odd (1 3 ···43 45)
+              </p>
+              <p className="mt-3">
+              Even (0 2 ···42 44)
               </p>
             </div>
 

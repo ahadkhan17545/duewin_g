@@ -42,12 +42,14 @@ function Wallet() {
   const getToken = () => {
     try {
       if (typeof localStorage !== "undefined") {
-        return localStorage.getItem("token");
+        const token = localStorage.getItem("token");
+        console.log("[Wallet] getToken: token=", token);
+        return token;
       }
-      console.warn("localStorage not available, authentication may fail");
+      console.warn("[Wallet] localStorage not available, authentication may fail");
       return null;
     } catch (error) {
-      console.warn("Error accessing localStorage:", error);
+      console.warn("[Wallet] Error accessing localStorage:", error);
       return null;
     }
   };
@@ -61,11 +63,7 @@ function Wallet() {
           "No authentication token available. Please login first."
         );
       }
-
-      console.log(
-        "Making transfer request with token:",
-        token.substring(0, 20) + "..."
-      );
+      console.log("[Wallet] Making transfer request with token:", token.substring(0, 20) + "...");
 
       const response = await fetch(
         "https://api.strikecolor1.com/api/wallet/transfer-from-third-party",
@@ -83,34 +81,37 @@ function Wallet() {
         }
       );
 
-      console.log("Transfer response status:", response.status);
+      console.log("[Wallet] Transfer response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Transfer API error response:", errorData);
+        console.error("[Wallet] Transfer API error response:", errorData);
         throw new Error(
           `HTTP error! status: ${response.status}, message: ${errorData.message || "Transfer failed"}`
         );
       }
 
       const data = await response.json();
-      console.log("Transfer API success:", data);
+      console.log("[Wallet] Transfer API success:", data);
       return data;
     } catch (error) {
-      console.error("Transfer API error:", error);
+      console.error("[Wallet] Transfer API error:", error);
       throw error;
     }
   };
 
   const handleTransferClick = async () => {
+    console.log("[Wallet] handleTransferClick called");
     // Only allow transfer if there's money in third party wallet
     if (thirdPartyWalletBalance <= 0) {
       setError("No funds available in 3rd party wallet to transfer");
+      console.warn("[Wallet] No funds in third party wallet");
       return;
     }
 
     // Prevent multiple clicks during transfer
     if (transferLoading || countdown !== null) {
+      console.warn("[Wallet] Transfer already in progress or countdown active");
       return;
     }
 
@@ -125,7 +126,7 @@ function Wallet() {
       const transferResult = await transferFromThirdParty();
 
       if (transferResult.success || transferResult.status === "success") {
-        console.log("Transfer successful:", transferResult);
+        console.log("[Wallet] Transfer successful:", transferResult);
 
         // Mark transfer as successful but don't update UI yet
         setTransferSuccess(true);
@@ -133,7 +134,7 @@ function Wallet() {
         throw new Error(transferResult.message || "Transfer failed");
       }
     } catch (err) {
-      console.error("Transfer error:", err);
+      console.error("[Wallet] Transfer error:", err);
 
       // Provide more specific error messages
       let errorMessage = "Transfer failed. Please try again.";
@@ -155,6 +156,7 @@ function Wallet() {
       setTransferSuccess(false);
     } finally {
       setTransferLoading(false);
+      console.log("[Wallet] Transfer loading stopped");
     }
   };
   const dispatch = useDispatch()
@@ -189,36 +191,28 @@ function Wallet() {
   // Fetch balance from API using the centralized API service
   const fetchBalance = async () => {
     dispatch(startLoading());
-
     setLoading(true);
     setError(null);
-
+    console.log("[Wallet] fetchBalance called");
     try {
       const data = await getWalletBalance();
-
+      console.log("[Wallet] Wallet balance fetched:", data);
       if (data.success) {
-        // Set main wallet balance
         setMainWalletBalance(data.mainWallet?.balance || 0);
-
-        // Set third party wallet balance
         setThirdPartyWalletBalance(data.thirdPartyWallet?.balance || 0);
-
-        // Set currency
         setCurrency(data.mainWallet?.currency || "EUR");
-
-        // Determine if third party wallet is active based on balance
         setIsThirdPartyActive((data.thirdPartyWallet?.balance || 0) > 0);
-
-        console.log("Wallet balance fetched successfully:", data);
+        console.log("[Wallet] Wallet balance fetch success");
       } else {
         throw new Error(data.message || "Failed to fetch wallet balance");
       }
     } catch (err) {
-      console.error("Error fetching wallet balance:", err);
       setError(err.message || "Failed to fetch wallet balance");
+      console.error("[Wallet] Error fetching wallet balance:", err);
     } finally {
       setLoading(false);
       dispatch(stopLoading());
+      console.log("[Wallet] fetchBalance loading stopped");
     }
   };
 
