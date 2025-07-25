@@ -266,9 +266,9 @@ function ProfilePage() {
                     <div className="text-[#a8a5a1] ml-4 leading-tight">
                       <div className="text-base">Vault</div>
                       <div className="text-xs leading-snug">
-                        the daily interest rate is 0.1%, and the income is
+                        The daily interest rate is 0.01%, and the income is
                         <br />
-                        calculated once every 1 minute.
+                        calculated Instantly.
                       </div>
                     </div>
                   </div>

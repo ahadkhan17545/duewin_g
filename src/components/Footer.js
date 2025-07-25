@@ -97,8 +97,8 @@ function Footer() {
             alignItems: "center",
             overflow: "visible",
             WebkitMask:
-              "radial-gradient(circle at 50% 0%, transparent 40px, white 41px)",
-            mask: "radial-gradient(circle at 50% 0%, transparent 40px, white 41px)",
+              "radial-gradient(circle at 50% 0%, transparent 43px, white 47px)",
+            mask: "radial-gradient(circle at 50% 0%, transparent 43px, white 47px)",
           }}
         >
           <div className="relative w-full h-full flex justify-around items-center">

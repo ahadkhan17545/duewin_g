@@ -268,7 +268,7 @@ function Home() {
 
   const slidesettings = {
     infinite: true,
-    speed: 500,
+    speed: 1000,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
@@ -631,16 +631,11 @@ function Home() {
   const [checked, setChecked] = useState(false);
 
   const earnings = [
-    { id: 1, name: "Mem***AXT", amount: 213289650, rank: "N01" },
-    { id: 2, name: "Mem***Y1R", amount: 174203429, rank: "N02" },
-    { id: 3, name: "Mem***BBM", amount: 114002435, rank: "N03" },
-    { id: 4, name: "Mem***ZJ0", amount: 106615180.0 },
-    { id: 5, name: "Mem***Q21", amount: 541543016.0 },
-    { id: 6, name: "Sah***dhi", amount: 528783489.0 },
-    { id: 7, name: "Mem***ZJ0", amount: 106615180.0 },
-    { id: 8, name: "Mem***Q21", amount: 541543016.0 },
-    { id: 9, name: "Sah***dhi", amount: 528783489.0 },
-    { id: 10, name: "Ram***dhi", amount: 5287832134.0 },
+    { id: 1, name: "Mem***AXT", amount: 89650.0, rank: "N01" },
+    { id: 2, name: "Mem***Y1R", amount: 78425.0, rank: "N02" },
+    { id: 3, name: "Mem***BBM", amount: 72435.0, rank: "N03" },
+    { id: 4, name: "Mem***ZJ0", amount: 65180.0 },
+    { id: 5, name: "Mem***Q21", amount: 43016.0 },
   ];
 
   const [lotterycardData] = useState([
@@ -976,8 +971,8 @@ function Home() {
                   onClick={() => handleCategoryChange(category.title)}
                   className={`flex-1 h-[120px] flex items-start justify-between cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
                     activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
+                      ? "opacity-120"
+                      : "opacity-120"
                   }`}
                   style={{
                     background: `linear-gradient(60deg, ${
@@ -987,17 +982,17 @@ function Home() {
                     })`,
                   }}
                 >
-                  <div className="w-full h-full flex flex-row items-center justify-between p-4 relative">
-                    <span className="text-white text-sm font-bold self-start">
+                  <div className="w-full h-full flex flex-row items-center justify-between p-2 relative">
+                    <span className="text-[#d9ac4f] text-l font-bold self-start">
                       {category.title}
                     </span>
                     <img
                       src={category.image}
                       alt={category.title}
-                      className={`w-[220px] object-contain -mt-4 -mr-4 ${
+                      className={`w-[120px] object-contain -mt-4-mr-2 ${
                         category.title === "Hot Games"
-                          ? "h-[300px]"
-                          : "h-[220px] -mt-9"
+                          ? "h-[120px]"
+                          : "h-[120px] -mt-1"
                       }`}
                     />
                   </div>
@@ -1009,10 +1004,10 @@ function Home() {
                 <div
                   key={category.id}
                   onClick={() => handleCategoryChange(category.title)}
-                  className={`flex-1 h-[80px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
+                  className={`flex-1 h-[100px] flex items-center justify-center cursor-pointer rounded-lg relative overflow-hidden transition-all duration-300 ${
                     activeCategory === category.title
-                      ? "opacity-100"
-                      : "opacity-80"
+                      ? "opacity-120"
+                      : "opacity-120"
                   }`}
                   style={{
                     background: `linear-gradient(90deg, ${
@@ -1030,10 +1025,10 @@ function Home() {
                     <img
                       src={category.image}
                       alt={category.title}
-                      className="w-full h-[60px] object-contain"
+                      className="w-full h-[75px] object-contain"
                     />
                     <div className="w-full text-center -mt-1">
-                      <span className="text-white text-xs font-bold">
+                      <span className="text-[#d9ac4f] text-l font-bold">
                         {category.title}
                       </span>
                     </div>
@@ -1050,9 +1045,8 @@ function Home() {
                     <span className="w-1 h-4 bg-[#C4933F] inline-block rounded-sm"></span>
                     Lottery
                   </h2>
-                  <p className="text-xs text-gray-400 ml-2">
-                    when you win a super jackpot, you will receive additional
-                    rewards
+                  <p className="text-s text-gray-400 ml-2">
+                    Participate in the events to win grand prizes
                   </p>
                 </div>
                 <div className="w-full py-2">
@@ -1667,13 +1661,10 @@ function Home() {
                       <span className="text-white font-medium text-sm font-[Arial] mx-1">
                         Click to promote – become an agent
                       </span>{" "}
-                      💎
+                      
                     </p>
                     <p className="text-white text-sm font-[Arial]">
                       💎 Earn income every day
-                    </p>
-                    <p className="text-white text-sm font-[Arial]">
-                      💎 Official Telegram id ......................
                     </p>
                   </div>
                 </div>

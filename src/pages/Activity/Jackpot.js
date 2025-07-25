@@ -97,9 +97,9 @@ const Jackpot = () => {
     fetchRebate(1)
     fetchRebateStats()
   }, [])
-  const images = [img6, img1];
-  const activeImages = [activeImg6, activeImg1];
-  const tabNames = ["Original", "Provider"];
+  const images = [img6,img2, img1];
+  const activeImages = [activeImg6,activeImg2, activeImg1];
+  const tabNames = ["All","Original", "Provider"];
 
   const openPopup = () => {
     setShowPopup(true);
@@ -161,7 +161,7 @@ const Jackpot = () => {
           {images.map((img, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg px-12 mt-6 py-1 ${selectedTab === index ? '' : 'bg-[#333332]'
+              className={`flex flex-col items-center flex-shrink-0 cursor-pointer rounded-lg px-10 mt-6 py-1  ${selectedTab === index ? '' : 'bg-[#333332]'
                 }`}
               style={
                 selectedTab === index

@@ -35,6 +35,12 @@ import dice3 from "../../../Assets/newIcon/dice/num3-52bb404d.png";
 import dice4 from "../../../Assets/newIcon/dice/num4-6bed6212.png";
 import dice5 from "../../../Assets/newIcon/dice/num5-7962f058.png";
 import dice6 from "../../../Assets/newIcon/dice/num6-1cc40321.png";
+import number1 from "../../../Assets/WingoNew/n1-584b8878.png";
+import number2 from "../../../Assets/WingoNew/n2-447499dc.png";
+import number3 from "../../../Assets/WingoNew/n3-1432a6bd.png";
+import number4 from "../../../Assets/WingoNew/n4-9d453819.png";
+import number5 from "../../../Assets/WingoNew/n5-09b70e91.png";
+import number6 from "../../../Assets/WingoNew/n6-b68c6bb6.png";
 import gameApi from "../../../api/gameAPI";
 import ResultPopUp from "../../../components/ResultPopUp";
 import CommanHeader from "../../../components/CommanHeader";
@@ -48,6 +54,12 @@ const diceImages = {
   4: dice4,
   5: dice5,
   6: dice6,
+  7: number1,
+  8: number2,
+  9: number3,
+  10: number4,
+  11: number5,
+  12: number6,
 };
 
 const buttonData = [
@@ -1634,167 +1646,50 @@ function LotteryK3() {
             {/* Content */}
             <div className="bg-[#201d2b] p-4 text-white text-sm flex-1 overflow-y-auto">
               <p>
-              Fast 3 open with 3 numbers in each period as the opening number，The opening numbers are 111 to 666 Natural number，No zeros in the array，And the opening numbers are in no particular order，Quick 3 is to guess all or part of the 3 winning numbers.
+                1 minute 1 issue, 45 seconds to order, 15 seconds waiting for
+                the draw. It opens all day. The total number of trades is 1440
+                issues.
               </p>
               <p className="mt-3">
-                Sum Value
+                If you spend 100 to trade, after deducting a 2% service fee,
+                your contract amount is 98:
               </p>
               <p className="mt-3">
-                
-                Place a bet on the sum of three numbers
-
+                <span className="font-medium text-green-400">
+                  1. Select Green:
+                </span>{" "}
+                If the result shows 1,3,7,9 you will get (98×2) 196; If the
+                result shows 5, you will get (98×1.5) 147.
               </p>
               <p className="mt-3">
-                
-              Choose 3 same number all
-
+                <span className="font-medium text-red-400">2. Select Red:</span>{" "}
+                If the result shows 2,4,6,8 you will get (98×2) 196; If the
+                result shows 0, you will get (98×1.5) 147.
               </p>
               <p className="mt-3">
-                
-              For all the same three numbers（111、222、…、666）Make an all-inclusive bet
-
+                <span className="font-medium text-purple-400">
+                  3. Select Violet:
+                </span>{" "}
+                If the result shows 0 or 5, you will get (98×4.5) 441.
               </p>
               <p className="mt-3">
-                
-              Choose 3 same number single
-
+                <span className="font-medium text-blue-400">
+                  4. Select Number:
+                </span>{" "}
+                If the result matches the number you selected, you will get
+                (98×9) 882.
               </p>
               <p className="mt-3">
-                
-              From all the same three numbers（111、…、666）Choose a group of numbers in any of them to place bets
-
+                <span className="font-medium text-yellow-400">
+                  5. Select Big:
+                </span>{" "}
+                If the result shows 5,6,7,8,9 you will get (98×2) 196.
               </p>
               <p className="mt-3">
-                
-              Choose 2 Same Multiple
-
-              </p>
-              <p className="mt-3">
-                
-                Place a bet on two designated same numbers and an arbitrary number among the three numbers
-
-              </p>
-              <p className="mt-3">
-                
-                Choose 2 Same Single
-
-              </p>
-              <p className="mt-3">
-                
-              Place a bet on two designated same numbers and a designated different number among the three numbers
-
-              </p>
-              <p className="mt-3">
-                
-              3 numbers different
-
-              </p>
-              <p className="mt-3">
-                
-                Place a bet on three different numbers
-
-              </p>
-              <p className="mt-3">
-                
-              2 numbers different
-
-              </p>
-              <p className="mt-3">
-                
-              Place a bet on two designated different numbers and an arbitrary number among the three numbers
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 3 Consecutive number all
-
-              </p>
-              <p className="mt-3">
-                
-              For all three consecutive numbers（123、234、345、456）Place a betFor all three consecutive numbers（123、234、345、456）Place a bet
-
-              </p>
-              <p className="mt-3">
-                
-              Description of winning and odds:
-
-              </p>
-              <p className="mt-3">
-                
-              Sum Value
-
-              </p>
-              <p className="mt-3">
-                
-              A bet with the same opening number and value is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 3 same number all
-
-              </p>
-              <p className="mt-3">
-                
-              If the opening numbers are any three of the same number, it is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 3 same number single
-
-              </p>
-              <p className="mt-3">
-                
-              A bet that is exactly the same as the opening number is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 2 Same Multiple
-              </p>
-              <p className="mt-3">
-                
-              The same number as the two same numbers in the opening number (except for the three same numbers) is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 2 Same Single
-
-              </p>
-              <p className="mt-3">
-                
-              A bet that is exactly the same as the opening number is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              3 numbers different
-
-              </p>
-              <p className="mt-3">
-                
-              A bet that is exactly the same as the opening number is the winning
-              </p>
-              <p className="mt-3">
-                
-              2 numbers different
-              </p>
-              <p className="mt-3">
-                
-              The same as the two arbitrary numbers in the opening number is the winning
-
-              </p>
-              <p className="mt-3">
-                
-              Choose 3 Consecutive number all
-
-              </p>
-              <p className="mt-3">
-                
-              If the opening numbers are any three consecutive numbers, it is the winning
-
+                <span className="font-medium text-orange-400">
+                  6. Select Small:
+                </span>{" "}
+                If the result shows 0,1,2,3,4 you will get (98×2) 196.
               </p>
             </div>
 
